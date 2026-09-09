@@ -1,50 +1,354 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gladiator | Wings of Atreia</title>
-<link rel="stylesheet" href="../assets/css/style.css"></head>
-<body data-base="../"><header class="site-header"><div class="nav-wrap">
-<a class="brand" href="../index.html">WINGS OF ATREIA</a>
-<nav class="nav-links"><a href="../index.html">Home</a><a href="../rules/">Rules</a>
-<a href="../classes/">Classes</a><a href="../world/">World</a><a href="../about.html">About</a></nav>
-<div class="search-box"><input type="search" placeholder="Search WoA…" aria-label="Search Wings of Atreia" data-site-search></div>
-</div></header><main>
-<header class="page-header"><div class="eyebrow">Playable Class</div><h1>Gladiator</h1>
-<p>Dedicated player reference for the Gladiator class.</p></header>
-<div class="notice">Complete mechanics will be migrated only from the latest approved Wings of Atreia player material.</div>
-<div class="topic-list">
-<a class="topic" href="#overview"><strong>Class Overview</strong><span>Identity and role.</span></a>
-<a class="topic" href="#proficiencies"><strong>Hit Points &amp; Proficiencies</strong><span>Core class statistics.</span></a>
-<a class="topic" href="#resource"><strong>Class Resource</strong><span>Class-specific resource rules.</span></a>
-<a class="topic" href="#progression"><strong>Level Progression</strong><span>Levels 1–20.</span></a>
-<a class="topic" href="#ultimate"><strong>Ultimate Ability</strong><span>Level 10+ Ultimate reference.</span></a>
-<a class="topic" href="#clarifications"><strong>Rules Clarifications</strong><span>Class-specific rulings.</span></a>
-</div>
-<section id="overview"><h2>Class Overview</h2><p>Approved Gladiator overview will be inserted here.</p></section>
-<section id="proficiencies"><h2>Hit Points &amp; Proficiencies</h2><p>Approved statistics and proficiencies will be inserted here.</p></section>
-<section id="resource"><h2>Class Resource</h2><p>Approved resource rules will be inserted here.</p></section>
-<section id="progression"><h2>Level Progression</h2><p>The approved Level 1–20 progression table will be inserted here.</p><h3 id="level-1">Level 1</h3><p>Approved Level 1 feature text will be inserted here.</p>
-<h3 id="level-2">Level 2</h3><p>Approved Level 2 feature text will be inserted here.</p>
-<h3 id="level-3">Level 3</h3><p>Approved Level 3 feature text will be inserted here.</p>
-<h3 id="level-4">Level 4</h3><p>Approved Level 4 feature text will be inserted here.</p>
-<h3 id="level-5">Level 5</h3><p>Approved Level 5 feature text will be inserted here.</p>
-<h3 id="level-6">Level 6</h3><p>Approved Level 6 feature text will be inserted here.</p>
-<h3 id="level-7">Level 7</h3><p>Approved Level 7 feature text will be inserted here.</p>
-<h3 id="level-8">Level 8</h3><p>Approved Level 8 feature text will be inserted here.</p>
-<h3 id="level-9">Level 9</h3><p>Approved Level 9 feature text will be inserted here.</p>
-<h3 id="level-10">Level 10</h3><p>Approved Level 10 feature text will be inserted here.</p>
-<h3 id="level-11">Level 11</h3><p>Approved Level 11 feature text will be inserted here.</p>
-<h3 id="level-12">Level 12</h3><p>Approved Level 12 feature text will be inserted here.</p>
-<h3 id="level-13">Level 13</h3><p>Approved Level 13 feature text will be inserted here.</p>
-<h3 id="level-14">Level 14</h3><p>Approved Level 14 feature text will be inserted here.</p>
-<h3 id="level-15">Level 15</h3><p>Approved Level 15 feature text will be inserted here.</p>
-<h3 id="level-16">Level 16</h3><p>Approved Level 16 feature text will be inserted here.</p>
-<h3 id="level-17">Level 17</h3><p>Approved Level 17 feature text will be inserted here.</p>
-<h3 id="level-18">Level 18</h3><p>Approved Level 18 feature text will be inserted here.</p>
-<h3 id="level-19">Level 19</h3><p>Approved Level 19 feature text will be inserted here.</p>
-<h3 id="level-20">Level 20</h3><p>Approved Level 20 feature text will be inserted here.</p></section>
-<section id="ultimate"><h2>Ultimate Ability</h2><p>The approved Gladiator Ultimate Ability will be inserted here.</p></section>
-<section id="equipment"><h2>Equipment</h2><p>Approved equipment information will be inserted here.</p></section>
-<section id="clarifications"><h2>Rules Clarifications</h2><p>Approved clarifications will be inserted here.</p></section>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gladiator | Wings of Atreia</title>
+  <meta name="description" content="Complete player reference for the Gladiator class in Wings of Atreia, based on Player Handbook v3.10.">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .class-kicker{font-size:.85rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:800}
+    .class-tagline{font-size:1.1rem;color:var(--muted);margin:.25rem 0 .3rem}
+    .class-quote{font-size:1.15rem;font-style:italic;margin:.65rem 0 0}
+    .quick-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.7rem;margin:1.4rem 0 2rem}
+    .quick-nav a{display:block;padding:.75rem .85rem;border:1px solid var(--line);border-radius:.7rem;background:rgba(13,27,42,.78)}
+    .rule-table-wrap{overflow-x:auto;margin:1rem 0 1.7rem}
+    table.rule-table{width:100%;border-collapse:collapse;min-width:680px;background:rgba(13,27,42,.72)}
+    .rule-table th,.rule-table td{border:1px solid var(--line);padding:.65rem .7rem;vertical-align:top;text-align:left}
+    .rule-table th{background:#173957;color:#fff}
+    .rule-table td:first-child{font-weight:700}
+    .mechanic-box,.ultimate-box{border:1px solid var(--line);border-radius:1rem;padding:1.15rem 1.2rem;margin:1.15rem 0;background:linear-gradient(180deg,rgba(20,50,74,.78),rgba(10,27,43,.8))}
+    .ultimate-box{border-color:#4f87b3;box-shadow:0 12px 30px rgba(0,0,0,.22)}
+    .level-block{padding:1.15rem 0;border-top:1px solid var(--line)}
+    .level-block:first-child{border-top:0}
+    .level-block h3{margin-bottom:.5rem}
+    .subfeature{margin:.8rem 0}
+    .subfeature h4{margin:.1rem 0 .25rem;color:var(--accent-2)}
+    .source-note{font-size:.92rem;color:var(--muted);border-left:3px solid var(--accent);padding:.85rem 1rem;background:rgba(127,200,255,.06);margin:1rem 0 2rem}
+    ul.tight li{margin:.35rem 0}
+    @media(max-width:850px){.quick-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:520px){.quick-nav{grid-template-columns:1fr}}
+  </style>
+</head>
+<body data-base="../">
+
+<header class="site-header">
+  <div class="nav-wrap">
+    <a class="brand" href="../index.html">WINGS OF ATREIA</a>
+    <nav class="nav-links">
+      <a href="../index.html">Home</a>
+      <a href="../rules/">Rules</a>
+      <a href="../classes/">Classes</a>
+      <a href="../world/">World</a>
+      <a href="../about.html">About</a>
+    </nav>
+    <div class="search-box">
+      <input type="search" placeholder="Search WoA…" aria-label="Search Wings of Atreia" data-site-search>
+    </div>
+  </div>
+</header>
+
+<main>
+  <header class="page-header">
+    <div class="class-kicker">Martial Striker • Chain Attacks • Momentum • Frontline Pressure</div>
+    <h1>Gladiator</h1>
+    <p class="class-quote">“Nothing can stand in my way!”</p>
+    <p class="class-tagline">The premier sustained melee damage class, built around deliberate attack sequences, Momentum, Chain Links, and Finishers.</p>
+  </header>
+
+  <div class="source-note">
+    Website rules source: <strong>Wings of Atreia Player Handbook v3.10 — Publication Master, 8 September 2026.</strong>
+  </div>
+
+  <nav class="quick-nav" aria-label="Gladiator page sections">
+    <a href="#overview">Overview</a>
+    <a href="#chassis">Class Chassis</a>
+    <a href="#momentum">Momentum</a>
+    <a href="#chains">Chain Attacks</a>
+    <a href="#action-reference">Action Reference</a>
+    <a href="#levels">Levels 1–20</a>
+    <a href="#specializations">Specializations</a>
+    <a href="#examples">Combat Examples</a>
+  </nav>
+
+  <section id="overview">
+    <h2>Class Overview</h2>
+    <p>The Gladiator is the premier sustained melee damage class. It wins through sequences rather than single isolated attacks: open a Chain, spend Momentum on Links that alter the battlefield, then cash the sequence out with a Finisher. Polearms provide the highest sustained weapon output, while weapon discipline and specialization determine whether the Gladiator emphasizes execution, cleaving pressure, or relentless pursuit.</p>
+
+    <h3>Class Identity</h3>
+    <p>Gladiators are Daevas who turn martial mastery into relentless battlefield pressure. They are not defined by a single weapon or one decisive blow, but by the ability to seize momentum, force an opening, and keep an enemy under pressure until the fight breaks in their favor. In Wings of Atreia, this identity is expressed through Momentum and Chain Attacks: the Gladiator becomes more dangerous when attacks, movement, and finishers are linked into a deliberate sequence.</p>
+
+    <h3>Tradition &amp; Outlook</h3>
+    <p>The Gladiator tradition descends from the broad warrior disciplines of Atreia and is associated with soldiers, arena fighters, legion veterans, weapon masters, and Daevas who believe that skill must survive contact with a real battlefield. Gladiators commonly value courage, physical discipline, adaptability, and decisive action. Some fight for glory or personal mastery; others see themselves as the hard edge of a legion, the Daeva who advances when everyone else needs the line to move.</p>
+
+    <h3>Appearance &amp; Adventuring</h3>
+    <p>Gladiators usually present themselves as practical combatants: heavy armor, battle-worn weapons, and equipment chosen for reach, leverage, or sustained close combat. Polearms and other approved Gladiator weapons may suggest very different fighting schools, but the class is recognized by an aggressive, forward-driving presence. A Gladiator adventures to test mastery, protect comrades through offensive pressure, earn renown, serve a military cause, or become strong enough to face the threats of the Abyss and Balaurea directly.</p>
+  </section>
+
+  <section id="chassis">
+    <h2>Class Chassis</h2>
+    <div class="rule-table-wrap">
+      <table class="rule-table">
+        <thead><tr><th>Trait</th><th>Rule</th></tr></thead>
+        <tbody>
+          <tr><td>Primary Ability</td><td>Strength</td></tr>
+          <tr><td>Secondary Ability</td><td>Dexterity</td></tr>
+          <tr><td>Hit Die</td><td>d12</td></tr>
+          <tr><td>Saving Throws</td><td>Strength, Constitution</td></tr>
+          <tr><td>Armor</td><td>Chain Armor, Plate Armor</td></tr>
+          <tr><td>Weapons</td><td>Shortswords, Longswords, Polearms, Spears</td></tr>
+          <tr><td>Skills</td><td>Choose 2: Acrobatics, Athletics, Intimidation, Perception, Survival</td></tr>
+          <tr><td>Class Save DC</td><td>8 + PB + STR modifier</td></tr>
+          <tr><td>Signature Resource</td><td>Momentum</td></tr>
+          <tr><td>Signature Mechanic</td><td>Chain Attacks</td></tr>
+          <tr><td>Extra Attack</td><td>Level 5; two attacks only</td></tr>
+          <tr><td>Spellcasting</td><td>None</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="momentum">
+    <h2>Core Engine — Momentum and Chains</h2>
+    <p>Momentum represents the Gladiator forcing the battle forward. It exists only in genuine combat and resets to 0 when combat ends. Normal Momentum does not decay simply because you failed to spend it; later features care about maintaining an active Chain instead.</p>
+    <ul class="tight">
+      <li><strong>First melee hit on your own turn:</strong> gain 1 Momentum.</li>
+      <li><strong>Aggressive Momentum:</strong> once on each of your turns, gain 1 additional Momentum if a melee hit follows at least 15 feet of movement toward that target, is a critical hit, or reduces a hostile creature to 0 HP. Multiple qualifying conditions on one attack still grant only 1 additional Momentum.</li>
+      <li><strong>Maximum Momentum:</strong> 3 at Levels 1–4; 4 at 5–8; 5 at 9–12; 6 at 13–16; 7 at 17–20.</li>
+      <li>A single attack cannot normally grant more than the Momentum allowed by the generation rules above. Refunds occur after the triggering feature resolves and are not new Momentum-generation events unless stated otherwise.</li>
+    </ul>
+
+    <h3>Resource Flow — Generation, Recovery, Spending &amp; Reset</h3>
+    <div class="rule-table-wrap">
+      <table class="rule-table">
+        <thead><tr><th>Resource Flow</th><th>Rule</th></tr></thead>
+        <tbody>
+          <tr><td>Starting State</td><td>Momentum exists only in genuine combat and normally begins at 0. A later feature may cause you to begin genuine combat with Momentum instead.</td></tr>
+          <tr><td>Maximum</td><td>3 at Levels 1–4; 4 at 5–8; 5 at 9–12; 6 at 13–16; 7 at 17–20.</td></tr>
+          <tr><td>How You Gain It</td><td>Your first melee hit on your own turn grants 1 Momentum. Once on each of your turns, Aggressive Momentum grants 1 additional Momentum when a melee hit follows at least 15 ft of movement toward that target, is a critical hit, or reduces a hostile creature to 0 HP.</td></tr>
+          <tr><td>Generation Limits</td><td>Multiple Aggressive Momentum conditions on one hit still grant only 1 additional Momentum. A normal hit cannot repeatedly generate Momentum beyond the explicit first-hit and Aggressive Momentum triggers.</td></tr>
+          <tr><td>How You Spend It</td><td>Driving Strike 1; Sweeping Strike 1; Crushing Finisher 2; Hamstring Strike 1; Staggering Strike 1; Devastating Finisher 3; Titanic Finisher 4; Endless Assault 1 at Levels 15–19 (0 at Level 20).</td></tr>
+          <tr><td>Refunds / Recovery</td><td>Later features may refund or grant Momentum after a Link or Finisher resolves or at a stated timing. A refund is not a new Momentum-generation event unless the feature explicitly says otherwise.</td></tr>
+          <tr><td>Persistence / Reset</td><td>Normal Momentum does not decay during combat merely because you did not spend it. It resets to 0 when combat ends.</td></tr>
+          <tr><td>Does Not Generate</td><td>Artificial combat, staged attacks, harmless allied targets, or forced movement used to imitate Battle Rush do not generate Momentum unless a feature explicitly says otherwise.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="chains">
+    <h2>Chain Attacks</h2>
+    <div class="mechanic-box">
+      <p>A Chain begins when you declare a successful melee hit on your own turn to be an <strong>Opener</strong>. You can maintain only one Chain at a time. The Chain belongs to you, not to a particular enemy, so later Links may strike another legal target. A miss does not automatically end the Chain. It lasts until the end of your next turn, until you use a Finisher, abandon it, or become unable to continue it.</p>
+      <ul class="tight">
+        <li>One Chain technique may modify a given attack.</li>
+        <li>Chain Links and Finishers normally apply only to attacks made on your own turn.</li>
+        <li>A Finisher ends the Chain after it resolves.</li>
+        <li>Chain Dice are d6 at Levels 1–4, d8 at 5–10, d10 at 11–16, and d12 at 17–20.</li>
+        <li>Chain Dice added directly to the triggering weapon attack double on a critical hit. Independent secondary damage does not.</li>
+      </ul>
+    </div>
+
+    <h3>Universal Gladiator Chain Techniques</h3>
+    <div class="rule-table-wrap">
+      <table class="rule-table">
+        <thead><tr><th>Technique</th><th>Cost</th><th>Requirement</th><th>Exact Effect</th></tr></thead>
+        <tbody>
+          <tr><td>Driving Strike</td><td>1 Momentum</td><td>A melee hit that can carry a Link</td><td>Add 1 Chain Die to the attack. If the target is no more than one size larger, push it 5 feet.</td></tr>
+          <tr><td>Sweeping Strike</td><td>1 Momentum</td><td>A melee hit; once per turn</td><td>Choose another hostile within your reach and within 5 feet of the original target. It takes 1 Chain Die + STR modifier damage. This is independent secondary damage, not a separate attack.</td></tr>
+          <tr><td>Crushing Finisher</td><td>2 Momentum</td><td>At least 1 prior Link</td><td>Add 2 Chain Dice to the triggering attack. The Chain ends after resolution.</td></tr>
+          <tr><td>Hamstring Strike</td><td>1 Momentum</td><td>Level 5; a Link</td><td>Add 1 Chain Die and reduce the target’s Speed by 10 feet until the start of your next turn.</td></tr>
+          <tr><td>Staggering Strike</td><td>1 Momentum</td><td>Level 11; a Link</td><td>Add 1 Chain Die. The target cannot take Reactions until the start of your next turn.</td></tr>
+          <tr><td>Devastating Finisher</td><td>3 Momentum</td><td>Level 11; at least 2 prior Links</td><td>Add 3 Chain Dice. The target makes a STR save; on failure it falls Prone. Creatures more than one size larger have Advantage on the save. The Chain ends.</td></tr>
+          <tr><td>Titanic Finisher</td><td>4 Momentum</td><td>Level 17; at least 3 prior Links</td><td>Add 4 Chain Dice. STR save; on failure choose Prone and push 20 feet, Prone only, or push 30 feet. Creatures more than one size larger have Advantage. The Chain ends.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="action-reference">
+    <h2>Level 1–20 Action &amp; Resource Reference</h2>
+    <div class="rule-table-wrap">
+      <table class="rule-table">
+        <thead><tr><th>Level</th><th>Option</th><th>Timing</th><th>Cost</th><th>Trigger / Requirement</th><th>Short Effect</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Attack</td><td>Action</td><td>—</td><td>Take the Attack action</td><td>Make one weapon attack; two attacks from Level 5.</td></tr>
+          <tr><td>1</td><td>Open a Chain</td><td>Triggered / No Action</td><td>—</td><td>A successful melee hit on your turn</td><td>Declare the hit as the Opener; the Chain begins after the hit resolves.</td></tr>
+          <tr><td>1</td><td>Driving / Sweeping Strike</td><td>On Hit / Link</td><td>1 Momentum</td><td>Qualifying melee hit</td><td>Modify that attack with one Chain Link.</td></tr>
+          <tr><td>1</td><td>Crushing Finisher</td><td>On Hit / Finisher</td><td>2 Momentum</td><td>At least 1 prior successful Link</td><td>Add 2 Chain Dice; the Chain ends.</td></tr>
+          <tr><td>3</td><td>Relentless Finisher (Destroyer)</td><td>Triggered / No Action</td><td>—</td><td>Crushing Finisher hits a target at half maximum HP or fewer; once/turn</td><td>Regain 1 Momentum after the Finisher resolves.</td></tr>
+          <tr><td>3</td><td>Charging Assault (Warpath)</td><td>Triggered / No Action</td><td>—</td><td>Battle Rush qualifying hit; once/turn</td><td>Battle Rush requires only 10 ft of approach; after the hit, move up to 10 ft without provoking from that creature, ending closer to it or another perceived hostile.</td></tr>
+          <tr><td>5</td><td>Hamstring Strike</td><td>On Hit / Link</td><td>1 Momentum</td><td>Qualifying melee hit</td><td>Add a Chain Die and reduce the target’s Speed by 10 feet until the start of your next turn.</td></tr>
+          <tr><td>7</td><td>Relentless Advance</td><td>Reaction</td><td>—</td><td>Hostile in melee reach willingly moves away</td><td>Move up to half Speed and end closer; no attack is granted.</td></tr>
+          <tr><td>9</td><td>Momentum Mastery</td><td>Triggered / No Action</td><td>—</td><td>Spend Momentum on a Link that advances an active Chain; once/turn</td><td>Regain 1 Momentum after that Link resolves.</td></tr>
+          <tr><td>10+</td><td>Heavenbreaker</td><td>Action + Bonus Action</td><td>100 DP</td><td>Ultimate available</td><td>Attempt the class Ultimate under the universal Ultimate rules.</td></tr>
+          <tr><td>10</td><td>Overrun (Warpath)</td><td>Triggered / No Action</td><td>—</td><td>Battle Rush hit after at least 20 ft of movement toward the target</td><td>Target makes the listed STR save; on a failure choose push 10 ft or knock it Prone.</td></tr>
+          <tr><td>11</td><td>Staggering Strike</td><td>On Hit / Link</td><td>1 Momentum</td><td>Qualifying melee hit</td><td>Add a Chain Die; the target cannot take Reactions until the start of your next turn.</td></tr>
+          <tr><td>11</td><td>Devastating Finisher</td><td>On Hit / Finisher</td><td>3 Momentum</td><td>At least 2 prior Links</td><td>Add 3 Chain Dice and force the listed STR save; Chain ends.</td></tr>
+          <tr><td>13</td><td>Unbroken Momentum</td><td>Start of Turn / No Action</td><td>—</td><td>Begin your turn with an active Chain and 0 Momentum</td><td>Gain 1 Momentum; successful Links also refresh the active Chain duration.</td></tr>
+          <tr><td>14</td><td>Perfect Execution (Destroyer)</td><td>Triggered / No Action</td><td>—</td><td>Finisher hits a creature at half maximum HP or fewer</td><td>Add 1 current Chain Die; if the Finisher reduces it to 0 HP, regain 2 Momentum once/turn.</td></tr>
+          <tr><td>14</td><td>Maelstrom Sweep (Tempest)</td><td>Triggered / No Action</td><td>—</td><td>Sweeping Strike damages at least two secondary creatures</td><td>Regain 1 Momentum after the Sweep resolves, once/turn.</td></tr>
+          <tr><td>14</td><td>Breakthrough (Warpath)</td><td>Triggered / No Action</td><td>—</td><td>A creature fails its save against Overrun</td><td>Move up to 10 ft; you may pass through the affected creature if size allows, cannot end there, and do not provoke from that creature.</td></tr>
+          <tr><td>15</td><td>Endless Assault</td><td>Bonus Action</td><td>1 Momentum; 0 at L20</td><td>A Finisher hits and fully resolves</td><td>Make one melee attack; it cannot carry a Link/Finisher but may open a new Chain.</td></tr>
+          <tr><td>17</td><td>Titanic Finisher</td><td>On Hit / Finisher</td><td>4 Momentum</td><td>At least 3 prior Links</td><td>Add 4d12 and force the listed STR save; Chain ends.</td></tr>
+          <tr><td>17</td><td>Perfect Sequence</td><td>Triggered / No Action</td><td>—</td><td>Resolve three different Chain Links in the same Chain</td><td>Reduce the next Finisher’s Momentum cost by 1, minimum 1.</td></tr>
+          <tr><td>18</td><td>Additional Martial Reaction</td><td>Passive</td><td>—</td><td>Each round</td><td>Second Reaction usable only for Opportunity Attack or Relentless Advance.</td></tr>
+          <tr><td>20</td><td>Perfect Gladiator Flow</td><td>Initiative / Triggered</td><td>—</td><td>Genuine combat begins / a Finisher resolves</td><td>Begin with 3 Momentum; successful Finishers refund 2 Momentum; Endless Assault costs 0 Momentum.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Coverage.</strong> This reference covers every class option in the current manuscript that creates or materially changes an Action, Bonus Action, Reaction, triggered player choice, or signature-resource expenditure, refund, recovery, overflow conversion, or combat starting state. A level that only changes passive numerical scaling, grants a Feat/ASI, or automatically upgrades an already listed option does not need a duplicate row; use the level progression for the new value.</p>
+    <p><strong>Timing rule.</strong> “Triggered / No Action” means the option modifies or responds to its stated event without consuming your Action, Bonus Action, or Reaction. Specific feature text remains authoritative.</p>
+  </section>
+
+  <section id="levels">
+    <h2>Level-by-Level Progression</h2>
+
+    <div class="level-block" id="level-1">
+      <h3>Level 1 — Momentum, Chain Attacks, Battle Rush</h3>
+      <div class="subfeature"><h4>Momentum</h4><p>Your maximum Momentum is 3. Your first melee hit on your turn grants 1 Momentum, and Aggressive Momentum can grant 1 additional Momentum once on your turn from a qualifying aggressive hit.</p></div>
+      <div class="subfeature"><h4>Chain Attacks</h4><p>You gain the Chain rules and the Level 1 techniques Driving Strike, Sweeping Strike, and Crushing Finisher. At this level your Chain Die is d6 and a Chain may contain one or more Links before the Finisher, subject to available attacks and Momentum.</p></div>
+      <div class="subfeature"><h4>Battle Rush</h4><p>Moving at least 15 feet toward a creature before hitting it with a melee weapon attack satisfies the movement condition for Aggressive Momentum. The movement must be actual movement through legal spaces; forced movement does not count.</p></div>
+    </div>
+
+    <div class="level-block" id="level-2">
+      <h3>Level 2 — Combat Discipline</h3>
+      <p>Choose one discipline. <strong>Heavy Weapon</strong> lets you reroll one weapon damage die showing 1 or 2 once per attack; it does not reroll a Chain Die. <strong>Polearm Discipline</strong> increases the reach of your polearm melee attacks by 5 feet during your own turn. <strong>Twin Blade</strong> adds your STR modifier to the damage of your additional light-weapon attack; two Shortswords are explicitly a valid Twin Blade setup. <strong>Defensive Weapon Discipline</strong> grants +1 AC while wielding a melee weapon and not using a shield. You may retrain this choice when you gain a class Feat/ASI.</p>
+    </div>
+
+    <div class="level-block" id="level-3">
+      <h3>Level 3 — Gladiator Specialization</h3>
+      <p>Choose Destroyer, Tempest, or Warpath. The choice is permanent unless the campaign later introduces an explicit retraining rule. Your specialization grants new features at Levels 3, 6, 10, and 14.</p>
+      <div class="subfeature"><h4>Destroyer — Relentless Finisher</h4><p>Once on each of your turns when Crushing Finisher hits a creature that had half its maximum HP or fewer before the attack, regain 1 Momentum after the Finisher resolves.</p></div>
+      <div class="subfeature"><h4>Tempest — Widening Sweep</h4><p>When you use Sweeping Strike, you may choose one additional eligible secondary creature. That second creature takes one Chain Die of damage without adding STR.</p></div>
+      <div class="subfeature"><h4>Warpath — Charging Assault</h4><p>Battle Rush now requires only 10 feet of movement toward the target. After that qualifying hit resolves, you may move up to 10 feet without provoking Opportunity Attacks from the creature you hit, and the movement must leave you closer to that creature or another hostile creature you can perceive.</p></div>
+    </div>
+
+    <div class="level-block" id="level-4"><h3>Level 4 — Feat / Ability Score Improvement</h3><p>Gain the universal Feat / Ability Score Improvement for this level. A class retraining opportunity may also be used to change your Combat Discipline.</p></div>
+
+    <div class="level-block" id="level-5">
+      <h3>Level 5 — Extra Attack, Improved Momentum, Hamstring Strike</h3>
+      <div class="subfeature"><h4>Extra Attack</h4><p>When you take the Attack action on your turn, make two attacks instead of one. This is the Gladiator’s standard attack ceiling; the class does not later gain a third ordinary Attack-action attack.</p></div>
+      <div class="subfeature"><h4>Improved Momentum and Chain Die</h4><p>Maximum Momentum increases to 4 and your Chain Die becomes d8. You can now more reliably create an Opener with the first attack and advance the Chain with the second.</p></div>
+      <div class="subfeature"><h4>Hamstring Strike</h4><p>You unlock Hamstring Strike for 1 Momentum. On a qualifying melee hit, add 1d8 Chain damage and reduce Speed by 10 feet until the start of your next turn. The Speed reduction follows the class non-stacking rule.</p></div>
+    </div>
+
+    <div class="level-block" id="level-6">
+      <h3>Level 6 — Specialization Advancement</h3>
+      <div class="subfeature"><h4>Destroyer — Executioner’s Weight</h4><p>When Crushing Finisher hits a creature that had half its maximum HP or fewer before the attack, add 1 additional current Chain Die to the attack.</p></div>
+      <div class="subfeature"><h4>Tempest — Storm of Steel</h4><p>Every secondary creature damaged by Sweeping Strike now takes one current Chain Die + your STR modifier, including the additional creature from Widening Sweep.</p></div>
+      <div class="subfeature"><h4>Warpath — Relentless Charge</h4><p>When moving toward a creature for Battle Rush, ignore nonmagical difficult terrain. Opportunity Attacks made against you during that qualifying approach have Disadvantage.</p></div>
+    </div>
+
+    <div class="level-block" id="level-7"><h3>Level 7 — Relentless Advance</h3><p>When a hostile creature within your melee reach willingly moves away from you, use your Reaction to move up to half your Speed. You must end closer to that creature than where you started and cannot end farther from it. This movement does not itself provoke an Opportunity Attack from the triggering creature and grants no attack.</p></div>
+
+    <div class="level-block" id="level-8"><h3>Level 8 — Feat / Ability Score Improvement</h3><p>Gain the universal Feat / Ability Score Improvement.</p></div>
+
+    <div class="level-block" id="level-9">
+      <h3>Level 9 — Momentum Mastery</h3>
+      <div class="subfeature"><h4>Greater Momentum</h4><p>Maximum Momentum increases to 5.</p></div>
+      <div class="subfeature"><h4>Momentum Mastery</h4><p>Once on each of your turns when you spend Momentum on a Chain Link that advances an already active Chain, regain 1 Momentum after that Link resolves. The refund cannot exceed your maximum and cannot recursively trigger another Gladiator rider.</p></div>
+    </div>
+
+    <div class="level-block" id="level-10">
+      <h3>Level 10 — Specialization Advancement</h3>
+      <div class="ultimate-box">
+        <h4>Heavenbreaker — Ultimate Ability</h4>
+        <p><strong>Ultimate Activation — 100 DP.</strong> As your Action and Bonus Action, move up to your Speed toward a creature you can see without provoking Opportunity Attacks. You must end within your melee reach, then make one Ultimate melee weapon attack against it. After this Ultimate attempt resolves, you enter Ultimate Recovery during your next turn.</p>
+        <p><strong>Primary Damage.</strong> On a hit, the attack deals its normal weapon damage plus fixed additional damage of the weapon's type: 100 at Levels 10–14, 120 at Levels 15–19, or 140 at Level 20.</p>
+        <p><strong>Shockwave.</strong> On a hit, every other hostile creature within 10 feet of the primary target makes a DEX save against your Gladiator Class Save DC. A creature takes fixed Force damage of 40 at Levels 10–14, 50 at Levels 15–19, or 60 at Level 20 on a failure, or half that amount on a success. The radius becomes 15 feet at Level 15. At Level 20, the primary target is also knocked Prone if it is Huge or smaller.</p>
+      </div>
+      <div class="subfeature"><h4>Destroyer — Execution Window</h4><p>When a Finisher attack hits a creature that had half its maximum HP or fewer before the attack, that Finisher scores a critical hit on a roll of 19 or 20.</p></div>
+      <div class="subfeature"><h4>Tempest — Cyclone Sweep</h4><p>Sweeping Strike secondary targets no longer need to be within 5 feet of the original target; each only needs to be within your melee reach.</p></div>
+      <div class="subfeature"><h4>Warpath — Overrun</h4><p>When a Battle Rush hit follows at least 20 feet of movement toward the target, the target makes a STR save. On a failure, choose to push it 10 feet or knock it Prone. Creatures more than one size larger have Advantage on the save.</p></div>
+    </div>
+
+    <div class="level-block" id="level-11">
+      <h3>Level 11 — Greater Chains</h3>
+      <div class="subfeature"><h4>Greater Chain Die</h4><p>Your Chain Die becomes d10.</p></div>
+      <div class="subfeature"><h4>Staggering Strike</h4><p>Spend 1 Momentum on a qualifying Link to add 1d10 and prevent the target from taking Reactions until the start of your next turn.</p></div>
+      <div class="subfeature"><h4>Devastating Finisher</h4><p>After at least two prior successful Links in the current Chain, spend 3 Momentum on a melee hit to add 3d10. The target makes a STR save; on a failure it falls Prone. A creature more than one size larger has Advantage. The Chain then ends.</p></div>
+    </div>
+
+    <div class="level-block" id="level-12"><h3>Level 12 — Feat / Ability Score Improvement</h3><p>Gain the universal Feat / Ability Score Improvement.</p></div>
+
+    <div class="level-block" id="level-13">
+      <h3>Level 13 — Unbroken Momentum</h3>
+      <div class="subfeature"><h4>Greater Momentum</h4><p>Maximum Momentum increases to 6.</p></div>
+      <div class="subfeature"><h4>Unbroken Momentum</h4><p>A successful Chain Link refreshes the duration of your active Chain. In addition, if you begin your turn with an active Chain and 0 Momentum, gain 1 Momentum. This start-turn recovery can occur only once per turn and cannot exceed your maximum.</p></div>
+    </div>
+
+    <div class="level-block" id="level-14">
+      <h3>Level 14 — Final Specialization Advancement</h3>
+      <div class="subfeature"><h4>Destroyer — Perfect Execution</h4><p>Executioner’s Weight is replaced by Perfect Execution. Any Finisher that hits a creature at half maximum HP or fewer adds 1 current Chain Die. If that Finisher reduces the target to 0 HP, regain 2 Momentum instead of the 1 Momentum refund from Relentless Finisher, once per turn.</p></div>
+      <div class="subfeature"><h4>Tempest — Maelstrom Sweep</h4><p>Sweeping Strike may now damage up to three eligible secondary creatures, each for one current Chain Die + STR. If at least two secondary creatures actually take damage, regain 1 Momentum after the Sweep resolves, once per turn.</p></div>
+      <div class="subfeature"><h4>Warpath — Breakthrough</h4><p>After a creature fails the save against Overrun, you may move up to 10 feet. You may pass through the space of the affected creature if it is no more than one size larger, but cannot end there. This movement does not provoke Opportunity Attacks from that creature and should end closer to another hostile creature when one is reasonably reachable.</p></div>
+    </div>
+
+    <div class="level-block" id="level-15">
+      <h3>Level 15 — Endless Assault</h3>
+      <div class="subfeature"><h4>Endless Assault</h4><p>Once on each of your turns after a Finisher hits and fully resolves, you may spend 1 Momentum to make one melee weapon attack as a Bonus Action. This attack cannot carry a Chain Link or Finisher, but it may be declared the Opener of a new Chain after the previous Chain has ended.</p></div>
+      <div class="subfeature"><h4>Ascendant Heavenbreaker</h4><p>Your Heavenbreaker now uses all Levels 15–19 values and improvements described in its Level 10 feature.</p></div>
+    </div>
+
+    <div class="level-block" id="level-16"><h3>Level 16 — Feat / Ability Score Improvement</h3><p>Gain the universal Feat / Ability Score Improvement.</p></div>
+
+    <div class="level-block" id="level-17">
+      <h3>Level 17 — Apex Chains</h3>
+      <div class="subfeature"><h4>Apex Momentum and Chain Die</h4><p>Maximum Momentum increases to 7 and your Chain Die becomes d12. Your active Chain may contain up to four successful Links before its Finisher.</p></div>
+      <div class="subfeature"><h4>Perfect Sequence</h4><p>After you successfully resolve three different Chain Links within the same Chain, reduce the Momentum cost of the next Finisher in that Chain by 1, minimum 1. The reduction is consumed when that Finisher is used or the Chain ends.</p></div>
+      <div class="subfeature"><h4>Titanic Finisher</h4><p>After at least three prior Links, spend 4 Momentum on a melee hit to add 4d12. The target makes a STR save. On a failure choose: knock it Prone and push it 20 feet; knock it Prone without pushing; or push it 30 feet. Creatures more than one size larger have Advantage. The Chain ends after resolution.</p></div>
+    </div>
+
+    <div class="level-block" id="level-18">
+      <h3>Level 18 — Master of the Frontline</h3>
+      <div class="subfeature"><h4>Frontline Stability</h4><p>You have Advantage on checks and saving throws made to resist being knocked Prone, shoved, or forcibly moved.</p></div>
+      <div class="subfeature"><h4>Additional Martial Reaction</h4><p>You gain one additional Reaction each round. This extra Reaction can be used only for an Opportunity Attack or Relentless Advance. You cannot spend both Reactions on the same triggering event, and both refresh at the start of your turn.</p></div>
+    </div>
+
+    <div class="level-block" id="level-19"><h3>Level 19 — Empyrean Boon</h3><p>Gain the universal Empyrean Boon available at Level 19.</p></div>
+
+    <div class="level-block" id="level-20">
+      <h3>Level 20 — Perfect Gladiator</h3>
+      <div class="subfeature"><h4>Battle-Ready Momentum</h4><p>When you roll Initiative for genuine combat, you gain 3 Momentum.</p></div>
+      <div class="subfeature"><h4>Perfect Finisher Flow</h4><p>Once on each of your turns after a Finisher successfully hits and resolves, regain 2 Momentum. This is a refund, not Momentum generation, and cannot recursively trigger itself.</p></div>
+      <div class="subfeature"><h4>Perfect Endless Assault</h4><p>Endless Assault no longer costs Momentum. It still grants only one Bonus Action melee attack, still cannot carry a Link or Finisher, and still does not grant another Attack action.</p></div>
+      <div class="subfeature"><h4>Apex Heavenbreaker</h4><p>Your Heavenbreaker uses its Level 20 damage and all Level 20 improvements described in the Level 10 feature.</p></div>
+    </div>
+  </section>
+
+  <section id="specializations">
+    <h2>Specialization Path Reference</h2>
+    <div class="rule-table-wrap">
+      <table class="rule-table">
+        <thead><tr><th>Level</th><th>Destroyer</th><th>Tempest</th><th>Warpath</th></tr></thead>
+        <tbody>
+          <tr><td>3</td><td>Relentless Finisher — wounded Crushing Finisher refunds 1 Momentum.</td><td>Widening Sweep — one additional secondary target.</td><td>Charging Assault — Battle Rush needs 10 ft and grants safe pursuit.</td></tr>
+          <tr><td>6</td><td>Executioner’s Weight — wounded Crushing Finisher +1 Chain Die.</td><td>Storm of Steel — all Sweep secondaries add STR.</td><td>Relentless Charge — ignore nonmagical difficult terrain; approach OAs at Disadvantage.</td></tr>
+          <tr><td>10</td><td>Execution Window — wounded Finishers crit on 19–20.</td><td>Cyclone Sweep — secondaries need only be within reach.</td><td>Overrun — 20-ft Battle Rush can push or knock Prone on failed STR save.</td></tr>
+          <tr><td>14</td><td>Perfect Execution — any wounded Finisher +1 die; kill refund becomes 2.</td><td>Maelstrom Sweep — up to three secondaries; 2+ damaged refunds 1 Momentum.</td><td>Breakthrough — move through a failed-Overrun target and continue toward the next threat.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="examples">
+    <h2>Example Combat Sequences</h2>
+    <ol>
+      <li><strong>Level 5 baseline:</strong> move 15 feet toward a hostile, hit to generate Momentum and open the Chain, apply Driving Strike, make the second attack and apply Hamstring Strike, then continue the Chain next turn if no Finisher was affordable.</li>
+      <li><strong>Level 11 prepared Chain:</strong> Opener → Driving Strike → Hamstring Strike across the available attacks/turns → Devastating Finisher once two prior Links exist. Momentum Mastery refunds one Link expenditure along the way.</li>
+      <li><strong>Destroyer:</strong> build a full Chain and delay the Finisher until the target reaches half HP, then use the widened critical window and extra Chain Die.</li>
+      <li><strong>Tempest:</strong> position a polearm so multiple hostiles remain in reach, then use Sweeping Strike each turn to pressure clustered enemies without creating extra attack rolls.</li>
+      <li><strong>Warpath:</strong> approach through difficult terrain, trigger Battle Rush, force an Overrun save, then use Breakthrough to pass the target and threaten the formation behind it.</li>
+    </ol>
+  </section>
+
+  <p><a class="btn secondary" href="../classes/">← Back to Classes</a></p>
 </main>
-<footer class="site-footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”) · Non-commercial fan project.</footer>
-<script src="../assets/js/search.js"></script></body></html>
+
+<footer class="site-footer">
+  Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”) · Non-commercial fan project.
+</footer>
+<script src="../assets/js/search.js"></script>
+</body>
+</html>
