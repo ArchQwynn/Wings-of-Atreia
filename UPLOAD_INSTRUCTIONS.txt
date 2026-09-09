@@ -1,0 +1,28 @@
+WINGS OF ATREIA — ADD SPELLS TO SITE NAVIGATION
+
+This package changes navigation only. It does not change class rules, rules text,
+spell content, styling, or the search index.
+
+Upload/replace these files in the matching locations of your GitHub repository:
+
+ROOT:
+- index.html
+- about.html
+
+classes/:
+- index.html
+- all 11 class HTML pages
+
+rules/:
+- index.html
+- all Core Rules HTML pages
+
+world/:
+- index.html
+
+Do NOT upload these files into spells/.
+Your existing spells/ pages already contain the Spells navigation link.
+
+After the GitHub Pages deployment finishes, the navigation should read:
+
+Home | Rules | Classes | Spells | World | About
