@@ -1,0 +1,112 @@
+[
+  {
+    "title": "Core Rules",
+    "url": "rules/",
+    "desc": "Character creation, combat, flight, Daeva Points, Ultimates, conditions, and core systems."
+  },
+  {
+    "title": "Classes",
+    "url": "classes/",
+    "desc": "The 11 playable Wings of Atreia classes and their progression."
+  },
+  {
+    "title": "World of Atreia",
+    "url": "world/",
+    "desc": "Spoiler-safe setting reference for Elysea, Asmodae, Reshanta, and Balaurea."
+  },
+  {
+    "title": "About Wings of Atreia",
+    "url": "about.html",
+    "desc": "Project overview, credits, and publication notes."
+  },
+  {
+    "title": "Daeva Points & Ultimates",
+    "url": "rules/#ultimates",
+    "desc": "Player reference for Daeva Points and Ultimate Abilities."
+  },
+  {
+    "title": "Flight",
+    "url": "rules/#flight",
+    "desc": "Combat flight, exploration flight, and gliding."
+  },
+  {
+    "title": "Combat",
+    "url": "rules/#combat",
+    "desc": "Actions, movement, attacks, reactions, and combat rules."
+  },
+  {
+    "title": "Gladiator",
+    "url": "classes/#gladiator",
+    "desc": "Playable class reference."
+  },
+  {
+    "title": "Templar",
+    "url": "classes/#templar",
+    "desc": "Playable class reference."
+  },
+  {
+    "title": "Assassin",
+    "url": "classes/#assassin",
+    "desc": "Playable class reference."
+  },
+  {
+    "title": "Ranger",
+    "url": "classes/#ranger",
+    "desc": "Playable class reference."
+  },
+  {
+    "title": "Sorcerer",
+    "url": "classes/#sorcerer",
+    "desc": "Playable class reference."
+  },
+  {
+    "title": "Spiritmaster",
+    "url": "classes/#spiritmaster",
+    "desc": "Playable class reference."
+  },
+  {
+    "title": "Cleric",
+    "url": "classes/#cleric",
+    "desc": "Playable class reference."
+  },
+  {
+    "title": "Chanter",
+    "url": "classes/#chanter",
+    "desc": "Playable class reference."
+  },
+  {
+    "title": "Aethertech",
+    "url": "classes/#aethertech",
+    "desc": "Playable class reference."
+  },
+  {
+    "title": "Gunslinger",
+    "url": "classes/#gunslinger",
+    "desc": "Playable class reference."
+  },
+  {
+    "title": "Songweaver",
+    "url": "classes/#songweaver",
+    "desc": "Playable class reference."
+  },
+  {
+    "title": "Elysea",
+    "url": "world/#elysea",
+    "desc": "Player-facing regional reference."
+  },
+  {
+    "title": "Asmodae",
+    "url": "world/#asmodae",
+    "desc": "Player-facing regional reference."
+  },
+  {
+    "title": "Reshanta / The Abyss",
+    "url": "world/#reshanta",
+    "desc": "Player-facing regional reference."
+  },
+  {
+    "title": "Balaurea",
+    "url": "world/#balaurea",
+    "desc": "Player-facing regional reference."
+  }
+]
