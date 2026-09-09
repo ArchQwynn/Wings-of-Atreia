@@ -668,5 +668,25 @@
     "title": "Conductor's Dominion",
     "url": "spells/conductors-dominion.html",
     "desc": "Songweaver · Performance Utility · Unlock 18 · Long Rest 1 · Apex Performance"
+  },
+  {
+    "title": "Backgrounds",
+    "url": "rules/backgrounds.html",
+    "desc": "Soldier, Scholar, Acolyte, Noble, Outlander, Underworld, Artisan, Merchant, Entertainer; skill pools, languages and territorial familiarity."
+  },
+  {
+    "title": "Feats & Empyrean Boons",
+    "url": "rules/feats-boons.html",
+    "desc": "ASI choices, Universal Feats, prerequisites and exact benefits, plus the six Level 19 Empyrean Boons."
+  },
+  {
+    "title": "Player Quick Reference",
+    "url": "rules/quick-reference.html",
+    "desc": "Character creation and level-up checklists; actions; conditions; feats; boons; flight; inventory; Aether enhancement; class resources."
+  },
+  {
+    "title": "Glossary & Core Terms",
+    "url": "rules/glossary.html",
+    "desc": "Action, Bonus Action, Reaction, Movement, Proficiency Bonus, Advantage, Disadvantage, Genuine Combat, rests, Save DC, Concentration and other core terms."
   }
 ]
