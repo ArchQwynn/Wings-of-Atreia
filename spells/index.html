@@ -1,1 +1,384 @@
-<!-- placeholder -->
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spell Library | Wings of Atreia</title><meta name="description" content="Search and browse all 106 Wings of Atreia player spells.">
+<link rel="stylesheet" href="../assets/css/style.css"><style>
+.spell-kicker{font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:800}
+.spell-toolbar{display:grid;grid-template-columns:2fr repeat(4,1fr);gap:.7rem;margin:1.3rem 0}
+.spell-toolbar input,.spell-toolbar select{width:100%;border:1px solid var(--line);background:#071524;color:#fff;border-radius:.65rem;padding:.65rem .75rem}
+.spell-count{color:var(--muted);margin:.35rem 0 1rem}
+.spell-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem}
+.spell-card{display:block;border:1px solid var(--line);border-radius:.85rem;padding:1rem;background:rgba(13,27,42,.78)}
+.spell-card:hover{border-color:var(--accent)}
+.spell-card h3{margin:0 0 .25rem;color:#fff}.spell-card p{margin:.15rem 0;color:var(--muted)}
+.pills{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.65rem}
+.pill{font-size:.78rem;border:1px solid var(--line);border-radius:999px;padding:.2rem .48rem;color:var(--accent-2)}
+.meta-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;margin:1.2rem 0 1.7rem}
+.meta-item{border:1px solid var(--line);border-radius:.7rem;padding:.75rem;background:rgba(13,27,42,.72)}
+.meta-item strong{display:block;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}
+.rule-table-wrap{overflow-x:auto;margin:1rem 0 1.7rem}
+.rule-table{width:100%;border-collapse:collapse;min-width:560px}
+.rule-table th,.rule-table td{border:1px solid var(--line);padding:.65rem .7rem;vertical-align:top;text-align:left}
+.rule-table th{background:#173957}.source-note{border-left:3px solid var(--accent);padding:.9rem 1rem;background:rgba(127,200,255,.06);color:var(--muted);margin:1rem 0 1.7rem}
+.class-links{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.65rem;margin:1.2rem 0 2rem}
+.class-links a{text-align:center;border:1px solid var(--line);border-radius:.7rem;padding:.7rem;background:rgba(13,27,42,.78)}
+.alpha-nav{display:flex;flex-wrap:wrap;gap:.35rem;margin:1rem 0 1.5rem}.alpha-nav a{border:1px solid var(--line);border-radius:.45rem;padding:.2rem .45rem}
+@media(max-width:900px){.spell-toolbar{grid-template-columns:1fr 1fr}.class-links{grid-template-columns:1fr 1fr}.spell-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.spell-toolbar{grid-template-columns:1fr}.class-links{grid-template-columns:1fr}.meta-grid{grid-template-columns:1fr}}
+</style></head>
+<body data-base="../"><header class="site-header"><div class="nav-wrap">
+<a class="brand" href="../index.html">WINGS OF ATREIA</a>
+<nav class="nav-links">
+<a href="../index.html">Home</a><a href="../rules/">Rules</a><a href="../classes/">Classes</a><a href="../spells/">Spells</a><a href="../world/">World</a><a href="../about.html">About</a>
+</nav><div class="search-box"><input type="search" placeholder="Search WoA…" aria-label="Search Wings of Atreia" data-site-search></div>
+</div></header><main>
+<header class="page-header"><div class="spell-kicker">Player Reference</div><h1>Spell Library</h1>
+<p>The complete 106-spell player library for Sorcerer, Spiritmaster, Cleric, Chanter, and Songweaver.</p></header>
+<div class="source-note">Source: <strong>Wings of Atreia Player Handbook v3.10 — Integrated Spell Compendium.</strong> Spell entries preserve the handbook's Class, Chain, Unlock Level, Prerequisite, Casting Time, Range, Frequency, Duration, Concentration, Role, Base Effect, scaling, and milestone improvements.</div>
+<div class="class-links"><a href="sorcerer.html">Sorcerer<br><small>24 spells</small></a><a href="spiritmaster.html">Spiritmaster<br><small>22 spells</small></a><a href="cleric.html">Cleric<br><small>20 spells</small></a><a href="chanter.html">Chanter<br><small>16 spells</small></a><a href="songweaver.html">Songweaver<br><small>24 spells</small></a></div>
+<div class="spell-toolbar">
+<input id="spellSearch" type="search" placeholder="Search spell name, role, chain…" aria-label="Filter spells">
+<select id="classFilter"><option value="">All classes</option><option value="Sorcerer">Sorcerer</option><option value="Spiritmaster">Spiritmaster</option><option value="Cleric">Cleric</option><option value="Chanter">Chanter</option><option value="Songweaver">Songweaver</option></select>
+<select id="frequencyFilter"><option value="">All frequencies</option><option value="At-Will">At-Will</option><option value="Cooldown 2">Cooldown 2</option><option value="Cooldown 3">Cooldown 3</option><option value="Long Rest 1">Long Rest 1</option><option value="Short Rest 1">Short Rest 1</option></select>
+<select id="roleFilter"><option value="">All roles</option><option value="Aether / Support">Aether / Support</option><option value="Apex Area / Coordination">Apex Area / Coordination</option><option value="Apex Area Damage">Apex Area Damage</option><option value="Apex Control">Apex Control</option><option value="Apex Control / Protection">Apex Control / Protection</option><option value="Apex Damage">Apex Damage</option><option value="Apex Damage / Control">Apex Damage / Control</option><option value="Apex Damage / Debuff">Apex Damage / Debuff</option><option value="Apex Damage / Disruption">Apex Damage / Disruption</option><option value="Apex Disruption">Apex Disruption</option><option value="Apex Healing">Apex Healing</option><option value="Apex Healing / Support">Apex Healing / Support</option><option value="Apex Performance">Apex Performance</option><option value="Apex Protection">Apex Protection</option><option value="Apex Purification">Apex Purification</option><option value="Apex Support">Apex Support</option><option value="Apex Team Offense">Apex Team Offense</option><option value="Apex Zone / Control">Apex Zone / Control</option><option value="Area / Forced Movement">Area / Forced Movement</option><option value="Area Damage">Area Damage</option><option value="Area Healing">Area Healing</option><option value="Area Protection">Area Protection</option><option value="Area Purification">Area Purification</option><option value="Battlefield Control">Battlefield Control</option><option value="Control">Control</option><option value="Control / Debuff">Control / Debuff</option><option value="Damage">Damage</option><option value="Damage / Bond Setup">Damage / Bond Setup</option><option value="Damage / Cadence">Damage / Cadence</option><option value="Damage / Control">Damage / Control</option><option value="Damage / Debuff">Damage / Debuff</option><option value="Damage / Disruption">Damage / Disruption</option><option value="Damage / Movement">Damage / Movement</option><option value="Damage / Positioning">Damage / Positioning</option><option value="Damage / Protection Setup">Damage / Protection Setup</option><option value="Damage / Team Setup">Damage / Team Setup</option><option value="Debuff">Debuff</option><option value="Debuff / Control">Debuff / Control</option><option value="Debuff / Damage">Debuff / Damage</option><option value="Debuff / Forced Movement">Debuff / Forced Movement</option><option value="Defense">Defense</option><option value="Disruption">Disruption</option><option value="Dissonance / Apex Control">Dissonance / Apex Control</option><option value="Dissonance / Damage">Dissonance / Damage</option><option value="Dissonance / Debuff">Dissonance / Debuff</option><option value="Dissonance / Movement">Dissonance / Movement</option><option value="Dual-Origin Damage">Dual-Origin Damage</option><option value="Dual-Origin Support">Dual-Origin Support</option><option value="Guard">Guard</option><option value="Guard / Apex Protection">Guard / Apex Protection</option><option value="Guard / Area Protection">Guard / Area Protection</option><option value="Guard / Defense">Guard / Defense</option><option value="Guard / Protection">Guard / Protection</option><option value="Harmony / Apex Healing">Harmony / Apex Healing</option><option value="Harmony / Area Healing">Harmony / Area Healing</option><option value="Harmony / Healing">Harmony / Healing</option><option value="Harmony / Movement">Harmony / Movement</option><option value="Healing">Healing</option><option value="Mastery">Mastery</option><option value="Mobility">Mobility</option><option value="Movement">Movement</option><option value="Movement Support">Movement Support</option><option value="Multi-Target Damage">Multi-Target Damage</option><option value="Protection">Protection</option><option value="Purification">Purification</option><option value="Repair / Healing">Repair / Healing</option><option value="Requiem / Apex Damage">Requiem / Apex Damage</option><option value="Requiem / Damage">Requiem / Damage</option><option value="Requiem / Damage-over-Time">Requiem / Damage-over-Time</option><option value="Role Mastery">Role Mastery</option><option value="Single-Target Control">Single-Target Control</option><option value="Support">Support</option><option value="Support / Minor Purification">Support / Minor Purification</option><option value="Suppression">Suppression</option><option value="Utility">Utility</option><option value="Utility / Counter">Utility / Counter</option><option value="Utility / Refrain">Utility / Refrain</option><option value="Zone / Control">Zone / Control</option><option value="Zone / Damage">Zone / Damage</option><option value="Zone / Disruption">Zone / Disruption</option><option value="Zone / Support">Zone / Support</option></select>
+<select id="chainFilter"><option value="">All chains</option><option value="Arcane">Arcane</option><option value="Bond">Bond</option><option value="Disruption Chant">Disruption Chant</option><option value="Dissonance">Dissonance</option><option value="Earth Spirit">Earth Spirit</option><option value="Fire">Fire</option><option value="Fire Spirit">Fire Spirit</option><option value="Guard">Guard</option><option value="Harmony">Harmony</option><option value="Harmony Supplemental">Harmony Supplemental</option><option value="Hex">Hex</option><option value="Ice">Ice</option><option value="Judgment">Judgment</option><option value="Judgment Auxiliary">Judgment Auxiliary</option><option value="Lightning">Lightning</option><option value="Martial Chant">Martial Chant</option><option value="Performance Utility">Performance Utility</option><option value="Protection">Protection</option><option value="Protection Auxiliary">Protection Auxiliary</option><option value="Purification">Purification</option><option value="Purification Auxiliary">Purification Auxiliary</option><option value="Requiem">Requiem</option><option value="Requiem Supplemental">Requiem Supplemental</option><option value="Restoration">Restoration</option><option value="Restoration Auxiliary">Restoration Auxiliary</option><option value="Spirit">Spirit</option><option value="Supplemental">Supplemental</option><option value="Supplemental Chant">Supplemental Chant</option><option value="Support">Support</option><option value="Support Chant">Support Chant</option><option value="Ward Chant">Ward Chant</option><option value="Water Spirit">Water Spirit</option><option value="Wind">Wind</option><option value="Wind Spirit">Wind Spirit</option></select>
+</div>
+<p class="spell-count"><strong id="spellCount">106</strong> spells shown</p>
+<div class="spell-grid" id="spellGrid"><a class="spell-card" href="absolute-zero.html"
+data-spell-card data-class="Sorcerer" data-frequency="Long Rest 1" data-role="Apex Control" data-chain="Ice" data-search="absolute zero sorcerer ice long rest 1 apex control 17 ice prison spell level 7">
+<h3>Absolute Zero</h3><p>Sorcerer · Ice · Unlock 17</p>
+<div class="pills"><span class="pill">Long Rest 1</span><span class="pill">Apex Control</span></div></a><a class="spell-card" href="abyssal-torrent.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Short Rest 1" data-role="Apex Control" data-chain="Water Spirit" data-search="abyssal torrent spiritmaster water spirit short rest 1 apex control 15 drowning hex spell level 6">
+<h3>Abyssal Torrent</h3><p>Spiritmaster · Water Spirit · Unlock 15</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Apex Control</span></div></a><a class="spell-card" href="aegis-field.html"
+data-spell-card data-class="Cleric" data-frequency="Cooldown 2" data-role="Area Protection" data-chain="Protection" data-search="aegis field cleric protection cooldown 2 area protection 7 sacred ward spell level 3">
+<h3>Aegis Field</h3><p>Cleric · Protection · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Area Protection</span></div></a><a class="spell-card" href="aegis-symphony.html"
+data-spell-card data-class="Songweaver" data-frequency="Short Rest 1" data-role="Guard / Apex Protection" data-chain="Guard" data-search="aegis symphony songweaver guard short rest 1 guard / apex protection 15 protective chorus spell level 6">
+<h3>Aegis Symphony</h3><p>Songweaver · Guard · Unlock 15</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Guard / Apex Protection</span></div></a><a class="spell-card" href="aether-dispel.html"
+data-spell-card data-class="Sorcerer" data-frequency="Short Rest 1" data-role="Utility" data-chain="Arcane" data-search="aether dispel sorcerer arcane short rest 1 utility 5 —">
+<h3>Aether Dispel</h3><p>Sorcerer · Arcane · Unlock 5</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Utility</span></div></a><a class="spell-card" href="aether-lock.html"
+data-spell-card data-class="Sorcerer" data-frequency="Short Rest 1" data-role="Control" data-chain="Arcane" data-search="aether lock sorcerer arcane short rest 1 control 8 —">
+<h3>Aether Lock</h3><p>Sorcerer · Arcane · Unlock 8</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Control</span></div></a><a class="spell-card" href="aether-step.html"
+data-spell-card data-class="Sorcerer" data-frequency="Cooldown 2" data-role="Mobility" data-chain="Arcane" data-search="aether step sorcerer arcane cooldown 2 mobility 2 —">
+<h3>Aether Step</h3><p>Sorcerer · Arcane · Unlock 2</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Mobility</span></div></a><a class="spell-card" href="aetheric-refrain.html"
+data-spell-card data-class="Chanter" data-frequency="Short Rest 1" data-role="Aether / Support" data-chain="Supplemental Chant" data-search="aetheric refrain chanter supplemental chant short rest 1 aether / support 10 —">
+<h3>Aetheric Refrain</h3><p>Chanter · Supplemental Chant · Unlock 10</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Aether / Support</span></div></a><a class="spell-card" href="anthem-of-renewal.html"
+data-spell-card data-class="Chanter" data-frequency="Short Rest 1" data-role="Apex Healing / Support" data-chain="Support Chant" data-search="anthem of renewal chanter support chant short rest 1 apex healing / support 15 harmonic recovery spell level 6">
+<h3>Anthem of Renewal</h3><p>Chanter · Support Chant · Unlock 15</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Apex Healing / Support</span></div></a><a class="spell-card" href="arcane-barrier.html"
+data-spell-card data-class="Sorcerer" data-frequency="At-Will" data-role="Defense" data-chain="Arcane" data-search="arcane barrier sorcerer arcane at-will defense 1 —">
+<h3>Arcane Barrier</h3><p>Sorcerer · Arcane · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Defense</span></div></a><a class="spell-card" href="battle-hymn.html"
+data-spell-card data-class="Chanter" data-frequency="Short Rest 1" data-role="Apex Team Offense" data-chain="Martial Chant" data-search="battle hymn chanter martial chant short rest 1 apex team offense 15 echoing blow spell level 6">
+<h3>Battle Hymn</h3><p>Chanter · Martial Chant · Unlock 15</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Apex Team Offense</span></div></a><a class="spell-card" href="breaking-rhythm.html"
+data-spell-card data-class="Chanter" data-frequency="Cooldown 2" data-role="Control / Debuff" data-chain="Disruption Chant" data-search="breaking rhythm chanter disruption chant cooldown 2 control / debuff 7 discordant pulse spell level 3">
+<h3>Breaking Rhythm</h3><p>Chanter · Disruption Chant · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Control / Debuff</span></div></a><a class="spell-card" href="burning-brand.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Cooldown 2" data-role="Debuff / Damage" data-chain="Fire Spirit" data-search="burning brand spiritmaster fire spirit cooldown 2 debuff / damage 7 spirit flame spell level 3">
+<h3>Burning Brand</h3><p>Spiritmaster · Fire Spirit · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Debuff / Damage</span></div></a><a class="spell-card" href="cacophony.html"
+data-spell-card data-class="Songweaver" data-frequency="Short Rest 1" data-role="Dissonance / Apex Control" data-chain="Dissonance" data-search="cacophony songweaver dissonance short rest 1 dissonance / apex control 15 fracturing chorus spell level 6">
+<h3>Cacophony</h3><p>Songweaver · Dissonance · Unlock 15</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Dissonance / Apex Control</span></div></a><a class="spell-card" href="chain-lightning.html"
+data-spell-card data-class="Sorcerer" data-frequency="Cooldown 2" data-role="Multi-Target Damage" data-chain="Lightning" data-search="chain lightning sorcerer lightning cooldown 2 multi-target damage 5 spark javelin spell level 3">
+<h3>Chain Lightning</h3><p>Sorcerer · Lightning · Unlock 5</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Multi-Target Damage</span></div></a><a class="spell-card" href="chorus-of-mending.html"
+data-spell-card data-class="Songweaver" data-frequency="Cooldown 2" data-role="Harmony / Area Healing" data-chain="Harmony" data-search="chorus of mending songweaver harmony cooldown 2 harmony / area healing 7 soothing verse spell level 3">
+<h3>Chorus of Mending</h3><p>Songweaver · Harmony · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Harmony / Area Healing</span></div></a><a class="spell-card" href="circle-of-purity.html"
+data-spell-card data-class="Cleric" data-frequency="Short Rest 1" data-role="Area Purification" data-chain="Purification Auxiliary" data-search="circle of purity cleric purification auxiliary short rest 1 area purification 8 —">
+<h3>Circle of Purity</h3><p>Cleric · Purification Auxiliary · Unlock 8</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Area Purification</span></div></a><a class="spell-card" href="cleanse-affliction.html"
+data-spell-card data-class="Cleric" data-frequency="Short Rest 1" data-role="Purification" data-chain="Purification Auxiliary" data-search="cleanse affliction cleric purification auxiliary short rest 1 purification 5 —">
+<h3>Cleanse Affliction</h3><p>Cleric · Purification Auxiliary · Unlock 5</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Purification</span></div></a><a class="spell-card" href="cleansing-grace.html"
+data-spell-card data-class="Cleric" data-frequency="Cooldown 2" data-role="Purification" data-chain="Purification" data-search="cleansing grace cleric purification cooldown 2 purification 7 purifying spark spell level 3">
+<h3>Cleansing Grace</h3><p>Cleric · Purification · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Purification</span></div></a><a class="spell-card" href="conductors-dominion.html"
+data-spell-card data-class="Songweaver" data-frequency="Long Rest 1" data-role="Apex Performance" data-chain="Performance Utility" data-search="conductor&#x27;s dominion songweaver performance utility long rest 1 apex performance 18 —">
+<h3>Conductor&#x27;s Dominion</h3><p>Songweaver · Performance Utility · Unlock 18</p>
+<div class="pills"><span class="pill">Long Rest 1</span><span class="pill">Apex Performance</span></div></a><a class="spell-card" href="consecrated-ground.html"
+data-spell-card data-class="Cleric" data-frequency="Short Rest 1" data-role="Zone / Support" data-chain="Judgment Auxiliary" data-search="consecrated ground cleric judgment auxiliary short rest 1 zone / support 10 —">
+<h3>Consecrated Ground</h3><p>Cleric · Judgment Auxiliary · Unlock 10</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Zone / Support</span></div></a><a class="spell-card" href="counterpoint.html"
+data-spell-card data-class="Songweaver" data-frequency="Short Rest 1" data-role="Utility / Counter" data-chain="Performance Utility" data-search="counterpoint songweaver performance utility short rest 1 utility / counter 11 —">
+<h3>Counterpoint</h3><p>Songweaver · Performance Utility · Unlock 11</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Utility / Counter</span></div></a><a class="spell-card" href="crushing-dirge.html"
+data-spell-card data-class="Songweaver" data-frequency="Cooldown 2" data-role="Requiem / Damage" data-chain="Supplemental" data-search="crushing dirge songweaver supplemental cooldown 2 requiem / damage 3 —">
+<h3>Crushing Dirge</h3><p>Songweaver · Supplemental · Unlock 3</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Requiem / Damage</span></div></a><a class="spell-card" href="curse-of-silence.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Short Rest 1" data-role="Suppression" data-chain="Hex" data-search="curse of silence spiritmaster hex short rest 1 suppression 10 —">
+<h3>Curse of Silence</h3><p>Spiritmaster · Hex · Unlock 10</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Suppression</span></div></a><a class="spell-card" href="cyclone-field.html"
+data-spell-card data-class="Sorcerer" data-frequency="Cooldown 3" data-role="Zone / Control" data-chain="Wind" data-search="cyclone field sorcerer wind cooldown 3 zone / control 11 gale burst spell level 5">
+<h3>Cyclone Field</h3><p>Sorcerer · Wind · Unlock 11</p>
+<div class="pills"><span class="pill">Cooldown 3</span><span class="pill">Zone / Control</span></div></a><a class="spell-card" href="dirge-note.html"
+data-spell-card data-class="Songweaver" data-frequency="At-Will" data-role="Requiem / Damage" data-chain="Requiem" data-search="dirge note songweaver requiem at-will requiem / damage 1 —">
+<h3>Dirge Note</h3><p>Songweaver · Requiem · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Requiem / Damage</span></div></a><a class="spell-card" href="discordant-chorus.html"
+data-spell-card data-class="Chanter" data-frequency="Cooldown 2" data-role="Disruption" data-chain="Supplemental Chant" data-search="discordant chorus chanter supplemental chant cooldown 2 disruption 4 —">
+<h3>Discordant Chorus</h3><p>Chanter · Supplemental Chant · Unlock 4</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Disruption</span></div></a><a class="spell-card" href="discordant-note.html"
+data-spell-card data-class="Songweaver" data-frequency="At-Will" data-role="Dissonance / Damage" data-chain="Dissonance" data-search="discordant note songweaver dissonance at-will dissonance / damage 1 —">
+<h3>Discordant Note</h3><p>Songweaver · Dissonance · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Dissonance / Damage</span></div></a><a class="spell-card" href="discordant-pulse.html"
+data-spell-card data-class="Chanter" data-frequency="At-Will" data-role="Damage / Debuff" data-chain="Disruption Chant" data-search="discordant pulse chanter disruption chant at-will damage / debuff 1 —">
+<h3>Discordant Pulse</h3><p>Chanter · Disruption Chant · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Damage / Debuff</span></div></a><a class="spell-card" href="divine-bastion.html"
+data-spell-card data-class="Cleric" data-frequency="Short Rest 1" data-role="Apex Protection" data-chain="Protection" data-search="divine bastion cleric protection short rest 1 apex protection 15 aegis field spell level 6">
+<h3>Divine Bastion</h3><p>Cleric · Protection · Unlock 15</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Apex Protection</span></div></a><a class="spell-card" href="divine-intervention.html"
+data-spell-card data-class="Cleric" data-frequency="Long Rest 1" data-role="Apex Support" data-chain="Support" data-search="divine intervention cleric support long rest 1 apex support 18 —">
+<h3>Divine Intervention</h3><p>Cleric · Support · Unlock 18</p>
+<div class="pills"><span class="pill">Long Rest 1</span><span class="pill">Apex Support</span></div></a><a class="spell-card" href="drowning-hex.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Cooldown 2" data-role="Debuff / Control" data-chain="Water Spirit" data-search="drowning hex spiritmaster water spirit cooldown 2 debuff / control 7 water sigil spell level 3">
+<h3>Drowning Hex</h3><p>Spiritmaster · Water Spirit · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Debuff / Control</span></div></a><a class="spell-card" href="earthen-shackles.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Cooldown 2" data-role="Control" data-chain="Earth Spirit" data-search="earthen shackles spiritmaster earth spirit cooldown 2 control 7 stone mark spell level 3">
+<h3>Earthen Shackles</h3><p>Spiritmaster · Earth Spirit · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Control</span></div></a><a class="spell-card" href="echo-step.html"
+data-spell-card data-class="Songweaver" data-frequency="Cooldown 2" data-role="Movement" data-chain="Performance Utility" data-search="echo step songweaver performance utility cooldown 2 movement 4 —">
+<h3>Echo Step</h3><p>Songweaver · Performance Utility · Unlock 4</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Movement</span></div></a><a class="spell-card" href="echoing-blow.html"
+data-spell-card data-class="Chanter" data-frequency="Cooldown 2" data-role="Damage / Team Setup" data-chain="Martial Chant" data-search="echoing blow chanter martial chant cooldown 2 damage / team setup 7 resonant strike spell level 3">
+<h3>Echoing Blow</h3><p>Chanter · Martial Chant · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Damage / Team Setup</span></div></a><a class="spell-card" href="elegy-of-withering.html"
+data-spell-card data-class="Songweaver" data-frequency="Cooldown 2" data-role="Requiem / Damage-over-Time" data-chain="Requiem" data-search="elegy of withering songweaver requiem cooldown 2 requiem / damage-over-time 7 dirge note spell level 3">
+<h3>Elegy of Withering</h3><p>Songweaver · Requiem · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Requiem / Damage-over-Time</span></div></a><a class="spell-card" href="final-requiem.html"
+data-spell-card data-class="Songweaver" data-frequency="Long Rest 1" data-role="Requiem / Apex Damage" data-chain="Requiem" data-search="final requiem songweaver requiem long rest 1 requiem / apex damage 15 elegy of withering spell level 6">
+<h3>Final Requiem</h3><p>Songweaver · Requiem · Unlock 15</p>
+<div class="pills"><span class="pill">Long Rest 1</span><span class="pill">Requiem / Apex Damage</span></div></a><a class="spell-card" href="fire-wall.html"
+data-spell-card data-class="Sorcerer" data-frequency="Cooldown 3" data-role="Zone / Damage" data-chain="Fire" data-search="fire wall sorcerer fire cooldown 3 zone / damage 11 flame burst spell level 5">
+<h3>Fire Wall</h3><p>Sorcerer · Fire · Unlock 11</p>
+<div class="pills"><span class="pill">Cooldown 3</span><span class="pill">Zone / Damage</span></div></a><a class="spell-card" href="flame-bolt.html"
+data-spell-card data-class="Sorcerer" data-frequency="At-Will" data-role="Damage" data-chain="Fire" data-search="flame bolt sorcerer fire at-will damage 1 —">
+<h3>Flame Bolt</h3><p>Sorcerer · Fire · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Damage</span></div></a><a class="spell-card" href="flame-burst.html"
+data-spell-card data-class="Sorcerer" data-frequency="Cooldown 2" data-role="Area Damage" data-chain="Fire" data-search="flame burst sorcerer fire cooldown 2 area damage 5 flame bolt spell level 3">
+<h3>Flame Burst</h3><p>Sorcerer · Fire · Unlock 5</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Area Damage</span></div></a><a class="spell-card" href="fracturing-chorus.html"
+data-spell-card data-class="Songweaver" data-frequency="Cooldown 2" data-role="Dissonance / Debuff" data-chain="Dissonance" data-search="fracturing chorus songweaver dissonance cooldown 2 dissonance / debuff 7 discordant note spell level 3">
+<h3>Fracturing Chorus</h3><p>Songweaver · Dissonance · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Dissonance / Debuff</span></div></a><a class="spell-card" href="frost-lance.html"
+data-spell-card data-class="Sorcerer" data-frequency="At-Will" data-role="Damage / Control" data-chain="Ice" data-search="frost lance sorcerer ice at-will damage / control 1 —">
+<h3>Frost Lance</h3><p>Sorcerer · Ice · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Damage / Control</span></div></a><a class="spell-card" href="frozen-ground.html"
+data-spell-card data-class="Sorcerer" data-frequency="Cooldown 2" data-role="Zone / Control" data-chain="Ice" data-search="frozen ground sorcerer ice cooldown 2 zone / control 5 frost lance spell level 3">
+<h3>Frozen Ground</h3><p>Sorcerer · Ice · Unlock 5</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Zone / Control</span></div></a><a class="spell-card" href="fusion-veil.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Long Rest 1" data-role="Mastery" data-chain="Bond" data-search="fusion veil spiritmaster bond long rest 1 mastery 14 —">
+<h3>Fusion Veil</h3><p>Spiritmaster · Bond · Unlock 14</p>
+<div class="pills"><span class="pill">Long Rest 1</span><span class="pill">Mastery</span></div></a><a class="spell-card" href="gale-burst.html"
+data-spell-card data-class="Sorcerer" data-frequency="Cooldown 2" data-role="Area / Forced Movement" data-chain="Wind" data-search="gale burst sorcerer wind cooldown 2 area / forced movement 5 wind blade spell level 3">
+<h3>Gale Burst</h3><p>Sorcerer · Wind · Unlock 5</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Area / Forced Movement</span></div></a><a class="spell-card" href="gale-sigil.html"
+data-spell-card data-class="Spiritmaster" data-frequency="At-Will" data-role="Damage / Positioning" data-chain="Wind Spirit" data-search="gale sigil spiritmaster wind spirit at-will damage / positioning 1 —">
+<h3>Gale Sigil</h3><p>Spiritmaster · Wind Spirit · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Damage / Positioning</span></div></a><a class="spell-card" href="grand-harmony.html"
+data-spell-card data-class="Songweaver" data-frequency="Short Rest 1" data-role="Harmony / Apex Healing" data-chain="Harmony" data-search="grand harmony songweaver harmony short rest 1 harmony / apex healing 15 chorus of mending spell level 6">
+<h3>Grand Harmony</h3><p>Songweaver · Harmony · Unlock 15</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Harmony / Apex Healing</span></div></a><a class="spell-card" href="gravity-snare.html"
+data-spell-card data-class="Sorcerer" data-frequency="Cooldown 2" data-role="Control" data-chain="Arcane" data-search="gravity snare sorcerer arcane cooldown 2 control 3 —">
+<h3>Gravity Snare</h3><p>Sorcerer · Arcane · Unlock 3</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Control</span></div></a><a class="spell-card" href="greater-restoration-light.html"
+data-spell-card data-class="Cleric" data-frequency="Cooldown 2" data-role="Healing" data-chain="Restoration Auxiliary" data-search="greater restoration light cleric restoration auxiliary cooldown 2 healing 4 —">
+<h3>Greater Restoration Light</h3><p>Cleric · Restoration Auxiliary · Unlock 4</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Healing</span></div></a><a class="spell-card" href="guarded-cadence.html"
+data-spell-card data-class="Songweaver" data-frequency="Cooldown 2" data-role="Guard / Defense" data-chain="Performance Utility" data-search="guarded cadence songweaver performance utility cooldown 2 guard / defense 5 —">
+<h3>Guarded Cadence</h3><p>Songweaver · Performance Utility · Unlock 5</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Guard / Defense</span></div></a><a class="spell-card" href="guardian-chant.html"
+data-spell-card data-class="Chanter" data-frequency="Short Rest 1" data-role="Protection" data-chain="Supplemental Chant" data-search="guardian chant chanter supplemental chant short rest 1 protection 12 —">
+<h3>Guardian Chant</h3><p>Chanter · Supplemental Chant · Unlock 12</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Protection</span></div></a><a class="spell-card" href="guardian-halo.html"
+data-spell-card data-class="Cleric" data-frequency="Cooldown 2" data-role="Area Protection" data-chain="Protection Auxiliary" data-search="guardian halo cleric protection auxiliary cooldown 2 area protection 4 —">
+<h3>Guardian Halo</h3><p>Cleric · Protection Auxiliary · Unlock 4</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Area Protection</span></div></a><a class="spell-card" href="guarding-cadence.html"
+data-spell-card data-class="Chanter" data-frequency="At-Will" data-role="Protection" data-chain="Ward Chant" data-search="guarding cadence chanter ward chant at-will protection 1 —">
+<h3>Guarding Cadence</h3><p>Chanter · Ward Chant · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Protection</span></div></a><a class="spell-card" href="harmonic-barrier.html"
+data-spell-card data-class="Songweaver" data-frequency="Cooldown 2" data-role="Guard" data-chain="Supplemental" data-search="harmonic barrier songweaver supplemental cooldown 2 guard 3 —">
+<h3>Harmonic Barrier</h3><p>Songweaver · Supplemental · Unlock 3</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Guard</span></div></a><a class="spell-card" href="harmonic-lift.html"
+data-spell-card data-class="Songweaver" data-frequency="Cooldown 2" data-role="Harmony / Movement" data-chain="Performance Utility" data-search="harmonic lift songweaver performance utility cooldown 2 harmony / movement 5 —">
+<h3>Harmonic Lift</h3><p>Songweaver · Performance Utility · Unlock 5</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Harmony / Movement</span></div></a><a class="spell-card" href="harmonic-recovery.html"
+data-spell-card data-class="Chanter" data-frequency="Cooldown 2" data-role="Area Healing" data-chain="Support Chant" data-search="harmonic recovery chanter support chant cooldown 2 area healing 7 mending note spell level 3">
+<h3>Harmonic Recovery</h3><p>Chanter · Support Chant · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Area Healing</span></div></a><a class="spell-card" href="healing-light.html"
+data-spell-card data-class="Cleric" data-frequency="At-Will" data-role="Healing" data-chain="Restoration" data-search="healing light cleric restoration at-will healing 1 —">
+<h3>Healing Light</h3><p>Cleric · Restoration · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Healing</span></div></a><a class="spell-card" href="heavenly-verdict.html"
+data-spell-card data-class="Cleric" data-frequency="Short Rest 1" data-role="Apex Damage / Control" data-chain="Judgment" data-search="heavenly verdict cleric judgment short rest 1 apex damage / control 15 judgment seal spell level 6">
+<h3>Heavenly Verdict</h3><p>Cleric · Judgment · Unlock 15</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Apex Damage / Control</span></div></a><a class="spell-card" href="hex-of-frailty.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Cooldown 2" data-role="Debuff" data-chain="Hex" data-search="hex of frailty spiritmaster hex cooldown 2 debuff 3 —">
+<h3>Hex of Frailty</h3><p>Spiritmaster · Hex · Unlock 3</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Debuff</span></div></a><a class="spell-card" href="ice-prison.html"
+data-spell-card data-class="Sorcerer" data-frequency="Cooldown 3" data-role="Single-Target Control" data-chain="Ice" data-search="ice prison sorcerer ice cooldown 3 single-target control 11 frozen ground spell level 5">
+<h3>Ice Prison</h3><p>Sorcerer · Ice · Unlock 11</p>
+<div class="pills"><span class="pill">Cooldown 3</span><span class="pill">Single-Target Control</span></div></a><a class="spell-card" href="inferno.html"
+data-spell-card data-class="Sorcerer" data-frequency="Long Rest 1" data-role="Apex Area Damage" data-chain="Fire" data-search="inferno sorcerer fire long rest 1 apex area damage 17 fire wall spell level 7">
+<h3>Inferno</h3><p>Sorcerer · Fire · Unlock 17</p>
+<div class="pills"><span class="pill">Long Rest 1</span><span class="pill">Apex Area Damage</span></div></a><a class="spell-card" href="judgment-beam.html"
+data-spell-card data-class="Cleric" data-frequency="Cooldown 2" data-role="Damage" data-chain="Judgment Auxiliary" data-search="judgment beam cleric judgment auxiliary cooldown 2 damage 4 —">
+<h3>Judgment Beam</h3><p>Cleric · Judgment Auxiliary · Unlock 4</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Damage</span></div></a><a class="spell-card" href="judgment-seal.html"
+data-spell-card data-class="Cleric" data-frequency="Cooldown 2" data-role="Damage / Debuff" data-chain="Judgment" data-search="judgment seal cleric judgment cooldown 2 damage / debuff 7 radiant bolt spell level 3">
+<h3>Judgment Seal</h3><p>Cleric · Judgment · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Damage / Debuff</span></div></a><a class="spell-card" href="maelstrom.html"
+data-spell-card data-class="Sorcerer" data-frequency="Long Rest 1" data-role="Apex Zone / Control" data-chain="Wind" data-search="maelstrom sorcerer wind long rest 1 apex zone / control 17 cyclone field spell level 7">
+<h3>Maelstrom</h3><p>Sorcerer · Wind · Unlock 17</p>
+<div class="pills"><span class="pill">Long Rest 1</span><span class="pill">Apex Zone / Control</span></div></a><a class="spell-card" href="marching-hymn.html"
+data-spell-card data-class="Chanter" data-frequency="Short Rest 1" data-role="Movement Support" data-chain="Supplemental Chant" data-search="marching hymn chanter supplemental chant short rest 1 movement support 6 —">
+<h3>Marching Hymn</h3><p>Chanter · Supplemental Chant · Unlock 6</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Movement Support</span></div></a><a class="spell-card" href="mending-note.html"
+data-spell-card data-class="Chanter" data-frequency="At-Will" data-role="Healing" data-chain="Support Chant" data-search="mending note chanter support chant at-will healing 1 —">
+<h3>Mending Note</h3><p>Chanter · Support Chant · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Healing</span></div></a><a class="spell-card" href="miracle-of-life.html"
+data-spell-card data-class="Cleric" data-frequency="Long Rest 1" data-role="Apex Healing" data-chain="Restoration" data-search="miracle of life cleric restoration long rest 1 apex healing 15 restoring wave spell level 6">
+<h3>Miracle of Life</h3><p>Cleric · Restoration · Unlock 15</p>
+<div class="pills"><span class="pill">Long Rest 1</span><span class="pill">Apex Healing</span></div></a><a class="spell-card" href="mirror-fold.html"
+data-spell-card data-class="Sorcerer" data-frequency="Short Rest 1" data-role="Defense" data-chain="Arcane" data-search="mirror fold sorcerer arcane short rest 1 defense 6 —">
+<h3>Mirror Fold</h3><p>Sorcerer · Arcane · Unlock 6</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Defense</span></div></a><a class="spell-card" href="off-key-step.html"
+data-spell-card data-class="Songweaver" data-frequency="Cooldown 2" data-role="Dissonance / Movement" data-chain="Performance Utility" data-search="off-key step songweaver performance utility cooldown 2 dissonance / movement 6 —">
+<h3>Off-Key Step</h3><p>Songweaver · Performance Utility · Unlock 6</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Dissonance / Movement</span></div></a><a class="spell-card" href="perfect-equation.html"
+data-spell-card data-class="Sorcerer" data-frequency="Long Rest 1" data-role="Mastery" data-chain="Arcane" data-search="perfect equation sorcerer arcane long rest 1 mastery 16 —">
+<h3>Perfect Equation</h3><p>Sorcerer · Arcane · Unlock 16</p>
+<div class="pills"><span class="pill">Long Rest 1</span><span class="pill">Mastery</span></div></a><a class="spell-card" href="perfect-harmony.html"
+data-spell-card data-class="Songweaver" data-frequency="Long Rest 1" data-role="Role Mastery" data-chain="Performance Utility" data-search="perfect harmony songweaver performance utility long rest 1 role mastery 14 —">
+<h3>Perfect Harmony</h3><p>Songweaver · Performance Utility · Unlock 14</p>
+<div class="pills"><span class="pill">Long Rest 1</span><span class="pill">Role Mastery</span></div></a><a class="spell-card" href="prayer-of-resolve.html"
+data-spell-card data-class="Cleric" data-frequency="Short Rest 1" data-role="Support" data-chain="Support" data-search="prayer of resolve cleric support short rest 1 support 6 —">
+<h3>Prayer of Resolve</h3><p>Cleric · Support · Unlock 6</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Support</span></div></a><a class="spell-card" href="protective-chorus.html"
+data-spell-card data-class="Songweaver" data-frequency="Cooldown 2" data-role="Guard / Area Protection" data-chain="Guard" data-search="protective chorus songweaver guard cooldown 2 guard / area protection 7 shielding note spell level 3">
+<h3>Protective Chorus</h3><p>Songweaver · Guard · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Guard / Area Protection</span></div></a><a class="spell-card" href="protective-link.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Cooldown 2" data-role="Protection" data-chain="Bond" data-search="protective link spiritmaster bond cooldown 2 protection 7 —">
+<h3>Protective Link</h3><p>Spiritmaster · Bond · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Protection</span></div></a><a class="spell-card" href="purifying-spark.html"
+data-spell-card data-class="Cleric" data-frequency="At-Will" data-role="Support / Minor Purification" data-chain="Purification" data-search="purifying spark cleric purification at-will support / minor purification 1 —">
+<h3>Purifying Spark</h3><p>Cleric · Purification · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Support / Minor Purification</span></div></a><a class="spell-card" href="radiant-bolt.html"
+data-spell-card data-class="Cleric" data-frequency="At-Will" data-role="Damage" data-chain="Judgment" data-search="radiant bolt cleric judgment at-will damage 1 —">
+<h3>Radiant Bolt</h3><p>Cleric · Judgment · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Damage</span></div></a><a class="spell-card" href="refrain-relay.html"
+data-spell-card data-class="Songweaver" data-frequency="Short Rest 1" data-role="Utility / Refrain" data-chain="Performance Utility" data-search="refrain relay songweaver performance utility short rest 1 utility / refrain 8 —">
+<h3>Refrain Relay</h3><p>Songweaver · Performance Utility · Unlock 8</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Utility / Refrain</span></div></a><a class="spell-card" href="resonant-shelter.html"
+data-spell-card data-class="Chanter" data-frequency="Cooldown 2" data-role="Area Protection" data-chain="Ward Chant" data-search="resonant shelter chanter ward chant cooldown 2 area protection 7 guarding cadence spell level 3">
+<h3>Resonant Shelter</h3><p>Chanter · Ward Chant · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Area Protection</span></div></a><a class="spell-card" href="resonant-strike.html"
+data-spell-card data-class="Chanter" data-frequency="At-Will" data-role="Damage / Cadence" data-chain="Martial Chant" data-search="resonant strike chanter martial chant at-will damage / cadence 1 —">
+<h3>Resonant Strike</h3><p>Chanter · Martial Chant · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Damage / Cadence</span></div></a><a class="spell-card" href="resonant-wave.html"
+data-spell-card data-class="Songweaver" data-frequency="Cooldown 2" data-role="Requiem / Damage" data-chain="Requiem Supplemental" data-search="resonant wave songweaver requiem supplemental cooldown 2 requiem / damage 4 —">
+<h3>Resonant Wave</h3><p>Songweaver · Requiem Supplemental · Unlock 4</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Requiem / Damage</span></div></a><a class="spell-card" href="restoring-wave.html"
+data-spell-card data-class="Cleric" data-frequency="Cooldown 2" data-role="Area Healing" data-chain="Restoration" data-search="restoring wave cleric restoration cooldown 2 area healing 7 healing light spell level 3">
+<h3>Restoring Wave</h3><p>Cleric · Restoration · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Area Healing</span></div></a><a class="spell-card" href="sacred-ward.html"
+data-spell-card data-class="Cleric" data-frequency="At-Will" data-role="Protection" data-chain="Protection" data-search="sacred ward cleric protection at-will protection 1 —">
+<h3>Sacred Ward</h3><p>Cleric · Protection · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Protection</span></div></a><a class="spell-card" href="sanctified-restoration.html"
+data-spell-card data-class="Cleric" data-frequency="Short Rest 1" data-role="Apex Purification" data-chain="Purification" data-search="sanctified restoration cleric purification short rest 1 apex purification 15 cleansing grace spell level 6">
+<h3>Sanctified Restoration</h3><p>Cleric · Purification · Unlock 15</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Apex Purification</span></div></a><a class="spell-card" href="shared-aether-pulse.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Short Rest 1" data-role="Dual-Origin Support" data-chain="Bond" data-search="shared aether pulse spiritmaster bond short rest 1 dual-origin support 5 —">
+<h3>Shared Aether Pulse</h3><p>Spiritmaster · Bond · Unlock 5</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Dual-Origin Support</span></div></a><a class="spell-card" href="shielding-note.html"
+data-spell-card data-class="Songweaver" data-frequency="At-Will" data-role="Guard / Protection" data-chain="Guard" data-search="shielding note songweaver guard at-will guard / protection 1 —">
+<h3>Shielding Note</h3><p>Songweaver · Guard · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Guard / Protection</span></div></a><a class="spell-card" href="silencing-refrain.html"
+data-spell-card data-class="Chanter" data-frequency="Short Rest 1" data-role="Apex Disruption" data-chain="Disruption Chant" data-search="silencing refrain chanter disruption chant short rest 1 apex disruption 15 breaking rhythm spell level 6">
+<h3>Silencing Refrain</h3><p>Chanter · Disruption Chant · Unlock 15</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Apex Disruption</span></div></a><a class="spell-card" href="song-of-renewal.html"
+data-spell-card data-class="Songweaver" data-frequency="Short Rest 1" data-role="Harmony / Healing" data-chain="Harmony Supplemental" data-search="song of renewal songweaver harmony supplemental short rest 1 harmony / healing 10 —">
+<h3>Song of Renewal</h3><p>Songweaver · Harmony Supplemental · Unlock 10</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Harmony / Healing</span></div></a><a class="spell-card" href="soothing-verse.html"
+data-spell-card data-class="Songweaver" data-frequency="At-Will" data-role="Harmony / Healing" data-chain="Harmony" data-search="soothing verse songweaver harmony at-will harmony / healing 1 —">
+<h3>Soothing Verse</h3><p>Songweaver · Harmony · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Harmony / Healing</span></div></a><a class="spell-card" href="soul-rupture.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Long Rest 1" data-role="Apex Damage / Debuff" data-chain="Hex" data-search="soul rupture spiritmaster hex long rest 1 apex damage / debuff 17 —">
+<h3>Soul Rupture</h3><p>Spiritmaster · Hex · Unlock 17</p>
+<div class="pills"><span class="pill">Long Rest 1</span><span class="pill">Apex Damage / Debuff</span></div></a><a class="spell-card" href="spark-javelin.html"
+data-spell-card data-class="Sorcerer" data-frequency="At-Will" data-role="Damage / Disruption" data-chain="Lightning" data-search="spark javelin sorcerer lightning at-will damage / disruption 1 —">
+<h3>Spark Javelin</h3><p>Sorcerer · Lightning · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Damage / Disruption</span></div></a><a class="spell-card" href="spatial-collapse.html"
+data-spell-card data-class="Sorcerer" data-frequency="Long Rest 1" data-role="Battlefield Control" data-chain="Arcane" data-search="spatial collapse sorcerer arcane long rest 1 battlefield control 12 —">
+<h3>Spatial Collapse</h3><p>Sorcerer · Arcane · Unlock 12</p>
+<div class="pills"><span class="pill">Long Rest 1</span><span class="pill">Battlefield Control</span></div></a><a class="spell-card" href="spirit-bolt.html"
+data-spell-card data-class="Spiritmaster" data-frequency="At-Will" data-role="Damage" data-chain="Spirit" data-search="spirit bolt spiritmaster spirit at-will damage 1 —">
+<h3>Spirit Bolt</h3><p>Spiritmaster · Spirit · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Damage</span></div></a><a class="spell-card" href="spirit-conflagration.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Short Rest 1" data-role="Apex Damage" data-chain="Fire Spirit" data-search="spirit conflagration spiritmaster fire spirit short rest 1 apex damage 15 burning brand spell level 6">
+<h3>Spirit Conflagration</h3><p>Spiritmaster · Fire Spirit · Unlock 15</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Apex Damage</span></div></a><a class="spell-card" href="spirit-erosion.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Cooldown 2" data-role="Damage / Debuff" data-chain="Hex" data-search="spirit erosion spiritmaster hex cooldown 2 damage / debuff 6 —">
+<h3>Spirit Erosion</h3><p>Spiritmaster · Hex · Unlock 6</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Damage / Debuff</span></div></a><a class="spell-card" href="spirit-flame.html"
+data-spell-card data-class="Spiritmaster" data-frequency="At-Will" data-role="Damage / Bond Setup" data-chain="Fire Spirit" data-search="spirit flame spiritmaster fire spirit at-will damage / bond setup 1 —">
+<h3>Spirit Flame</h3><p>Spiritmaster · Fire Spirit · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Damage / Bond Setup</span></div></a><a class="spell-card" href="spirit-mend.html"
+data-spell-card data-class="Spiritmaster" data-frequency="At-Will" data-role="Repair / Healing" data-chain="Spirit" data-search="spirit mend spiritmaster spirit at-will repair / healing 1 —">
+<h3>Spirit Mend</h3><p>Spiritmaster · Spirit · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Repair / Healing</span></div></a><a class="spell-card" href="spirit-tempest.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Short Rest 1" data-role="Apex Area / Coordination" data-chain="Wind Spirit" data-search="spirit tempest spiritmaster wind spirit short rest 1 apex area / coordination 15 vacuum curse spell level 6">
+<h3>Spirit Tempest</h3><p>Spiritmaster · Wind Spirit · Unlock 15</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Apex Area / Coordination</span></div></a><a class="spell-card" href="stone-mark.html"
+data-spell-card data-class="Spiritmaster" data-frequency="At-Will" data-role="Damage / Protection Setup" data-chain="Earth Spirit" data-search="stone mark spiritmaster earth spirit at-will damage / protection setup 1 —">
+<h3>Stone Mark</h3><p>Spiritmaster · Earth Spirit · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Damage / Protection Setup</span></div></a><a class="spell-card" href="tempest-crown.html"
+data-spell-card data-class="Sorcerer" data-frequency="Long Rest 1" data-role="Apex Damage / Disruption" data-chain="Lightning" data-search="tempest crown sorcerer lightning long rest 1 apex damage / disruption 17 thunder cage spell level 7">
+<h3>Tempest Crown</h3><p>Sorcerer · Lightning · Unlock 17</p>
+<div class="pills"><span class="pill">Long Rest 1</span><span class="pill">Apex Damage / Disruption</span></div></a><a class="spell-card" href="thunder-cage.html"
+data-spell-card data-class="Sorcerer" data-frequency="Cooldown 3" data-role="Zone / Disruption" data-chain="Lightning" data-search="thunder cage sorcerer lightning cooldown 3 zone / disruption 11 chain lightning spell level 5">
+<h3>Thunder Cage</h3><p>Sorcerer · Lightning · Unlock 11</p>
+<div class="pills"><span class="pill">Cooldown 3</span><span class="pill">Zone / Disruption</span></div></a><a class="spell-card" href="titanic-binding.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Short Rest 1" data-role="Apex Control / Protection" data-chain="Earth Spirit" data-search="titanic binding spiritmaster earth spirit short rest 1 apex control / protection 15 earthen shackles spell level 6">
+<h3>Titanic Binding</h3><p>Spiritmaster · Earth Spirit · Unlock 15</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Apex Control / Protection</span></div></a><a class="spell-card" href="twin-aether-burst.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Short Rest 1" data-role="Dual-Origin Damage" data-chain="Bond" data-search="twin aether burst spiritmaster bond short rest 1 dual-origin damage 11 shared aether pulse spell level 5">
+<h3>Twin Aether Burst</h3><p>Spiritmaster · Bond · Unlock 11</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Dual-Origin Damage</span></div></a><a class="spell-card" href="unbroken-chorus.html"
+data-spell-card data-class="Chanter" data-frequency="Short Rest 1" data-role="Apex Protection" data-chain="Ward Chant" data-search="unbroken chorus chanter ward chant short rest 1 apex protection 15 resonant shelter spell level 6">
+<h3>Unbroken Chorus</h3><p>Chanter · Ward Chant · Unlock 15</p>
+<div class="pills"><span class="pill">Short Rest 1</span><span class="pill">Apex Protection</span></div></a><a class="spell-card" href="vacuum-curse.html"
+data-spell-card data-class="Spiritmaster" data-frequency="Cooldown 2" data-role="Debuff / Forced Movement" data-chain="Wind Spirit" data-search="vacuum curse spiritmaster wind spirit cooldown 2 debuff / forced movement 7 gale sigil spell level 3">
+<h3>Vacuum Curse</h3><p>Spiritmaster · Wind Spirit · Unlock 7</p>
+<div class="pills"><span class="pill">Cooldown 2</span><span class="pill">Debuff / Forced Movement</span></div></a><a class="spell-card" href="water-sigil.html"
+data-spell-card data-class="Spiritmaster" data-frequency="At-Will" data-role="Debuff" data-chain="Water Spirit" data-search="water sigil spiritmaster water spirit at-will debuff 1 —">
+<h3>Water Sigil</h3><p>Spiritmaster · Water Spirit · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Debuff</span></div></a><a class="spell-card" href="wind-blade.html"
+data-spell-card data-class="Sorcerer" data-frequency="At-Will" data-role="Damage / Movement" data-chain="Wind" data-search="wind blade sorcerer wind at-will damage / movement 1 —">
+<h3>Wind Blade</h3><p>Sorcerer · Wind · Unlock 1</p>
+<div class="pills"><span class="pill">At-Will</span><span class="pill">Damage / Movement</span></div></a></div>
+<script>
+(function(){
+ const q=document.getElementById('spellSearch'), cf=document.getElementById('classFilter'),
+ ff=document.getElementById('frequencyFilter'), rf=document.getElementById('roleFilter'),
+ ch=document.getElementById('chainFilter'), count=document.getElementById('spellCount');
+ const cards=[...document.querySelectorAll('[data-spell-card]')];
+ function apply(){
+  const s=(q.value||'').toLowerCase().trim(); let n=0;
+  cards.forEach(c=>{
+   const ok=(!s||c.dataset.search.includes(s))&&(!cf.value||c.dataset.class===cf.value)&&
+   (!ff.value||c.dataset.frequency===ff.value)&&(!rf.value||c.dataset.role===rf.value)&&
+   (!ch.value||c.dataset.chain===ch.value);
+   c.style.display=ok?'block':'none'; if(ok)n++;
+  });
+  count.textContent=n;
+ }
+ [q,cf,ff,rf,ch].forEach(x=>x.addEventListener(x.tagName==='INPUT'?'input':'change',apply));
+})();
+</script>
+</main><footer class="site-footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”) · Non-commercial fan project.</footer>
+<div class="search-results" data-search-results></div><script src="../assets/js/search.js"></script></body></html>
