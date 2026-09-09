@@ -688,5 +688,15 @@
     "title": "Glossary & Core Terms",
     "url": "rules/glossary.html",
     "desc": "Action, Bonus Action, Reaction, Movement, Proficiency Bonus, Advantage, Disadvantage, Genuine Combat, rests, Save DC, Concentration and other core terms."
+  },
+  {
+    "title": "Player FAQ",
+    "url": "rules/faq.html",
+    "desc": "Common Wings of Atreia questions: fixed array, multiclassing, Help, Grapple/Shove, Prone, spell slots, Concentration, Spell Advancement, Daeva Points, Ultimate miss choices, Flight, Professions, Warfronts and class resources."
+  },
+  {
+    "title": "Downloads & Character Sheet",
+    "url": "rules/downloads.html",
+    "desc": "Official three-page Wings of Atreia Character Sheet guide, field guidance, sheet maintenance, and future player downloads."
   }
 ]
