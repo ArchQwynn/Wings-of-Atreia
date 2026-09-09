@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Beginner Guide | Wings of Atreia</title>
+<meta name="description" content="A spoiler-safe start-here guide for new Wings of Atreia players.">
+<link rel="stylesheet" href="../assets/css/style.css">
+<style>
+.start-kicker{font-size:.84rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:800}
+.start-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1.25rem 0 2rem}
+.start-card{border:1px solid var(--line);border-radius:.9rem;padding:1rem 1.05rem;background:rgba(13,27,42,.76)}
+.start-card h2,.start-card h3{margin-top:.15rem}
+.step-list{counter-reset:steps;list-style:none;padding:0;margin:1rem 0}
+.step-list li{counter-increment:steps;position:relative;padding:.8rem .85rem .8rem 3.2rem;margin:.55rem 0;border:1px solid var(--line);border-radius:.75rem;background:rgba(13,27,42,.68)}
+.step-list li::before{content:counter(steps);position:absolute;left:.8rem;top:.72rem;width:1.7rem;height:1.7rem;display:grid;place-items:center;border-radius:50%;background:#173957;color:#fff;font-weight:800}
+.quick-rule{border-left:3px solid var(--accent);padding:.85rem 1rem;margin:1rem 0;background:rgba(127,200,255,.06)}
+.track-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem;list-style:none;padding:0}
+.track-list li{border:1px solid var(--line);border-radius:.65rem;padding:.65rem .75rem;background:rgba(13,27,42,.65)}
+.link-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;margin:1rem 0 2rem}
+.link-grid a{border:1px solid var(--line);border-radius:.7rem;padding:.8rem;background:rgba(13,27,42,.75);display:block}
+.source-note{font-size:.92rem;color:var(--muted);border-left:3px solid var(--accent);padding:.85rem 1rem;background:rgba(127,200,255,.06);margin:1rem 0 1.8rem}
+@media(max-width:850px){.start-grid,.link-grid,.track-list{grid-template-columns:1fr}}
+</style>
+</head>
+<body data-base="../">
+<header class="site-header"><div class="nav-wrap">
+<a class="brand" href="../index.html">WINGS OF ATREIA</a>
+<nav class="nav-links"><a href="../index.html">Home</a><a href="../rules/">Rules</a><a href="../classes/">Classes</a><a href="../spells/">Spells</a><a href="../world/">World</a><a href="../about.html">About</a></nav>
+<div class="search-box"><input type="search" placeholder="Search WoA…" aria-label="Search Wings of Atreia" data-site-search></div>
+</div></header>
+
+<main>
+<header class="page-header">
+<div class="start-kicker">New Player · Start Here</div>
+<h1>Beginner Guide</h1>
+<p>You do not need to memorize the entire handbook before your first session. This page gives you the minimum player-facing framework needed to create a Daeva, understand a normal turn, and know where to look when a rule comes up.</p>
+</header>
+
+<div class="source-note">This guide is an orientation page built from the current <strong>Wings of Atreia Player Handbook v3.10</strong>. It summarizes and links to the governing player rules; when a summary and a full rules page differ, use the full current rule.</div>
+
+<section>
+<h2>1. What Kind of Game Is This?</h2>
+<p><strong>Wings of Atreia</strong> is a heroic fantasy tabletop roleplaying game about <strong>Daevas</strong>: ageless winged heroes who explore, fight, negotiate, survive, and shape a world divided by the Abyss. Every standard player character begins play as a Daeva.</p>
+<p>You control one Daeva. You decide what that character attempts, describe how they act and respond, work with the party, and roll when an outcome is both uncertain and meaningful. Characters advance from <strong>Level 1 to Level 20 in one class</strong>; multiclassing is not used.</p>
+</section>
+
+<section class="start-grid">
+<div class="start-card">
+<h2>2. The Core d20 Rule</h2>
+<p>When a meaningful outcome is uncertain:</p>
+<div class="quick-rule"><strong>Roll 1d20 + the relevant ability modifier.</strong><br>Add Proficiency Bonus when you are proficient in the relevant skill, weapon, or saving throw, or when a rule explicitly tells you to add it. Meet or exceed the target DC to succeed.</div>
+<p>You do not roll simply because an action was described. The GM calls for a roll when the result genuinely matters and is uncertain.</p>
+<a href="core-resolution.html">Read Core Resolution →</a>
+</div>
+
+<div class="start-card">
+<h2>3. What You Track</h2>
+<p>During play, a Daeva commonly tracks:</p>
+<ul class="track-list">
+<li>Hit Points (HP)</li>
+<li>Flight Slots</li>
+<li>Inventory and equipment</li>
+<li>Your class resource</li>
+<li>Limited-use features</li>
+<li>Spell frequencies, if applicable</li>
+<li>Daeva Points from Level 10 onward</li>
+<li>Conditions and other active effects</li>
+</ul>
+</div>
+</section>
+
+<section>
+<h2>4. Create Your First Daeva</h2>
+<ol class="step-list">
+<li>Choose <strong>Elyos</strong> or <strong>Asmodian</strong>. The factions differ culturally, historically, politically, visually, and territorially, but use the same universal Daeva mechanical foundation.</li>
+<li>Choose one of the <strong>11 classes</strong>.</li>
+<li>Assign <strong>16, 14, 14, 12, 10, 8</strong> among STR, DEX, CON, INT, WIS, and CHA.</li>
+<li>Choose one <strong>Background</strong>.</li>
+<li>Record your class saving throws and your armor, shield, and weapon access.</li>
+<li>Choose your class skills and <strong>two Background skills</strong>.</li>
+<li>Calculate HP, AC, Initiative, class Save DC, Speed, Passive Perception, and Passive Investigation.</li>
+<li>Record your fixed class starting weapon or implement, armor, <strong>Common Wings</strong>, and starting Kinah.</li>
+<li>Choose your name, appearance, wing appearance, personality, history, relationships, and motivation.</li>
+</ol>
+<p><a class="btn" href="character-creation.html">Open Full Character Creation</a> <a class="btn secondary" href="../classes/">Browse the 11 Classes</a></p>
+</section>
+
+<section>
+<h2>5. Elyos and Asmodians</h2>
+<p>All player characters are Daevas. <strong>Elyos</strong> are the Humans and Daevas of Elysea, while <strong>Asmodians</strong> are the Humans and Daevas of Asmodae. Choosing a faction establishes culture, homeland, language, and political identity; it does <strong>not</strong> grant inherent combat superiority.</p>
+<p>Ascension does not erase your former Human life. Your character may still have family, relationships, memories, duties, and a personal history from before becoming a Daeva.</p>
+</section>
+
+<section>
+<h2>6. Your Turn in Combat</h2>
+<p>Genuine combat uses Initiative and rounds. One round represents approximately six seconds, and each participant normally takes one turn in Initiative order.</p>
+<div class="start-grid">
+<div class="start-card"><h3>Action</h3><p>Normally one per turn. Attacking, many spells, Dash, Disengage, Dodge, Hide, Search, Use Object, Grapple, Shove, and other features may use it.</p></div>
+<div class="start-card"><h3>Movement</h3><p>Move up to your available movement, subject to terrain, conditions, and flight rules.</p></div>
+<div class="start-card"><h3>Bonus Action</h3><p>Up to one, but only when a feature actually grants something that uses a Bonus Action.</p></div>
+<div class="start-card"><h3>Reaction</h3><p>Normally one per round, refreshing at the start of your turn unless an explicit class rule says otherwise.</p></div>
+</div>
+<p>There is also one free simple object interaction per turn. Wings of Atreia has <strong>no universal Action-to-Bonus-Action conversion</strong>, and unused movement or Actions are not stored for later turns.</p>
+<p><a class="btn secondary" href="combat.html">Open Full Combat Rules</a></p>
+</section>
+
+<section>
+<h2>7. Flight Is a Core Player System</h2>
+<p>Your wings are not decorative. Daevas have both exploration-flight rules and <strong>Combat Flight Slots</strong>. Flight has its own movement, altitude, gliding, falling, and aerial-combat procedures, so read the Flight page before a session where aerial movement is likely to matter.</p>
+<p><a class="btn secondary" href="flight.html">Read Flight Rules</a></p>
+</section>
+
+<section>
+<h2>8. If You Are a Spellcaster</h2>
+<p>The finalized spellcasting classes are <strong>Sorcerer, Spiritmaster, Cleric, Chanter, and Songweaver</strong>. Wings of Atreia has <strong>no spell slots and no cantrip category</strong>. Each spell is individually At-Will, Cooldown-based, Short-Rest limited, or Long-Rest limited.</p>
+<p>Spells are class-granted abilities. They unlock through character level and, when applicable, the immediately preceding spell in a linear prerequisite chain. Spell Advancement improves eligible unlocked spells.</p>
+<p><a class="btn" href="../spells/">Open the 106-Spell Library</a> <a class="btn secondary" href="aether-spellcasting.html">Read Spellcasting Rules</a></p>
+</section>
+
+<section>
+<h2>9. Daeva Points and Ultimates</h2>
+<p>Beginning at <strong>Level 10</strong>, you track Daeva Points from 0 to 100 and gain your class Ultimate Ability. At 100 DP, your Ultimate is ready. Ultimate resolution includes its own hit/miss procedure and a mandatory <strong>Ultimate Recovery</strong> turn after an Ultimate attempt.</p>
+<p>You do not need to learn this system at Level 1. Return to it when your character reaches Level 10.</p>
+<p><a class="btn secondary" href="daeva-points-ultimates.html">Read Daeva Points &amp; Ultimates</a></p>
+</section>
+
+<section>
+<h2>10. What Should I Read Before Session One?</h2>
+<div class="link-grid">
+<a href="character-creation.html"><strong>Required:</strong><br>Character Creation</a>
+<a href="../classes/"><strong>Required:</strong><br>Your Class Page</a>
+<a href="core-resolution.html"><strong>Recommended:</strong><br>Core Resolution</a>
+<a href="combat.html"><strong>Recommended:</strong><br>Combat</a>
+<a href="flight.html"><strong>Recommended:</strong><br>Flight</a>
+<a href="../spells/"><strong>If applicable:</strong><br>Your Spells</a>
+</div>
+<p>You can learn equipment quality, Professions, advanced spell progression, Daeva Points, Legions, and Warfront procedures when they become relevant in play. The full rules remain available from the Rules directory whenever you need them.</p>
+</section>
+
+<section>
+<h2>11. First-Session Checklist</h2>
+<ul>
+<li>Your character sheet is complete and your class page is easy to access.</li>
+<li>You know your AC, maximum HP, Speed, Initiative, and main attack or spell values.</li>
+<li>You know what your class resource is and how your Level 1 features use it.</li>
+<li>You have recorded your starting weapon or implement, armor, Common Wings, and Kinah.</li>
+<li>If you cast spells, you know which starting spells you have and their frequencies.</li>
+<li>You know how many Combat Flight Slots you currently have.</li>
+<li>You know which Background skills you chose.</li>
+</ul>
+</section>
+
+<p><a class="btn" href="../classes/">Choose a Class</a> <a class="btn secondary" href="../rules/">Browse All Rules</a></p>
+</main>
+
+<footer class="site-footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”) · Non-commercial fan project.</footer>
+<div class="search-results" data-search-results></div>
+<script src="../assets/js/search.js"></script>
+</body>
+</html>

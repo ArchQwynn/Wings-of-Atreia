@@ -1,5 +1,10 @@
 [
   {
+    "title": "Beginner Guide",
+    "url": "rules/beginner-guide.html",
+    "desc": "Start here: create your first Daeva, learn the basic d20 rule, combat turn structure, flight, spellcasting basics, and first-session preparation."
+  },
+  {
     "title": "Core Rules",
     "url": "rules/",
     "desc": "Character creation, combat, flight, Daeva Points, Ultimates, equipment, professions, Aether, and player systems."
