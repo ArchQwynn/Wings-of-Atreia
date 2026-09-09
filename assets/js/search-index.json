@@ -2,17 +2,22 @@
   {
     "title": "Core Rules",
     "url": "rules/",
-    "desc": "Character creation, combat, flight, Daeva Points, Ultimates, conditions, and core systems."
+    "desc": "Character creation, combat, flight, Daeva Points, Ultimates, equipment, professions, Aether, and player systems."
   },
   {
     "title": "Classes",
     "url": "classes/",
-    "desc": "The 11 playable Wings of Atreia classes and their progression."
+    "desc": "The 11 playable Wings of Atreia classes and their Level 1–20 progression."
+  },
+  {
+    "title": "Spell Library",
+    "url": "spells/",
+    "desc": "Complete searchable 106-spell library for Sorcerer, Spiritmaster, Cleric, Chanter, and Songweaver."
   },
   {
     "title": "World of Atreia",
     "url": "world/",
-    "desc": "Spoiler-safe setting reference for Elysea, Asmodae, Reshanta, and Balaurea."
+    "desc": "Player-facing setting reference."
   },
   {
     "title": "About Wings of Atreia",
@@ -20,93 +25,643 @@
     "desc": "Project overview, credits, and publication notes."
   },
   {
-    "title": "Daeva Points & Ultimates",
-    "url": "rules/#ultimates",
-    "desc": "Player reference for Daeva Points and Ultimate Abilities."
+    "title": "Character Creation",
+    "url": "rules/character-creation.html",
+    "desc": "Player rules reference."
   },
   {
-    "title": "Flight",
-    "url": "rules/#flight",
-    "desc": "Combat flight, exploration flight, and gliding."
+    "title": "Advancement, Feats & Boons",
+    "url": "rules/advancement.html",
+    "desc": "Player rules reference."
+  },
+  {
+    "title": "Daeva Points & Ultimates",
+    "url": "rules/daeva-points-ultimates.html",
+    "desc": "Player rules reference."
+  },
+  {
+    "title": "Core Resolution",
+    "url": "rules/core-resolution.html",
+    "desc": "Player rules reference."
   },
   {
     "title": "Combat",
-    "url": "rules/#combat",
-    "desc": "Actions, movement, attacks, reactions, and combat rules."
+    "url": "rules/combat.html",
+    "desc": "Player rules reference."
+  },
+  {
+    "title": "Flight",
+    "url": "rules/flight.html",
+    "desc": "Player rules reference."
+  },
+  {
+    "title": "Exploration & Interaction",
+    "url": "rules/exploration.html",
+    "desc": "Player rules reference."
+  },
+  {
+    "title": "Equipment",
+    "url": "rules/equipment.html",
+    "desc": "Player rules reference."
+  },
+  {
+    "title": "Professions & Economy",
+    "url": "rules/professions-economy.html",
+    "desc": "Player rules reference."
+  },
+  {
+    "title": "Aether & Spellcasting",
+    "url": "rules/aether-spellcasting.html",
+    "desc": "Player rules reference."
+  },
+  {
+    "title": "Legions & Abyss Warfronts",
+    "url": "rules/legions-warfronts.html",
+    "desc": "Player rules reference."
   },
   {
     "title": "Gladiator",
-    "url": "classes/#gladiator",
+    "url": "classes/gladiator.html",
     "desc": "Playable class reference."
   },
   {
     "title": "Templar",
-    "url": "classes/#templar",
+    "url": "classes/templar.html",
     "desc": "Playable class reference."
   },
   {
     "title": "Assassin",
-    "url": "classes/#assassin",
+    "url": "classes/assassin.html",
     "desc": "Playable class reference."
   },
   {
     "title": "Ranger",
-    "url": "classes/#ranger",
+    "url": "classes/ranger.html",
     "desc": "Playable class reference."
   },
   {
     "title": "Sorcerer",
-    "url": "classes/#sorcerer",
+    "url": "classes/sorcerer.html",
     "desc": "Playable class reference."
   },
   {
     "title": "Spiritmaster",
-    "url": "classes/#spiritmaster",
+    "url": "classes/spiritmaster.html",
     "desc": "Playable class reference."
   },
   {
     "title": "Cleric",
-    "url": "classes/#cleric",
+    "url": "classes/cleric.html",
     "desc": "Playable class reference."
   },
   {
     "title": "Chanter",
-    "url": "classes/#chanter",
+    "url": "classes/chanter.html",
     "desc": "Playable class reference."
   },
   {
     "title": "Aethertech",
-    "url": "classes/#aethertech",
+    "url": "classes/aethertech.html",
     "desc": "Playable class reference."
   },
   {
     "title": "Gunslinger",
-    "url": "classes/#gunslinger",
+    "url": "classes/gunslinger.html",
     "desc": "Playable class reference."
   },
   {
     "title": "Songweaver",
-    "url": "classes/#songweaver",
+    "url": "classes/songweaver.html",
     "desc": "Playable class reference."
   },
   {
-    "title": "Elysea",
-    "url": "world/#elysea",
-    "desc": "Player-facing regional reference."
+    "title": "Flame Bolt",
+    "url": "spells/flame-bolt.html",
+    "desc": "Sorcerer · Fire · Unlock 1 · At-Will · Damage"
   },
   {
-    "title": "Asmodae",
-    "url": "world/#asmodae",
-    "desc": "Player-facing regional reference."
+    "title": "Flame Burst",
+    "url": "spells/flame-burst.html",
+    "desc": "Sorcerer · Fire · Unlock 5 · Cooldown 2 · Area Damage"
   },
   {
-    "title": "Reshanta / The Abyss",
-    "url": "world/#reshanta",
-    "desc": "Player-facing regional reference."
+    "title": "Fire Wall",
+    "url": "spells/fire-wall.html",
+    "desc": "Sorcerer · Fire · Unlock 11 · Cooldown 3 · Zone / Damage"
   },
   {
-    "title": "Balaurea",
-    "url": "world/#balaurea",
-    "desc": "Player-facing regional reference."
+    "title": "Inferno",
+    "url": "spells/inferno.html",
+    "desc": "Sorcerer · Fire · Unlock 17 · Long Rest 1 · Apex Area Damage"
+  },
+  {
+    "title": "Frost Lance",
+    "url": "spells/frost-lance.html",
+    "desc": "Sorcerer · Ice · Unlock 1 · At-Will · Damage / Control"
+  },
+  {
+    "title": "Frozen Ground",
+    "url": "spells/frozen-ground.html",
+    "desc": "Sorcerer · Ice · Unlock 5 · Cooldown 2 · Zone / Control"
+  },
+  {
+    "title": "Ice Prison",
+    "url": "spells/ice-prison.html",
+    "desc": "Sorcerer · Ice · Unlock 11 · Cooldown 3 · Single-Target Control"
+  },
+  {
+    "title": "Absolute Zero",
+    "url": "spells/absolute-zero.html",
+    "desc": "Sorcerer · Ice · Unlock 17 · Long Rest 1 · Apex Control"
+  },
+  {
+    "title": "Spark Javelin",
+    "url": "spells/spark-javelin.html",
+    "desc": "Sorcerer · Lightning · Unlock 1 · At-Will · Damage / Disruption"
+  },
+  {
+    "title": "Chain Lightning",
+    "url": "spells/chain-lightning.html",
+    "desc": "Sorcerer · Lightning · Unlock 5 · Cooldown 2 · Multi-Target Damage"
+  },
+  {
+    "title": "Thunder Cage",
+    "url": "spells/thunder-cage.html",
+    "desc": "Sorcerer · Lightning · Unlock 11 · Cooldown 3 · Zone / Disruption"
+  },
+  {
+    "title": "Tempest Crown",
+    "url": "spells/tempest-crown.html",
+    "desc": "Sorcerer · Lightning · Unlock 17 · Long Rest 1 · Apex Damage / Disruption"
+  },
+  {
+    "title": "Wind Blade",
+    "url": "spells/wind-blade.html",
+    "desc": "Sorcerer · Wind · Unlock 1 · At-Will · Damage / Movement"
+  },
+  {
+    "title": "Gale Burst",
+    "url": "spells/gale-burst.html",
+    "desc": "Sorcerer · Wind · Unlock 5 · Cooldown 2 · Area / Forced Movement"
+  },
+  {
+    "title": "Cyclone Field",
+    "url": "spells/cyclone-field.html",
+    "desc": "Sorcerer · Wind · Unlock 11 · Cooldown 3 · Zone / Control"
+  },
+  {
+    "title": "Maelstrom",
+    "url": "spells/maelstrom.html",
+    "desc": "Sorcerer · Wind · Unlock 17 · Long Rest 1 · Apex Zone / Control"
+  },
+  {
+    "title": "Arcane Barrier",
+    "url": "spells/arcane-barrier.html",
+    "desc": "Sorcerer · Arcane · Unlock 1 · At-Will · Defense"
+  },
+  {
+    "title": "Aether Step",
+    "url": "spells/aether-step.html",
+    "desc": "Sorcerer · Arcane · Unlock 2 · Cooldown 2 · Mobility"
+  },
+  {
+    "title": "Gravity Snare",
+    "url": "spells/gravity-snare.html",
+    "desc": "Sorcerer · Arcane · Unlock 3 · Cooldown 2 · Control"
+  },
+  {
+    "title": "Aether Dispel",
+    "url": "spells/aether-dispel.html",
+    "desc": "Sorcerer · Arcane · Unlock 5 · Short Rest 1 · Utility"
+  },
+  {
+    "title": "Mirror Fold",
+    "url": "spells/mirror-fold.html",
+    "desc": "Sorcerer · Arcane · Unlock 6 · Short Rest 1 · Defense"
+  },
+  {
+    "title": "Aether Lock",
+    "url": "spells/aether-lock.html",
+    "desc": "Sorcerer · Arcane · Unlock 8 · Short Rest 1 · Control"
+  },
+  {
+    "title": "Spatial Collapse",
+    "url": "spells/spatial-collapse.html",
+    "desc": "Sorcerer · Arcane · Unlock 12 · Long Rest 1 · Battlefield Control"
+  },
+  {
+    "title": "Perfect Equation",
+    "url": "spells/perfect-equation.html",
+    "desc": "Sorcerer · Arcane · Unlock 16 · Long Rest 1 · Mastery"
+  },
+  {
+    "title": "Spirit Flame",
+    "url": "spells/spirit-flame.html",
+    "desc": "Spiritmaster · Fire Spirit · Unlock 1 · At-Will · Damage / Bond Setup"
+  },
+  {
+    "title": "Burning Brand",
+    "url": "spells/burning-brand.html",
+    "desc": "Spiritmaster · Fire Spirit · Unlock 7 · Cooldown 2 · Debuff / Damage"
+  },
+  {
+    "title": "Spirit Conflagration",
+    "url": "spells/spirit-conflagration.html",
+    "desc": "Spiritmaster · Fire Spirit · Unlock 15 · Short Rest 1 · Apex Damage"
+  },
+  {
+    "title": "Water Sigil",
+    "url": "spells/water-sigil.html",
+    "desc": "Spiritmaster · Water Spirit · Unlock 1 · At-Will · Debuff"
+  },
+  {
+    "title": "Drowning Hex",
+    "url": "spells/drowning-hex.html",
+    "desc": "Spiritmaster · Water Spirit · Unlock 7 · Cooldown 2 · Debuff / Control"
+  },
+  {
+    "title": "Abyssal Torrent",
+    "url": "spells/abyssal-torrent.html",
+    "desc": "Spiritmaster · Water Spirit · Unlock 15 · Short Rest 1 · Apex Control"
+  },
+  {
+    "title": "Stone Mark",
+    "url": "spells/stone-mark.html",
+    "desc": "Spiritmaster · Earth Spirit · Unlock 1 · At-Will · Damage / Protection Setup"
+  },
+  {
+    "title": "Earthen Shackles",
+    "url": "spells/earthen-shackles.html",
+    "desc": "Spiritmaster · Earth Spirit · Unlock 7 · Cooldown 2 · Control"
+  },
+  {
+    "title": "Titanic Binding",
+    "url": "spells/titanic-binding.html",
+    "desc": "Spiritmaster · Earth Spirit · Unlock 15 · Short Rest 1 · Apex Control / Protection"
+  },
+  {
+    "title": "Gale Sigil",
+    "url": "spells/gale-sigil.html",
+    "desc": "Spiritmaster · Wind Spirit · Unlock 1 · At-Will · Damage / Positioning"
+  },
+  {
+    "title": "Vacuum Curse",
+    "url": "spells/vacuum-curse.html",
+    "desc": "Spiritmaster · Wind Spirit · Unlock 7 · Cooldown 2 · Debuff / Forced Movement"
+  },
+  {
+    "title": "Spirit Tempest",
+    "url": "spells/spirit-tempest.html",
+    "desc": "Spiritmaster · Wind Spirit · Unlock 15 · Short Rest 1 · Apex Area / Coordination"
+  },
+  {
+    "title": "Spirit Bolt",
+    "url": "spells/spirit-bolt.html",
+    "desc": "Spiritmaster · Spirit · Unlock 1 · At-Will · Damage"
+  },
+  {
+    "title": "Spirit Mend",
+    "url": "spells/spirit-mend.html",
+    "desc": "Spiritmaster · Spirit · Unlock 1 · At-Will · Repair / Healing"
+  },
+  {
+    "title": "Hex of Frailty",
+    "url": "spells/hex-of-frailty.html",
+    "desc": "Spiritmaster · Hex · Unlock 3 · Cooldown 2 · Debuff"
+  },
+  {
+    "title": "Spirit Erosion",
+    "url": "spells/spirit-erosion.html",
+    "desc": "Spiritmaster · Hex · Unlock 6 · Cooldown 2 · Damage / Debuff"
+  },
+  {
+    "title": "Curse of Silence",
+    "url": "spells/curse-of-silence.html",
+    "desc": "Spiritmaster · Hex · Unlock 10 · Short Rest 1 · Suppression"
+  },
+  {
+    "title": "Soul Rupture",
+    "url": "spells/soul-rupture.html",
+    "desc": "Spiritmaster · Hex · Unlock 17 · Long Rest 1 · Apex Damage / Debuff"
+  },
+  {
+    "title": "Shared Aether Pulse",
+    "url": "spells/shared-aether-pulse.html",
+    "desc": "Spiritmaster · Bond · Unlock 5 · Short Rest 1 · Dual-Origin Support"
+  },
+  {
+    "title": "Protective Link",
+    "url": "spells/protective-link.html",
+    "desc": "Spiritmaster · Bond · Unlock 7 · Cooldown 2 · Protection"
+  },
+  {
+    "title": "Twin Aether Burst",
+    "url": "spells/twin-aether-burst.html",
+    "desc": "Spiritmaster · Bond · Unlock 11 · Short Rest 1 · Dual-Origin Damage"
+  },
+  {
+    "title": "Fusion Veil",
+    "url": "spells/fusion-veil.html",
+    "desc": "Spiritmaster · Bond · Unlock 14 · Long Rest 1 · Mastery"
+  },
+  {
+    "title": "Healing Light",
+    "url": "spells/healing-light.html",
+    "desc": "Cleric · Restoration · Unlock 1 · At-Will · Healing"
+  },
+  {
+    "title": "Restoring Wave",
+    "url": "spells/restoring-wave.html",
+    "desc": "Cleric · Restoration · Unlock 7 · Cooldown 2 · Area Healing"
+  },
+  {
+    "title": "Miracle of Life",
+    "url": "spells/miracle-of-life.html",
+    "desc": "Cleric · Restoration · Unlock 15 · Long Rest 1 · Apex Healing"
+  },
+  {
+    "title": "Purifying Spark",
+    "url": "spells/purifying-spark.html",
+    "desc": "Cleric · Purification · Unlock 1 · At-Will · Support / Minor Purification"
+  },
+  {
+    "title": "Cleansing Grace",
+    "url": "spells/cleansing-grace.html",
+    "desc": "Cleric · Purification · Unlock 7 · Cooldown 2 · Purification"
+  },
+  {
+    "title": "Sanctified Restoration",
+    "url": "spells/sanctified-restoration.html",
+    "desc": "Cleric · Purification · Unlock 15 · Short Rest 1 · Apex Purification"
+  },
+  {
+    "title": "Sacred Ward",
+    "url": "spells/sacred-ward.html",
+    "desc": "Cleric · Protection · Unlock 1 · At-Will · Protection"
+  },
+  {
+    "title": "Aegis Field",
+    "url": "spells/aegis-field.html",
+    "desc": "Cleric · Protection · Unlock 7 · Cooldown 2 · Area Protection"
+  },
+  {
+    "title": "Divine Bastion",
+    "url": "spells/divine-bastion.html",
+    "desc": "Cleric · Protection · Unlock 15 · Short Rest 1 · Apex Protection"
+  },
+  {
+    "title": "Radiant Bolt",
+    "url": "spells/radiant-bolt.html",
+    "desc": "Cleric · Judgment · Unlock 1 · At-Will · Damage"
+  },
+  {
+    "title": "Judgment Seal",
+    "url": "spells/judgment-seal.html",
+    "desc": "Cleric · Judgment · Unlock 7 · Cooldown 2 · Damage / Debuff"
+  },
+  {
+    "title": "Heavenly Verdict",
+    "url": "spells/heavenly-verdict.html",
+    "desc": "Cleric · Judgment · Unlock 15 · Short Rest 1 · Apex Damage / Control"
+  },
+  {
+    "title": "Greater Restoration Light",
+    "url": "spells/greater-restoration-light.html",
+    "desc": "Cleric · Restoration Auxiliary · Unlock 4 · Cooldown 2 · Healing"
+  },
+  {
+    "title": "Guardian Halo",
+    "url": "spells/guardian-halo.html",
+    "desc": "Cleric · Protection Auxiliary · Unlock 4 · Cooldown 2 · Area Protection"
+  },
+  {
+    "title": "Cleanse Affliction",
+    "url": "spells/cleanse-affliction.html",
+    "desc": "Cleric · Purification Auxiliary · Unlock 5 · Short Rest 1 · Purification"
+  },
+  {
+    "title": "Circle of Purity",
+    "url": "spells/circle-of-purity.html",
+    "desc": "Cleric · Purification Auxiliary · Unlock 8 · Short Rest 1 · Area Purification"
+  },
+  {
+    "title": "Judgment Beam",
+    "url": "spells/judgment-beam.html",
+    "desc": "Cleric · Judgment Auxiliary · Unlock 4 · Cooldown 2 · Damage"
+  },
+  {
+    "title": "Consecrated Ground",
+    "url": "spells/consecrated-ground.html",
+    "desc": "Cleric · Judgment Auxiliary · Unlock 10 · Short Rest 1 · Zone / Support"
+  },
+  {
+    "title": "Prayer of Resolve",
+    "url": "spells/prayer-of-resolve.html",
+    "desc": "Cleric · Support · Unlock 6 · Short Rest 1 · Support"
+  },
+  {
+    "title": "Divine Intervention",
+    "url": "spells/divine-intervention.html",
+    "desc": "Cleric · Support · Unlock 18 · Long Rest 1 · Apex Support"
+  },
+  {
+    "title": "Resonant Strike",
+    "url": "spells/resonant-strike.html",
+    "desc": "Chanter · Martial Chant · Unlock 1 · At-Will · Damage / Cadence"
+  },
+  {
+    "title": "Echoing Blow",
+    "url": "spells/echoing-blow.html",
+    "desc": "Chanter · Martial Chant · Unlock 7 · Cooldown 2 · Damage / Team Setup"
+  },
+  {
+    "title": "Battle Hymn",
+    "url": "spells/battle-hymn.html",
+    "desc": "Chanter · Martial Chant · Unlock 15 · Short Rest 1 · Apex Team Offense"
+  },
+  {
+    "title": "Mending Note",
+    "url": "spells/mending-note.html",
+    "desc": "Chanter · Support Chant · Unlock 1 · At-Will · Healing"
+  },
+  {
+    "title": "Harmonic Recovery",
+    "url": "spells/harmonic-recovery.html",
+    "desc": "Chanter · Support Chant · Unlock 7 · Cooldown 2 · Area Healing"
+  },
+  {
+    "title": "Anthem of Renewal",
+    "url": "spells/anthem-of-renewal.html",
+    "desc": "Chanter · Support Chant · Unlock 15 · Short Rest 1 · Apex Healing / Support"
+  },
+  {
+    "title": "Guarding Cadence",
+    "url": "spells/guarding-cadence.html",
+    "desc": "Chanter · Ward Chant · Unlock 1 · At-Will · Protection"
+  },
+  {
+    "title": "Resonant Shelter",
+    "url": "spells/resonant-shelter.html",
+    "desc": "Chanter · Ward Chant · Unlock 7 · Cooldown 2 · Area Protection"
+  },
+  {
+    "title": "Unbroken Chorus",
+    "url": "spells/unbroken-chorus.html",
+    "desc": "Chanter · Ward Chant · Unlock 15 · Short Rest 1 · Apex Protection"
+  },
+  {
+    "title": "Discordant Pulse",
+    "url": "spells/discordant-pulse.html",
+    "desc": "Chanter · Disruption Chant · Unlock 1 · At-Will · Damage / Debuff"
+  },
+  {
+    "title": "Breaking Rhythm",
+    "url": "spells/breaking-rhythm.html",
+    "desc": "Chanter · Disruption Chant · Unlock 7 · Cooldown 2 · Control / Debuff"
+  },
+  {
+    "title": "Silencing Refrain",
+    "url": "spells/silencing-refrain.html",
+    "desc": "Chanter · Disruption Chant · Unlock 15 · Short Rest 1 · Apex Disruption"
+  },
+  {
+    "title": "Marching Hymn",
+    "url": "spells/marching-hymn.html",
+    "desc": "Chanter · Supplemental Chant · Unlock 6 · Short Rest 1 · Movement Support"
+  },
+  {
+    "title": "Discordant Chorus",
+    "url": "spells/discordant-chorus.html",
+    "desc": "Chanter · Supplemental Chant · Unlock 4 · Cooldown 2 · Disruption"
+  },
+  {
+    "title": "Aetheric Refrain",
+    "url": "spells/aetheric-refrain.html",
+    "desc": "Chanter · Supplemental Chant · Unlock 10 · Short Rest 1 · Aether / Support"
+  },
+  {
+    "title": "Guardian Chant",
+    "url": "spells/guardian-chant.html",
+    "desc": "Chanter · Supplemental Chant · Unlock 12 · Short Rest 1 · Protection"
+  },
+  {
+    "title": "Soothing Verse",
+    "url": "spells/soothing-verse.html",
+    "desc": "Songweaver · Harmony · Unlock 1 · At-Will · Harmony / Healing"
+  },
+  {
+    "title": "Chorus of Mending",
+    "url": "spells/chorus-of-mending.html",
+    "desc": "Songweaver · Harmony · Unlock 7 · Cooldown 2 · Harmony / Area Healing"
+  },
+  {
+    "title": "Grand Harmony",
+    "url": "spells/grand-harmony.html",
+    "desc": "Songweaver · Harmony · Unlock 15 · Short Rest 1 · Harmony / Apex Healing"
+  },
+  {
+    "title": "Shielding Note",
+    "url": "spells/shielding-note.html",
+    "desc": "Songweaver · Guard · Unlock 1 · At-Will · Guard / Protection"
+  },
+  {
+    "title": "Protective Chorus",
+    "url": "spells/protective-chorus.html",
+    "desc": "Songweaver · Guard · Unlock 7 · Cooldown 2 · Guard / Area Protection"
+  },
+  {
+    "title": "Aegis Symphony",
+    "url": "spells/aegis-symphony.html",
+    "desc": "Songweaver · Guard · Unlock 15 · Short Rest 1 · Guard / Apex Protection"
+  },
+  {
+    "title": "Discordant Note",
+    "url": "spells/discordant-note.html",
+    "desc": "Songweaver · Dissonance · Unlock 1 · At-Will · Dissonance / Damage"
+  },
+  {
+    "title": "Fracturing Chorus",
+    "url": "spells/fracturing-chorus.html",
+    "desc": "Songweaver · Dissonance · Unlock 7 · Cooldown 2 · Dissonance / Debuff"
+  },
+  {
+    "title": "Cacophony",
+    "url": "spells/cacophony.html",
+    "desc": "Songweaver · Dissonance · Unlock 15 · Short Rest 1 · Dissonance / Apex Control"
+  },
+  {
+    "title": "Dirge Note",
+    "url": "spells/dirge-note.html",
+    "desc": "Songweaver · Requiem · Unlock 1 · At-Will · Requiem / Damage"
+  },
+  {
+    "title": "Elegy of Withering",
+    "url": "spells/elegy-of-withering.html",
+    "desc": "Songweaver · Requiem · Unlock 7 · Cooldown 2 · Requiem / Damage-over-Time"
+  },
+  {
+    "title": "Final Requiem",
+    "url": "spells/final-requiem.html",
+    "desc": "Songweaver · Requiem · Unlock 15 · Long Rest 1 · Requiem / Apex Damage"
+  },
+  {
+    "title": "Song of Renewal",
+    "url": "spells/song-of-renewal.html",
+    "desc": "Songweaver · Harmony Supplemental · Unlock 10 · Short Rest 1 · Harmony / Healing"
+  },
+  {
+    "title": "Harmonic Barrier",
+    "url": "spells/harmonic-barrier.html",
+    "desc": "Songweaver · Supplemental · Unlock 3 · Cooldown 2 · Guard"
+  },
+  {
+    "title": "Crushing Dirge",
+    "url": "spells/crushing-dirge.html",
+    "desc": "Songweaver · Supplemental · Unlock 3 · Cooldown 2 · Requiem / Damage"
+  },
+  {
+    "title": "Resonant Wave",
+    "url": "spells/resonant-wave.html",
+    "desc": "Songweaver · Requiem Supplemental · Unlock 4 · Cooldown 2 · Requiem / Damage"
+  },
+  {
+    "title": "Echo Step",
+    "url": "spells/echo-step.html",
+    "desc": "Songweaver · Performance Utility · Unlock 4 · Cooldown 2 · Movement"
+  },
+  {
+    "title": "Harmonic Lift",
+    "url": "spells/harmonic-lift.html",
+    "desc": "Songweaver · Performance Utility · Unlock 5 · Cooldown 2 · Harmony / Movement"
+  },
+  {
+    "title": "Guarded Cadence",
+    "url": "spells/guarded-cadence.html",
+    "desc": "Songweaver · Performance Utility · Unlock 5 · Cooldown 2 · Guard / Defense"
+  },
+  {
+    "title": "Off-Key Step",
+    "url": "spells/off-key-step.html",
+    "desc": "Songweaver · Performance Utility · Unlock 6 · Cooldown 2 · Dissonance / Movement"
+  },
+  {
+    "title": "Refrain Relay",
+    "url": "spells/refrain-relay.html",
+    "desc": "Songweaver · Performance Utility · Unlock 8 · Short Rest 1 · Utility / Refrain"
+  },
+  {
+    "title": "Counterpoint",
+    "url": "spells/counterpoint.html",
+    "desc": "Songweaver · Performance Utility · Unlock 11 · Short Rest 1 · Utility / Counter"
+  },
+  {
+    "title": "Perfect Harmony",
+    "url": "spells/perfect-harmony.html",
+    "desc": "Songweaver · Performance Utility · Unlock 14 · Long Rest 1 · Role Mastery"
+  },
+  {
+    "title": "Conductor's Dominion",
+    "url": "spells/conductors-dominion.html",
+    "desc": "Songweaver · Performance Utility · Unlock 18 · Long Rest 1 · Apex Performance"
   }
 ]
