@@ -29,7 +29,18 @@
     ul.tight li{margin:.35rem 0}
     @media(max-width:850px){.quick-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:520px){.quick-nav{grid-template-columns:1fr}}
-  </style>
+  
+    .class-inspiration{margin:0 0 2rem}
+    .class-inspiration h2{margin-bottom:.45rem}
+    .inspiration-intro{color:var(--muted);margin:.15rem 0 1rem}
+    .inspiration-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+    .inspiration-card{margin:0;border:1px solid var(--line);border-radius:1rem;overflow:hidden;background:rgba(13,27,42,.78);box-shadow:0 12px 28px rgba(0,0,0,.18)}
+    .inspiration-frame{display:flex;align-items:center;justify-content:center;aspect-ratio:4/5;background:rgba(5,15,24,.72);padding:.55rem}
+    .inspiration-frame img{display:block;width:100%;height:100%;object-fit:contain;border-radius:.6rem}
+    .inspiration-card figcaption{padding:.8rem 1rem;font-weight:800;text-align:center;color:var(--accent-2)}
+    .inspiration-disclaimer{font-size:.9rem;color:var(--muted);margin:.85rem 0 0;padding:.85rem 1rem;border-left:3px solid var(--accent);background:rgba(127,200,255,.05)}
+    @media(max-width:650px){.inspiration-grid{grid-template-columns:1fr}.inspiration-frame{aspect-ratio:auto;min-height:0}.inspiration-frame img{height:auto;max-height:none}}
+</style>
 </head>
 <body data-base="../">
 <header class="site-header">
@@ -58,7 +69,7 @@
     Website rules source: <strong>Wings of Atreia Player Handbook v3.10 — Publication Master, 8 September 2026.</strong>
 </div>
 <nav aria-label="Gladiator page sections" class="quick-nav">
-<a href="#overview">Overview</a>
+<a href="#inspiration">Class Inspiration</a><a href="#overview">Overview</a>
 <a href="#chassis">Class Chassis</a>
 <a href="#momentum">Momentum</a>
 <a href="#chains">Chain Attacks</a>
@@ -66,7 +77,15 @@
 <a href="#levels">Levels 1–20</a>
 <a href="#specializations">Specializations</a>
 <a href="#examples">Combat Examples</a>
-<a href="#specialization-reassignment">Specialization Reassignment</a></nav>
+<a href="#specialization-reassignment">Specialization Reassignment</a></nav><section class="class-inspiration" id="inspiration">
+<h2>Class Inspiration</h2>
+<p class="inspiration-intro">Elyos and Asmodian visual references for the Gladiator. These images are inspiration for tone and style, not fixed character designs.</p>
+<div class="inspiration-grid">
+<figure class="inspiration-card"><div class="inspiration-frame"><img alt="Elyos Gladiator class inspiration artwork" decoding="async" loading="lazy" src="../assets/images/classes/gladiator-elyos.webp"/></div><figcaption>Elyos Inspiration</figcaption></figure>
+<figure class="inspiration-card"><div class="inspiration-frame"><img alt="Asmodian Gladiator class inspiration artwork" decoding="async" loading="lazy" src="../assets/images/classes/gladiator-asmodian.webp"/></div><figcaption>Asmodian Inspiration</figcaption></figure>
+</div>
+<p class="inspiration-disclaimer"><strong>Visual inspiration only.</strong> These images do not establish a required appearance, armor design, weapon design, body type, gender, or personal style for this class. Elyos and Asmodian characters use the same class mechanics unless an explicit rule states otherwise.</p>
+</section>
 <section id="overview">
 <h2>Class Overview</h2>
 <p>The Gladiator is the premier sustained melee damage class. It wins through sequences rather than single isolated attacks: open a Chain, spend Momentum on Links that alter the battlefield, then cash the sequence out with a Finisher. Polearms provide the highest sustained weapon output, while weapon discipline and specialization determine whether the Gladiator emphasizes execution, cleaving pressure, or relentless pursuit.</p>
