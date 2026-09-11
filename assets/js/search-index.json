@@ -87,57 +87,57 @@
   {
     "title": "Gladiator",
     "url": "classes/gladiator.html",
-    "desc": "Playable class reference."
+    "desc": "Playable class reference. Specialization reassignment checkpoints: Levels 6, 10, and 14."
   },
   {
     "title": "Templar",
     "url": "classes/templar.html",
-    "desc": "Playable class reference."
+    "desc": "Playable class reference. Specialization reassignment checkpoints: Levels 6, 10, and 14."
   },
   {
     "title": "Assassin",
     "url": "classes/assassin.html",
-    "desc": "Playable class reference."
+    "desc": "Playable class reference. Specialization reassignment checkpoints: Levels 6, 10, and 14."
   },
   {
     "title": "Ranger",
     "url": "classes/ranger.html",
-    "desc": "Playable class reference."
+    "desc": "Playable class reference. Specialization reassignment checkpoints: Levels 6, 10, and 14."
   },
   {
     "title": "Sorcerer",
     "url": "classes/sorcerer.html",
-    "desc": "Playable class reference."
+    "desc": "Playable class reference. Specialization reassignment checkpoints: Levels 6, 10, and 14."
   },
   {
     "title": "Spiritmaster",
     "url": "classes/spiritmaster.html",
-    "desc": "Playable class reference."
+    "desc": "Playable class reference. Specialization reassignment checkpoints: Levels 6, 10, and 14."
   },
   {
     "title": "Cleric",
     "url": "classes/cleric.html",
-    "desc": "Playable class reference."
+    "desc": "Playable class reference. Specialization reassignment checkpoints: Levels 6, 10, and 14."
   },
   {
     "title": "Chanter",
     "url": "classes/chanter.html",
-    "desc": "Playable class reference."
+    "desc": "Playable class reference. Specialization reassignment checkpoints: Levels 6, 10, and 14."
   },
   {
     "title": "Aethertech",
     "url": "classes/aethertech.html",
-    "desc": "Playable class reference."
+    "desc": "Playable class reference. Specialization reassignment checkpoints: Levels 6, 10, and 14."
   },
   {
     "title": "Gunslinger",
     "url": "classes/gunslinger.html",
-    "desc": "Playable class reference."
+    "desc": "Playable class reference. Specialization reassignment checkpoints: Levels 6, 10, and 14."
   },
   {
     "title": "Songweaver",
     "url": "classes/songweaver.html",
-    "desc": "Playable class reference."
+    "desc": "Playable class reference. Specialization reassignment checkpoints: Levels 6, 10, and 14."
   },
   {
     "title": "Flame Bolt",
@@ -682,7 +682,7 @@
   {
     "title": "Player Quick Reference",
     "url": "rules/quick-reference.html",
-    "desc": "Character creation and level-up checklists; actions; conditions; feats; boons; flight; inventory; Aether enhancement; class resources."
+    "desc": "Character creation and level-up checklists; actions; conditions; feats; boons; flight; inventory; Aether enhancement; class resources. Includes Level 3/6/10/14 Specialization checkpoints."
   },
   {
     "title": "Glossary & Core Terms",
@@ -692,11 +692,16 @@
   {
     "title": "Player FAQ",
     "url": "rules/faq.html",
-    "desc": "Common Wings of Atreia questions: fixed array, multiclassing, Help, Grapple/Shove, Prone, spell slots, Concentration, Spell Advancement, Daeva Points, Ultimate miss choices, Flight, Professions, Warfronts and class resources."
+    "desc": "Common Wings of Atreia questions: fixed array, multiclassing, Help, Grapple/Shove, Prone, spell slots, Concentration, Spell Advancement, Daeva Points, Ultimate miss choices, Flight, Professions, Warfronts and class resources. Includes Specialization Reassignment."
   },
   {
     "title": "Downloads & Character Sheet",
     "url": "rules/downloads.html",
     "desc": "Official three-page Wings of Atreia Character Sheet guide, field guidance, sheet maintenance, and future player downloads."
+  },
+  {
+    "title": "Specialization Reassignment",
+    "url": "rules/advancement.html#specialization-reassignment",
+    "desc": "Change or switch class Specialization at Levels 6, 10, and 14; replace the previous path's entire feature package; no mixing Specialization features; Level 14 final normal choice."
   }
 ]
