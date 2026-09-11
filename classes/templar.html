@@ -1,10 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Templar | Wings of Atreia</title>
-<meta name="description" content="Complete player reference for the Templar class in Wings of Atreia, based on Player Handbook v3.10.">
-<link rel="stylesheet" href="../assets/css/style.css">
+<meta content="Complete player reference for the Templar class in Wings of Atreia, based on Player Handbook v3.10." name="description"/>
+<link href="../assets/css/style.css" rel="stylesheet"/>
 <style>
 .class-kicker{font-size:.85rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:800}
 .class-tagline{font-size:1.1rem;color:var(--muted);margin:.25rem 0 .3rem}.class-quote{font-size:1.15rem;font-style:italic;margin:.65rem 0 0}
@@ -21,25 +22,21 @@ ul.tight li{margin:.35rem 0}@media(max-width:850px){.quick-nav{grid-template-col
 <body data-base="../">
 <header class="site-header"><div class="nav-wrap"><a class="brand" href="../index.html">WINGS OF ATREIA</a>
 <nav class="nav-links"><a href="../index.html">Home</a><a href="../rules/">Rules</a><a href="../classes/">Classes</a><a href="../spells/">Spells</a><a href="../world/">World</a><a href="../about.html">About</a></nav>
-<div class="search-box"><input type="search" placeholder="Search WoA…" aria-label="Search Wings of Atreia" data-site-search></div></div></header>
+<div class="search-box"><input aria-label="Search Wings of Atreia" data-site-search="" placeholder="Search WoA…" type="search"/></div></div></header>
 <main>
 <header class="page-header"><div class="class-kicker">Martial Defender • Resolve • Challenge • Interception</div><h1>Templar</h1>
 <p class="class-quote">“You're only as good as your armor.”</p>
 <p class="class-tagline">The premier martial defender, turning incoming pressure into protection, damage reduction, retaliation, and formation control.</p></header>
-
 <div class="source-note">Website rules source: <strong>Wings of Atreia Player Handbook v3.10 — Publication Master, 8 September 2026.</strong></div>
-
-<nav class="quick-nav" aria-label="Templar page sections">
+<nav aria-label="Templar page sections" class="quick-nav">
 <a href="#overview">Overview</a><a href="#chassis">Class Chassis</a><a href="#resolve">Resolve</a><a href="#signature">Signature Mechanics</a>
 <a href="#action-reference">Action Reference</a><a href="#levels">Levels 1–20</a><a href="#specializations">Specializations</a><a href="#examples">Defensive Examples</a>
-</nav>
-
+<a href="#specialization-reassignment">Specialization Reassignment</a></nav>
 <section id="overview"><h2>Class Overview</h2>
 <p>The Templar is the system’s premier martial defender. It does not force enemies to attack it through mind control; instead, Challenge makes ignoring the Templar tactically dangerous while Resolve turns incoming pressure into protection, damage reduction, retaliation, and formation control.</p>
 <h3>Class Identity</h3><p>Templars are guardian-warriors whose strength is measured by what they can endure and whom they can keep standing. They occupy the most dangerous space in a battle, challenge enemies that would otherwise overwhelm vulnerable allies, and turn personal resilience into protection for the group. Resolve is the mechanical expression of this identity: a Templar grows most meaningful when danger is real and protection requires commitment.</p>
 <h3>Tradition &amp; Outlook</h3><p>The Templar tradition grows from Atreia’s warrior disciplines but places duty, discipline, guardianship, and control above personal glory. Templars are found among legion defenders, fortress guardians, sworn protectors, escorts, and Daevas who believe power carries an obligation to stand between danger and others. Individual Templars may be stern, compassionate, devout, pragmatic, or fiercely patriotic, but the class ideal is constancy under pressure.</p>
 <h3>Appearance &amp; Adventuring</h3><p>Templars are commonly associated with plate armor, shields, and the unmistakable silhouette of a heavily protected frontline Daeva. Their equipment tends to emphasize readiness and endurance rather than ornament alone. Templars adventure because someone must hold the line: to defend a community, fulfill an oath, guard companions, reclaim threatened territory, or confront enemies that cannot safely be allowed to reach the rest of the party.</p></section>
-
 <section id="chassis"><h2>Class Chassis</h2><div class="rule-table-wrap"><table class="rule-table"><thead><tr><th>Trait</th><th>Rule</th></tr></thead><tbody>
 <tr><td>Primary Class Ability</td><td>Constitution</td></tr><tr><td>Weapon Ability</td><td>Strength</td></tr><tr><td>Hit Die</td><td>d12</td></tr>
 <tr><td>Hit Points at Level 1</td><td>16 + CON modifier</td></tr><tr><td>Hit Points at Higher Levels</td><td>Roll d12 or use fixed 7, add CON modifier, then add +4 maximum HP from Templar durability each Templar level after 1.</td></tr>
@@ -48,7 +45,6 @@ ul.tight li{margin:.35rem 0}@media(max-width:850px){.quick-nav{grid-template-col
 <tr><td>Signature Resource</td><td>Resolve</td></tr><tr><td>Signature Mechanics</td><td>Resolute Guard, Challenge, Guardian’s Intercession</td></tr>
 <tr><td>Extra Attack</td><td>Level 5; two attacks only</td></tr><tr><td>Spellcasting</td><td>None</td></tr>
 </tbody></table></div></section>
-
 <section id="resolve"><h2>Core Engine — Resolve</h2>
 <p>Resolve represents the Templar converting battlefield pressure into defensive certainty. Unless a later feature states otherwise, Resolve becomes 0 when Initiative is rolled, becomes 0 when combat ends, and cannot be gained while you are Incapacitated.</p>
 <ul class="tight"><li><strong>Hold the Line:</strong> gain 1 Resolve when a hostile creature you can see hits you with an attack while you are within that creature’s melee reach.</li>
@@ -56,7 +52,6 @@ ul.tight li{margin:.35rem 0}@media(max-width:850px){.quick-nav{grid-template-col
 <li><strong>Defy the Templar:</strong> gain 1 Resolve when a creature Challenged by you attacks another creature while you were a valid target for that attack.</li>
 <li>You can normally gain no more than 1 Resolve during any creature’s turn. One event grants Resolve only once even if it satisfies multiple triggers.</li>
 <li><strong>Maximum Resolve:</strong> 3 at Levels 1–4; 4 at 5–8; 5 at 9–14; 6 at 15–20.</li></ul>
-
 <h3>Resource Flow — Generation, Recovery, Spending &amp; Reset</h3>
 <div class="rule-table-wrap"><table class="rule-table"><thead><tr><th>Resource Flow</th><th>Rule</th></tr></thead><tbody>
 <tr><td>Starting State</td><td>Resolve normally becomes 0 when Initiative is rolled. Later Templar features explicitly establish starting Resolve.</td></tr>
@@ -66,19 +61,16 @@ ul.tight li{margin:.35rem 0}@media(max-width:850px){.quick-nav{grid-template-col
 <tr><td>How You Spend It</td><td>Resolute Guard 1; Guardian’s Rally 1; Bulwark Shared Resolve 1; Resolute Shelter 1; Bulwark Last Wall 1; Refuse to Fall 3. Other features spend Resolve only when their text states a cost.</td></tr>
 <tr><td>Same-Trigger Timing</td><td>When a protection feature both resolves and legitimately generates Resolve, newly gained Resolve can pay an eligible same-trigger defensive technique when the feature permits the timing.</td></tr>
 <tr><td>Reset</td><td>Resolve becomes 0 when combat ends.</td></tr></tbody></table></div>
-
 <div class="mechanic-box"><h3>Resolve Timing Rules</h3><ul class="tight">
 <li>Resolve from Hold the Line may immediately be spent on Resolute Guard against the same triggering attack’s damage.</li>
 <li>Resolve generated by a successful Guardian’s Intercession is gained before redirected damage is applied, so it may be used against the redirected attack if otherwise legal.</li>
 <li>Resolve generated because Guardian’s Shelter changed a save from failure to success may immediately pay for Resolute Shelter at Level 14.</li>
 <li>Challenge may remain on a creature while its penalty is temporarily suppressed because you are out of range, cannot be perceived, or are not a legal target.</li>
 </ul></div></section>
-
 <section id="signature"><h2>Signature Defensive Mechanics</h2>
 <h3>Resolute Guard</h3><p>When you take damage from an attack, spend 1 Resolve with no action required to reduce that damage by 1 Guard Die + your CON modifier, minimum 0. The Guard Die is d6 at Level 1, d8 from Level 5, d10 from Level 9, and d12 from Level 15. You can normally use Resolute Guard only once per turn unless a Templar feature explicitly says otherwise.</p>
 <h3>Challenge</h3><p>As a Bonus Action, choose one hostile creature you can see within 30 feet. It is Challenged until the start of your next turn. Initially you can maintain one Challenge. While the creature is within 30 feet, can perceive you, and you are a valid target for at least one attack it could make, it has Disadvantage on attack rolls against creatures other than you. Challenge is nonmagical, has no save, and is neither Charm nor Fear.</p>
 <h3>Guardian’s Intercession</h3><p>When an ally within 5 feet is hit by an attack, use your Reaction to redirect that attack to yourself. Use the same attack roll. If it hits your AC, you take the attack and its damage/effects normally; if it misses your AC, the redirected attack misses. A successful interception qualifies for Protect the Vulnerable when it actually prevents the ally from receiving the attack’s damage.</p></section>
-
 <section id="action-reference"><h2>Level 1–20 Action &amp; Resource Reference</h2>
 <div class="rule-table-wrap"><table class="rule-table"><thead><tr><th>Level</th><th>Option</th><th>Timing</th><th>Cost</th><th>Trigger / Requirement</th><th>Short Effect</th></tr></thead><tbody>
 <tr><td>1</td><td>Attack</td><td>Action</td><td>—</td><td>Take Attack action</td><td>One weapon attack; two from Level 5.</td></tr>
@@ -107,7 +99,6 @@ ul.tight li{margin:.35rem 0}@media(max-width:850px){.quick-nav{grid-template-col
 <tr><td>20</td><td>Resolve Through Sacrifice</td><td>Triggered / No Action</td><td>—</td><td>Intercession or Shelter protects another and Protect the Vulnerable applies</td><td>Gain 2 Resolve instead of 1; counts as one generation event.</td></tr>
 </tbody></table></div>
 <p><strong>Coverage.</strong> This reference covers class options that create or materially change an Action, Bonus Action, Reaction, triggered player choice, or Resolve expenditure, refund, recovery, or starting state. Passive numerical scaling and universal advancement remain in the level progression.</p></section>
-
 <section id="levels"><h2>Level-by-Level Progression</h2>
 <div class="level-block"><h3>Level 1 — Resolve, Resolute Guard, Challenge, Guardian’s Intercession</h3><p>You gain the complete Resolve engine and the three signature defensive mechanics described above. Maximum Resolve is 3 and your Guard Die is d6.</p></div>
 <div class="level-block"><h3>Level 2 — Combat Discipline and Protective Reflexes</h3>
@@ -119,7 +110,7 @@ ul.tight li{margin:.35rem 0}@media(max-width:850px){.quick-nav{grid-template-col
 <p><strong>Aegis — Hold the Ground:</strong> while not Incapacitated, spaces within 5 ft of you are difficult terrain for hostile creatures; creatures you permit are unaffected.</p></div>
 <div class="level-block"><h3>Level 4 — Feat / Ability Score Improvement</h3><p>Gain the universal Feat / Ability Score Improvement.</p></div>
 <div class="level-block"><h3>Level 5 — Extra Attack, Improved Resolve and Relentless Challenge</h3><p>Attack twice when taking the Attack action. Maximum Resolve becomes 4 and Guard Die becomes d8. Relentless Challenge can maintain your current Challenge at the start of your turn without a Bonus Action when its range, perception, and Incapacitation conditions are met.</p></div>
-<div class="level-block"><h3>Level 6 — Guardian’s Shelter and Specialization Advancement</h3>
+<div class="level-block"><h3>Level 6 — Guardian’s Shelter and Specialization Decision / Advancement</h3>
 <p><strong>Guardian’s Shelter:</strong> when another creature you can see within 5 ft makes a save, use your Reaction before the roll to add your CON modifier, minimum +1. If this changes failure to success, Protect the Vulnerable triggers.</p>
 <p><strong>Bulwark — Shared Resolve:</strong> once per round, a redirected Intercession hit may spend 1 Resolve to use Resolute Guard even if already used that turn; one damage instance benefits only once.</p>
 <p><strong>Justicar — Punishing Rebuke:</strong> a hit from Retributive Challenge sets the creature’s Speed to 0 until the end of the current turn.</p>
@@ -127,8 +118,7 @@ ul.tight li{margin:.35rem 0}@media(max-width:850px){.quick-nav{grid-template-col
 <div class="level-block"><h3>Level 7 — Universal Character Advancement</h3><p>The PHB v3.10 Templar class progression does not list a new Templar-specific feature at this level. Apply the universal Level 7 advancement normally.</p></div>
 <div class="level-block"><h3>Level 8 — Feat / Ability Score Improvement</h3><p>Gain the universal Feat / Ability Score Improvement.</p></div>
 <div class="level-block"><h3>Level 9 — Greater Resolve and Steadfast Resolve</h3><p>Maximum Resolve becomes 5 and Guard Die becomes d10. When you roll Initiative for a genuine combat encounter, begin with 1 Resolve instead of 0.</p></div>
-
-<div class="level-block"><h3>Level 10 — Commanding Challenge and Specialization Advancement</h3>
+<div class="level-block"><h3>Level 10 — Commanding Challenge and Specialization Decision / Advancement</h3>
 <div class="ultimate-box"><h4>Empyrean Bulwark — Ultimate Ability</h4>
 <p><strong>Ultimate Activation — 100 DP.</strong> As your Action and Bonus Action, make one Ultimate melee weapon attack against a creature within your reach. After the attempt resolves, enter Ultimate Recovery during your next turn.</p>
 <p><strong>Judgment Damage.</strong> On a hit, the attack deals normal weapon damage plus fixed Radiant damage: 80 at Levels 10–14, 100 at Levels 15–19, or 120 at Level 20.</p>
@@ -137,11 +127,10 @@ ul.tight li{margin:.35rem 0}@media(max-width:850px){.quick-nav{grid-template-col
 <p><strong>Bulwark — No One Falls:</strong> once per round, if an in-range ally is hit and the damage would reduce it to 0 HP, use Guardian’s Intercession immediately before damage even if your Reaction was already used; afterward Intercession is unavailable until your next turn.</p>
 <p><strong>Justicar — Judgment of Defiance:</strong> Retributive Challenge hits deal one additional current Guard Die; Punishing Rebuke continues.</p>
 <p><strong>Aegis — Impassable Line:</strong> a hostile provokes an OA when it moves 5 ft or more while within your reach, even without leaving it; once per creature per turn, and Disengage prevents it.</p></div>
-
 <div class="level-block"><h3>Level 11 — Unbreakable Resolve</h3><p>Whenever Resolute Guard reduces damage, choose one: <strong>Stand Firm</strong> grants Advantage until your next turn on checks and saves to resist Grappled, Prone, or forced movement; <strong>Reposition</strong> lets you move 5 ft without provoking; <strong>Press the Threat</strong> makes your next melee hit against the source before the end of your next turn deal one additional Guard Die, usable once on each of your turns.</p></div>
 <div class="level-block"><h3>Level 12 — Feat / Ability Score Improvement</h3><p>Gain the universal Feat / Ability Score Improvement.</p></div>
 <div class="level-block"><h3>Level 13 — Guardian’s Rally</h3><p>As a Bonus Action, spend 1 Resolve and choose yourself or an ally within 10 ft. Roll your current Guard Die; the creature gains temporary HP equal to the result + CON modifier until the start of your next turn. Guardian’s Rally does not itself generate Resolve or trigger Protect the Vulnerable when those temporary HP absorb damage.</p></div>
-<div class="level-block"><h3>Level 14 — Resolute Shelter and Final Specialization Advancement</h3>
+<div class="level-block"><h3>Level 14 — Resolute Shelter and Final Specialization Decision / Advancement</h3>
 <p><strong>Resolute Shelter:</strong> Guardian’s Shelter range becomes 10 ft. If the protected creature succeeds and a successful save would normally deal half damage, spend 1 Resolve to make that damage 0. Resolve generated by Shelter changing failure to success may immediately pay this cost.</p>
 <p><strong>Bulwark — Last Wall:</strong> once per round when a redirected Intercession attack hits you, spend 1 Resolve to gain resistance to all damage from that attack; apply resistance before Resolute Guard.</p>
 <p><strong>Justicar — Inescapable Judgment:</strong> when a Challenged creature triggers Defy the Templar, your Retributive Challenge attack has Advantage; on hit, it also cannot take Reactions until the start of its next turn.</p>
@@ -160,23 +149,28 @@ ul.tight li{margin:.35rem 0}@media(max-width:850px){.quick-nav{grid-template-col
 <p><strong>Resolve Through Sacrifice:</strong> when Guardian’s Intercession or Guardian’s Shelter successfully protects another creature and Protect the Vulnerable would grant Resolve, gain 2 instead of 1. Those 2 points count as one generation event and may exceed the normal one-Resolve-per-creature-turn limit. Hold the Line and Defy the Templar remain unchanged.</p>
 <p><strong>Apex Empyrean Bulwark:</strong> Empyrean Bulwark uses its Level 20 damage and all Level 20 improvements.</p></div>
 </section>
-
-<section id="specializations"><h2>Specialization Path Reference</h2><div class="rule-table-wrap"><table class="rule-table"><thead><tr><th>Level</th><th>Bulwark</th><th>Justicar</th><th>Aegis</th></tr></thead><tbody>
+<section id="specializations"><section class="specialization-reassignment-note">
+<h2 id="specialization-reassignment">Specialization Reassignment</h2>
+<p><strong>Initial choice — Level 3.</strong> Choose one Specialization available to your class.</p>
+<p><strong>Reassignment checkpoints — Levels 6, 10, and 14.</strong> When gaining one of these levels, you may either continue your current Specialization or change to another Specialization available to your class.</p>
+<p>If you change Specialization, remove <strong>every feature granted by the previous Specialization</strong> and replace it with the <strong>complete feature package of the newly selected Specialization through your current checkpoint</strong>. Features from different Specializations cannot be mixed, retained, or combined.</p>
+<p>When newly entering a Specialization, make any choices required by the features you now gain. Continuing the same Specialization does not reset earlier internal choices unless an explicit feature says otherwise.</p>
+<p>If the removed Specialization granted extra known options, selections, capacities, or Specialization-dependent maxima, remove, reselect, or recalculate them as necessary to satisfy the new path. Reassignment itself does <strong>not</strong> restore HP or class resources, and current values cannot remain above any new maximum.</p>
+<p>Reassignment occurs only as part of gaining <strong>Level 6, Level 10, or Level 14</strong>. It cannot be performed through a rest, downtime, training, ordinary retraining, or between adventures. The <strong>Level 14 decision is the final normal Specialization choice</strong> and remains locked through Level 20 unless a later explicit rule says otherwise.</p>
+</section><h2>Specialization Path Reference</h2><div class="rule-table-wrap"><table class="rule-table"><thead><tr><th>Level</th><th>Bulwark</th><th>Justicar</th><th>Aegis</th></tr></thead><tbody>
 <tr><td>3</td><td>Unyielding Intercession — range 10 ft and move into interception.</td><td>Retributive Challenge — Reaction melee attack after defiance.</td><td>Hold the Ground — hostile spaces within 5 ft are difficult terrain.</td></tr>
 <tr><td>6</td><td>Shared Resolve — pay Resolve to Guard an intercepted hit even if Guard was used.</td><td>Punishing Rebuke — retaliation hit sets Speed 0 for current turn.</td><td>Unyielding Ground — leaving your 5-ft zone reduces Speed.</td></tr>
 <tr><td>10</td><td>No One Falls — emergency lethal-damage interception despite spent Reaction.</td><td>Judgment of Defiance — retaliation hit gains +Guard Die.</td><td>Impassable Line — movement within reach can provoke once/turn.</td></tr>
 <tr><td>14</td><td>Last Wall — intercepted attack can gain resistance before Guard.</td><td>Inescapable Judgment — retaliation gains Advantage and shuts off Reactions.</td><td>No Passage — OA hit sets Speed 0 for current turn.</td></tr>
 </tbody></table></div></section>
-
 <section id="examples"><h2>Example Defensive Sequences</h2><ol>
 <li>An enemy attacks a Challenged ally: Defy the Templar generates Resolve because you were a valid target. If you are a Justicar and the enemy remains in reach, Retributive Challenge can answer after the attack resolves.</li>
 <li>An adjacent ally is hit: Guardian’s Intercession redirects the attack. If the redirection prevents damage to the ally, Protect the Vulnerable grants Resolve before redirected damage is applied; that Resolve can immediately pay Resolute Guard.</li>
 <li>At Level 14, Guardian’s Shelter turns an ally’s save from failure to success. Protect the Vulnerable generates Resolve, then Resolute Shelter may immediately spend that Resolve to turn the successful half-damage result into no damage.</li>
 <li>A Level 17 Bulwark intercepts a lethal attack: No One Falls can supply the emergency Intercession, Last Wall spends 1 Resolve for resistance, then Resolute Guard can reduce the already-halved damage further.</li>
 </ol></section>
-
 <p><a class="btn secondary" href="../classes/">← Back to Classes</a></p>
 </main>
 <footer class="site-footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”) · Non-commercial fan project.</footer>
-<div class="search-results" data-search-results></div>
+<div class="search-results" data-search-results=""></div>
 <script src="../assets/js/search.js"></script></body></html>
