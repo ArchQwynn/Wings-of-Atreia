@@ -2,7 +2,7 @@
   {
     "title": "Beginner Guide",
     "url": "rules/beginner-guide.html",
-    "desc": "Start here: create your first Daeva with the Character Manager, learn the basic d20 rule, combat turn structure, flight, spellcasting basics, and first-session preparation."
+    "desc": "Start here: create your first Daeva, learn the basic d20 rule, combat turn structure, flight, spellcasting basics, and first-session preparation."
   },
   {
     "title": "Core Rules",
@@ -32,7 +32,7 @@
   {
     "title": "Character Creation",
     "url": "rules/character-creation.html",
-    "desc": "Create your Daeva and enter its starting information in the Wings of Atreia Character Manager."
+    "desc": "Player rules reference."
   },
   {
     "title": "Advancement, Feats & Boons",
@@ -695,13 +695,18 @@
     "desc": "Common Wings of Atreia questions: fixed array, multiclassing, Help, Grapple/Shove, Prone, spell slots, Concentration, Spell Advancement, Daeva Points, Ultimate miss choices, Flight, Professions, Warfronts and class resources. Includes Specialization Reassignment."
   },
   {
-    "title": "Downloads",
+    "title": "Downloads & Character Sheet",
     "url": "rules/downloads.html",
-    "desc": "Future download area for the Player Handbook, Core Rulebook, Game Master’s Guide, and FAQ."
+    "desc": "Official three-page Wings of Atreia Character Sheet guide, field guidance, sheet maintenance, and future player downloads."
   },
   {
     "title": "Specialization Reassignment",
     "url": "rules/advancement.html#specialization-reassignment",
     "desc": "Change or switch class Specialization at Levels 6, 10, and 14; replace the previous path's entire feature package; no mixing Specialization features; Level 14 final normal choice."
+  },
+  {
+    "title": "History of Atreia",
+    "url": "world/history.html",
+    "desc": "Player-safe lore from ancient Atreia, the rise of the Balaur and Millennium War through the Cataclysm, Elysea and Asmodae, and the opening phase of the Abyss War."
   }
 ]
