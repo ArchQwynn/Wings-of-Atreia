@@ -2,7 +2,7 @@
   {
     "title": "Beginner Guide",
     "url": "rules/beginner-guide.html",
-    "desc": "Start here: create your first Daeva, learn the basic d20 rule, combat turn structure, flight, spellcasting basics, and first-session preparation."
+    "desc": "Start here: create your first Daeva with the Character Manager, learn the basic d20 rule, combat turn structure, flight, spellcasting basics, and first-session preparation."
   },
   {
     "title": "Core Rules",
@@ -32,7 +32,7 @@
   {
     "title": "Character Creation",
     "url": "rules/character-creation.html",
-    "desc": "Player rules reference."
+    "desc": "Create your Daeva and enter its starting information in the Wings of Atreia Character Manager."
   },
   {
     "title": "Advancement, Feats & Boons",
@@ -695,9 +695,9 @@
     "desc": "Common Wings of Atreia questions: fixed array, multiclassing, Help, Grapple/Shove, Prone, spell slots, Concentration, Spell Advancement, Daeva Points, Ultimate miss choices, Flight, Professions, Warfronts and class resources. Includes Specialization Reassignment."
   },
   {
-    "title": "Downloads & Character Sheet",
+    "title": "Downloads",
     "url": "rules/downloads.html",
-    "desc": "Official three-page Wings of Atreia Character Sheet guide, field guidance, sheet maintenance, and future player downloads."
+    "desc": "Future download area for the Player Handbook, Core Rulebook, Game Master’s Guide, and FAQ."
   },
   {
     "title": "Specialization Reassignment",
