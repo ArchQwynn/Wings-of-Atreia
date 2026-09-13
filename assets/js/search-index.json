@@ -708,5 +708,120 @@
     "title": "History of Atreia",
     "url": "world/history.html",
     "desc": "Player-safe lore from ancient Atreia, the rise of the Balaur and Millennium War through the Cataclysm, Elysea and Asmodae, and the opening phase of the Abyss War."
+  },
+  {
+    "title": "Sanctum",
+    "url": "world/#sanctum",
+    "desc": "Sanctum is the monumental floating capital of Elysea, suspended above Oriel and visible as one of the great symbols of Elyos civilization. Its luminous plazas, temples, government halls, Legion offices, archives, and scholarly institutions make it a center of civic life as much as military power. The city was raised during the long southern reconstruction after the Cataclysm rather than surviving unchanged from ancient Atreia. Public ceremony, learning, art, diplomacy, and service all contribute to the capital’s cultivated identity."
+  },
+  {
+    "title": "Oriel",
+    "url": "world/#oriel",
+    "desc": "Oriel is the cultivated residential sanctuary directly beneath Sanctum on the same greater floating geography, not a distant island of its own. Gardens, estates, homes, workshops, and carefully maintained public spaces give it a gentler character than the monumental capital overhead. It reflects the domestic side of Elyos civilization: households, artistry, hospitality, and the patient work of maintaining a beautiful place to live. Its closeness to Sanctum ties everyday life directly to the political and religious heart of Elysea."
+  },
+  {
+    "title": "Poeta",
+    "url": "world/#poeta",
+    "desc": "Poeta is a fertile rural region of Elysea, defined by broad plains, farms, forests, and clear lakes. Akarios Village stands among a landscape that includes Cliona Lake, Daminu Forest, Kabarah Strip Mine, and Timolia Mine. Compared with the grandeur of Sanctum, Poeta feels close to the land and to the ordinary rhythms of food, work, family, and local community. Its pastoral appearance makes it one of the clearest expressions of the hospitable southern environment."
+  },
+  {
+    "title": "Verteron",
+    "url": "world/#verteron",
+    "desc": "Verteron is a temperate defensive frontier where plains, coastline, woodland, roads, and old ruins meet. Verteron Citadel anchors the region alongside Tolbas Village, Verteron Observatory, Cantas Coast, Tursin Garrison, Zumion Ruins, and the road leading toward Eltnen. Its settled routes are never entirely removed from military vigilance, giving the region the feel of civilization pressed against contested ground. Ancient remains and active defenses stand side by side across the landscape."
+  },
+  {
+    "title": "Eltnen",
+    "url": "world/#eltnen",
+    "desc": "Eltnen is Elysea’s distinctly arid region, a landscape of dry badlands, exposed stone, scarce water, and scattered greener pockets where life gathers. Its harsher terrain contrasts sharply with Poeta’s fertility and demonstrates that the southern realm is not uniformly lush. Settlements and travelers must respect distance, water, weather, and the limits imposed by the land. Ruins and isolated routes can feel especially exposed beneath the bright Elysean sky."
+  },
+  {
+    "title": "Heiron",
+    "url": "world/#heiron",
+    "desc": "Heiron is a forested and mountainous region of Elysea, rich in waterways, steep terrain, old roads, and places where wilderness can conceal history. Its dense landscapes and changes in elevation distinguish it from both arid Eltnen and rural Poeta. The region carries a strong sense of vigilance and memory, with civilization existing beside terrain that can quickly become difficult or dangerous. Water, forest, and stone shape both travel and settlement."
+  },
+  {
+    "title": "Theobomos",
+    "url": "world/#theobomos",
+    "desc": "Theobomos is a scorched and devastated eastern island whose landscape bears wounds that ordinary weather and time have not erased. Ruins, archaeological sites, burned terrain, and supernatural scars make it one of Elysea’s clearest reminders that the wars of Atreia can permanently change the land. The region is not simply empty destruction; expeditions, researchers, soldiers, and those reclaiming knowledge still have reasons to enter it. Its damaged environment gives every surviving structure and recovered record unusual weight."
+  },
+  {
+    "title": "Iluma",
+    "url": "world/#iluma",
+    "desc": "Iluma is a recognized region of Elysea associated with sacred archaeology and the recovery of ancient memory. It belongs to the wider WoA Gazetteer even though it is outside the first-wave continental atlas, so its exact map presentation is intentionally deferred. The region is best understood as a place where the remains of earlier Atreia carry religious, historical, and cultural importance. Its identity should come from discovery and reverence rather than from importing later events as predetermined canon."
+  },
+  {
+    "title": "Pandaemonium",
+    "url": "world/#pandaemonium",
+    "desc": "Pandaemonium is the monumental capital of Asmodae, a great center of government, military organization, scholarship, religion, trade, and culture beneath the northern darkness. It is a functioning city rather than a fortress pretending to be one, with institutions and households that reflect centuries of Asmodian reconstruction. Pernon occupies the southern portion of the same island and serves as the capital’s cultivated residential counterpart. The city embodies the Asmodian conviction that civilization can flourish in a world shaped by hardship."
+  },
+  {
+    "title": "Pernon",
+    "url": "world/#pernon",
+    "desc": "Pernon is the cultivated residential counterpart to Pandaemonium, occupying the southern portion of the same island rather than existing as a distant independent landmass. Homes, gardens, workshops, gathering places, and carefully maintained spaces show a quieter expression of Asmodian life. Its beauty is adapted to darkness, emphasizing shelter, craft, community, and the visual character of the northern realm. The region gives domestic life a place beside the monumental institutions of the capital."
+  },
+  {
+    "title": "Ishalgen",
+    "url": "world/#ishalgen",
+    "desc": "Ishalgen is a rugged island frontier whose terrain and isolated communities foster a strong sense of independence. Uneven ground, wilderness, exposed routes, and local settlements make the region feel removed from the monumental scale of Pandaemonium. Its people are accustomed to solving practical problems with limited support and to respecting dangers beyond settled ground. The landscape reflects the northern world without reducing it to a frozen wasteland."
+  },
+  {
+    "title": "Altgard",
+    "url": "world/#altgard",
+    "desc": "Altgard is a settled military frontier where Asmodian communities, roads, defenses, and patrol routes exist in close relationship with contested territory. Unlike the capital, its identity is shaped by the expectation that danger may arrive from beyond the next defended line. Soldiers and civilians share the same landscape, creating a region where preparedness is part of ordinary life. Its settlements demonstrate that a frontier can be both inhabited and militarily important."
+  },
+  {
+    "title": "Morheim",
+    "url": "world/#morheim",
+    "desc": "Morheim is a mountainous and highly varied region, with sharp changes in terrain that make travel and local conditions unpredictable. Its identity is one of adaptability and defiance: communities and travelers learn quickly that one part of the region cannot stand for the whole. The landscape carries scars from major conflicts, and portions of Morheim have been profoundly altered by supernatural cold. Even so, the region remains more than the disasters that have struck it."
+  },
+  {
+    "title": "Beluslan",
+    "url": "world/#beluslan",
+    "desc": "Beluslan is the most strongly snowbound and frozen of Asmodae’s major regions, defined by severe cold, ice, and landscapes where survival infrastructure matters. Its settlements and routes exist because generations learned how to live with the environment rather than waiting for it to become gentle. The region carries a strong reclamation identity, with inhabited places standing beside damaged, dangerous, or difficult territory. Snow and darkness are part of home here, not symbols of evil."
+  },
+  {
+    "title": "Brusthonin",
+    "url": "world/#brusthonin",
+    "desc": "Brusthonin is a damaged but still living region shaped by contamination, loss, and long efforts at recovery. Parts of the land carry the consequences of Beritra-linked devastation, yet the region should never be presented as uniformly dead or beyond hope. Settlements, reclaimed ground, and people committed to restoration exist beside places that remain hazardous. Its defining cultural theme is patient recovery rather than simple ruin."
+  },
+  {
+    "title": "Norsvold",
+    "url": "world/#norsvold",
+    "desc": "Norsvold is a recognized Asmodian region associated with sacred memory and the deeper historical identity of the northern people. It remains part of the WoA Gazetteer while sitting outside the first-wave continental atlas, so detailed map production is intentionally deferred. Its significance lies in places where history, belief, and the Asmodian experience of survival intersect. The region should be developed from WoA canon rather than treated as a requirement to reproduce later source-story outcomes."
+  },
+  {
+    "title": "Lower Abyss",
+    "url": "world/#lower-abyss",
+    "desc": "The Lower Abyss occupies the portion of Reshanta nearer Elysea, a vast aerial theater of floating landmasses separated by open voids. Terminon is the enduring Elyos staging base and a crucial point of support for operations in the region. Fortresses and routes beyond that permanent bridgehead can change hands as the campaign develops, so the military map is never completely static. Flight is fundamental here because enormous gaps make ordinary ground travel insufficient."
+  },
+  {
+    "title": "Upper Abyss",
+    "url": "world/#upper-abyss",
+    "desc": "The Upper Abyss lies nearer Asmodae and shares the shattered aerial geography that defines Reshanta. Primum is the enduring Asmodian staging base, providing a lasting foothold amid territory whose other fortresses may change control through the campaign. Floating islands, fortress positions, open gaps, and exposed flight paths make geography inseparable from military planning. The region is physical space within Atreia, not another dimension."
+  },
+  {
+    "title": "Core / Eye of Reshanta",
+    "url": "world/#core-eye-of-reshanta",
+    "desc": "The Core, also called the Eye of Reshanta, occupies the central strategic heart of the Abyss between Elysea and Asmodae. It is the most symbolically and militarily charged part of Reshanta, centered on the Divine Fortress and the central Balaur order that holds the starting-era position. Tower remnants and the immense broken interior of Atreia dominate the surrounding sense of scale. Reaching the Core means moving toward the center of a war that has endured for centuries."
+  },
+  {
+    "title": "Inggison",
+    "url": "world/#inggison",
+    "desc": "Inggison is the principal Elyos foothold on the known Balaurean frontier, reached through stable physical routes that can support real military logistics. It combines dangerous wilderness, ancient Balaur infrastructure, fortress corridors, expeditionary positions, and contact with peoples who have lived under Balaur pressure far longer than most Elyos newcomers. The region is a foothold, not a conquered province, and maintained routes become less certain as expeditions move beyond established corridors. Its approaches also form one side of the strategic access toward Silentera."
+  },
+  {
+    "title": "Gelkmaros",
+    "url": "world/#gelkmaros",
+    "desc": "Gelkmaros is the principal Asmodian foothold on the known Balaurean frontier, a dangerous outer-world region of wilderness, Balaur infrastructure, refugee communities, fortress corridors, and routes toward Silentera. Gelkmaros Fortress anchors Asmodian operations, while places such as Rhonnam Refugee Village, Vorgaltem Citadel, Crimson Temple, and other outposts reveal a frontier shared with communities that are not simply extensions of Asmodae. Old Balaur routes and structures remain embedded in the landscape. Control is practical and local rather than absolute."
+  },
+  {
+    "title": "Silentera Canyon",
+    "url": "world/#silentera-canyon",
+    "desc": "Silentera Canyon is a vast physical subterranean network of canyons, tunnels, chambers, ruins, and hidden routes linking the Inggison and Gelkmaros frontiers. It is neither a Rift network nor a separate dimension; Daevas enter an actual deep fracture system beneath the Balaurean frontier. No single modern faction controls the whole network, and knowledge of one mapped corridor does not imply knowledge of every branch. Beshmundir Temple is the greatest known deep site associated with these routes."
+  },
+  {
+    "title": "Greater Balaurea",
+    "url": "world/#balaurea",
+    "desc": "The largely unmapped outer world beyond the known Inggison, Gelkmaros, and Silentera frontier."
   }
 ]
