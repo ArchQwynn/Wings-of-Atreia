@@ -1,5 +1,47 @@
 [
   {
+    "title": "New Player Start Here",
+    "url": "start-here.html",
+    "desc": "Guided 10–15 minute introduction for new Wings of Atreia players: faction, class, essential rules, Character Manager, campaign start, and Session 0 Ascension.",
+    "text": "new player start here beginner onboarding introduction faction class essential rules Character Manager campaign start Session 0 Ascension Wings Daeva",
+    "kind": "landing"
+  },
+  {
+    "title": "Choose Your Faction",
+    "url": "start-here.html#faction",
+    "desc": "Beginner overview of choosing Elyos or Asmodian without mechanical faction bonuses.",
+    "text": "Elyos Asmodian faction Elysea Asmodae choose side beginner culture homeland Seraphim Shedim",
+    "kind": "section"
+  },
+  {
+    "title": "Find Your Class",
+    "url": "start-here.html#class",
+    "desc": "Quick playstyle guide to all 11 playable classes.",
+    "text": "Gladiator Templar Assassin Ranger Sorcerer Spiritmaster Cleric Chanter Aethertech Gunslinger Songweaver class playstyle choose class",
+    "kind": "section"
+  },
+  {
+    "title": "First Rules to Learn",
+    "url": "start-here.html#essentials",
+    "desc": "Core resolution, combat-turn basics, Level 1 class features, and Flight for new players.",
+    "text": "d20 action movement bonus action reaction flight Combat Flight Slots beginner rules first session",
+    "kind": "section"
+  },
+  {
+    "title": "Character Manager for New Players",
+    "url": "start-here.html#character-manager",
+    "desc": "Create and track your Daeva through the official Wings of Atreia Character Manager.",
+    "text": "Character Manager character creation ability array 16 14 14 12 10 8 background skills equipment inventory spells",
+    "kind": "section"
+  },
+  {
+    "title": "Session 0 — Ascension",
+    "url": "start-here.html#session-zero",
+    "desc": "Prepare an unascended character for Session 0, Ascension, and receiving their Wings.",
+    "text": "Session 0 Session Zero Ascension unascended mortal Daeva receive Wings starting character",
+    "kind": "section"
+  },
+  {
     "title": "Beginner Guide",
     "url": "rules/beginner-guide.html",
     "desc": "Start here: create your first Daeva, learn the basic d20 rule, combat turn structure, flight, spellcasting basics, and first-session preparation.",
