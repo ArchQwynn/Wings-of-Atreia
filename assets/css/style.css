@@ -324,3 +324,30 @@ main {
   outline-offset: -1px;
 }
 .search-empty mark { background: transparent; }
+
+/* Progressive Web App install affordance */
+.pwa-install-button {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 1200;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  background: #0d2236;
+  color: var(--text);
+  padding: .7rem 1rem;
+  font: inherit;
+  font-weight: 800;
+  letter-spacing: .02em;
+  box-shadow: 0 10px 30px rgba(0,0,0,.32);
+  cursor: pointer;
+}
+.pwa-install-button:hover,
+.pwa-install-button:focus-visible {
+  background: #15314a;
+  outline: 2px solid rgba(127,200,255,.35);
+  outline-offset: 2px;
+}
+@media (max-width: 600px) {
+  .pwa-install-button { right: .75rem; bottom: .75rem; }
+}
