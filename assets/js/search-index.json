@@ -6634,5 +6634,33 @@
     "desc": "Fregion, Meslamtaeda, Ereshkigal, Beritra, Tiamat, and Apsu; the supreme Balaur powers and their spoiler-safe roles toward player characters.",
     "text": "The Six Dragon Lords The Dragon Lords are the supreme powers of the Balaur and represent threats on a scale far beyond ordinary soldiers or monsters. Their names are known through history, warfare, rumor, and the devastation associated with Balaur dominion. Player characters are far more likely to encounter their armies, agents, fortresses, schemes, and consequences before ever standing before a Dragon Lord directly. Fregion — Dragon Lord of Fire Fregion is remembered as the first Dragon Lord and the beginning of the transformation that produced the Balaur order. To players, his name represents the oldest and greatest shadow behind Balaur power. Any direct involvement with Fregion belongs to the highest scale of Daeva conflict rather than ordinary adventuring. Meslamtaeda — Dragon Lord of Rage and Destruction Meslamtaeda embodies overwhelming destructive power among the Dragon Lords. Players should understand his influence through the fear, devastation, and military consequences associated with forces acting beneath such a ruler. Confronting power of this magnitude is not the same as facing a conventional battlefield commander. Ereshkigal — Dragon Lord of Ice and Justice Ereshkigal is one of the great Balaur powers whose name is bound to the long struggle surrounding the Abyss. For players, she represents a strategic power capable of shaping entire theaters of war rather than merely individual encounters. Her deeper circumstances in the Present Age are intentionally left for discovery during play. Beritra — Dragon Lord of Darkness Beritra is a Dragon Lord whose power extends through Balaur forces, plans, and conflicts reaching beyond any single region. Player characters may experience that influence through enemies and events long before understanding the full design behind them. His true objectives and present movements are matters for the campaign to reveal. Tiamat — Dragon Lord of Earth and Death Tiamat commands power associated with conquest, warfare, and Balaur dominion. To beginning Daevas, her name belongs to the class of enemies capable of moving armies and changing the fate of territories. What she seeks in the Present Age—and how her struggles with other Balaur powers affect Atreia—should emerge through play. Apsu — Dragon Lord of Wind Apsu is counted among the Six Dragon Lords and remains part of the history and power structure players inherit at the start of the campaign. Public knowledge does not provide beginning characters with a complete account of his present circumstances. His deeper role is therefore deliberately left unexplained here so that the campaign can reveal it at the proper time. What the Lords mean to your character: Empyrean Lords can stand behind the institutions, duties, beliefs, and authorities that shape a Daeva’s life, while Dragon Lords define the scale of the Balaur threat looming over both factions. Neither group should be reduced to a list of quest-givers or boss fights. As the campaign grows, the players’ relationship to these powers can change from distant history and military consequence to direct choices capable of affecting Atreia itself.",
     "kind": "section"
+  },
+  {
+    "title": "Rules Compendium",
+    "url": "rules/compendium.html",
+    "desc": "Find a WoA rule fast. Browse player rules by category or use the A–Z lookup for common table terms.",
+    "text": "rules compendium find a rule fast actions conditions combat flight spellcasting daeva points equipment professions advancement warfronts A-Z index",
+    "kind": "landing"
+  },
+  {
+    "title": "Rules Compendium — At the Table Right Now",
+    "url": "rules/compendium.html",
+    "desc": "Fast links to actions, conditions, flight, spellcasting, Daeva Points, Ultimates, equipment quality, and Aether enhancement.",
+    "text": "actions bonus actions reactions conditions flight aerial combat spellcasting cooldown rest daeva points dp ultimates equipment quality aether enhancement",
+    "kind": "section"
+  },
+  {
+    "title": "Rules Compendium — Character & Advancement",
+    "url": "rules/compendium.html",
+    "desc": "Character creation, advancement, ASI, Feats, Empyrean Boons, Backgrounds, and Specialization reassignment.",
+    "text": "character creation advancement leveling milestone asi feat feats empyrean boons backgrounds specialization reassignment",
+    "kind": "section"
+  },
+  {
+    "title": "Rules Compendium — A–Z Rules Lookup",
+    "url": "rules/compendium.html#a-z-index",
+    "desc": "Alphabetical lookup for common WoA rules terms including Exhaustion, Flight Slots, Kinah, Poisoned, Shields, Spell Advancement, Ultimate Abilities, War Assets, and Wings.",
+    "text": "A-Z alphabetical rules lookup exhaustion flight slots kinah poisoned shields spell advancement ultimate abilities war assets wings d20 tests advantage disadvantage saving throws temporary hp",
+    "kind": "section"
   }
 ]
