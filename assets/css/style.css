@@ -72,6 +72,8 @@ a:hover { color: var(--accent-2); }
   display: flex;
   gap: .5rem;
   align-items: center;
+  position: relative;
+  z-index: 1000;
 }
 
 .search-box input {
@@ -213,13 +215,20 @@ main {
 
 .search-results {
   display: none;
-  max-width: 760px;
-  margin: 1.25rem auto 0;
+  position: absolute;
+  top: calc(100% + .55rem);
+  right: 0;
+  width: min(520px, calc(100vw - 2rem));
+  max-height: min(70vh, 560px);
+  margin: 0;
   text-align: left;
   border: 1px solid var(--line);
   border-radius: .85rem;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: #081728;
+  box-shadow: 0 18px 45px rgba(0,0,0,.45);
+  z-index: 2000;
 }
 
 .search-results.active { display: block; }
@@ -228,7 +237,11 @@ main {
   display: block;
   padding: .9rem 1rem;
   border-bottom: 1px solid var(--line);
+  background: #081728;
 }
+
+.search-result:hover,
+.search-result:focus { background: #10283f; }
 
 .search-result:last-child { border-bottom: 0; }
 .search-result small { display: block; color: var(--muted); }
@@ -254,6 +267,7 @@ main {
   .nav-links { margin-left: 0; width: 100%; }
   .search-box { width: 100%; }
   .search-box input { width: 100%; max-width: none; }
+  .search-results { left: 0; right: auto; width: 100%; }
   .card-grid { grid-template-columns: 1fr; }
   .topic-list { grid-template-columns: 1fr; }
   .hero { padding-top: 4rem; }
