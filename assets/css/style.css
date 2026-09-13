@@ -272,3 +272,55 @@ main {
   .topic-list { grid-template-columns: 1fr; }
   .hero { padding-top: 4rem; }
 }
+
+/* Enhanced search result context — categories, excerpts, and match highlighting */
+.search-summary {
+  padding: .5rem .8rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .78rem;
+  letter-spacing: .04em;
+}
+.search-result-meta {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  margin-bottom: .18rem;
+  color: var(--muted);
+  font-size: .72rem;
+  line-height: 1.2;
+}
+.search-category {
+  display: inline-flex;
+  align-items: center;
+  padding: .12rem .42rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(127,200,255,.07);
+  color: var(--accent-2);
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.search-result strong {
+  display: block;
+  line-height: 1.25;
+}
+.search-result small {
+  margin-top: .22rem;
+  line-height: 1.35;
+}
+.search-result mark {
+  padding: 0 .08em;
+  border-radius: .16em;
+  background: rgba(255, 215, 94, .24);
+  color: inherit;
+  font-weight: 800;
+}
+.search-result.is-active {
+  background: #10283f;
+  outline: 1px solid rgba(127,200,255,.22);
+  outline-offset: -1px;
+}
+.search-empty mark { background: transparent; }
