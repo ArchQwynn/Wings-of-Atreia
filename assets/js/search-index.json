@@ -1,5 +1,12 @@
 [
   {
+    "title": "Glossary & Core Terms",
+    "url": "rules/glossary.html",
+    "desc": "Expanded A–Z player glossary with cross-links to complete Wings of Atreia rules, classes, equipment, spellcasting, world, and Warfront references.",
+    "text": "glossary definitions core terms terminology A-Z rules reference cross links",
+    "kind": "glossary"
+  },
+  {
     "title": "New Player Start Here",
     "url": "start-here.html",
     "desc": "Guided 10–15 minute introduction for new Wings of Atreia players: faction, class, essential rules, Character Manager, campaign start, and Session 0 Ascension.",
@@ -1540,13 +1547,6 @@
     "kind": "page"
   },
   {
-    "title": "Core Terms Every Player Should Know",
-    "url": "rules/glossary.html#core-terms-every-player-should-know",
-    "desc": "Term Meaning at the Table Action Your main turn action. Bonus Action A secondary action available only when a feature, spell or rule explicitly gives an option using it. Reaction A response to a trigger, usually outside your turn. Normally one per round unless a feature grants another. Movement Distance you may travel during your turn, separate from your Act",
-    "text": "Core Terms Every Player Should Know Term Meaning at the Table Action Your main turn action. Bonus Action A secondary action available only when a feature, spell or rule explicitly gives an option using it. Reaction A response to a trigger, usually outside your turn. Normally one per round unless a feature grants another. Movement Distance you may travel during your turn, separate from your Action. Proficiency Bonus (PB) Universal proficiency modifier that rises with character level. Advantage / Disadvantage Roll two d20s and use the higher / lower. Genuine Combat A real encounter using initiative and combat timing; artificial combat cannot farm resources. Short Rest / Long Rest Recovery periods of 1 hour / 8 hours. Class Save DC Normally 8 + PB + the class ability identified by the class. Concentration Only one Concentration effect at a time; Incapacitated ends it. Secondary rider An extra effect caused by another feature; it does not recursively trigger the same engine unless explicitly permitted. Boss Action The dedicated off-turn special-action framework used by every ordinary Boss-rank monster as defined in its statblock. Lord Action The dedicated off-turn action framework used by Empyrean and Dragon Lords.",
-    "kind": "section"
-  },
-  {
     "title": "Counterpoint",
     "url": "spells/counterpoint.html",
     "desc": "Songweaver spell reference for Counterpoint.",
@@ -2434,13 +2434,6 @@
     "desc": "Exploration gliding requires at least 30 feet of descent, functioning open wings, and an Aether state that permits flight. It travels 3 feet horizontally per 1 foot descended, consumes neither Flight Time nor Flight Slots, always loses altitude, and has a 1-hour cooldown between glides. Master Glider improves the ratio to 4:1. ← Back to Rules",
     "text": "Gliding Exploration gliding requires at least 30 feet of descent, functioning open wings, and an Aether state that permits flight. It travels 3 feet horizontally per 1 foot descended, consumes neither Flight Time nor Flight Slots, always loses altitude, and has a 1-hour cooldown between glides. Master Glider improves the ratio to 4:1. ← Back to Rules",
     "kind": "section"
-  },
-  {
-    "title": "Glossary & Core Terms",
-    "url": "rules/glossary.html",
-    "desc": "The handbook's universal player terms with direct links to the larger rules systems where those terms are used.",
-    "text": "Glossary & Core Terms The handbook's universal player terms with direct links to the larger rules systems where those terms are used. Source: Wings of Atreia Player Handbook v3.10 — Publication Master, 8 September 2026. This page is a player-facing reference extracted from the handbook rather than a replacement ruleset. Core Terms Where to Look Next Core Terms Every Player Should Know Term Meaning at the Table Action Your main turn action. Bonus Action A secondary action available only when a feature, spell or rule explicitly gives an option using it. Reaction A response to a trigger, usually outside your turn. Normally one per round unless a feature grants another. Movement Distance you may travel during your turn, separate from your Action. Proficiency Bonus (PB) Universal proficiency modifier that rises with character level. Advantage / Disadvantage Roll two d20s and use the higher / lower. Genuine Combat A real encounter using initiative and combat timing; artificial combat cannot farm resources. Short Rest / Long Rest Recovery periods of 1 hour / 8 hours. Class Save DC Normally 8 + PB + the class ability identified by the class. Concentration Only one Concentration effect at a time; Incapacitated ends it. Secondary rider An extra effect caused by another feature; it does not recursively trigger the same engine unless explicitly permitted. Boss Action The dedicated off-turn special-action framework used by every ordinary Boss-rank monster as defined in its statblock. Lord Action The dedicated off-turn action framework used by Empyrean and Dragon Lords. Where to Look Next Class resources: use your individual Class page or the Class Resource Quick Guide in Quick Reference . Spell terminology: use Aether & Spellcasting and the Spell Library . Warfront terminology: use Legions & Complete Abyss Warfront System . Equipment terminology: use Equipment and Professions & Economy . ← Back to Rules",
-    "kind": "page"
   },
   {
     "title": "Grace Techniques",
@@ -6573,13 +6566,6 @@
     "kind": "section"
   },
   {
-    "title": "Where to Look Next",
-    "url": "rules/glossary.html#where-to-look-next",
-    "desc": "Class resources: use your individual Class page or the Class Resource Quick Guide in Quick Reference . Spell terminology: use Aether & Spellcasting and the Spell Library . Warfront terminology: use Legions & Complete Abyss Warfront System . Equipment terminology: use Equipment and Professions & Economy . ← Back to Rules",
-    "text": "Where to Look Next Class resources: use your individual Class page or the Class Resource Quick Guide in Quick Reference . Spell terminology: use Aether & Spellcasting and the Spell Library . Warfront terminology: use Legions & Complete Abyss Warfront System . Equipment terminology: use Equipment and Professions & Economy . ← Back to Rules",
-    "kind": "section"
-  },
-  {
     "title": "Wind Blade",
     "url": "spells/wind-blade.html",
     "desc": "Sorcerer spell reference for Wind Blade.",
@@ -6662,5 +6648,327 @@
     "desc": "Alphabetical lookup for common WoA rules terms including Exhaustion, Flight Slots, Kinah, Poisoned, Shields, Spell Advancement, Ultimate Abilities, War Assets, and Wings.",
     "text": "A-Z alphabetical rules lookup exhaustion flight slots kinah poisoned shields spell advancement ultimate abilities war assets wings d20 tests advantage disadvantage saving throws temporary hp",
     "kind": "section"
+  },
+  {
+    "title": "Action",
+    "url": "rules/glossary.html#action",
+    "desc": "Your main turn action. Many attacks, spells, class features, and other options specify that they use your Action.",
+    "text": "Action Your main turn action. Many attacks, spells, class features, and other options specify that they use your Action. Combat",
+    "kind": "glossary"
+  },
+  {
+    "title": "Advantage / Disadvantage",
+    "url": "rules/glossary.html#advantage-disadvantage",
+    "desc": "Roll two d20s and use the higher result for Advantage or the lower result for Disadvantage.",
+    "text": "Advantage / Disadvantage Roll two d20s and use the higher result for Advantage or the lower result for Disadvantage. Core Resolution",
+    "kind": "glossary"
+  },
+  {
+    "title": "Aether",
+    "url": "rules/glossary.html#aether",
+    "desc": "The supernatural power that underlies Daeva abilities, spellcasting, flight, and many extraordinary phenomena in Atreia.",
+    "text": "Aether The supernatural power that underlies Daeva abilities, spellcasting, flight, and many extraordinary phenomena in Atreia. Aether & Spellcasting",
+    "kind": "glossary"
+  },
+  {
+    "title": "Aether Enhancement",
+    "url": "rules/glossary.html#aether-enhancement",
+    "desc": "The higher equipment-quality path beyond Profession +2. Aether upgrades are level-gated and handled separately from ordinary Profession work.",
+    "text": "Aether Enhancement The higher equipment-quality path beyond Profession +2. Aether upgrades are level-gated and handled separately from ordinary Profession work. Equipment",
+    "kind": "glossary"
+  },
+  {
+    "title": "Ascension",
+    "url": "rules/glossary.html#ascension",
+    "desc": "The transformation by which a mortal becomes a Daeva and receives Wings. WoA begins with this event in Session 0.",
+    "text": "Ascension The transformation by which a mortal becomes a Daeva and receives Wings. WoA begins with this event in Session 0. Character Creation",
+    "kind": "glossary"
+  },
+  {
+    "title": "At-Will",
+    "url": "rules/glossary.html#at-will",
+    "desc": "A spell or ability frequency that may be used whenever its normal action and other requirements are met.",
+    "text": "At-Will A spell or ability frequency that may be used whenever its normal action and other requirements are met. Aether & Spellcasting",
+    "kind": "glossary"
+  },
+  {
+    "title": "Background",
+    "url": "rules/glossary.html#background",
+    "desc": "A character-creation choice representing experience and identity before or around Ascension; it provides its defined skills and related benefits.",
+    "text": "Background A character-creation choice representing experience and identity before or around Ascension; it provides its defined skills and related benefits. Backgrounds",
+    "kind": "glossary"
+  },
+  {
+    "title": "Bonus Action",
+    "url": "rules/glossary.html#bonus-action",
+    "desc": "A secondary turn action available only when a feature, spell, or rule explicitly gives an option that uses it.",
+    "text": "Bonus Action A secondary turn action available only when a feature, spell, or rule explicitly gives an option that uses it. Combat",
+    "kind": "glossary"
+  },
+  {
+    "title": "Character Manager",
+    "url": "rules/glossary.html#character-manager",
+    "desc": "The official WoA character-management method for creation records, advancement, current resources, equipment, spells, and other tracked character data.",
+    "text": "Character Manager The official WoA character-management method for creation records, advancement, current resources, equipment, spells, and other tracked character data. Character Creation",
+    "kind": "glossary"
+  },
+  {
+    "title": "Class",
+    "url": "rules/glossary.html#class",
+    "desc": "Your Daeva’s primary mechanical path. WoA uses eleven classes and does not use multiclassing.",
+    "text": "Class Your Daeva’s primary mechanical path. WoA uses eleven classes and does not use multiclassing. Classes",
+    "kind": "glossary"
+  },
+  {
+    "title": "Class Resource",
+    "url": "rules/glossary.html#class-resource",
+    "desc": "A class-specific pool, charge, stance, meter, or other tracked mechanic defined by that class.",
+    "text": "Class Resource A class-specific pool, charge, stance, meter, or other tracked mechanic defined by that class. Quick Reference",
+    "kind": "glossary"
+  },
+  {
+    "title": "Class Save DC",
+    "url": "rules/glossary.html#class-save-dc",
+    "desc": "Normally 8 + Proficiency Bonus + the class ability identified by your class, unless a rule states otherwise.",
+    "text": "Class Save DC Normally 8 + Proficiency Bonus + the class ability identified by your class, unless a rule states otherwise. Core Resolution",
+    "kind": "glossary"
+  },
+  {
+    "title": "Concentration",
+    "url": "rules/glossary.html#concentration",
+    "desc": "A spell/effect limit: only one Concentration effect can be maintained at a time, and Incapacitated ends it. WoA does not use Concentration saving throws.",
+    "text": "Concentration A spell/effect limit: only one Concentration effect can be maintained at a time, and Incapacitated ends it. WoA does not use Concentration saving throws. Aether & Spellcasting",
+    "kind": "glossary"
+  },
+  {
+    "title": "Condition",
+    "url": "rules/glossary.html#condition",
+    "desc": "A named rules state such as Poisoned or Incapacitated that changes what a creature can do or how rolls affect it.",
+    "text": "Condition A named rules state such as Poisoned or Incapacitated that changes what a creature can do or how rolls affect it. Combat",
+    "kind": "glossary"
+  },
+  {
+    "title": "Cooldown",
+    "url": "rules/glossary.html#cooldown",
+    "desc": "A spell or ability frequency that becomes unavailable after use until its stated cooldown is satisfied; WoA also uses the universal out-of-combat cooldown rule where applicable.",
+    "text": "Cooldown A spell or ability frequency that becomes unavailable after use until its stated cooldown is satisfied; WoA also uses the universal out-of-combat cooldown rule where applicable. Aether & Spellcasting",
+    "kind": "glossary"
+  },
+  {
+    "title": "Daeva",
+    "url": "rules/glossary.html#daeva",
+    "desc": "An Ascended immortal warrior of Atreia. Player characters in Wings of Atreia are Daevas.",
+    "text": "Daeva An Ascended immortal warrior of Atreia. Player characters in Wings of Atreia are Daevas. Character Creation",
+    "kind": "glossary"
+  },
+  {
+    "title": "Daeva Points (DP)",
+    "url": "rules/glossary.html#daeva-points-dp",
+    "desc": "A resource unlocked at Level 10 and earned through participation in genuine combat victories. DP powers Ultimate Abilities and persists through rests.",
+    "text": "Daeva Points (DP) A resource unlocked at Level 10 and earned through participation in genuine combat victories. DP powers Ultimate Abilities and persists through rests. Daeva Points & Ultimates",
+    "kind": "glossary"
+  },
+  {
+    "title": "Empyrean Boon",
+    "url": "rules/glossary.html#empyrean-boon",
+    "desc": "A powerful universal character option gained at Level 19 according to the advancement rules.",
+    "text": "Empyrean Boon A powerful universal character option gained at Level 19 according to the advancement rules. Feats & Empyrean Boons",
+    "kind": "glossary"
+  },
+  {
+    "title": "Empyrean Lord",
+    "url": "rules/glossary.html#empyrean-lord",
+    "desc": "One of the great Daeva Lords whose authority and legacy shape Elyos and Asmodian civilization, together with the two historic Tower Guardians.",
+    "text": "Empyrean Lord One of the great Daeva Lords whose authority and legacy shape Elyos and Asmodian civilization, together with the two historic Tower Guardians. World",
+    "kind": "glossary"
+  },
+  {
+    "title": "Faction",
+    "url": "rules/glossary.html#faction",
+    "desc": "Your character’s allegiance as Elyos or Asmodian. Faction affects culture, homeland, and campaign relationships rather than class statistics.",
+    "text": "Faction Your character’s allegiance as Elyos or Asmodian. Faction affects culture, homeland, and campaign relationships rather than class statistics. Character Creation",
+    "kind": "glossary"
+  },
+  {
+    "title": "Feat",
+    "url": "rules/glossary.html#feat",
+    "desc": "A universal character option chosen at designated advancement points instead of an Ability Score Improvement where the rules allow it.",
+    "text": "Feat A universal character option chosen at designated advancement points instead of an Ability Score Improvement where the rules allow it. Feats & Empyrean Boons",
+    "kind": "glossary"
+  },
+  {
+    "title": "Flight Slot",
+    "url": "rules/glossary.html#flight-slot",
+    "desc": "A tracked unit of a Daeva’s flight capacity. The number of Flight Slots increases with character level.",
+    "text": "Flight Slot A tracked unit of a Daeva’s flight capacity. The number of Flight Slots increases with character level. Flight",
+    "kind": "glossary"
+  },
+  {
+    "title": "Genuine Combat",
+    "url": "rules/glossary.html#genuine-combat",
+    "desc": "A real encounter using initiative and combat timing. Artificial encounters cannot be used to farm resources such as Daeva Points.",
+    "text": "Genuine Combat A real encounter using initiative and combat timing. Artificial encounters cannot be used to farm resources such as Daeva Points. Combat",
+    "kind": "glossary"
+  },
+  {
+    "title": "Implement",
+    "url": "rules/glossary.html#implement",
+    "desc": "A spellcasting equipment category that can follow the established quality and enhancement progression.",
+    "text": "Implement A spellcasting equipment category that can follow the established quality and enhancement progression. Equipment",
+    "kind": "glossary"
+  },
+  {
+    "title": "Kinah",
+    "url": "rules/glossary.html#kinah",
+    "desc": "The standard currency used for purchases, profession training, supplies, and other economic transactions.",
+    "text": "Kinah The standard currency used for purchases, profession training, supplies, and other economic transactions. Professions & Economy",
+    "kind": "glossary"
+  },
+  {
+    "title": "Legendary Equipment",
+    "url": "rules/glossary.html#legendary-equipment",
+    "desc": "Story-driven top-tier equipment above the Aether enhancement tiers. Legendary items are not ordinary Profession products.",
+    "text": "Legendary Equipment Story-driven top-tier equipment above the Aether enhancement tiers. Legendary items are not ordinary Profession products. Equipment",
+    "kind": "glossary"
+  },
+  {
+    "title": "Long Rest",
+    "url": "rules/glossary.html#long-rest",
+    "desc": "An 8-hour recovery period. What it restores depends on the specific class, spell, feature, or rule.",
+    "text": "Long Rest An 8-hour recovery period. What it restores depends on the specific class, spell, feature, or rule. Combat",
+    "kind": "glossary"
+  },
+  {
+    "title": "Lord Action",
+    "url": "rules/glossary.html#lord-action",
+    "desc": "The dedicated off-turn action framework used by Empyrean Lords and Dragon Lords.",
+    "text": "Lord Action The dedicated off-turn action framework used by Empyrean Lords and Dragon Lords. Combat",
+    "kind": "glossary"
+  },
+  {
+    "title": "Milestone Advancement",
+    "url": "rules/glossary.html#milestone-advancement",
+    "desc": "WoA’s advancement method. Characters gain levels through campaign milestones rather than experience-point totals.",
+    "text": "Milestone Advancement WoA’s advancement method. Characters gain levels through campaign milestones rather than experience-point totals. Advancement",
+    "kind": "glossary"
+  },
+  {
+    "title": "Movement",
+    "url": "rules/glossary.html#movement",
+    "desc": "The distance you may travel during your turn, separate from your Action.",
+    "text": "Movement The distance you may travel during your turn, separate from your Action. Combat",
+    "kind": "glossary"
+  },
+  {
+    "title": "Multiclassing",
+    "url": "rules/glossary.html#multiclassing",
+    "desc": "Combining levels from multiple classes. Wings of Atreia does not use multiclassing.",
+    "text": "Multiclassing Combining levels from multiple classes. Wings of Atreia does not use multiclassing. Advancement",
+    "kind": "glossary"
+  },
+  {
+    "title": "Profession",
+    "url": "rules/glossary.html#profession",
+    "desc": "A trained downtime discipline used for approved upgrades, consumables, meals, or related work. A character can have only one Active Profession at a time.",
+    "text": "Profession A trained downtime discipline used for approved upgrades, consumables, meals, or related work. A character can have only one Active Profession at a time. Professions & Economy",
+    "kind": "glossary"
+  },
+  {
+    "title": "Proficiency Bonus (PB)",
+    "url": "rules/glossary.html#proficiency-bonus-pb",
+    "desc": "The universal proficiency modifier that rises with character level and is added wherever a rule says you are proficient.",
+    "text": "Proficiency Bonus (PB) The universal proficiency modifier that rises with character level and is added wherever a rule says you are proficient. Core Resolution",
+    "kind": "glossary"
+  },
+  {
+    "title": "Reaction",
+    "url": "rules/glossary.html#reaction",
+    "desc": "A response to a trigger, usually outside your own turn. Normally you have one Reaction per round unless a feature explicitly grants another.",
+    "text": "Reaction A response to a trigger, usually outside your own turn. Normally you have one Reaction per round unless a feature explicitly grants another. Combat",
+    "kind": "glossary"
+  },
+  {
+    "title": "Rest Spell",
+    "url": "rules/glossary.html#rest-spell",
+    "desc": "A spell frequency that refreshes after the specified Short Rest or Long Rest rather than by cooldown.",
+    "text": "Rest Spell A spell frequency that refreshes after the specified Short Rest or Long Rest rather than by cooldown. Aether & Spellcasting",
+    "kind": "glossary"
+  },
+  {
+    "title": "Secondary Rider",
+    "url": "rules/glossary.html#secondary-rider",
+    "desc": "An extra effect caused by another feature. A secondary rider does not recursively trigger the same engine unless the rules explicitly permit it.",
+    "text": "Secondary Rider An extra effect caused by another feature. A secondary rider does not recursively trigger the same engine unless the rules explicitly permit it. Core Resolution",
+    "kind": "glossary"
+  },
+  {
+    "title": "Session 0: Ascension",
+    "url": "rules/glossary.html#session-0-ascension",
+    "desc": "The default WoA opening in which player characters begin unascended, undergo Ascension, and receive their Wings before the wider campaign begins.",
+    "text": "Session 0: Ascension The default WoA opening in which player characters begin unascended, undergo Ascension, and receive their Wings before the wider campaign begins. Character Creation",
+    "kind": "glossary"
+  },
+  {
+    "title": "Shield",
+    "url": "rules/glossary.html#shield",
+    "desc": "A defensive equipment category with its own enhancement path. Shields do not use the Profession +1/+2 upgrade stages.",
+    "text": "Shield A defensive equipment category with its own enhancement path. Shields do not use the Profession +1/+2 upgrade stages. Equipment",
+    "kind": "glossary"
+  },
+  {
+    "title": "Short Rest",
+    "url": "rules/glossary.html#short-rest",
+    "desc": "A 1-hour recovery period. What it restores depends on the specific class, spell, feature, or rule.",
+    "text": "Short Rest A 1-hour recovery period. What it restores depends on the specific class, spell, feature, or rule. Combat",
+    "kind": "glossary"
+  },
+  {
+    "title": "Specialization",
+    "url": "rules/glossary.html#specialization",
+    "desc": "A class path first chosen at Level 3. WoA allows reassignment decisions at the established Level 6, 10, and 14 checkpoints.",
+    "text": "Specialization A class path first chosen at Level 3. WoA allows reassignment decisions at the established Level 6, 10, and 14 checkpoints. Classes",
+    "kind": "glossary"
+  },
+  {
+    "title": "Spell Advancement",
+    "url": "rules/glossary.html#spell-advancement",
+    "desc": "When a spell advances, its Spell Level increases by +1. If that new Spell Level is not referenced by the spell’s scaling or milestones, record the new level but make no other mechanical change.",
+    "text": "Spell Advancement When a spell advances, its Spell Level increases by +1. If that new Spell Level is not referenced by the spell’s scaling or milestones, record the new level but make no other mechanical change. Aether & Spellcasting",
+    "kind": "glossary"
+  },
+  {
+    "title": "Spell Level",
+    "url": "rules/glossary.html#spell-level",
+    "desc": "A spell’s advancement value. It is distinct from character level and changes through the Spell Advancement rules.",
+    "text": "Spell Level A spell’s advancement value. It is distinct from character level and changes through the Spell Advancement rules. Aether & Spellcasting",
+    "kind": "glossary"
+  },
+  {
+    "title": "Ultimate Ability",
+    "url": "rules/glossary.html#ultimate-ability",
+    "desc": "A powerful class ability unlocked at Level 10 that uses Daeva Points and follows the universal Ultimate activation and miss rules.",
+    "text": "Ultimate Ability A powerful class ability unlocked at Level 10 that uses Daeva Points and follows the universal Ultimate activation and miss rules. Daeva Points & Ultimates",
+    "kind": "glossary"
+  },
+  {
+    "title": "War Asset (WA)",
+    "url": "rules/glossary.html#war-asset-wa",
+    "desc": "The strategic resource used by the Abyss Warfront system for armies, units, and fortress-scale conflict.",
+    "text": "War Asset (WA) The strategic resource used by the Abyss Warfront system for armies, units, and fortress-scale conflict. Legions & Warfronts",
+    "kind": "glossary"
+  },
+  {
+    "title": "Warfare",
+    "url": "rules/glossary.html#warfare",
+    "desc": "Large-scale Warfront play. Daeva Points and Ultimate Abilities are not usable in Warfare.",
+    "text": "Warfare Large-scale Warfront play. Daeva Points and Ultimate Abilities are not usable in Warfare. Legions & Warfronts",
+    "kind": "glossary"
+  },
+  {
+    "title": "Wings",
+    "url": "rules/glossary.html#wings",
+    "desc": "The physical and supernatural manifestation received through Ascension, enabling Daeva flight and following its own equipment-quality progression.",
+    "text": "Wings The physical and supernatural manifestation received through Ascension, enabling Daeva flight and following its own equipment-quality progression. Flight",
+    "kind": "glossary"
   }
 ]
