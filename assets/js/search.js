@@ -305,3 +305,83 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelector(".pwa-install-button")?.remove();
   });
 })();
+
+/* Wings of Atreia offline bundle status */
+(function initWoAOfflineStatus() {
+  if (!("serviceWorker" in navigator)) return;
+
+  const style = document.createElement("style");
+  style.textContent = `
+    .woa-offline-status{position:fixed;right:16px;bottom:16px;z-index:9998;max-width:min(340px,calc(100vw - 32px));font:600 13px/1.35 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .woa-offline-status button{width:100%;text-align:left;border:1px solid rgba(214,176,83,.45);background:rgba(8,19,31,.96);color:#f4ead2;border-radius:12px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,.28);cursor:pointer}
+    .woa-offline-status button:hover,.woa-offline-status button:focus{border-color:#d6b053;outline:none}
+    .woa-offline-status .row{display:flex;align-items:center;gap:8px}
+    .woa-offline-status .dot{width:9px;height:9px;border-radius:50%;background:#9aa6b2;flex:0 0 auto}
+    .woa-offline-status.ready .dot{background:#65c98b}
+    .woa-offline-status.preparing .dot{background:#d6b053}
+    .woa-offline-status.error .dot{background:#d06a6a}
+    .woa-offline-status .detail{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.12);font-weight:400;color:#c9d3dc}
+    .woa-offline-status.open .detail{display:block}
+    .woa-offline-status .detail strong{color:#f4ead2}
+    @media (max-width:640px){.woa-offline-status{right:10px;bottom:10px;max-width:calc(100vw - 20px)}}
+  `;
+  document.head.appendChild(style);
+
+  const wrap = document.createElement("div");
+  wrap.className = "woa-offline-status preparing";
+  wrap.innerHTML = `
+    <button type="button" aria-expanded="false" aria-label="Show offline reference status">
+      <div class="row"><span class="dot" aria-hidden="true"></span><span class="label">Offline Reference: Checking…</span></div>
+      <div class="detail"></div>
+    </button>`;
+  document.body.appendChild(wrap);
+
+  const button = wrap.querySelector("button");
+  const label = wrap.querySelector(".label");
+  const detail = wrap.querySelector(".detail");
+  button.addEventListener("click", () => {
+    const open = wrap.classList.toggle("open");
+    button.setAttribute("aria-expanded", String(open));
+  });
+
+  function render(status) {
+    wrap.classList.remove("ready", "preparing", "error");
+    const online = navigator.onLine;
+
+    if (status?.ready) {
+      wrap.classList.add("ready");
+      label.textContent = online ? "Offline Reference: Ready" : "Offline Reference: Ready · Offline";
+      detail.innerHTML = `<strong>Cached pages & assets:</strong> ${status.cached} / ${status.total}<br><strong>Offline bundle:</strong> Complete<br><strong>Bundle version:</strong> ${status.version}<br><strong>Bundle updated:</strong> ${status.updated}`;
+    } else if (status?.cached >= 0) {
+      wrap.classList.add("preparing");
+      label.textContent = "Offline Reference: Preparing…";
+      detail.innerHTML = `<strong>Cached pages & assets:</strong> ${status.cached} / ${status.total}<br>Keep this page open while the full WoA reference bundle finishes downloading.`;
+    } else {
+      wrap.classList.add("error");
+      label.textContent = online ? "Offline Reference: Not ready" : "Offline Reference: Status unavailable";
+      detail.innerHTML = online
+        ? "The offline bundle has not finished installing yet. Keep the site open online, then reload once installation completes."
+        : "Reconnect briefly so WoA can finish preparing the offline reference bundle.";
+    }
+  }
+
+  async function requestStatus() {
+    const registration = await navigator.serviceWorker.getRegistration();
+    const worker = navigator.serviceWorker.controller || registration?.active || registration?.waiting || registration?.installing;
+    if (!worker) return render(null);
+
+    const channel = new MessageChannel();
+    const timeout = setTimeout(() => render(null), 2500);
+    channel.port1.onmessage = event => {
+      clearTimeout(timeout);
+      render(event.data || null);
+    };
+    worker.postMessage({ type: "WOA_CACHE_STATUS" }, [channel.port2]);
+  }
+
+  window.addEventListener("online", requestStatus);
+  window.addEventListener("offline", requestStatus);
+  navigator.serviceWorker.addEventListener("controllerchange", () => setTimeout(requestStatus, 250));
+  window.addEventListener("load", () => setTimeout(requestStatus, 700));
+  setTimeout(requestStatus, 1200);
+})();
