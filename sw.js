@@ -1,5 +1,5 @@
-const CACHE_VERSION = "woa-pwa-20260914-1";
-const RUNTIME_CACHE = "woa-runtime-20260914-1";
+const CACHE_VERSION = "woa-pwa-20260914-2";
+const RUNTIME_CACHE = "woa-runtime-20260914-2";
 const PRECACHE = [
   "index.html",
   "offline.html",
@@ -166,18 +166,38 @@ function scopedUrl(path) {
   return new URL(path, self.registration.scope).href;
 }
 
+async function cachedMatch(requestOrUrl) {
+  return caches.match(requestOrUrl, { ignoreSearch: true });
+}
+
+function normalizedNavigationUrl(request) {
+  const url = new URL(request.url);
+  const scopePath = new URL(self.registration.scope).pathname;
+  let relative = url.pathname.startsWith(scopePath)
+    ? url.pathname.slice(scopePath.length)
+    : url.pathname.replace(/^\//, "");
+
+  if (!relative) relative = "index.html";
+  else if (relative.endsWith("/")) relative += "index.html";
+
+  return scopedUrl(relative);
+}
+
 self.addEventListener("install", event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_VERSION);
+
+    // The offline bundle is all-or-nothing. A new service worker only installs
+    // after every player-facing page and core asset has been downloaded.
     for (const path of PRECACHE) {
-      try {
-        const request = new Request(scopedUrl(path), { cache: "reload" });
-        const response = await fetch(request);
-        if (response.ok) await cache.put(request, response.clone());
-      } catch (_) {
-        // A missing optional page must never prevent installation.
+      const request = new Request(scopedUrl(path), { cache: "reload" });
+      const response = await fetch(request);
+      if (!response || !response.ok) {
+        throw new Error(`WoA offline precache failed for ${path}`);
       }
+      await cache.put(request, response.clone());
     }
+
     await self.skipWaiting();
   })());
 });
@@ -185,25 +205,38 @@ self.addEventListener("install", event => {
 self.addEventListener("activate", event => {
   event.waitUntil((async () => {
     const names = await caches.keys();
-    await Promise.all(names.filter(name => name.startsWith("woa-") && ![CACHE_VERSION, RUNTIME_CACHE].includes(name)).map(name => caches.delete(name)));
+    await Promise.all(
+      names
+        .filter(name => name.startsWith("woa-") && ![CACHE_VERSION, RUNTIME_CACHE].includes(name))
+        .map(name => caches.delete(name))
+    );
     await self.clients.claim();
   })());
 });
 
-async function networkFirst(request) {
+async function networkFirst(request, { navigation = false } = {}) {
   const runtime = await caches.open(RUNTIME_CACHE);
   try {
     const response = await fetch(request);
     if (response && response.ok) await runtime.put(request, response.clone());
     return response;
   } catch (_) {
-    return (await runtime.match(request)) || (await caches.match(request));
+    const exact = await cachedMatch(request);
+    if (exact) return exact;
+
+    if (navigation) {
+      const normalized = await cachedMatch(normalizedNavigationUrl(request));
+      if (normalized) return normalized;
+    }
+
+    return undefined;
   }
 }
 
 async function cacheFirst(request) {
-  const cached = await caches.match(request);
+  const cached = await cachedMatch(request);
   if (cached) return cached;
+
   try {
     const response = await fetch(request);
     if (response && response.ok) {
@@ -219,6 +252,7 @@ async function cacheFirst(request) {
 self.addEventListener("fetch", event => {
   const request = event.request;
   if (request.method !== "GET") return;
+
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
@@ -227,13 +261,16 @@ self.addEventListener("fetch", event => {
 
   if (acceptsHtml) {
     event.respondWith((async () => {
-      const response = await networkFirst(request);
+      const response = await networkFirst(request, { navigation: true });
       if (response) return response;
-      return (await caches.match(scopedUrl("offline.html"))) || Response.error();
+      return (await cachedMatch(scopedUrl("offline.html"))) || Response.error();
     })());
     return;
   }
 
+  // Reference data prefers the network when online, but its precached copy is
+  // available immediately offline, including when a cache-busting query string
+  // is present.
   if (isFreshReference) {
     event.respondWith(networkFirst(request));
     return;
