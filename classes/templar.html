@@ -29,20 +29,28 @@ ul.tight li{margin:.35rem 0}@media(max-width:850px){.quick-nav{grid-template-col
     .inspiration-card figcaption{padding:.8rem 1rem;font-weight:800;text-align:center;color:var(--accent-2)}
     .inspiration-disclaimer{font-size:.9rem;color:var(--muted);margin:.85rem 0 0;padding:.85rem 1rem;border-left:3px solid var(--accent);background:rgba(127,200,255,.05)}
     @media(max-width:650px){.inspiration-grid{grid-template-columns:1fr}.inspiration-frame{aspect-ratio:auto;min-height:0}.inspiration-frame img{height:auto;max-height:none}}
+
+    /* Sticky class navigation */
+    .class-sticky-nav{position:sticky;top:0;z-index:40;margin:1.1rem 0 1.8rem;border:1px solid var(--line);border-radius:.85rem;background:rgba(8,22,35,.96);backdrop-filter:blur(10px);box-shadow:0 10px 28px rgba(0,0,0,.22);overflow:hidden}
+    .class-sticky-label{display:block;padding:.45rem .8rem .2rem;color:var(--muted);font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    .class-sticky-links{display:flex;align-items:center;gap:.35rem;overflow-x:auto;padding:.35rem .55rem .65rem;scrollbar-width:thin}
+    .class-sticky-links a{flex:0 0 auto;display:inline-flex;align-items:center;min-height:2.15rem;padding:.45rem .72rem;border:1px solid transparent;border-radius:.55rem;color:var(--text);font-size:.9rem;font-weight:700;text-decoration:none;white-space:nowrap}
+    .class-sticky-links a:hover,.class-sticky-links a:focus-visible{border-color:var(--line);background:rgba(127,200,255,.09);color:var(--accent-2)}
+    .class-sticky-links .spell-list-link{border-color:rgba(127,200,255,.28);color:var(--accent-2)}
+    .class-sticky-links .class-top-link{margin-left:auto;color:var(--muted)}
+    section[id],h2[id],h3[id]{scroll-margin-top:7.5rem}
+    @media(max-width:700px){.class-sticky-nav{top:0;border-radius:.7rem}.class-sticky-label{padding-bottom:.1rem}.class-sticky-links{padding-bottom:.55rem}.class-sticky-links .class-top-link{margin-left:0}}
 </style></head>
 <body data-base="../">
 <header class="site-header"><div class="nav-wrap"><a class="brand" href="../index.html">WINGS OF ATREIA</a>
 <nav class="nav-links"><a href="../index.html">Home</a><a href="../rules/">Rules</a><a href="../classes/">Classes</a><a href="../spells/">Spells</a><a href="../world/">World</a><a href="../about.html">About</a></nav>
 <div class="search-box"><input aria-label="Search Wings of Atreia" data-site-search="" placeholder="Search WoA…" type="search"/></div></div></header>
-<main>
+<main id="top">
 <header class="page-header"><div class="class-kicker">Martial Defender • Resolve • Challenge • Interception</div><h1>Templar</h1>
 <p class="class-quote">“You're only as good as your armor.”</p>
 <p class="class-tagline">The premier martial defender, turning incoming pressure into protection, damage reduction, retaliation, and formation control.</p></header>
 <div class="source-note">Website rules source: <strong>Wings of Atreia Player Handbook v3.10 — Publication Master, 8 September 2026.</strong></div>
-<nav aria-label="Templar page sections" class="quick-nav">
-<a href="#overview">Overview</a><a href="#chassis">Class Chassis</a><a href="#resolve">Resolve</a><a href="#signature">Signature Mechanics</a>
-<a href="#action-reference">Action Reference</a><a href="#specializations">Specializations Preview</a><a href="#levels">Levels 1–20</a><a href="#examples">Defensive Examples</a>
-<a href="#specialization-reassignment">Specialization Reassignment</a></nav>
+<nav aria-label="Templar class page navigation" class="class-sticky-nav"><span class="class-sticky-label">On this page</span><div class="class-sticky-links"><a href="#overview">Overview</a><a href="#chassis">Chassis</a><a href="#resolve">Core Mechanics</a><a href="#action-reference">Action Reference</a><a href="#specializations">Specializations</a><a href="#levels">Progression</a><a href="#examples">Examples</a><a aria-label="Back to top" class="class-top-link" href="#top">↑ Top</a></div></nav>
 <section id="overview"><h2>Class Overview</h2>
 <p>The Templar is the system’s premier martial defender. It does not force enemies to attack it through mind control; instead, Challenge makes ignoring the Templar tactically dangerous while Resolve turns incoming pressure into protection, damage reduction, retaliation, and formation control.</p>
 <h3>Class Identity</h3><p>Templars are guardian-warriors whose strength is measured by what they can endure and whom they can keep standing. They occupy the most dangerous space in a battle, challenge enemies that would otherwise overwhelm vulnerable allies, and turn personal resilience into protection for the group. Resolve is the mechanical expression of this identity: a Templar grows most meaningful when danger is real and protection requires commitment.</p>
@@ -173,7 +181,6 @@ ul.tight li{margin:.35rem 0}@media(max-width:850px){.quick-nav{grid-template-col
 <p><strong>Resolve Through Sacrifice:</strong> when Guardian’s Intercession or Guardian’s Shelter successfully protects another creature and Protect the Vulnerable would grant Resolve, gain 2 instead of 1. Those 2 points count as one generation event and may exceed the normal one-Resolve-per-creature-turn limit. Hold the Line and Defy the Templar remain unchanged.</p>
 <p><strong>Apex Empyrean Bulwark:</strong> Empyrean Bulwark uses its Level 20 damage and all Level 20 improvements.</p></div>
 </section>
-
 <section id="examples"><h2>Example Defensive Sequences</h2><ol>
 <li>An enemy attacks a Challenged ally: Defy the Templar generates Resolve because you were a valid target. If you are a Justicar and the enemy remains in reach, Retributive Challenge can answer after the attack resolves.</li>
 <li>An adjacent ally is hit: Guardian’s Intercession redirects the attack. If the redirection prevents damage to the ally, Protect the Vulnerable grants Resolve before redirected damage is applied; that Resolve can immediately pay Resolute Guard.</li>
