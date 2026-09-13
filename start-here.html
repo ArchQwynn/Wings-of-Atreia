@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>New Player Start Here | Wings of Atreia</title>
+<meta content="A guided 10–15 minute introduction for new Wings of Atreia players: choose a faction, explore the 11 classes, learn the essentials, and prepare for Session 0 Ascension." name="description"/>
+<link href="assets/css/style.css" rel="stylesheet"/>
+<style>
+.journey{display:grid;gap:1rem;margin:1.25rem 0 2rem}.journey-step{display:grid;grid-template-columns:64px 1fr;gap:1rem;align-items:start;border:1px solid var(--line);border-radius:1rem;padding:1.15rem;background:linear-gradient(180deg,rgba(18,40,61,.88),rgba(10,26,41,.88))}.step-no{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:#173957;border:1px solid var(--line);font-weight:800;font-size:1.15rem}.journey-step h2{margin:.1rem 0 .4rem}.journey-step p{color:var(--muted)}
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1rem 0}.choice{border:1px solid var(--line);border-radius:.9rem;padding:1rem;background:rgba(13,27,42,.72)}.choice h3{margin:.1rem 0 .4rem}.choice p{color:var(--muted)}
+.class-pick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;margin:1rem 0}.class-pick article{border:1px solid var(--line);border-radius:.8rem;padding:.9rem;background:rgba(13,27,42,.68)}.class-pick h3{margin:.05rem 0 .4rem}.class-pick p{margin:.35rem 0;color:var(--muted)}
+.checklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem;list-style:none;padding:0}.checklist li{border:1px solid var(--line);border-radius:.65rem;padding:.7rem .8rem;background:rgba(13,27,42,.65)}
+.time-badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:.35rem .7rem;color:var(--accent-2);font-weight:700;margin:.2rem .25rem .2rem 0}.final-call{text-align:center;border:1px solid var(--line);border-radius:1rem;padding:2rem 1.25rem;margin:2rem 0;background:linear-gradient(180deg,rgba(21,51,75,.9),rgba(10,26,41,.92))}.final-call h2{font-size:clamp(1.8rem,5vw,3.2rem);margin:.3rem 0}.final-call p{max-width:760px;margin:.6rem auto 1.2rem;color:var(--muted)}
+@media(max-width:800px){.choice-grid,.class-pick,.checklist{grid-template-columns:1fr}.journey-step{grid-template-columns:48px 1fr}.step-no{width:40px;height:40px}}
+</style>
+</head>
+<body data-base="">
+<header class="site-header"><div class="nav-wrap">
+<a class="brand" href="index.html">WINGS OF ATREIA</a>
+<nav class="nav-links"><a href="index.html">Home</a><a href="rules/">Rules</a><a href="classes/">Classes</a><a href="spells/">Spells</a><a href="world/">World</a><a href="about.html">About</a></nav>
+<div class="search-box"><input aria-label="Search Wings of Atreia" data-site-search="" placeholder="Search WoA…" type="search"/></div>
+</div></header>
+<main>
+<header class="page-header">
+<div class="eyebrow">New Player · Guided Introduction</div>
+<h1>Start Here</h1>
+<p>Never played Wings of Atreia before? Follow this short path. In about 10–15 minutes, you should understand what your character is, choose a faction and class direction, know the rules that matter first, and be ready for Session 0.</p>
+<p><span class="time-badge">10–15 minute overview</span><span class="time-badge">No campaign spoilers</span><span class="time-badge">No rules memorization required</span></p>
+</header>
+
+<section class="journey">
+<article class="journey-step" id="what-is-woa"><div class="step-no">1</div><div>
+<h2>What is Wings of Atreia?</h2>
+<p><strong>Wings of Atreia</strong> is a heroic fantasy tabletop roleplaying game set in the shattered world of Atreia. You play a mortal who undergoes <strong>Ascension</strong> and becomes a <strong>Daeva</strong>—an ageless winged hero able to take part in conflicts that ordinary people cannot survive.</p>
+<p>The game combines character-driven adventuring with aerial movement, class-based combat, exploration, spellcasting, political conflict, and large-scale Warfare. Characters advance from Level 1 to Level 20 in a single class through milestone advancement; multiclassing is not used.</p>
+<p><a href="rules/beginner-guide.html">Read the Beginner Guide →</a></p>
+</div></article>
+
+<article class="journey-step" id="faction"><div class="step-no">2</div><div>
+<h2>Choose Your Faction</h2>
+<p>Your first major identity choice is <strong>Elyos</strong> or <strong>Asmodian</strong>. This choice establishes homeland, culture, political loyalties, visual traditions, and the society your character knows. It does <strong>not</strong> grant a racial or faction ability-score bonus, and neither faction is mechanically superior.</p>
+<div class="choice-grid">
+<div class="choice"><h3>Elyos</h3><p>Daevas of <strong>Elysea</strong>, the southern half of shattered Atreia. Elyos civilization is centered on Sanctum and shaped by the Seraphim Lords, with regions ranging from fertile Poeta to arid Eltnen and the devastated lands of Theobomos.</p><a href="world/#elysea">Explore Elysea →</a></div>
+<div class="choice"><h3>Asmodians</h3><p>Daevas of <strong>Asmodae</strong>, the northern half of shattered Atreia. Asmodian civilization is centered on Pandaemonium and shaped by the Shedim Lords, with lands ranging from the severe frontiers of Altgard and Morheim to frozen Beluslan.</p><a href="world/#asmodae">Explore Asmodae →</a></div>
+</div>
+<p>You do not need to choose based on which side your friends pick. Wings of Atreia can place Elyos and Asmodian characters in situations where survival, shared objectives, or greater threats force cooperation despite the war between their peoples.</p>
+</div></article>
+
+<article class="journey-step" id="class"><div class="step-no">3</div><div>
+<h2>Find the Class That Sounds Like You</h2>
+<p>There are <strong>11 playable classes</strong>. You do not need to understand every feature before choosing—start with the fantasy and playstyle you want, then read that class page.</p>
+<div class="class-pick">
+<article><h3>I want to fight on the front line.</h3><p><a href="classes/gladiator.html"><strong>Gladiator</strong></a> — aggressive martial pressure and Momentum.<br/><a href="classes/templar.html"><strong>Templar</strong></a> — heavy defense, protection, and control.<br/><a href="classes/aethertech.html"><strong>Aethertech</strong></a> — Aether-powered Bastion combat using Core and Heat.</p></article>
+<article><h3>I want precision and high damage.</h3><p><a href="classes/assassin.html"><strong>Assassin</strong></a> — close-range precision and Rune Marks.<br/><a href="classes/ranger.html"><strong>Ranger</strong></a> — ranged pressure, Focus, traps, and positioning.<br/><a href="classes/gunslinger.html"><strong>Gunslinger</strong></a> — Pistols, Muskets, and Tempo.</p></article>
+<article><h3>I want powerful magic.</h3><p><a href="classes/sorcerer.html"><strong>Sorcerer</strong></a> — destructive and controlling Aetheric spellcasting.<br/><a href="classes/spiritmaster.html"><strong>Spiritmaster</strong></a> — spirit-linked spellcasting and supernatural bonds.</p></article>
+<article><h3>I want to support the party.</h3><p><a href="classes/cleric.html"><strong>Cleric</strong></a> — healing, protection, and judgment.<br/><a href="classes/chanter.html"><strong>Chanter</strong></a> — martial support through Cadence, chants, and Mantras.<br/><a href="classes/songweaver.html"><strong>Songweaver</strong></a> — Resonance-based performance magic, support, and control.</p></article>
+</div>
+<p><a class="btn" href="classes/">Compare All 11 Classes</a></p>
+</div></article>
+
+<article class="journey-step" id="essentials"><div class="step-no">4</div><div>
+<h2>Learn Only the Rules You Need First</h2>
+<p>Do not try to memorize the whole ruleset. For your first session, focus on the basic d20 rule, what you can do on your turn, your class's Level 1 features, and how Flight works.</p>
+<ul class="checklist">
+<li><strong>Core resolution:</strong> d20 + relevant modifier, plus Proficiency when applicable.</li>
+<li><strong>Your turn:</strong> Action, movement, Bonus Action when granted, and normally one Reaction per round.</li>
+<li><strong>Your class:</strong> know your main resource and Level 1 features.</li>
+<li><strong>Flight:</strong> Wings are a real gameplay system, including Combat Flight Slots.</li>
+</ul>
+<p><a href="rules/core-resolution.html">Core Resolution →</a> · <a href="rules/combat.html">Combat →</a> · <a href="rules/flight.html">Flight →</a></p>
+</div></article>
+
+<article class="journey-step" id="character-manager"><div class="step-no">5</div><div>
+<h2>Create Your Character in the Character Manager</h2>
+<p>The official character-management method is the <strong>Wings of Atreia Character Manager</strong>. Use it for character creation records, advancement, live HP and resources, equipment, inventory, spells, specialization state, Daeva Points, professions, and other tracked character information.</p>
+<p>At creation, choose your faction and class, assign the fixed ability array <strong>16, 14, 14, 12, 10, 8</strong>, choose your Background and skills, and establish your character's name, appearance, history, relationships, and motivation. Your class's starting equipment and other starting values should be recorded there.</p>
+<p><a href="rules/character-creation.html">Read Character Creation →</a></p>
+</div></article>
+
+<article class="journey-step" id="campaign"><div class="step-no">6</div><div>
+<h2>Know Where the Campaign Begins</h2>
+<p>The default campaign takes place during the <strong>Abyss War</strong>, centuries after Atreia was shattered. Elyos and Asmodians contest the Abyss while the Balaur stand as a third great power, and the conflict reaches beyond familiar homelands toward the Balaurean frontier.</p>
+<p>You do not need to learn every region or Lord before playing. Knowing your homeland, your faction's worldview, and the basic reason the Abyss matters is enough; the rest can be discovered naturally through play.</p>
+<p><a href="world/#campaign-start">Read the Current Campaign Start →</a> · <a href="world/history.html">History of Atreia →</a></p>
+</div></article>
+
+<article class="journey-step" id="session-zero"><div class="step-no">7</div><div>
+<h2>Arrive Ready for Session 0: Ascension</h2>
+<p>Your first Wings of Atreia experience normally begins with your character still <strong>unascended</strong>. During Session 0, the character undergoes <strong>Ascension</strong>, becomes a Daeva, and receives their Wings. The continuing campaign begins with that newly Ascended hero stepping into a much larger world.</p>
+<p>Bring a clear character concept rather than a completed personal epic. Know who your character was as a mortal, what matters to them, how they feel about their faction, and why becoming a Daeva changes their life. The campaign will give you room to discover who they become afterward.</p>
+<ul class="checklist">
+<li>Faction chosen</li><li>Class chosen</li><li>Character concept ready</li><li>Character Manager entry prepared</li><li>Level 1 class page reviewed</li><li>Ready to receive your Wings</li>
+</ul>
+</div></article>
+</section>
+
+<section class="final-call">
+<div class="eyebrow">You are ready.</div>
+<h2>Your mortal life is about to end.</h2>
+<p>Atreia is divided. The Abyss is waiting. Your Ascension is only the beginning.</p>
+<p><a class="btn" href="rules/beginner-guide.html">Continue to the Beginner Guide</a> <a class="btn secondary" href="classes/">Choose Your Class</a></p>
+</section>
+</main>
+<footer class="site-footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”) · Non-commercial fan project.</footer>
+<div class="search-results" data-search-results=""></div>
+<script src="assets/js/search.js?v=20260914-2"></script>
+</body>
+</html>
