@@ -280,3 +280,28 @@ self.addEventListener("fetch", event => {
     event.respondWith(cacheFirst(request));
   }
 });
+
+self.addEventListener("message", event => {
+  if (!event.data || event.data.type !== "WOA_CACHE_STATUS") return;
+  event.waitUntil((async () => {
+    let cached = 0;
+    try {
+      const cache = await caches.open(CACHE_VERSION);
+      const keys = await cache.keys();
+      const expected = new Set(PRECACHE.map(path => scopedUrl(path)));
+      cached = keys.reduce((count, request) => count + (expected.has(request.url) ? 1 : 0), 0);
+    } catch (_) {}
+
+    const payload = {
+      type: "WOA_CACHE_STATUS",
+      ready: cached === PRECACHE.length,
+      cached,
+      total: PRECACHE.length,
+      version: CACHE_VERSION,
+      updated: "14 Sep 2026"
+    };
+
+    if (event.ports && event.ports[0]) event.ports[0].postMessage(payload);
+    else if (event.source) event.source.postMessage(payload);
+  })());
+});
