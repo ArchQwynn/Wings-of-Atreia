@@ -240,3 +240,68 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!searchBox || !searchBox.contains(event.target)) closeResults();
   });
 });
+
+/* Wings of Atreia Progressive Web App support */
+(function initWoAPWA() {
+  const base = document.body?.dataset?.base || "";
+
+  function ensureHeadLink(rel, href, extra = {}) {
+    if (document.querySelector(`link[rel="${rel}"]`)) return;
+    const link = document.createElement("link");
+    link.rel = rel;
+    link.href = href;
+    Object.entries(extra).forEach(([key, value]) => link.setAttribute(key, value));
+    document.head.appendChild(link);
+  }
+
+  ensureHeadLink("manifest", base + "manifest.webmanifest");
+  ensureHeadLink("apple-touch-icon", base + "assets/icons/icon-192.png");
+
+  if (!document.querySelector('meta[name="theme-color"]')) {
+    const meta = document.createElement("meta");
+    meta.name = "theme-color";
+    meta.content = "#08131f";
+    document.head.appendChild(meta);
+  }
+
+  if (!document.querySelector('meta[name="apple-mobile-web-app-capable"]')) {
+    const meta = document.createElement("meta");
+    meta.name = "apple-mobile-web-app-capable";
+    meta.content = "yes";
+    document.head.appendChild(meta);
+  }
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register(base + "sw.js").catch(err => {
+        console.warn("WoA offline service worker could not be registered:", err);
+      });
+    });
+  }
+
+  let deferredInstallPrompt = null;
+  window.addEventListener("beforeinstallprompt", event => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    if (document.querySelector(".pwa-install-button")) return;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "pwa-install-button";
+    button.textContent = "Install WoA";
+    button.setAttribute("aria-label", "Install Wings of Atreia for offline use");
+    button.addEventListener("click", async () => {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      try { await deferredInstallPrompt.userChoice; } catch (_) {}
+      deferredInstallPrompt = null;
+      button.remove();
+    });
+    document.body.appendChild(button);
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    document.querySelector(".pwa-install-button")?.remove();
+  });
+})();
