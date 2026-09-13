@@ -1,11 +1,11 @@
-const CACHE_VERSION = "woa-pwa-20260914-3";
-const RUNTIME_CACHE = "woa-runtime-20260914-3";
+const CACHE_VERSION = "woa-pwa-20260914-5";
+const RUNTIME_CACHE = "woa-runtime-20260914-5";
 const PRECACHE = [
   "index.html",
   "offline.html",
   "manifest.webmanifest",
-  "assets/css/style.css",
-  "assets/js/search.js",
+  "assets/css/style-v20260914-5.css",
+  "assets/js/search-v20260914-5.js",
   "assets/js/search-index.json",
   "assets/icons/icon-192.png",
   "assets/icons/icon-512.png",
@@ -277,7 +277,14 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  if (["style", "script", "image", "font"].includes(request.destination)) {
+  // Shared CSS/JS prefer the network when online. Versioned filenames ensure an
+  // older controlling service worker cannot substitute a previous UI bundle.
+  if (["style", "script"].includes(request.destination)) {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  if (["image", "font"].includes(request.destination)) {
     event.respondWith(cacheFirst(request));
   }
 });
