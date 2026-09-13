@@ -1,46 +1,107 @@
 <!DOCTYPE html>
-
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Glossary &amp; Core Terms | Wings of Atreia</title>
-<meta content="The handbook's universal player terms with direct links to the larger rules systems where those terms are used." name="description"/>
-<link href="../assets/css/style.css?v=20260914-3" rel="stylesheet"/>
+<meta content="An expanded player-facing glossary of Wings of Atreia rules and world terms with direct cross-links to the full reference pages." name="description"/>
+<link href="../assets/css/style.css?v=20260914-2" rel="stylesheet"/>
 <style>
-.ref-note{border-left:3px solid var(--accent);padding:.85rem 1rem;margin:1rem 0 1.5rem;background:rgba(127,200,255,.06);color:var(--muted)}
-.ref-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
-.rule-table-wrap{overflow-x:auto;margin:1rem 0}
-.rule-table{width:100%;border-collapse:collapse}
-.rule-table th,.rule-table td{padding:.65rem .7rem;border:1px solid var(--line);vertical-align:top;text-align:left}
-.rule-table th{background:rgba(23,57,87,.72)}
-.source-list{padding-left:1.35rem}
-.source-list li{margin:.38rem 0}
-@media(max-width:760px){.ref-grid{grid-template-columns:1fr}}
-</style>
-</head>
-<body data-base="../">
-<header class="site-header"><div class="nav-wrap">
-<a class="brand" href="../index.html">WINGS OF ATREIA</a>
-<nav class="nav-links"><a href="../index.html">Home</a><a href="../rules/">Rules</a><a href="../classes/">Classes</a><a href="../spells/">Spells</a><a href="../world/">World</a><a href="../about.html">About</a></nav>
-<div class="search-box"><input aria-label="Search Wings of Atreia" data-site-search="" placeholder="Search WoA…" type="search"/></div>
-</div></header>
-<main>
-<header class="page-header"><h1>Glossary &amp; Core Terms</h1><p>The handbook's universal player terms with direct links to the larger rules systems where those terms are used.</p></header>
-<div class="ref-note">Source: <strong>Wings of Atreia Player Handbook v3.10 — Publication Master, 8 September 2026.</strong> This page is a player-facing reference extracted from the handbook rather than a replacement ruleset.</div>
-<nav class="quick-nav"><a href="#core-terms-every-player-should-know">Core Terms</a><a href="#where-to-look-next">Where to Look Next</a></nav>
-<h2 id="core-terms-every-player-should-know">Core Terms Every Player Should Know</h2><div class="rule-table-wrap"><table class="rule-table"><thead><tr><th>Term</th><th>Meaning at the Table</th></tr></thead><tbody><tr><td>Action</td><td>Your main turn action.</td></tr><tr><td>Bonus Action</td><td>A secondary action available only when a feature, spell or rule explicitly gives an option using it.</td></tr><tr><td>Reaction</td><td>A response to a trigger, usually outside your turn. Normally one per round unless a feature grants another.</td></tr><tr><td>Movement</td><td>Distance you may travel during your turn, separate from your Action.</td></tr><tr><td>Proficiency Bonus (PB)</td><td>Universal proficiency modifier that rises with character level.</td></tr><tr><td>Advantage / Disadvantage</td><td>Roll two d20s and use the higher / lower.</td></tr><tr><td>Genuine Combat</td><td>A real encounter using initiative and combat timing; artificial combat cannot farm resources.</td></tr><tr><td>Short Rest / Long Rest</td><td>Recovery periods of 1 hour / 8 hours.</td></tr><tr><td>Class Save DC</td><td>Normally 8 + PB + the class ability identified by the class.</td></tr><tr><td>Concentration</td><td>Only one Concentration effect at a time; Incapacitated ends it.</td></tr><tr><td>Secondary rider</td><td>An extra effect caused by another feature; it does not recursively trigger the same engine unless explicitly permitted.</td></tr><tr><td>Boss Action</td><td>The dedicated off-turn special-action framework used by every ordinary Boss-rank monster as defined in its statblock.</td></tr><tr><td>Lord Action</td><td>The dedicated off-turn action framework used by Empyrean and Dragon Lords.</td></tr></tbody></table></div>
-<h2 id="where-to-look-next">Where to Look Next</h2>
-<div class="ref-grid">
-<p><strong>Class resources:</strong> use your individual <a href="../classes/">Class page</a> or the Class Resource Quick Guide in <a href="quick-reference.html#appendix-j-class-resource-quick-guide">Quick Reference</a>.</p>
-<p><strong>Spell terminology:</strong> use <a href="aether-spellcasting.html">Aether &amp; Spellcasting</a> and the <a href="../spells/">Spell Library</a>.</p>
-<p><strong>Warfront terminology:</strong> use <a href="legions-warfronts.html">Legions &amp; Complete Abyss Warfront System</a>.</p>
-<p><strong>Equipment terminology:</strong> use <a href="equipment.html">Equipment</a> and <a href="professions-economy.html">Professions &amp; Economy</a>.</p>
+.glossary-tools{position:sticky;top:0;z-index:8;background:rgba(7,16,28,.96);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:12px;padding:.8rem;margin:1rem 0 1.4rem}
+.glossary-tools input{width:100%;padding:.75rem .9rem;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.04);color:inherit;font:inherit}
+.alpha-nav{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.65rem}
+.alpha-nav a{display:inline-flex;min-width:2rem;justify-content:center;padding:.3rem .45rem;border:1px solid var(--line);border-radius:7px;text-decoration:none}
+.glossary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem;margin-bottom:1.2rem}
+.glossary-entry{border:1px solid var(--line);border-radius:12px;padding:1rem;background:rgba(127,200,255,.035);scroll-margin-top:10rem}
+.glossary-entry h3{margin:.05rem 0 .45rem;color:var(--accent)}
+.glossary-entry p{margin:.35rem 0}
+.term-link{font-size:.92rem}
+.letter-heading{scroll-margin-top:10rem;border-bottom:1px solid var(--line);padding-bottom:.35rem}
+.glossary-count{color:var(--muted);margin:.5rem 0 0}
+.glossary-entry[hidden],.letter-heading[hidden],.glossary-grid[hidden]{display:none}
+@media(max-width:760px){.glossary-grid{grid-template-columns:1fr}}
+</style></head>
+<body data-base="../"><header class="site-header"><div class="nav-wrap"><a class="brand" href="../index.html">WINGS OF ATREIA</a><nav class="nav-links"><a href="../index.html">Home</a><a href="../rules/">Rules</a><a href="../classes/">Classes</a><a href="../spells/">Spells</a><a href="../world/">World</a><a href="../about.html">About</a></nav><div class="search-box"><input aria-label="Search Wings of Atreia" data-site-search="" placeholder="Search WoA…" type="search"/></div></div></header>
+<main><header class="page-header"><h1>Glossary &amp; Core Terms</h1><p>A player-facing A–Z reference for the vocabulary used throughout Wings of Atreia, with direct links to the full rules and lore pages.</p></header>
+<div class="ref-note" style="border-left:3px solid var(--accent);padding:.85rem 1rem;margin:1rem 0 1.5rem;background:rgba(127,200,255,.06);color:var(--muted)"><strong>How to use this page:</strong> definitions here are quick-reference summaries. Follow the “Read more” link whenever you need the complete rule, class text, or world context.</div>
+<div class="glossary-tools"><input id="glossary-filter" type="search" placeholder="Filter glossary terms…" aria-label="Filter glossary terms"/><div class="alpha-nav"><a href="#letter-A">A</a><a href="#letter-B">B</a><a href="#letter-C">C</a><a href="#letter-D">D</a><a href="#letter-E">E</a><a href="#letter-F">F</a><a href="#letter-G">G</a><a href="#letter-I">I</a><a href="#letter-K">K</a><a href="#letter-L">L</a><a href="#letter-M">M</a><a href="#letter-P">P</a><a href="#letter-R">R</a><a href="#letter-S">S</a><a href="#letter-U">U</a><a href="#letter-W">W</a></div><p class="glossary-count" id="glossary-count">46 terms</p></div>
+<h2 class="letter-heading" id="letter-A">A</h2><div class="glossary-grid">
+<article class="glossary-entry" id="action" data-term="action"><h3>Action</h3><p>Your main turn action. Many attacks, spells, class features, and other options specify that they use your Action.</p><p class="term-link"><a href="combat.html">Read more: Combat →</a></p></article>
+<article class="glossary-entry" id="advantage-disadvantage" data-term="advantage / disadvantage"><h3>Advantage / Disadvantage</h3><p>Roll two d20s and use the higher result for Advantage or the lower result for Disadvantage.</p><p class="term-link"><a href="core-resolution.html">Read more: Core Resolution →</a></p></article>
+<article class="glossary-entry" id="aether" data-term="aether"><h3>Aether</h3><p>The supernatural power that underlies Daeva abilities, spellcasting, flight, and many extraordinary phenomena in Atreia.</p><p class="term-link"><a href="aether-spellcasting.html">Read more: Aether &amp; Spellcasting →</a></p></article>
+<article class="glossary-entry" id="aether-enhancement" data-term="aether enhancement"><h3>Aether Enhancement</h3><p>The higher equipment-quality path beyond Profession +2. Aether upgrades are level-gated and handled separately from ordinary Profession work.</p><p class="term-link"><a href="equipment.html">Read more: Equipment →</a></p></article>
+<article class="glossary-entry" id="ascension" data-term="ascension"><h3>Ascension</h3><p>The transformation by which a mortal becomes a Daeva and receives Wings. WoA begins with this event in Session 0.</p><p class="term-link"><a href="character-creation.html">Read more: Character Creation →</a></p></article>
+<article class="glossary-entry" id="at-will" data-term="at-will"><h3>At-Will</h3><p>A spell or ability frequency that may be used whenever its normal action and other requirements are met.</p><p class="term-link"><a href="aether-spellcasting.html">Read more: Aether &amp; Spellcasting →</a></p></article>
 </div>
-<p><a class="btn secondary" href="../rules/">← Back to Rules</a></p>
-</main>
-<footer class="site-footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”) · Non-commercial fan project.</footer>
-<div class="search-results" data-search-results=""></div>
-<script src="../assets/js/search.js?v=20260914-3"></script>
-</body>
-</html>
+<h2 class="letter-heading" id="letter-B">B</h2><div class="glossary-grid">
+<article class="glossary-entry" id="background" data-term="background"><h3>Background</h3><p>A character-creation choice representing experience and identity before or around Ascension; it provides its defined skills and related benefits.</p><p class="term-link"><a href="backgrounds.html">Read more: Backgrounds →</a></p></article>
+<article class="glossary-entry" id="bonus-action" data-term="bonus action"><h3>Bonus Action</h3><p>A secondary turn action available only when a feature, spell, or rule explicitly gives an option that uses it.</p><p class="term-link"><a href="combat.html">Read more: Combat →</a></p></article>
+</div>
+<h2 class="letter-heading" id="letter-C">C</h2><div class="glossary-grid">
+<article class="glossary-entry" id="character-manager" data-term="character manager"><h3>Character Manager</h3><p>The official WoA character-management method for creation records, advancement, current resources, equipment, spells, and other tracked character data.</p><p class="term-link"><a href="character-creation.html">Read more: Character Creation →</a></p></article>
+<article class="glossary-entry" id="class" data-term="class"><h3>Class</h3><p>Your Daeva’s primary mechanical path. WoA uses eleven classes and does not use multiclassing.</p><p class="term-link"><a href="../classes/">Read more: Classes →</a></p></article>
+<article class="glossary-entry" id="class-resource" data-term="class resource"><h3>Class Resource</h3><p>A class-specific pool, charge, stance, meter, or other tracked mechanic defined by that class.</p><p class="term-link"><a href="quick-reference.html#appendix-j-class-resource-quick-guide">Read more: Quick Reference →</a></p></article>
+<article class="glossary-entry" id="class-save-dc" data-term="class save dc"><h3>Class Save DC</h3><p>Normally 8 + Proficiency Bonus + the class ability identified by your class, unless a rule states otherwise.</p><p class="term-link"><a href="core-resolution.html">Read more: Core Resolution →</a></p></article>
+<article class="glossary-entry" id="concentration" data-term="concentration"><h3>Concentration</h3><p>A spell/effect limit: only one Concentration effect can be maintained at a time, and Incapacitated ends it. WoA does not use Concentration saving throws.</p><p class="term-link"><a href="aether-spellcasting.html">Read more: Aether &amp; Spellcasting →</a></p></article>
+<article class="glossary-entry" id="condition" data-term="condition"><h3>Condition</h3><p>A named rules state such as Poisoned or Incapacitated that changes what a creature can do or how rolls affect it.</p><p class="term-link"><a href="combat.html">Read more: Combat →</a></p></article>
+<article class="glossary-entry" id="cooldown" data-term="cooldown"><h3>Cooldown</h3><p>A spell or ability frequency that becomes unavailable after use until its stated cooldown is satisfied; WoA also uses the universal out-of-combat cooldown rule where applicable.</p><p class="term-link"><a href="aether-spellcasting.html">Read more: Aether &amp; Spellcasting →</a></p></article>
+</div>
+<h2 class="letter-heading" id="letter-D">D</h2><div class="glossary-grid">
+<article class="glossary-entry" id="daeva" data-term="daeva"><h3>Daeva</h3><p>An Ascended immortal warrior of Atreia. Player characters in Wings of Atreia are Daevas.</p><p class="term-link"><a href="character-creation.html">Read more: Character Creation →</a></p></article>
+<article class="glossary-entry" id="daeva-points-dp" data-term="daeva points (dp)"><h3>Daeva Points (DP)</h3><p>A resource unlocked at Level 10 and earned through participation in genuine combat victories. DP powers Ultimate Abilities and persists through rests.</p><p class="term-link"><a href="daeva-points-ultimates.html">Read more: Daeva Points &amp; Ultimates →</a></p></article>
+</div>
+<h2 class="letter-heading" id="letter-E">E</h2><div class="glossary-grid">
+<article class="glossary-entry" id="empyrean-boon" data-term="empyrean boon"><h3>Empyrean Boon</h3><p>A powerful universal character option gained at Level 19 according to the advancement rules.</p><p class="term-link"><a href="feats-boons.html">Read more: Feats &amp; Empyrean Boons →</a></p></article>
+<article class="glossary-entry" id="empyrean-lord" data-term="empyrean lord"><h3>Empyrean Lord</h3><p>One of the great Daeva Lords whose authority and legacy shape Elyos and Asmodian civilization, together with the two historic Tower Guardians.</p><p class="term-link"><a href="../world/">Read more: World →</a></p></article>
+</div>
+<h2 class="letter-heading" id="letter-F">F</h2><div class="glossary-grid">
+<article class="glossary-entry" id="faction" data-term="faction"><h3>Faction</h3><p>Your character’s allegiance as Elyos or Asmodian. Faction affects culture, homeland, and campaign relationships rather than class statistics.</p><p class="term-link"><a href="character-creation.html">Read more: Character Creation →</a></p></article>
+<article class="glossary-entry" id="feat" data-term="feat"><h3>Feat</h3><p>A universal character option chosen at designated advancement points instead of an Ability Score Improvement where the rules allow it.</p><p class="term-link"><a href="feats-boons.html">Read more: Feats &amp; Empyrean Boons →</a></p></article>
+<article class="glossary-entry" id="flight-slot" data-term="flight slot"><h3>Flight Slot</h3><p>A tracked unit of a Daeva’s flight capacity. The number of Flight Slots increases with character level.</p><p class="term-link"><a href="flight.html">Read more: Flight →</a></p></article>
+</div>
+<h2 class="letter-heading" id="letter-G">G</h2><div class="glossary-grid">
+<article class="glossary-entry" id="genuine-combat" data-term="genuine combat"><h3>Genuine Combat</h3><p>A real encounter using initiative and combat timing. Artificial encounters cannot be used to farm resources such as Daeva Points.</p><p class="term-link"><a href="combat.html">Read more: Combat →</a></p></article>
+</div>
+<h2 class="letter-heading" id="letter-I">I</h2><div class="glossary-grid">
+<article class="glossary-entry" id="implement" data-term="implement"><h3>Implement</h3><p>A spellcasting equipment category that can follow the established quality and enhancement progression.</p><p class="term-link"><a href="equipment.html">Read more: Equipment →</a></p></article>
+</div>
+<h2 class="letter-heading" id="letter-K">K</h2><div class="glossary-grid">
+<article class="glossary-entry" id="kinah" data-term="kinah"><h3>Kinah</h3><p>The standard currency used for purchases, profession training, supplies, and other economic transactions.</p><p class="term-link"><a href="professions-economy.html">Read more: Professions &amp; Economy →</a></p></article>
+</div>
+<h2 class="letter-heading" id="letter-L">L</h2><div class="glossary-grid">
+<article class="glossary-entry" id="legendary-equipment" data-term="legendary equipment"><h3>Legendary Equipment</h3><p>Story-driven top-tier equipment above the Aether enhancement tiers. Legendary items are not ordinary Profession products.</p><p class="term-link"><a href="equipment.html">Read more: Equipment →</a></p></article>
+<article class="glossary-entry" id="long-rest" data-term="long rest"><h3>Long Rest</h3><p>An 8-hour recovery period. What it restores depends on the specific class, spell, feature, or rule.</p><p class="term-link"><a href="combat.html">Read more: Combat →</a></p></article>
+<article class="glossary-entry" id="lord-action" data-term="lord action"><h3>Lord Action</h3><p>The dedicated off-turn action framework used by Empyrean Lords and Dragon Lords.</p><p class="term-link"><a href="combat.html">Read more: Combat →</a></p></article>
+</div>
+<h2 class="letter-heading" id="letter-M">M</h2><div class="glossary-grid">
+<article class="glossary-entry" id="milestone-advancement" data-term="milestone advancement"><h3>Milestone Advancement</h3><p>WoA’s advancement method. Characters gain levels through campaign milestones rather than experience-point totals.</p><p class="term-link"><a href="advancement.html">Read more: Advancement →</a></p></article>
+<article class="glossary-entry" id="movement" data-term="movement"><h3>Movement</h3><p>The distance you may travel during your turn, separate from your Action.</p><p class="term-link"><a href="combat.html">Read more: Combat →</a></p></article>
+<article class="glossary-entry" id="multiclassing" data-term="multiclassing"><h3>Multiclassing</h3><p>Combining levels from multiple classes. Wings of Atreia does not use multiclassing.</p><p class="term-link"><a href="advancement.html">Read more: Advancement →</a></p></article>
+</div>
+<h2 class="letter-heading" id="letter-P">P</h2><div class="glossary-grid">
+<article class="glossary-entry" id="profession" data-term="profession"><h3>Profession</h3><p>A trained downtime discipline used for approved upgrades, consumables, meals, or related work. A character can have only one Active Profession at a time.</p><p class="term-link"><a href="professions-economy.html">Read more: Professions &amp; Economy →</a></p></article>
+<article class="glossary-entry" id="proficiency-bonus-pb" data-term="proficiency bonus (pb)"><h3>Proficiency Bonus (PB)</h3><p>The universal proficiency modifier that rises with character level and is added wherever a rule says you are proficient.</p><p class="term-link"><a href="core-resolution.html">Read more: Core Resolution →</a></p></article>
+</div>
+<h2 class="letter-heading" id="letter-R">R</h2><div class="glossary-grid">
+<article class="glossary-entry" id="reaction" data-term="reaction"><h3>Reaction</h3><p>A response to a trigger, usually outside your own turn. Normally you have one Reaction per round unless a feature explicitly grants another.</p><p class="term-link"><a href="combat.html">Read more: Combat →</a></p></article>
+<article class="glossary-entry" id="rest-spell" data-term="rest spell"><h3>Rest Spell</h3><p>A spell frequency that refreshes after the specified Short Rest or Long Rest rather than by cooldown.</p><p class="term-link"><a href="aether-spellcasting.html">Read more: Aether &amp; Spellcasting →</a></p></article>
+</div>
+<h2 class="letter-heading" id="letter-S">S</h2><div class="glossary-grid">
+<article class="glossary-entry" id="secondary-rider" data-term="secondary rider"><h3>Secondary Rider</h3><p>An extra effect caused by another feature. A secondary rider does not recursively trigger the same engine unless the rules explicitly permit it.</p><p class="term-link"><a href="core-resolution.html">Read more: Core Resolution →</a></p></article>
+<article class="glossary-entry" id="session-0-ascension" data-term="session 0: ascension"><h3>Session 0: Ascension</h3><p>The default WoA opening in which player characters begin unascended, undergo Ascension, and receive their Wings before the wider campaign begins.</p><p class="term-link"><a href="character-creation.html">Read more: Character Creation →</a></p></article>
+<article class="glossary-entry" id="shield" data-term="shield"><h3>Shield</h3><p>A defensive equipment category with its own enhancement path. Shields do not use the Profession +1/+2 upgrade stages.</p><p class="term-link"><a href="equipment.html">Read more: Equipment →</a></p></article>
+<article class="glossary-entry" id="short-rest" data-term="short rest"><h3>Short Rest</h3><p>A 1-hour recovery period. What it restores depends on the specific class, spell, feature, or rule.</p><p class="term-link"><a href="combat.html">Read more: Combat →</a></p></article>
+<article class="glossary-entry" id="specialization" data-term="specialization"><h3>Specialization</h3><p>A class path first chosen at Level 3. WoA allows reassignment decisions at the established Level 6, 10, and 14 checkpoints.</p><p class="term-link"><a href="../classes/">Read more: Classes →</a></p></article>
+<article class="glossary-entry" id="spell-advancement" data-term="spell advancement"><h3>Spell Advancement</h3><p>When a spell advances, its Spell Level increases by +1. If that new Spell Level is not referenced by the spell’s scaling or milestones, record the new level but make no other mechanical change.</p><p class="term-link"><a href="aether-spellcasting.html">Read more: Aether &amp; Spellcasting →</a></p></article>
+<article class="glossary-entry" id="spell-level" data-term="spell level"><h3>Spell Level</h3><p>A spell’s advancement value. It is distinct from character level and changes through the Spell Advancement rules.</p><p class="term-link"><a href="aether-spellcasting.html">Read more: Aether &amp; Spellcasting →</a></p></article>
+</div>
+<h2 class="letter-heading" id="letter-U">U</h2><div class="glossary-grid">
+<article class="glossary-entry" id="ultimate-ability" data-term="ultimate ability"><h3>Ultimate Ability</h3><p>A powerful class ability unlocked at Level 10 that uses Daeva Points and follows the universal Ultimate activation and miss rules.</p><p class="term-link"><a href="daeva-points-ultimates.html">Read more: Daeva Points &amp; Ultimates →</a></p></article>
+</div>
+<h2 class="letter-heading" id="letter-W">W</h2><div class="glossary-grid">
+<article class="glossary-entry" id="war-asset-wa" data-term="war asset (wa)"><h3>War Asset (WA)</h3><p>The strategic resource used by the Abyss Warfront system for armies, units, and fortress-scale conflict.</p><p class="term-link"><a href="legions-warfronts.html">Read more: Legions &amp; Warfronts →</a></p></article>
+<article class="glossary-entry" id="warfare" data-term="warfare"><h3>Warfare</h3><p>Large-scale Warfront play. Daeva Points and Ultimate Abilities are not usable in Warfare.</p><p class="term-link"><a href="legions-warfronts.html">Read more: Legions &amp; Warfronts →</a></p></article>
+<article class="glossary-entry" id="wings" data-term="wings"><h3>Wings</h3><p>The physical and supernatural manifestation received through Ascension, enabling Daeva flight and following its own equipment-quality progression.</p><p class="term-link"><a href="flight.html">Read more: Flight →</a></p></article>
+</div>
+<p><a class="btn secondary" href="../rules/">← Back to Rules</a></p></main>
+<footer class="site-footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”) · Non-commercial fan project.</footer><div class="search-results" data-search-results=""></div>
+<script>
+(()=>{const q=document.getElementById('glossary-filter'),entries=[...document.querySelectorAll('.glossary-entry')],count=document.getElementById('glossary-count');function run(){const s=q.value.trim().toLowerCase();let n=0;entries.forEach(e=>{const show=!s||e.textContent.toLowerCase().includes(s);e.hidden=!show;if(show)n++});document.querySelectorAll('.glossary-grid').forEach(g=>{const any=[...g.querySelectorAll('.glossary-entry')].some(e=>!e.hidden);g.hidden=!any;const h=g.previousElementSibling;if(h&&h.classList.contains('letter-heading'))h.hidden=!any});count.textContent=`${n} term${n===1?'':'s'} shown`;}q.addEventListener('input',run);})();
+</script><script src="../assets/js/search.js?v=20260914-3"></script></body></html>
