@@ -1,0 +1,15 @@
+{
+  "name": "Wings of Atreia Player Reference",
+  "short_name": "WoA Reference",
+  "description": "Installable player reference for Wings of Atreia, with rules, classes, spells, world lore, glossary, and quick-reference material.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#08131f",
+  "theme_color": "#08131f",
+  "icons": [
+    {"src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
