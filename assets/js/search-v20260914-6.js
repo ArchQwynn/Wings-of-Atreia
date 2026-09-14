@@ -310,6 +310,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 (function initWoAOfflineStatus() {
   if (!("serviceWorker" in navigator)) return;
 
+  const STORAGE_KEY = "woa-offline-status-open";
+
+  function getSavedOpenState() {
+    try {
+      return localStorage.getItem(STORAGE_KEY) === "1";
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function saveOpenState(open) {
+    try {
+      localStorage.setItem(STORAGE_KEY, open ? "1" : "0");
+    } catch (_) {}
+  }
+
   const style = document.createElement("style");
   style.textContent = `
     .woa-offline-status{position:fixed;right:16px;bottom:16px;z-index:9998;max-width:min(340px,calc(100vw - 32px));font:600 13px/1.35 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -323,7 +339,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     .woa-offline-status .detail{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.12);font-weight:400;color:#c9d3dc}
     .woa-offline-status.open .detail{display:block}
     .woa-offline-status .detail strong{color:#f4ead2}
-    @media (max-width:640px){.woa-offline-status{right:10px;bottom:10px;max-width:calc(100vw - 20px)}}
+    .woa-offline-status .compact-label{display:none}
+    .woa-offline-status:not(.open){width:auto;max-width:none}
+    .woa-offline-status:not(.open) button{width:auto;min-width:0;border-radius:999px;padding:7px 10px}
+    .woa-offline-status:not(.open) .row{gap:6px;white-space:nowrap}
+    .woa-offline-status:not(.open) .full-label{display:none}
+    .woa-offline-status:not(.open) .compact-label{display:inline}
+    @media (max-width:640px){
+      .woa-offline-status{right:10px;bottom:10px;max-width:calc(100vw - 20px)}
+      .woa-offline-status:not(.open){max-width:none}
+      .woa-offline-status:not(.open) button{padding:7px 9px;font-size:12px}
+    }
   `;
   document.head.appendChild(style);
 
@@ -331,17 +357,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   wrap.className = "woa-offline-status preparing";
   wrap.innerHTML = `
     <button type="button" aria-expanded="false" aria-label="Show offline reference status">
-      <div class="row"><span class="dot" aria-hidden="true"></span><span class="label">Offline Reference: Checking…</span></div>
+      <div class="row">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="label full-label">Offline Reference: Checking…</span>
+        <span class="label compact-label">Checking…</span>
+      </div>
       <div class="detail"></div>
     </button>`;
   document.body.appendChild(wrap);
 
   const button = wrap.querySelector("button");
-  const label = wrap.querySelector(".label");
+  const fullLabel = wrap.querySelector(".full-label");
+  const compactLabel = wrap.querySelector(".compact-label");
   const detail = wrap.querySelector(".detail");
-  button.addEventListener("click", () => {
-    const open = wrap.classList.toggle("open");
+
+  function setOpen(open, { remember = false } = {}) {
+    wrap.classList.toggle("open", open);
     button.setAttribute("aria-expanded", String(open));
+    button.setAttribute("aria-label", open ? "Hide offline reference status" : "Show offline reference status");
+    if (remember) saveOpenState(open);
+  }
+
+  button.addEventListener("click", () => {
+    setOpen(!wrap.classList.contains("open"), { remember: true });
   });
 
   function render(status) {
@@ -350,18 +388,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (status?.ready) {
       wrap.classList.add("ready");
-      label.textContent = online ? "Offline Reference: Ready" : "Offline Reference: Ready · Offline";
+      fullLabel.textContent = online ? "Offline Reference: Ready" : "Offline Reference: Ready · Offline";
+      compactLabel.textContent = "Offline Ready";
       detail.innerHTML = `<strong>Cached pages & assets:</strong> ${status.cached} / ${status.total}<br><strong>Offline bundle:</strong> Complete<br><strong>Bundle version:</strong> ${status.version}<br><strong>Bundle updated:</strong> ${status.updated}`;
+      setOpen(getSavedOpenState());
     } else if (status?.cached >= 0) {
       wrap.classList.add("preparing");
-      label.textContent = "Offline Reference: Preparing…";
+      fullLabel.textContent = "Offline Reference: Preparing…";
+      compactLabel.textContent = "Preparing…";
       detail.innerHTML = `<strong>Cached pages & assets:</strong> ${status.cached} / ${status.total}<br>Keep this page open while the full WoA reference bundle finishes downloading.`;
+      setOpen(true);
     } else {
       wrap.classList.add("error");
-      label.textContent = online ? "Offline Reference: Not ready" : "Offline Reference: Status unavailable";
+      fullLabel.textContent = online ? "Offline Reference: Not ready" : "Offline Reference: Status unavailable";
+      compactLabel.textContent = online ? "Not Ready" : "Status";
       detail.innerHTML = online
         ? "The offline bundle has not finished installing yet. Keep the site open online, then reload once installation completes."
         : "Reconnect briefly so WoA can finish preparing the offline reference bundle.";
+      setOpen(true);
     }
   }
 
