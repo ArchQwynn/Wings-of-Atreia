@@ -464,8 +464,8 @@
   {
     "title": "Altitude Layers",
     "url": "rules/flight.html#altitude-layers",
-    "desc": "Layer Height Ground 0 ft Low 30 ft Mid 60 ft High 90 ft Voluntarily ascending or descending one altitude layer consumes all movement for that turn. A creature cannot both ascend and descend voluntarily in the same turn. Dash does not permit an additional altitude-layer change.",
-    "text": "Altitude Layers Layer Height Ground 0 ft Low 30 ft Mid 60 ft High 90 ft Voluntarily ascending or descending one altitude layer consumes all movement for that turn. A creature cannot both ascend and descend voluntarily in the same turn. Dash does not permit an additional altitude-layer change.",
+    "desc": "Four airborne altitude layers: Low 30 ft, Mid 60 ft, High 90 ft, and Legendary 120 ft. Ground level is 0 ft and is not an altitude layer. All functional Wings reach the High layer; Legendary Wings alone allow access to the 120-ft Legendary layer. Voluntarily ascending or descending one altitude layer consumes all movement for that turn. A creature cannot both ascend and descend voluntarily in the same turn. Dash does not permit an additional altitude-layer change. A Daeva without Legendary Wings cannot voluntarily ascend above the High layer at 90 feet.",
+    "text": "Altitude Layers Four airborne altitude layers: Low 30 ft, Mid 60 ft, High 90 ft, and Legendary 120 ft. Ground level is 0 ft and is not an altitude layer. All functional Wings reach the High layer; Legendary Wings alone allow access to the 120-ft Legendary layer. Voluntarily ascending or descending one altitude layer consumes all movement for that turn. A creature cannot both ascend and descend voluntarily in the same turn. Dash does not permit an additional altitude-layer change.",
     "kind": "section"
   },
   {
