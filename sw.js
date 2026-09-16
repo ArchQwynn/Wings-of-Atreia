@@ -1,5 +1,5 @@
-const CACHE_VERSION = "woa-pwa-20260914-6";
-const RUNTIME_CACHE = "woa-runtime-20260914-6";
+const CACHE_VERSION = "woa-pwa-20260916-7";
+const RUNTIME_CACHE = "woa-runtime-20260916-7";
 const PRECACHE = [
   "index.html",
   "offline.html",
@@ -10,6 +10,9 @@ const PRECACHE = [
   "assets/icons/icon-192.png",
   "assets/icons/icon-512.png",
   "about.html",
+  "companion/index.html",
+  "companion/assets/companion-v20260916-1.css",
+  "companion/assets/companion-v20260916-1.js",
   "changelog.html",
   "classes/aethertech.html",
   "classes/assassin.html",
