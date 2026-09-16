@@ -273,7 +273,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register(base + "sw.js?v=20260914-7", { updateViaCache: "none" }).then(registration => registration.update()).catch(err => {
+      navigator.serviceWorker.register(base + "sw.js?v=20260914-5", { updateViaCache: "none" }).then(registration => registration.update()).catch(err => {
         console.warn("WoA offline service worker could not be registered:", err);
       });
     });
@@ -310,35 +310,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 (function initWoAOfflineStatus() {
   if (!("serviceWorker" in navigator)) return;
 
-  const READY_OPEN_KEY = "woaOfflineStatusOpen";
-
   const style = document.createElement("style");
   style.textContent = `
-    .woa-offline-status{position:fixed;right:16px;bottom:16px;z-index:9998;width:auto;max-width:min(340px,calc(100vw - 32px));font:600 13px/1.35 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    .woa-offline-status button{width:auto;max-width:100%;text-align:left;border:1px solid rgba(214,176,83,.45);background:rgba(8,19,31,.96);color:#f4ead2;border-radius:999px;padding:7px 10px;box-shadow:0 8px 24px rgba(0,0,0,.28);cursor:pointer;transition:border-radius .15s ease,padding .15s ease}
-    .woa-offline-status.open button,.woa-offline-status:not(.ready) button{width:min(320px,calc(100vw - 32px));border-radius:12px;padding:10px 12px}
+    .woa-offline-status{position:fixed;right:16px;bottom:16px;z-index:9998;max-width:min(340px,calc(100vw - 32px));font:600 13px/1.35 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    .woa-offline-status button{width:100%;text-align:left;border:1px solid rgba(214,176,83,.45);background:rgba(8,19,31,.96);color:#f4ead2;border-radius:12px;padding:10px 12px;box-shadow:0 8px 24px rgba(0,0,0,.28);cursor:pointer}
     .woa-offline-status button:hover,.woa-offline-status button:focus{border-color:#d6b053;outline:none}
-    .woa-offline-status .row{display:flex;align-items:center;gap:7px;white-space:nowrap}
-    .woa-offline-status.open .row,.woa-offline-status:not(.ready) .row{white-space:normal}
-    .woa-offline-status .dot{width:8px;height:8px;border-radius:50%;background:#9aa6b2;flex:0 0 auto}
+    .woa-offline-status .row{display:flex;align-items:center;gap:8px}
+    .woa-offline-status .dot{width:9px;height:9px;border-radius:50%;background:#9aa6b2;flex:0 0 auto}
     .woa-offline-status.ready .dot{background:#65c98b}
     .woa-offline-status.preparing .dot{background:#d6b053}
     .woa-offline-status.error .dot{background:#d06a6a}
     .woa-offline-status .detail{display:none;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.12);font-weight:400;color:#c9d3dc}
     .woa-offline-status.open .detail{display:block}
     .woa-offline-status .detail strong{color:#f4ead2}
-    @media (max-width:640px){
-      .woa-offline-status{right:10px;bottom:10px;max-width:calc(100vw - 20px)}
-      .woa-offline-status.open button,.woa-offline-status:not(.ready) button{width:min(300px,calc(100vw - 20px))}
-      .woa-offline-status.ready:not(.open) button{padding:6px 9px;font-size:12px}
-    }
+    @media (max-width:640px){.woa-offline-status{right:10px;bottom:10px;max-width:calc(100vw - 20px)}}
   `;
   document.head.appendChild(style);
 
   const wrap = document.createElement("div");
-  wrap.className = "woa-offline-status preparing open";
+  wrap.className = "woa-offline-status preparing";
   wrap.innerHTML = `
-    <button type="button" aria-expanded="true" aria-label="Hide offline reference details">
+    <button type="button" aria-expanded="false" aria-label="Show offline reference status">
       <div class="row"><span class="dot" aria-hidden="true"></span><span class="label">Offline Reference: Checking…</span></div>
       <div class="detail"></div>
     </button>`;
@@ -347,48 +339,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   const button = wrap.querySelector("button");
   const label = wrap.querySelector(".label");
   const detail = wrap.querySelector(".detail");
-  let lastStatus = null;
-
-  function setOpen(open, remember = false) {
-    wrap.classList.toggle("open", open);
-    button.setAttribute("aria-expanded", String(open));
-    button.setAttribute("aria-label", open ? "Hide offline reference details" : "Show offline reference details");
-    if (remember && wrap.classList.contains("ready")) {
-      try { localStorage.setItem(READY_OPEN_KEY, open ? "1" : "0"); } catch (_) {}
-    }
-    if (lastStatus?.ready) {
-      const offlineSuffix = navigator.onLine ? "" : " · Offline";
-      label.textContent = open ? `Offline Reference: Ready${offlineSuffix}` : `Offline Ready${offlineSuffix}`;
-    }
-  }
-
   button.addEventListener("click", () => {
-    setOpen(!wrap.classList.contains("open"), true);
+    const open = wrap.classList.toggle("open");
+    button.setAttribute("aria-expanded", String(open));
   });
 
   function render(status) {
-    lastStatus = status || null;
     wrap.classList.remove("ready", "preparing", "error");
     const online = navigator.onLine;
 
     if (status?.ready) {
       wrap.classList.add("ready");
+      label.textContent = online ? "Offline Reference: Ready" : "Offline Reference: Ready · Offline";
       detail.innerHTML = `<strong>Cached pages & assets:</strong> ${status.cached} / ${status.total}<br><strong>Offline bundle:</strong> Complete<br><strong>Bundle version:</strong> ${status.version}<br><strong>Bundle updated:</strong> ${status.updated}`;
-      let savedOpen = false;
-      try { savedOpen = localStorage.getItem(READY_OPEN_KEY) === "1"; } catch (_) {}
-      setOpen(savedOpen, false);
     } else if (status?.cached >= 0) {
       wrap.classList.add("preparing");
       label.textContent = "Offline Reference: Preparing…";
       detail.innerHTML = `<strong>Cached pages & assets:</strong> ${status.cached} / ${status.total}<br>Keep this page open while the full WoA reference bundle finishes downloading.`;
-      setOpen(true, false);
     } else {
       wrap.classList.add("error");
       label.textContent = online ? "Offline Reference: Not ready" : "Offline Reference: Status unavailable";
       detail.innerHTML = online
         ? "The offline bundle has not finished installing yet. Keep the site open online, then reload once installation completes."
         : "Reconnect briefly so WoA can finish preparing the offline reference bundle.";
-      setOpen(true, false);
     }
   }
 
