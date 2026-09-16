@@ -6,7 +6,7 @@
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Gladiator | Wings of Atreia</title>
 <meta content="Complete player reference for the Gladiator class in Wings of Atreia, based on Player Handbook v3.10." name="description"/>
-<link href="../assets/css/style-v20260914-6.css" rel="stylesheet"/>
+<link href="../assets/css/style.css" rel="stylesheet"/>
 <style>
     .class-kicker{font-size:.85rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:800}
     .class-tagline{font-size:1.1rem;color:var(--muted);margin:.25rem 0 .3rem}
@@ -40,17 +40,6 @@
     .inspiration-card figcaption{padding:.8rem 1rem;font-weight:800;text-align:center;color:var(--accent-2)}
     .inspiration-disclaimer{font-size:.9rem;color:var(--muted);margin:.85rem 0 0;padding:.85rem 1rem;border-left:3px solid var(--accent);background:rgba(127,200,255,.05)}
     @media(max-width:650px){.inspiration-grid{grid-template-columns:1fr}.inspiration-frame{aspect-ratio:auto;min-height:0}.inspiration-frame img{height:auto;max-height:none}}
-
-    /* Sticky class navigation */
-    .class-sticky-nav{position:sticky;top:0;z-index:40;margin:1.1rem 0 1.8rem;border:1px solid var(--line);border-radius:.85rem;background:rgba(8,22,35,.96);backdrop-filter:blur(10px);box-shadow:0 10px 28px rgba(0,0,0,.22);overflow:hidden}
-    .class-sticky-label{display:block;padding:.45rem .8rem .2rem;color:var(--muted);font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
-    .class-sticky-links{display:flex;align-items:center;gap:.35rem;overflow-x:auto;padding:.35rem .55rem .65rem;scrollbar-width:thin}
-    .class-sticky-links a{flex:0 0 auto;display:inline-flex;align-items:center;min-height:2.15rem;padding:.45rem .72rem;border:1px solid transparent;border-radius:.55rem;color:var(--text);font-size:.9rem;font-weight:700;text-decoration:none;white-space:nowrap}
-    .class-sticky-links a:hover,.class-sticky-links a:focus-visible{border-color:var(--line);background:rgba(127,200,255,.09);color:var(--accent-2)}
-    .class-sticky-links .spell-list-link{border-color:rgba(127,200,255,.28);color:var(--accent-2)}
-    .class-sticky-links .class-top-link{margin-left:auto;color:var(--muted)}
-    section[id],h2[id],h3[id]{scroll-margin-top:7.5rem}
-    @media(max-width:700px){.class-sticky-nav{top:0;border-radius:.7rem}.class-sticky-label{padding-bottom:.1rem}.class-sticky-links{padding-bottom:.55rem}.class-sticky-links .class-top-link{margin-left:0}}
 </style>
 </head>
 <body data-base="../">
@@ -69,7 +58,7 @@
 </div>
 </div>
 </header>
-<main id="top">
+<main>
 <header class="page-header">
 <div class="class-kicker">Martial Striker • Chain Attacks • Momentum • Frontline Pressure</div>
 <h1>Gladiator</h1>
@@ -77,9 +66,18 @@
 <p class="class-tagline">The premier sustained melee damage class, built around deliberate attack sequences, Momentum, Chain Links, and Finishers.</p>
 </header>
 <div class="source-note">
-    Website rules source: <strong>Wings of Atreia Player Handbook v3.13 — Publication Master, 12 September 2026.</strong>
+    Website rules source: <strong>Wings of Atreia Player Handbook v3.10 — Publication Master, 8 September 2026.</strong>
 </div>
-<nav aria-label="Gladiator class page navigation" class="class-sticky-nav"><span class="class-sticky-label">On this page</span><div class="class-sticky-links"><a href="#overview">Overview</a><a href="#chassis">Chassis</a><a href="#momentum">Core Mechanics</a><a href="#action-reference">Action Reference</a><a href="#specializations">Specializations</a><a href="#levels">Progression</a><a href="#examples">Examples</a><a aria-label="Back to top" class="class-top-link" href="#top">↑ Top</a></div></nav>
+<nav aria-label="Gladiator page sections" class="quick-nav">
+<a href="#overview">Overview</a>
+<a href="#chassis">Class Chassis</a>
+<a href="#momentum">Momentum</a>
+<a href="#chains">Chain Attacks</a>
+<a href="#action-reference">Action Reference</a>
+<a href="#specializations">Specializations Preview</a><a href="#levels">Levels 1–20</a>
+
+<a href="#examples">Combat Examples</a>
+<a href="#specialization-reassignment">Specialization Reassignment</a></nav>
 <section id="overview">
 <h2>Class Overview</h2>
 <p>The Gladiator is the premier sustained melee damage class. It wins through sequences rather than single isolated attacks: open a Chain, spend Momentum on Links that alter the battlefield, then cash the sequence out with a Finisher. Polearms provide the highest sustained weapon output, while weapon discipline and specialization determine whether the Gladiator emphasizes execution, cleaving pressure, or relentless pursuit.</p>
@@ -204,13 +202,13 @@
 <table class="rule-table">
 <thead><tr><th>Level</th><th>Destroyer</th><th>Tempest</th><th>Warpath</th></tr></thead>
 <tbody>
-<tr><td>3</td><td>Relentless Finisher — wounded Crushing Finisher refunds 1 Momentum.</td><td>Widening Sweep — one additional secondary target.</td><td>Charging Assault — Battle Rush needs 10 ft and grants safe pursuit.</td></tr>
-<tr><td>6</td><td><strong>Executioner’s Weight</strong><br/>When Crushing Finisher hits a creature that had half its maximum HP or fewer before the attack, add 1 additional current Chain Die to the attack.</td><td><strong>Storm of Steel</strong><br/>Every secondary creature damaged by Sweeping Strike takes one current Chain Die + STR modifier, including the additional creature from Widening Sweep.</td><td><strong>Relentless Charge</strong><br/>While moving toward a creature for Battle Rush, ignore nonmagical difficult terrain. Opportunity Attacks against you during that qualifying approach have Disadvantage.</td></tr>
-<tr><td>10</td><td><strong>Execution Window</strong><br/>When a Finisher attack hits a creature that had half its maximum HP or fewer before the attack, that Finisher scores a critical hit on 19–20.</td><td><strong>Cyclone Sweep</strong><br/>Sweeping Strike secondary targets no longer need to be within 5 feet of the original target; each only needs to be within your melee reach.</td><td><strong>Overrun</strong><br/>When a Battle Rush hit follows at least 20 feet of movement toward the target, it makes a STR save; on a failure choose to push it 10 feet or knock it Prone. Creatures more than one size larger have Advantage on the save.</td></tr>
-<tr><td>14</td><td><strong>Perfect Execution</strong><br/>Executioner’s Weight is replaced: any Finisher that hits a creature at half maximum HP or fewer adds 1 current Chain Die. If that Finisher reduces it to 0 HP, regain 2 Momentum instead of Relentless Finisher’s 1, once per turn.</td><td><strong>Maelstrom Sweep</strong><br/>Sweeping Strike may damage up to three eligible secondary creatures, each for one current Chain Die + STR. If at least two actually take damage, regain 1 Momentum after the Sweep resolves, once per turn.</td><td><strong>Breakthrough</strong><br/>After a creature fails its Overrun save, move up to 10 feet. You may pass through its space if it is no more than one size larger, cannot end there, and do not provoke an Opportunity Attack from it.</td></tr>
+<tr><td>3</td><td>Relentless Finisher — Once on each of your turns, when Crushing Finisher hits a creature that had half its maximum HP or fewer before the attack, regain 1 Momentum after the Finisher resolves.</td><td>Widening Sweep — When you use Sweeping Strike, choose one additional eligible secondary creature. That second creature takes one Chain Die without adding STR.</td><td>Charging Assault — Battle Rush requires only 10 feet of movement toward the target. After the qualifying hit resolves, move up to 10 feet without provoking an Opportunity Attack from that creature; you must end closer to that creature or another hostile creature you can perceive.</td></tr>
+<tr><td>6</td><td>Executioner’s Weight — wounded Crushing Finisher +1 Chain Die.</td><td>Storm of Steel — all Sweep secondaries add STR.</td><td>Relentless Charge — ignore nonmagical difficult terrain; approach OAs at Disadvantage.</td></tr>
+<tr><td>10</td><td>Execution Window — wounded Finishers crit on 19–20.</td><td>Cyclone Sweep — secondaries need only be within reach.</td><td>Overrun — 20-ft Battle Rush can push or knock Prone on failed STR save.</td></tr>
+<tr><td>14</td><td>Perfect Execution — any wounded Finisher +1 die; kill refund becomes 2.</td><td>Maelstrom Sweep — up to three secondaries; 2+ damaged refunds 1 Momentum.</td><td>Breakthrough — move through a failed-Overrun target and continue toward the next threat.</td></tr>
 </tbody>
 </table>
-</div><p class="section-intro">Levels 6, 10, and 14 show both the specialization feature gained and the mechanical effect it adds. Level 14 is the final normal specialization reassignment checkpoint.</p><section class="specialization-reassignment-note">
+</div><section class="specialization-reassignment-note">
 <h3 id="specialization-reassignment">Specialization Reassignment</h3>
 <p><strong>Initial choice — Level 3.</strong> Choose one Specialization available to your class.</p>
 <p><strong>Reassignment checkpoints — Levels 6, 10, and 14.</strong> When gaining one of these levels, you may either continue your current Specialization or change to another Specialization available to your class.</p>
@@ -245,7 +243,7 @@
 <div class="subfeature"><h4>Hamstring Strike</h4><p>You unlock Hamstring Strike for 1 Momentum. On a qualifying melee hit, add 1d8 Chain damage and reduce Speed by 10 feet until the start of your next turn. The Speed reduction follows the class non-stacking rule.</p></div>
 </div>
 <div class="level-block" id="level-6">
-<h3>Level 6 — Specialization Decision / Advancement</h3><p>Continue your current Specialization or reassign under the universal rule, then gain the chosen path’s Level 6 advancement.</p><div class="rule-table-wrap"><table class="rule-table"><thead><tr><th>Specialization</th><th>Level 6 Advancement</th></tr></thead><tbody><tr><td>Destroyer</td><td><strong>Executioner’s Weight</strong><br/>When Crushing Finisher hits a creature that had half its maximum HP or fewer before the attack, add 1 additional current Chain Die to the attack.</td></tr><tr><td>Tempest</td><td><strong>Storm of Steel</strong><br/>Every secondary creature damaged by Sweeping Strike takes one current Chain Die + STR modifier, including the additional creature from Widening Sweep.</td></tr><tr><td>Warpath</td><td><strong>Relentless Charge</strong><br/>While moving toward a creature for Battle Rush, ignore nonmagical difficult terrain. Opportunity Attacks against you during that qualifying approach have Disadvantage.</td></tr></tbody></table></div>
+<h3>Level 6 — Specialization Decision / Advancement</h3><p>Continue your current Specialization or reassign under the universal rule, then gain the chosen path’s Level 6 advancement.</p><div class="rule-table-wrap"><table class="rule-table"><thead><tr><th>Specialization</th><th>Level 6 Advancement</th></tr></thead><tbody><tr><td>Destroyer</td><td>Executioner’s Weight</td></tr><tr><td>Tempest</td><td>Storm of Steel</td></tr><tr><td>Warpath</td><td>Relentless Charge</td></tr></tbody></table></div>
 <div class="subfeature"></div>
 <div class="subfeature"></div>
 <div class="subfeature"></div>
@@ -258,7 +256,7 @@
 <div class="subfeature"><h4>Momentum Mastery</h4><p>Once on each of your turns when you spend Momentum on a Chain Link that advances an already active Chain, regain 1 Momentum after that Link resolves. The refund cannot exceed your maximum and cannot recursively trigger another Gladiator rider.</p></div>
 </div>
 <div class="level-block" id="level-10">
-<h3>Level 10 — Specialization Decision / Advancement</h3><p>Continue your current Specialization or reassign under the universal rule, then gain the chosen path’s Level 10 advancement.</p><div class="rule-table-wrap"><table class="rule-table"><thead><tr><th>Specialization</th><th>Level 10 Advancement</th></tr></thead><tbody><tr><td>Destroyer</td><td><strong>Execution Window</strong><br/>When a Finisher attack hits a creature that had half its maximum HP or fewer before the attack, that Finisher scores a critical hit on 19–20.</td></tr><tr><td>Tempest</td><td><strong>Cyclone Sweep</strong><br/>Sweeping Strike secondary targets no longer need to be within 5 feet of the original target; each only needs to be within your melee reach.</td></tr><tr><td>Warpath</td><td><strong>Overrun</strong><br/>When a Battle Rush hit follows at least 20 feet of movement toward the target, it makes a STR save; on a failure choose to push it 10 feet or knock it Prone. Creatures more than one size larger have Advantage on the save.</td></tr></tbody></table></div>
+<h3>Level 10 — Specialization Decision / Advancement</h3><p>Continue your current Specialization or reassign under the universal rule, then gain the chosen path’s Level 10 advancement.</p><div class="rule-table-wrap"><table class="rule-table"><thead><tr><th>Specialization</th><th>Level 10 Advancement</th></tr></thead><tbody><tr><td>Destroyer</td><td>Execution Window</td></tr><tr><td>Tempest</td><td>Cyclone Sweep</td></tr><tr><td>Warpath</td><td>Overrun</td></tr></tbody></table></div>
 <div class="ultimate-box">
 <h4>Heavenbreaker — Ultimate Ability</h4>
 <p><strong>Ultimate Activation — 100 DP.</strong> As your Action and Bonus Action, move up to your Speed toward a creature you can see without provoking Opportunity Attacks. You must end within your melee reach, then make one Ultimate melee weapon attack against it. After this Ultimate attempt resolves, you enter Ultimate Recovery during your next turn.</p>
@@ -282,7 +280,7 @@
 <div class="subfeature"><h4>Unbroken Momentum</h4><p>A successful Chain Link refreshes the duration of your active Chain. In addition, if you begin your turn with an active Chain and 0 Momentum, gain 1 Momentum. This start-turn recovery can occur only once per turn and cannot exceed your maximum.</p></div>
 </div>
 <div class="level-block" id="level-14">
-<h3>Level 14 — Final Specialization Decision / Advancement</h3><p>Continue your current Specialization or reassign under the universal rule, then gain the chosen path’s Level 14 advancement. This is the final normal Specialization decision.</p><div class="rule-table-wrap"><table class="rule-table"><thead><tr><th>Specialization</th><th>Level 14 Advancement</th></tr></thead><tbody><tr><td>Destroyer</td><td><strong>Perfect Execution</strong><br/>Executioner’s Weight is replaced: any Finisher that hits a creature at half maximum HP or fewer adds 1 current Chain Die. If that Finisher reduces it to 0 HP, regain 2 Momentum instead of Relentless Finisher’s 1, once per turn.</td></tr><tr><td>Tempest</td><td><strong>Maelstrom Sweep</strong><br/>Sweeping Strike may damage up to three eligible secondary creatures, each for one current Chain Die + STR. If at least two actually take damage, regain 1 Momentum after the Sweep resolves, once per turn.</td></tr><tr><td>Warpath</td><td><strong>Breakthrough</strong><br/>After a creature fails its Overrun save, move up to 10 feet. You may pass through its space if it is no more than one size larger, cannot end there, and do not provoke an Opportunity Attack from it.</td></tr></tbody></table></div>
+<h3>Level 14 — Final Specialization Decision / Advancement</h3><p>Continue your current Specialization or reassign under the universal rule, then gain the chosen path’s Level 14 advancement. This is the final normal Specialization decision.</p><div class="rule-table-wrap"><table class="rule-table"><thead><tr><th>Specialization</th><th>Level 14 Advancement</th></tr></thead><tbody><tr><td>Destroyer</td><td>Perfect Execution</td></tr><tr><td>Tempest</td><td>Maelstrom Sweep</td></tr><tr><td>Warpath</td><td>Breakthrough</td></tr></tbody></table></div>
 <div class="subfeature"></div>
 <div class="subfeature"></div>
 <div class="subfeature"></div>
@@ -313,8 +311,9 @@
 <div class="subfeature"><h4>Apex Heavenbreaker</h4><p>Your Heavenbreaker uses its Level 20 damage and all Level 20 improvements described in the Level 10 feature.</p></div>
 </div>
 </section>
+
 <section id="examples">
-<h2>Example Combat Sequences</h2>
+<div class="specialization-level3-detail"><h3>Level 3 Specialization Features — What They Do</h3><p>At Level 3, choose one specialization. The entries below explain exactly what each Level 3 feature does, including its trigger, limits, distances, dice, and bonuses. These definitions are player-facing; the full class rules remain authoritative.</p><div class="rule-table-wrap"><table class="rule-table"><thead><tr><th>Specialization</th><th>Level 3 Features and Mechanics</th></tr></thead><tbody><tr><td><strong>Destroyer</strong></td><td><strong>Relentless Finisher</strong><br>Once on each of your turns, when Crushing Finisher hits a creature that had half its maximum HP or fewer before the attack, regain 1 Momentum after the Finisher resolves.</td></tr><tr><td><strong>Tempest</strong></td><td><strong>Widening Sweep</strong><br>When you use Sweeping Strike, choose one additional eligible secondary creature. That second creature takes one Chain Die without adding STR.</td></tr><tr><td><strong>Warpath</strong></td><td><strong>Charging Assault</strong><br>Battle Rush requires only 10 feet of movement toward the target. After the qualifying hit resolves, move up to 10 feet without provoking an Opportunity Attack from that creature; you must end closer to that creature or another hostile creature you can perceive.</td></tr></tbody></table></div></div><h2>Example Combat Sequences</h2>
 <ol>
 <li><strong>Level 5 baseline:</strong> move 15 feet toward a hostile, hit to generate Momentum and open the Chain, apply Driving Strike, make the second attack and apply Hamstring Strike, then continue the Chain next turn if no Finisher was affordable.</li>
 <li><strong>Level 11 prepared Chain:</strong> Opener → Driving Strike → Hamstring Strike across the available attacks/turns → Devastating Finisher once two prior Links exist. Momentum Mastery refunds one Link expenditure along the way.</li>
@@ -329,6 +328,6 @@
   Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”) · Non-commercial fan project.
 </footer>
 <div class="search-results" data-search-results=""></div>
-<script src="../assets/js/search-v20260914-6.js"></script>
+<script src="../assets/js/search.js"></script>
 </body>
 </html>
