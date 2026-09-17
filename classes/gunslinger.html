@@ -3,8 +3,35 @@
 <html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Gunslinger | Wings of Atreia</title>
 <meta content="Complete player reference for the Gunslinger class in Wings of Atreia, based on Player Handbook v3.10." name="description"/>
-<link href="../assets/css/style-v20260914-6.css" rel="stylesheet"/>
-<link href="../assets/css/classes-v20260918-1.css" rel="stylesheet"/></head>
+<link href="../assets/css/classes-global-v20260918-1.css" rel="stylesheet"/><style>
+.class-kicker{font-size:.85rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:800}
+.class-tagline{font-size:1.1rem;color:var(--muted);margin:.25rem 0 .3rem}
+.class-quote{font-size:1.15rem;font-style:italic;margin:.65rem 0 0}
+.quick-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.7rem;margin:1.4rem 0 2rem}
+.quick-nav a{display:block;padding:.75rem .85rem;border:1px solid var(--line);border-radius:.7rem;background:rgba(13,27,42,.78)}
+.rule-table-wrap{overflow-x:auto;margin:1rem 0 1.7rem}
+table.rule-table{width:100%;border-collapse:collapse;min-width:680px;background:rgba(13,27,42,.72)}
+.rule-table th,.rule-table td{border:1px solid var(--line);padding:.65rem .7rem;vertical-align:top;text-align:left}
+.rule-table th{background:#173957;color:#fff}
+.rule-table td:first-child{font-weight:700}
+.source-note{font-size:.92rem;color:var(--muted);border-left:3px solid var(--accent);padding:.85rem 1rem;background:rgba(127,200,255,.06);margin:1rem 0 2rem}
+.level-heading{padding-top:.6rem}
+ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}
+ul.source-list li,ol.source-list li{margin:.35rem 0}
+@media(max-width:850px){.quick-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.quick-nav{grid-template-columns:1fr}}
+
+    .class-inspiration{margin:0 0 2rem}
+    .class-inspiration h2{margin-bottom:.45rem}
+    .inspiration-intro{color:var(--muted);margin:.15rem 0 1rem}
+    .inspiration-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+    .inspiration-card{margin:0;border:1px solid var(--line);border-radius:1rem;overflow:hidden;background:rgba(13,27,42,.78);box-shadow:0 12px 28px rgba(0,0,0,.18)}
+    .inspiration-frame{display:flex;align-items:center;justify-content:center;aspect-ratio:4/5;background:rgba(5,15,24,.72);padding:.55rem}
+    .inspiration-frame img{display:block;width:100%;height:100%;object-fit:contain;border-radius:.6rem}
+    .inspiration-card figcaption{padding:.8rem 1rem;font-weight:800;text-align:center;color:var(--accent-2)}
+    .inspiration-disclaimer{font-size:.9rem;color:var(--muted);margin:.85rem 0 0;padding:.85rem 1rem;border-left:3px solid var(--accent);background:rgba(127,200,255,.05)}
+    @media(max-width:650px){.inspiration-grid{grid-template-columns:1fr}.inspiration-frame{aspect-ratio:auto;min-height:0}.inspiration-frame img{height:auto;max-height:none}}
+</style></head>
 <body data-base="../"><header class="site-header"><div class="nav-wrap">
 <a class="brand" href="../index.html">WINGS OF ATREIA</a>
 <nav class="nav-links"><a href="../index.html">Home</a><a href="../rules/">Rules</a><a href="../classes/">Classes</a><a href="../spells/">Spells</a><a href="../world/">World</a><a href="../companion/">Character Companion</a><a href="../about.html">About</a></nav>
