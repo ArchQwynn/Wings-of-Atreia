@@ -1,5 +1,5 @@
-const CACHE_VERSION = "woa-pwa-20260918-9";
-const RUNTIME_CACHE = "woa-runtime-20260918-9";
+const CACHE_VERSION = "woa-pwa-20260920-10";
+const RUNTIME_CACHE = "woa-runtime-20260920-10";
 const PRECACHE = [
   "index.html",
   "offline.html",
