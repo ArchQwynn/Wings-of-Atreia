@@ -1,5 +1,5 @@
-const CACHE_VERSION = "woa-pwa-20260923-12";
-const RUNTIME_CACHE = "woa-runtime-20260923-12";
+const CACHE_VERSION = "woa-pwa-20260923-13";
+const RUNTIME_CACHE = "woa-runtime-20260923-13";
 const PRECACHE = [
   "index.html",
   "offline.html",
@@ -309,7 +309,7 @@ self.addEventListener("message", event => {
       cached,
       total: PRECACHE.length,
       version: CACHE_VERSION,
-      updated: "14 Sep 2026"
+      updated: "23 Sep 2026"
     };
 
     if (event.ports && event.ports[0]) event.ports[0].postMessage(payload);
