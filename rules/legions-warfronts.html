@@ -31,10 +31,11 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 <h3>Universal Synchronized Warfront Cycle</h3>
 <ol class="source-list">
 <li><strong>Simultaneous Movement Phase.</strong> Both sides complete legal strategic movement in the same Movement Phase. Where opposing adjacent forces could advance directly into one another, the player side has advance-declaration priority.</li>
-<li><strong>Battle Phase.</strong> Identify every engagement created by that movement. Every active engagement resolves completely, including all Battle Exchanges and Decision Windows.</li>
+<li><strong>Battle Phase.</strong> Identify every engagement created by that movement. Each active engagement resolves completely through its Preliminary Round, Main Combat, and Decision Windows.</li>
 <li><strong>No Early New Movement.</strong> A Battlefront or grid that resolves early cannot begin a new normal strategic move while another engagement from that Battle Phase is unresolved.</li>
 <li><strong>End-of-Battle-Phase Resolution.</strong> After all engagements conclude, resolve applicable control changes, recovery for eligible withdrawn Units, eliminations, retreats, and any External Reinforcement Check that is due. Then begin the next Movement Phase.</li>
 </ol>
+<p><strong>Warfront Round Limit.</strong> A Warfront lasts a maximum of 15 rounds. If an applicable victory condition is achieved before Round 15, the Warfront ends immediately. If neither side has won earlier, complete Round 15 and then determine Success or Defeat using the applicable scenario's victory conditions.</p>
 <p><strong>No Zone of Control.</strong> Enemy adjacency by itself never locks movement. An engagement begins only when opposing forces legally enter or share the same Battlefront or grid.</p>
 <h2 id="war-assets">War Assets (WA)</h2>
 <p>War Assets represent personnel, equipment, authorization, logistics, transportation, Aether resources, supplies, and the sustained resources needed to field formations.</p>
@@ -67,8 +68,20 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 <tr><td>I</td><td>1</td></tr><tr><td>II</td><td>2</td></tr><tr><td>III</td><td>3</td></tr><tr><td>IV</td><td>4</td></tr><tr><td>V</td><td>5</td></tr>
 </table></div>
 <p>A Unit reduced to <strong>0 END</strong> is eliminated.</p>
-<h2 id="battle-exchange">Battle Exchanges and Decision Windows</h2>
-<p>Each committed attacking combat Unit rolls one ATK die. Each committed defending combat Unit rolls one DEF die. A successful DEF roll does <strong>not</strong> cancel an attacking Hit; it creates a separate Hit against the attacking force. Resolve Hits, END reduction, eliminations, and applicable effects before opening the Decision Window.</p>
+<h2 id="battle-exchange">Preliminary Round, Main Combat, Battle Exchanges, and Decision Windows</h2>
+<p>After an engagement is identified, resolve the Preliminary Round before any normal Battle Exchange. Both sides resolve their applicable Preliminary actions, then all Preliminary effects are applied and Units reduced to 0 END are removed before Main Combat begins.</p>
+<h3>Preliminary Round</h3>
+<p><strong>Artillery.</strong> Every Artillery Unit makes one Preliminary Attack. Roll 1d6; only a result of <strong>1</strong> is a successful Hit. A successful Preliminary Artillery Hit deals 1 Hit to an eligible enemy Infantry or Ranged/Caster Unit. The owner of the targeted force chooses which eligible Unit suffers the Hit. Artillery cannot target Specialists, Aerial Units, other Artillery, or Support Units. This special roll does not use Artillery's normal ATK 0.</p>
+<p><strong>Siege.</strong> Every Siege Unit makes one Preliminary Attack. Roll 1d6; only a result of <strong>1</strong> is a successful SIEGE Hit, removing 1 Fortification Point. This Preliminary threshold of 1 is separate from the Siege Unit's normal SIEGE statistic, which is used during Main Combat.</p>
+<p><strong>Scout and Assassin.</strong> Scout and Assassin Specialists must be used during the Preliminary Round. They cannot be used after the Preliminary Round ends. Scout reveals only the total number of enemy Units in the next Battlefront. Assassin expends itself to reduce one eligible personnel-based enemy Unit's current END by 2; Assassins cannot gang up on one target.</p>
+<p>Preliminary actions are resolved before Main Combat. All Hits, END reduction, eliminations, and other applicable effects are resolved before Main Combat begins. A Unit eliminated during the Preliminary Round does not participate in Main Combat.</p>
+<h3>Main Combat Order</h3>
+<p>Both sides resolve each category simultaneously before moving to the next category:</p>
+<ol class="source-list"><li><strong>Ranged/Caster</strong></li><li><strong>Aerial</strong></li><li><strong>Infantry and Artillery</strong></li><li><strong>Siege and Saboteur</strong></li><li><strong>Engineer and Support</strong></li><li><strong>PC and Brigadier General</strong></li></ol>
+<p>Within each category, use the normal Warfront ATK/DEF/SIEGE rules unless a rule explicitly provides a different roll. Artillery's normal Main Combat statistic remains ATK 0 / DEF 2 / END 1. Siege uses its listed SIEGE statistic during Main Combat. Saboteur can modify only a Main Combat Siege attack and cannot modify a Preliminary Siege Attack. Engineer performs its repair during the Engineer + Support Main Combat step.</p>
+<h3>Commitment</h3>
+<p>At the beginning of a contested Battlefront or grid engagement, each side chooses which eligible Units are committed. Other eligible Units may be held back. Once the Preliminary Round begins, no Unit may reinforce, pull back, redeploy, or retreat during that Preliminary Round or Main Combat exchange.</p>
+<p>Each committed attacking combat Unit rolls one ATK die when its Main Combat category resolves. Each committed defending combat Unit rolls one DEF die when its Main Combat category resolves. A successful DEF roll does <strong>not</strong> cancel an attacking Hit; it creates a separate Hit against the attacking force. Resolve Hits, END reduction, eliminations, and applicable effects according to the category timing before continuing to the next category.</p>
 <h3>Commitment</h3>
 <p>At the beginning of a contested Battlefront or grid engagement, each side chooses which eligible Units are committed. Other eligible Units may be held back. Once the Battle Exchange begins, no Unit may reinforce, pull back, redeploy, or retreat during that exchange.</p>
 <div class="rule-table-wrap"><table class="rule-table">
@@ -135,9 +148,10 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 <tr><td>War</td><td>4</td><td>2</td><td>I–III</td></tr>
 </table></div>
 <h3>Artillery</h3>
-<p><strong>ATK 0 / DEF 2 / END 1.</strong> One Artillery may grant one additional Attack Die to one eligible attacking Infantry Unit: Light, Line, Assault, or Vanguard. Heavy, Guard, Elite, Levy, and non-Infantry Units are ineligible. One Infantry can receive at most one Artillery bonus die in the same Battle Exchange. Artillery also enables all allied Infantry in the same Battlefront/grid, including Levy, to attack Aerial Units.</p>
+<p><strong>ATK 0 / DEF 2 / END 1.</strong> During the Preliminary Round, each Artillery makes one special Preliminary Attack: roll 1d6, and only a <strong>1</strong> scores 1 Hit. The Preliminary Attack can target only Infantry and Ranged/Caster Units; it cannot target Specialists, Aerial Units, other Artillery, or Support Units. The target's owner chooses which eligible Unit suffers the Hit. The Preliminary Attack does not use ATK 0.</p>
+<p>During Main Combat, Artillery uses its normal ATK 0 / DEF 2 statistics. One Artillery may grant one additional Attack Die to one eligible attacking Infantry Unit: Light, Line, Assault, or Vanguard. Heavy, Guard, Elite, Levy, and non-Infantry Units are ineligible. One Infantry can receive at most one Artillery bonus die in the same Battle Exchange. Artillery also enables all allied Infantry in the same Battlefront/grid, including Levy, to attack Aerial Units.</p>
 <h3>Siege Units</h3>
-<p>Each successful SIEGE Hit removes 1 Fortification Point. Siege cannot proceed beyond the Main Gate and is excluded from Open Abyss Battles.</p>
+<p>Each Siege Unit makes one Preliminary Attack before Main Combat. Roll 1d6; only a <strong>1</strong> is a successful Preliminary SIEGE Hit, removing 1 Fortification Point. During Main Combat, Siege uses its listed SIEGE statistic normally. Saboteur can modify only a Main Combat Siege attack. Siege cannot proceed beyond the Main Gate and is excluded from Open Abyss Battles.</p>
 <div class="rule-table-wrap"><table class="rule-table">
 <tr><th>Profile</th><th>SIEGE</th><th>DEF</th><th>END</th></tr>
 <tr><td>Field Siege</td><td>2</td><td>1</td><td>2</td></tr>
@@ -158,10 +172,10 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 <p>All Specialists are Tier I, END 1, and roll no ATK or DEF die.</p>
 <div class="rule-table-wrap"><table class="rule-table">
 <tr><th>Specialist</th><th>Function</th></tr>
-<tr><td>Scout</td><td>Expend to reveal only the total number of enemy Units in the next Battlefront.</td></tr>
-<tr><td>Engineer</td><td>Defense only. Repair Capacity 3 for the entire operation. At the approved end-of-turn timing, restore 1 lost Fortification Point; each successful restoration uses 1 Repair. After the third successful restoration, the Engineer is expended. Moving does not refresh capacity.</td></tr>
-<tr><td>Saboteur</td><td>Expend to grant one Siege Unit +1 SIEGE for one Siege attack.</td></tr>
-<tr><td>Assassin</td><td>Expend to reduce one eligible personnel-based enemy Unit's current END by 2. Assassins cannot gang up on one target.</td></tr>
+<tr><td>Scout</td><td>During the Preliminary Round, expend to reveal only the total number of enemy Units in the next Battlefront. Scout cannot be used after the Preliminary Round.</td></tr>
+<tr><td>Engineer</td><td>Defense only. Repair Capacity 3 for the entire operation. During the Engineer + Support Main Combat step, an Engineer may restore 1 lost Fortification Point; each successful restoration uses 1 Repair. After the third successful restoration, the Engineer is expended. Moving does not refresh capacity.</td></tr>
+<tr><td>Saboteur</td><td>During Main Combat, expend to grant one Siege Unit +1 SIEGE for one Main Combat Siege attack. Saboteur cannot modify a Preliminary Siege Attack.</td></tr>
+<tr><td>Assassin</td><td>During the Preliminary Round, expend to reduce one eligible personnel-based enemy Unit's current END by 2. Assassins cannot gang up on one target and cannot be used after the Preliminary Round.</td></tr>
 </table></div>
 <h3>Aerial Units</h3>
 <p>Warfront Aerial Units do not track character-scale Flight Slots or individual Wind Serum consumption; their WA cost abstracts sustained mass-flight logistics.</p>
@@ -220,7 +234,8 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 <tr><td>Assassin</td><td>3</td></tr>
 </table></div>
 <h2 id="pc-participation">Player Character Warfront Participation</h2>
-<p>Each participating PC uses one fixed d6: <strong>ATK 3 while attacking</strong> and <strong>DEF 3 while defending</strong>.</p>
+<p>Each participating PC uses one d6. PCs at Levels 1–10 have <strong>ATK 3 / DEF 3</strong>. PCs at Levels 11–20 have <strong>ATK 4 / DEF 4</strong>.</p>
+<p><strong>PC Rerolls.</strong> Each PC has a maximum of 3 rerolls for the entire Warfront. A PC chooses whether to reroll a Warfront die they personally rolled. All three rerolls may be spent on the same original dice roll if the PC chooses. Once all 3 rerolls are spent, no further rerolls are available for that PC during that Warfront.</p>
 <ul class="source-list">
 <li>PCs are not Warfront Units, have no Tier or END, and cost no WA.</li>
 <li>PC ATK/DEF are not modified by Support, Artillery, Unit effects, class features, equipment, spells, Wings, feats, or other character-scale mechanics unless a rule explicitly names PCs.</li>
@@ -276,11 +291,11 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 <tr><th>Fortification Strength</th><th>Suggested FP</th></tr>
 <tr><td>Light</td><td>2</td></tr><tr><td>Reinforced</td><td>3</td></tr><tr><td>Strong</td><td>4</td></tr><tr><td>Major Fortress Defense</td><td>5</td></tr><tr><td>Exceptional / Story-Critical</td><td>6+</td></tr>
 </table></div>
-<p>At 0 FP a Fortification is Breached. Siege attacks Fortification Points and cannot proceed beyond the Main Gate.</p>
+<p>At 0 FP a Fortification is Breached. Siege attacks Fortification Points and cannot proceed beyond the Main Gate. PCs may also damage Fortifications: every 2 successful PC Hits against a Fortification remove 1 FP. PC Hits accumulate across PCs; they do not need to come from the same PC. PC attacks do not use the Siege mechanic.</p>
 <ul class="source-list">
 <li><strong>Engineer:</strong> defense-only, Repair Capacity 3 for the operation; one successful repair restores 1 FP and uses 1 Repair. After the third successful repair the Engineer is expended.</li>
 <li><strong>Engineer cap:</strong> Standard Fortress maximum 2 Engineers for the entire war; Major Fortress maximum 4. Eliminated or expended Engineers still count against the operation-wide cap unless a scenario explicitly grants an exception.</li>
-<li>A single Fortification can receive at most 1 FP of Engineer restoration at the same end-of-turn timing.</li>
+<li>A single Fortification can receive at most 1 FP of Engineer restoration during the Engineer + Support Main Combat step of an engagement.</li>
 <li><strong>Saboteur:</strong> improves one Siege attack by +1 SIEGE and is then expended.</li>
 <li><strong>Assassin:</strong> Fortress Wars allow at most three Assassin uses per side for the entire Fortress War.</li>
 </ul>
@@ -326,7 +341,7 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 <h3>Retreat, Encirclement, and Cut Off PCs</h3>
 <p>Retreating Units move exactly 1 grid backward toward their own Reserve: straight backward, backward-left, or backward-right. If an allied-controlled destination is already engaged, the retreating Units enter it but join only at that engagement's Decision Window.</p>
 <p>When a side declares overall Retreat or Surrender, a surviving Unit escapes only if a connected route to its own Reserve remains open and is not enemy-controlled. Trapped Units with no valid route are eliminated if no PCs are present.</p>
-<p>A PC with no valid connected route back to Reserve is <strong>Cut Off</strong>. A Cut Off PC remains in Warfront play, cannot Retreat until a route reopens, stays in the current grid, and continues to use ATK 3 / DEF 3. If the last allied Unit with a Cut Off PC is eliminated, the PC remains on the board as the explicit exception to the normal accompaniment rule. Ordinary Warfront Hits still cannot be assigned to that PC, and the PC still cannot control the grid.</p>
+<p>A PC with no valid connected route back to Reserve is <strong>Cut Off</strong>. A Cut Off PC remains in Warfront play, cannot Retreat until a route reopens, stays in the current grid, and uses its level-based ATK/DEF values. If the last allied Unit with a Cut Off PC is eliminated, the PC remains on the board as the explicit exception to the normal accompaniment rule. Ordinary Warfront Hits still cannot be assigned to that PC, and the PC still cannot control the grid.</p>
 <h3>Open Abyss External Reinforcements</h3>
 <ul class="source-list">
 <li>Uses the universal 3-change threshold and maximum-one-check-per-completed-Battle-Phase pacing.</li>
@@ -335,16 +350,17 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 <li>External reinforcements arrive in the receiving side's Reserve Line.</li>
 <li>Once either side declares overall Retreat or Surrender, no further External Reinforcement Checks or arrivals occur.</li>
 </ul>
-<h2 id="quick-reference">Quick Battle Exchange Reference</h2>
+<h2 id="quick-reference">Quick Warfront Combat Reference</h2>
 <div class="rule-table-wrap"><table class="rule-table"><tr><th>
-SIMULTANEOUS MOVEMENT → IDENTIFY ENGAGEMENTS → BATTLE EXCHANGES / DECISION WINDOWS UNTIL ALL ENGAGEMENTS RESOLVE → END-OF-BATTLE-PHASE RECOVERY / REINFORCEMENT CHECK → NEXT MOVEMENT PHASE
+SIMULTANEOUS MOVEMENT → IDENTIFY ENGAGEMENTS → PRELIMINARY ROUND → REMOVE PRELIMINARY CASUALTIES → MAIN COMBAT (RANGED/CASTER → AERIAL → INFANTRY &amp; ARTILLERY → SIEGE &amp; SABOTEUR → ENGINEER &amp; SUPPORT → PC &amp; BRIGADIER GENERAL) → DECISION WINDOW → NEXT BATTLE EXCHANGE → END-OF-BATTLE-PHASE RESOLUTION → NEXT MOVEMENT PHASE
 </th></tr></table></div>
 <ul class="source-list">
-<li>Attacker rolls one ATK die per committed combat Unit.</li>
-<li>Defender rolls one DEF die per committed combat Unit.</li>
-<li>Each successful die inflicts 1 Hit; DEF Hits do not cancel ATK Hits.</li>
+<li>Resolve Artillery and Siege Preliminary Attacks and Scout/Assassin abilities before Main Combat.</li>
+<li>Apply all Preliminary Hits and effects, then remove Units reduced to 0 END before Main Combat.</li>
+<li>Both sides resolve each Main Combat category simultaneously in the stated hierarchy.</li>
+<li>Each successful normal ATK/DEF die inflicts 1 Hit; DEF Hits do not cancel ATK Hits.</li>
 <li>Reduce END and remove Units at 0 END.</li>
-<li>After each Battle Exchange, open the Decision Window.</li>
+<li>After Main Combat, open the Decision Window.</li>
 <li>Units staying committed for the next exchange regain 1 END; Units leaving do not.</li>
 <li>After all engagements on the board conclude, resolve eligible post-Battle-Phase recovery and at most one External Reinforcement Check if the accumulated counter is at least 3.</li>
 <li>Apply scenario-specific control, movement, retreat, and reinforcement rules.</li>
