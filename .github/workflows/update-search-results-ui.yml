@@ -1,0 +1,72 @@
+name: Update Search Results UI
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  update-search-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Patch search behavior and PWA cache
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          search = Path("assets/js/search-v20260914-6.js")
+          text = search.read_text(encoding="utf-8")
+
+          old = '''    } else if (event.key === "Enter") {
+      const target = activeIndex >= 0 ? links[activeIndex] : links[0];
+      if (target) window.location.href = target.href;
+    }'''
+          new = '''    } else if (event.key === "Enter") {
+      event.preventDefault();
+      const query = input.value.trim();
+      if (query) {
+        window.location.href = `${base}search-results.html?q=${encodeURIComponent(query)}`;
+      }
+    }'''
+          if old not in text:
+              raise SystemExit("Expected Enter handler was not found; refusing to modify search.js.")
+          text = text.replace(old, new, 1)
+          text = text.replace("search-index.json?v=20260914-5", "search-index.json?v=20261001-1", 1)
+          search.write_text(text, encoding="utf-8")
+
+          sw = Path("sw.js")
+          sw_text = sw.read_text(encoding="utf-8")
+          sw_text = re.sub(r'const CACHE_VERSION = "[^"]+";', 'const CACHE_VERSION = "woa-pwa-20261001-1";', sw_text, count=1)
+          sw_text = re.sub(r'const RUNTIME_CACHE = "[^"]+";', 'const RUNTIME_CACHE = "woa-runtime-20261001-1";', sw_text, count=1)
+
+          if '"search-results.html"' not in sw_text:
+              sw_text = sw_text.replace('  "offline.html",', '  "offline.html",\n  "search-results.html",', 1)
+          if '"assets/js/search-results.js?v=20261001-1"' not in sw_text:
+              marker = '  "assets/js/search-results.js?v=20261001-1",'
+              if '"assets/js/search-v20260914-6.js"' in sw_text:
+                  sw_text = sw_text.replace('  "assets/js/search-v20260914-6.js",', '  "assets/js/search-v20260914-6.js",\n' + marker, 1)
+              elif 'assets/js/search-v20260914-6.js' in sw_text:
+                  sw_text = sw_text.replace('"assets/js/search-v20260914-6.js"', '"assets/js/search-v20260914-6.js",\n' + marker, 1)
+              else:
+                  sw_text = sw_text.replace('  "assets/js/search-index.json",', '  "assets/js/search-index.json",\n' + marker, 1)
+          sw.write_text(sw_text, encoding="utf-8")
+
+      - name: Commit search UI changes if needed
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/js/search-v20260914-6.js sw.js
+          if git diff --cached --quiet; then
+            echo "Search UI already up to date."
+          else
+            git commit -m "Update WoA search to full results page"
+            git push
+          fi
