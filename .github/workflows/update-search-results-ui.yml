@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Patch search behavior and PWA cache
-        shell: python
+        shell: python {0}
         run: |
           from pathlib import Path
           import re
