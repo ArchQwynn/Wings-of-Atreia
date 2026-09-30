@@ -2,8 +2,7 @@ name: Update Search Results UI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   contents: write
@@ -16,8 +15,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Patch search behavior and PWA cache
-        shell: python {0}
+        shell: bash
         run: |
+          python <<'PY'
           from pathlib import Path
           import re
 
@@ -57,6 +57,7 @@ jobs:
               else:
                   sw_text = sw_text.replace('  "assets/js/search-index.json",', '  "assets/js/search-index.json",\n' + marker, 1)
           sw.write_text(sw_text, encoding="utf-8")
+          PY
 
       - name: Commit search UI changes if needed
         shell: bash
