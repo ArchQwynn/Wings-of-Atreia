@@ -73,7 +73,7 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 <h3>Preliminary Round</h3>
 <p><strong>Artillery.</strong> Every Artillery Unit makes one Preliminary Attack. Roll 1d6; only a result of <strong>1</strong> is a successful Hit. A successful Preliminary Artillery Hit deals 1 Hit to an eligible enemy Infantry or Ranged/Caster Unit. The owner of the targeted force chooses which eligible Unit suffers the Hit. Artillery cannot target Specialists, Aerial Units, other Artillery, or Support Units. This special roll does not use Artillery's normal ATK 0.</p>
 <p><strong>Siege.</strong> Every Siege Unit makes one Preliminary Attack. Roll 1d6; only a result of <strong>1</strong> is a successful SIEGE Hit, removing 1 Fortification Point. This Preliminary threshold of 1 is separate from the Siege Unit's normal SIEGE statistic, which is used during Main Combat.</p>
-<p><strong>Scout and Assassin.</strong> Scout and Assassin Specialists must be used during the Preliminary Round. They cannot be used after the Preliminary Round ends. Scout reveals only the total number of enemy Units in the next Battlefront. Assassin expends itself to reduce one eligible personnel-based enemy Unit's current END by 2; Assassins cannot gang up on one target.</p>
+<p><strong>Scout and Assassin.</strong> Scout and Assassin Specialists must be used during the Preliminary Round. They cannot be used after the Preliminary Round ends. Scout reveals only the total number of enemy Units in the next Battlefront. Assassin expends itself to reduce one eligible personnel-based enemy Unit's current END by 2; One Assassin can only target 1 enemy unit and reduce its END. Unused reduction point is expended whatever the END of the enemy target is. Assassins cannot gang up on one target.</p>
 <p>Preliminary actions are resolved before Main Combat. All Hits, END reduction, eliminations, and other applicable effects are resolved before Main Combat begins. A Unit eliminated during the Preliminary Round does not participate in Main Combat.</p>
 <h3>Main Combat Order</h3>
 <p>Both sides resolve each category simultaneously before moving to the next category:</p>
@@ -301,16 +301,39 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 </ul>
 <h3>Fortress External Reinforcements</h3>
 <p>Fortress external reinforcements enter from outside. Roll 1d4: 1 North, 2 East, 3 South, 4 West. They cannot bypass an enemy-controlled exterior Battlefront to appear deeper in the Fortress. The first three Fortress reinforcement checks use the normal 1d10 table; after the third Fortress reinforcement check, later qualifying checks automatically reinforce the Fortress defender.</p>
+<h3>Brigadier-General</h3>
+<p>Every active Fortress Core has a Brigadier-Genral. The Brigadier-General is not purchased with WA and is the mandatory final defender of every active Fortress Core. It remains exclusively inside the Fortress Core and cannot move, redeploy, reinforce another Battlefront, or defend the Aether Controller.</p>
 <h3>Aether Controller and Fortress Core</h3>
 <p>The Aether Controller is a normal Major Ground Objective and requires at least one surviving attacking Infantry Unit to capture. The Fortress Core is inaccessible while the Aether Controller remains defender-controlled.</p>
-<p>Every active Fortress Core has a Brigadier-General. The Core uses a two-phase procedure: a final Warfront-scale defense followed, when the required PCs are physically present, by the established character-scale Brigadier-General encounter. The broader Warfront pauses during that second phase. Defeating the Brigadier-General immediately captures the Fortress and ends unresolved Warfront battles.</p>
+<p>Every active Fortress Core has a Brigadier-General. The Core uses a two-phase procedure as described below.</p>
+<li>Only PCs physically present at the Core when the encounter begins participate. PCs elsewhere cannot join after the encounter begins.</li>
+<li>Allied Warfront Units do not become individual cratures in the Phase 2 character-scale encounter; their surviving END contributes to the PCs through the Allied Force HP Conversion rule.</li>
+<li>The broader Warfront pauses during Phase 2 of the Brigadier-General encounter.</li>
+<li>If PCs withdraw and later return while the Brigadier-General remains alive, the Brigadier-General begins the new encounter at maximum HP and maximum resources. Converted END cannot be reimbursed back.</li>
+<li>Defeating the Brigadier-General immediately captures the Fortress and ends all remaining Warfront battles.</li>
 <p><strong>Player-site boundary:</strong> the exact GM-facing Brigadier-General enemy statblock and closed defender-side GM resolution table are intentionally not published here.</p>
 <h3>Fortress Retreat and End Conditions</h3>
 <ul class="source-list">
 <li>Surviving defending Units may escape off-map and remain in their Force Pool.</li>
 <li>If the attacking side declares overall retreat, the Fortress War ends.</li>
 <li>After the Warfront ends, pursuit, surrender, capture, escape, resistance, and campaign consequences are narrative/campaign material.</li>
-<li>Once the Brigadier-General is defeated, unresolved Battlefront engagements end immediately.</li>
+<h3>Fortress Core Phase 1 - Last Defense</h3>
+<p><strong>Core Command Unit.</strong>When attackers enter the Fortress Core, the Brigadier-General is represented on the Warfront board as a special Core Command Unit: <strong>ATK 0 / DEF +4 / END 1.</strong></p>
+<p>The Brigadier-General cannot be selected as a casualty, cannot be targeted by Assassins, and receives no Support modifiers. Consequently, the Brigadier-General does not receive Fortification DEF benefit because the Fortress Core has no Fortification Points. Ordinary defending Units fight around the Brigadier-General normally.</p>
+<p>Phase 1 continues until every ordinary defending Unit in the Fortress Core, except the Brigadier-General (as well as the PCs in case they are the defenders), is eliminated. Normal Decision Window reinforcement remains available while Phase 1 is active.</p>
+<p>If all ordinary defenders are removed but no PCs are physically present in the Fortress Core, Phase 2 cannot begin. The attacking Warfront Units pull back to the Aether Controller, leaving the Brigadier-General alone in the Core until PCs arrive and the attackers later re-enter. If the Aether Controller is controlled by the defenders, the retreating attacker units will have a clash at the Aether Controller as normal.</p>
+<h3>Fortress Core Phase 2 - Brigadier-General Encounter</h3>
+<p>If one or more PCs are physically present when their side wins Phase 1, Phase 2 immediately transitions to a separate standard Wings of Atreia GM encounter against the Brigadier-General. Only PCs physically present in the Fortress Core at that transition participate. The broader Warfront pauses throughout Phase 2. PCs elsewhere cannot join after Phase 2 begins.</p>
+<p><strong>Allied Force HP Conversion.</strong>At the end of a player victory in Phase 1, add together the <strong>CURRENT remaining END</strong> of every surviving player-side Warfront Unit physically present in the Fortress Core. Convert at 1 remaining END = 1 Current HP for the encounter. Divide that total HP pool equally among all PCs physically present and entering PHase 2, rounding each PC's share up. Each participating PCs increases both current HP and maximum HP by that assigned amount for this Brigadier-General encounter only.</p>
+<p>The current/max HP increase ends when that specific Brigadier-General encounter ends and never carries forward.</p>
+<p>If defenders repel the attacking Warfront Units during Phase 1, no Phase 2 occurs. The Fortress remains defended, the Brigadier-General survives, and the broader Warfron resumes after the Core engagement concludes.</p>
+<h3>Player-Side Fortress Defense - Phase 2 Closed d100 Resolution</h3>
+<p>If the attacking side wins Phase 1 while one or more PCs are physically present in the Fortress Core with the Brigadier-General, do not begin a separate character-scale boss encounter. Resolve the final defense with one closed opposed d100 roll. The side that rolls the higher wins.</p>
+<p><strong>Player Defender Side:</strong>1d100+4+PC modifier. Each PC present at the Fortress Core contributes 1 to the PC modifier for levels 1-10. PCs that are level 11-20 contribute +2 each to the modifier.</p>
+<p><strong>GM Attacker Side:</strong>1d100 + the number of surviving attacking Warfront Unit tokens physically present in the Fortress Core at the end of Phase 1. Count surviving Unit tokens, not remaining END.</p>
+<p><strong>Closed Roll:</strong>No outside modifier may affect either PHase 2 roll. No Unit ability, Support effect, Specialist ability, PC feature, spell, item, equipment, class resource, condition, Fortification, environmental effect, narrative circumstance, reinforcement effect, Unit Tier applies. The only permitted modifers are those abovementioned rulings.</p>
+<p><strong>Tie:</strong>If the final modified totals tie, neither side wins. Immediately reroll both opposed d100s using exactly the same modifiers. Repeat tied rerolls as many times as necessary until one side has the higher final roll.</p>
+<h3>Player-Side Fortress Defense - Phase 2 Closed d100 Resolution</h3>
 </ul>
 <h2 id="open-abyss">Open Abyss Battles</h2>
 <h3>Battlefield Structure</h3>
