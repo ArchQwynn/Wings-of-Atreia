@@ -35,7 +35,7 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 <li><strong>No Early New Movement.</strong> A Battlefront or grid that resolves early cannot begin a new normal strategic move while another engagement from that Battle Phase is unresolved.</li>
 <li><strong>End-of-Battle-Phase Resolution.</strong> After all engagements conclude, resolve applicable control changes, recovery for eligible withdrawn Units, eliminations, retreats, and any External Reinforcement Check that is due. Then begin the next Movement Phase.</li>
 </ol>
-<p><strong>Warfront Round Limit.</strong> A Warfront lasts a maximum of 15 rounds. If an applicable victory condition is achieved before Round 15, the Warfront ends immediately. If neither side has won earlier, complete Round 15 and then determine Success or Defeat using the applicable scenario's victory conditions.</p>
+<p><strong>Warfront Round Limit.</strong> A Warfront does not have a maximum round limit. Victory conditions apply depending on the type of Warfront session (e.g. Fortress Capture or Hold Out for Fortress War, and total elimination of enemy's units present in the battlefield for Open Abyss Battles). If one side chooses to surrender or give up, the Warfront ends immediately. The GM may choose if battle is won or lost depending on objectives.</p>
 <p><strong>No Zone of Control.</strong> Enemy adjacency by itself never locks movement. An engagement begins only when opposing forces legally enter or share the same Battlefront or grid.</p>
 <h2 id="war-assets">War Assets (WA)</h2>
 <p>War Assets represent personnel, equipment, authorization, logistics, transportation, Aether resources, supplies, and the sustained resources needed to field formations.</p>
@@ -43,18 +43,18 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 <li>The GM declares a separate Base WA allowance for each participating side before force selection and deployment.</li>
 <li>The GM may restrict available Unit Catalogue options, Tiers, or Specialist formations for a specific operation.</li>
 <li>There is no recurring Warfront Upkeep.</li>
-<li>Unused operation-specific Base or Supplemental WA is not banked, transferred, or refunded.</li>
+<li>Unused operation-specific Base or Supplemental WA can be banked, or transferred, but not refunded.</li>
 <li>Only the player-controlled side may buy Supplemental WA with Kinah.</li>
 </ul>
 <h3>Recommended Baseline WA</h3>
 <div class="rule-table-wrap"><table class="rule-table">
 <tr><th>Warfront</th><th>Attacker</th><th>Defender</th></tr>
-<tr><td>Open Abyss Battle</td><td>100 WA</td><td>100 WA</td></tr>
-<tr><td>Standard Fortress War</td><td>150 WA</td><td>100 WA</td></tr>
+<tr><td>Open Abyss Battle</td><td>150 WA</td><td>150 WA</td></tr>
+<tr><td>Standard Fortress War</td><td>275 WA</td><td>150 WA</td></tr>
 <tr><td>Major Fortress War</td><td>350 WA</td><td>200 WA</td></tr>
 </table></div>
 <p>These are recommended operational baselines, not mandatory encounter budgets. The actual Base WA is whatever the GM declares for that operation. Equal WA and a fixed attacker-to-defender ratio are not required.</p>
-<p><strong>Player-Funded Supplemental WA.</strong> Spend <strong>1,000 Kinah for +1 WA</strong>, to a maximum of <strong>20% of the player side's declared Base WA</strong>, rounded down.</p>
+<p><strong>Player-Funded Supplemental WA.</strong> Spend <strong>1,000 Kinah for +1 WA</strong>, to a maximum of <strong>25% of the player side's declared Base WA</strong>, rounded down.</p>
 <h2 id="unit-statistics">Unit Statistics and Tiers</h2>
 <div class="rule-table-wrap"><table class="rule-table">
 <tr><th>Statistic</th><th>Meaning</th></tr>
@@ -82,8 +82,6 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 <h3>Commitment</h3>
 <p>At the beginning of a contested Battlefront or grid engagement, each side chooses which eligible Units are committed. Other eligible Units may be held back. Once the Preliminary Round begins, no Unit may reinforce, pull back, redeploy, or retreat during that Preliminary Round or Main Combat exchange.</p>
 <p>Each committed attacking combat Unit rolls one ATK die when its Main Combat category resolves. Each committed defending combat Unit rolls one DEF die when its Main Combat category resolves. A successful DEF roll does <strong>not</strong> cancel an attacking Hit; it creates a separate Hit against the attacking force. Resolve Hits, END reduction, eliminations, and applicable effects according to the category timing before continuing to the next category.</p>
-<h3>Commitment</h3>
-<p>At the beginning of a contested Battlefront or grid engagement, each side chooses which eligible Units are committed. Other eligible Units may be held back. Once the Battle Exchange begins, no Unit may reinforce, pull back, redeploy, or retreat during that exchange.</p>
 <div class="rule-table-wrap"><table class="rule-table">
 <tr><th>Decision</th><th>Effect</th></tr>
 <tr><td>Continue</td><td>Fight another Battle Exchange with the surviving committed force.</td></tr>
@@ -116,7 +114,7 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 <tr><td>5–8</td><td>Opposing reinforcements arrive.</td></tr>
 <tr><td>9–10</td><td>Nothing happens.</td></tr>
 </table></div>
-<p>The GM determines the size, WA-equivalent strength, Unit composition, and exact makeup of arriving external forces.</p>
+<p>If the roll results in Friendly reinforcements, the Players choose who will roll the first d20 to determine the composition of the reinforcements according to the rollable table that is provided. If the result is for the Opposing reinforcements, it will be the GM that will roll the provided die. A second rolltable will determine the Tier of the units. In the event that the Unit composition has a set maximum Tier level that is less than the result of the 2nd roll, it means an automatic maximum Tier available to that unit composition.</p>
 <h2 id="unit-catalogue">Universal Unit Catalogue</h2>
 <h3>Infantry</h3>
 <p>Only Infantry captures or recaptures Major Ground Objectives and Open Abyss grids.</p>
@@ -141,6 +139,7 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 </ul>
 <h3>Ranged / Caster Units</h3>
 <p>Ranged/Caster Units must physically occupy the Battlefront/grid where they fight and may target Aerial Units.</p>
+<p>Defending Ranged/Caster Units within the same grid that has at least 1 Fortification point will receive a +1 to their DEF roll. This applies to all Ranged/Caster units.</p>
 <div class="rule-table-wrap"><table class="rule-table">
 <tr><th>Profile</th><th>ATK</th><th>DEF</th><th>Tier Range</th></tr>
 <tr><td>Light</td><td>2</td><td>1</td><td>I–III</td></tr>
@@ -170,6 +169,7 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 </ul>
 <h3>Specialists</h3>
 <p>All Specialists are Tier I, END 1, and roll no ATK or DEF die.</p>
+<p>Players can choose them as casualties in exchange of other more important units.</p>
 <div class="rule-table-wrap"><table class="rule-table">
 <tr><th>Specialist</th><th>Function</th></tr>
 <tr><td>Scout</td><td>During the Preliminary Round, expend to reveal only the total number of enemy Units in the next Battlefront. Scout cannot be used after the Preliminary Round.</td></tr>
