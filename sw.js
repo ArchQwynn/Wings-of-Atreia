@@ -1,13 +1,11 @@
-const CACHE_VERSION = "woa-pwa-20260930-2048";
-const RUNTIME_CACHE = "woa-runtime-20260930-2048";
+const CACHE_VERSION = "woa-pwa-20260930-2032";
+const RUNTIME_CACHE = "woa-runtime-20260930-2032";
 const PRECACHE = [
   "index.html",
   "offline.html",
-  "search-results.html",
   "manifest.webmanifest",
   "assets/css/style-v20260914-6.css",
   "assets/js/search-v20260914-6.js",
-  "assets/js/search-results.js?v=20261001-1",
   "assets/js/search-index.json",
   "assets/icons/icon-192.png",
   "assets/icons/icon-512.png",

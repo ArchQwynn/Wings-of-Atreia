@@ -27,17 +27,30 @@ jobs:
       - name: Rebuild search index
         run: python scripts/build_search_index.py
 
-      - name: Update full-search results navigation and PWA cache
-        run: python scripts/update_search_ui.py
+      - name: Refresh PWA cache version when the index changes
+        shell: python
+        run: |
+          from pathlib import Path
+          from datetime import datetime, timezone
+          import re
 
-      - name: Commit generated search system
+          sw = Path("sw.js")
+          text = sw.read_text(encoding="utf-8")
+          stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M")
+          text, n1 = re.subn(r'const CACHE_VERSION = "[^"]+";', f'const CACHE_VERSION = "woa-pwa-{stamp}";', text, count=1)
+          text, n2 = re.subn(r'const RUNTIME_CACHE = "[^"]+";', f'const RUNTIME_CACHE = "woa-runtime-{stamp}";', text, count=1)
+          if n1 != 1 or n2 != 1:
+              raise SystemExit("Could not locate PWA cache version constants in sw.js")
+          sw.write_text(text, encoding="utf-8")
+
+      - name: Commit generated search index and PWA cache version
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/js/search-index.json assets/js/search-v20260914-6.js search-results.html assets/js/search-results.js sw.js scripts/update_search_ui.py
+          git add assets/js/search-index.json sw.js
           if git diff --cached --quiet; then
-            echo "Search system is already current."
+            echo "Search index is already current."
             exit 0
           fi
-          git commit -m "Auto-update WoA search system"
+          git commit -m "Auto-update WoA search index"
           git push

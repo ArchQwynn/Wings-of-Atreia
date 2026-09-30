@@ -1,7 +1,7 @@
 async function loadSearchIndex() {
   const base = document.body.dataset.base || "";
   try {
-    const res = await fetch(base + "assets/js/search-index.json?v=20261001-1", { cache: "no-store" });
+    const res = await fetch(base + "assets/js/search-index.json?v=20260914-5", { cache: "no-store" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.json();
   } catch (e) {
@@ -231,11 +231,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       event.preventDefault();
       setActive(activeIndex < 0 ? links.length - 1 : activeIndex - 1);
     } else if (event.key === "Enter") {
-      event.preventDefault();
-      const query = input.value.trim();
-      if (query) {
-        window.location.href = `${base}search-results.html?q=${encodeURIComponent(query)}`;
-      }
+      const target = activeIndex >= 0 ? links[activeIndex] : links[0];
+      if (target) window.location.href = target.href;
     }
   });
 
