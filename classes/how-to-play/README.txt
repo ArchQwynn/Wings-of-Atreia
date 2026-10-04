@@ -1,0 +1,1 @@
+The individual class How to Play guides are linked from the corresponding class pages. The website class rules remain authoritative; these pages are instructional only.
