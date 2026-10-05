@@ -6069,6 +6069,13 @@
     "kind": "page"
   },
   {
+    "title": "Wings of Atreia VTT — Prototype",
+    "url": "vtt-prototype/index.html",
+    "desc": "Wings of Atreia reference: Wings of Atreia VTT — Prototype.",
+    "text": "TECHNICAL PROTOTYPE WINGS OF ATREIA VTT Local prototype 3D TABLETOP Touch: drag to rotate · pinch to zoom Select a standee Altitude: — SESSION Prototype Battle ROOM ATREIA-4827 CONTROLS Reset View 2D Fallback Raise +30 ft Lower −30 ft STANDEES TEST STATUS ✓ Lightweight 3D scene ✓ X / Y / Z token position ✓ Mobile touch camera ○ Multiplayer synchronization ○ Persistent save/load ○ Cloud asset storage This prototype is intentionally graphics-light. Standees are represented by lightweight planes and all rendering happens on the player's device. Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept",
+    "kind": "landing"
+  },
+  {
     "title": "Wings of Atreia — Companion Character Book",
     "url": "companion/index.html",
     "desc": "Wings of Atreia reference: Wings of Atreia — Companion Character Book.",
