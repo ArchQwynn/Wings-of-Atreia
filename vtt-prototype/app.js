@@ -6,6 +6,8 @@ const tokenList = document.getElementById('tokens');
 
 const ALTITUDE_STEP = 5;
 const MAX_ALTITUDE = 120;
+const MIN_ZOOM = 0.2;
+const MAX_ZOOM = 6;
 
 const state = {
   camera: { yaw: -0.65, pitch: 0.72, zoom: 1 },
@@ -69,7 +71,6 @@ function drawGrid(){
   const yA=project(0,-10,0),yB=project(0,10,0);
   ctx.beginPath();line(xA,xB);line(yA,yB);ctx.stroke();
 
-  // Asymmetric orientation markers make yaw rotation immediately obvious.
   const north=project(0,8,0);
   const east=project(8,0,0);
   ctx.fillStyle='rgba(255,255,255,.9)';
@@ -129,7 +130,6 @@ function drawToken(t){
 }
 
 function updateCameraHud(){
-  const r=canvas.getBoundingClientRect();
   let hud=document.getElementById('camera-readout');
   if(!hud){
     hud=document.createElement('div');
@@ -213,7 +213,7 @@ canvas.addEventListener('pointermove',e=>{
     const d=distance(pts[0],pts[1]);
     if(state.pinchDistance && d>0){
       const ratio=d/state.pinchDistance;
-      if(Math.abs(ratio-1)>.005) state.camera.zoom=Math.max(.35,Math.min(3,state.camera.zoom*ratio));
+      if(Math.abs(ratio-1)>.005) state.camera.zoom=Math.max(MIN_ZOOM,Math.min(MAX_ZOOM,state.camera.zoom*ratio));
     }
     state.pinchDistance=d;
     return;
@@ -252,7 +252,7 @@ function finishPointer(e){
 }
 canvas.addEventListener('pointerup',finishPointer);
 canvas.addEventListener('pointercancel',finishPointer);
-canvas.addEventListener('wheel',e=>{e.preventDefault();state.camera.zoom=Math.max(.35,Math.min(3,state.camera.zoom*(e.deltaY>0?.88:1.14)));},{passive:false});
+canvas.addEventListener('wheel',e=>{e.preventDefault();state.camera.zoom=Math.max(MIN_ZOOM,Math.min(MAX_ZOOM,state.camera.zoom*(e.deltaY>0?.88:1.14)));},{passive:false});
 
 for(const b of document.querySelectorAll('button'))b.onclick=()=>{
   const a=b.dataset.action,t=state.tokens.find(x=>x.id===state.selected);
