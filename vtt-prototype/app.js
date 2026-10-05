@@ -4,6 +4,9 @@ const selectionEl = document.getElementById('selection');
 const altitudeEl = document.getElementById('altitude');
 const tokenList = document.getElementById('tokens');
 
+const ALTITUDE_STEP = 5;
+const MAX_ALTITUDE = 120;
+
 const state = {
   camera: { yaw: -0.65, pitch: 0.72, zoom: 1 },
   selected: 'ranger',
@@ -51,7 +54,7 @@ function drawGrid(){
 }
 
 // Keep altitude references out of the 3D scene so they never obscure tokens or camera movement.
-// The small fixed scale is intentionally screen-space and remains readable on phones.
+// Altitude is tracked in 5-ft increments; the fixed scale shows only the major 30-ft tiers.
 function drawAltitudeScale(){
   const h=canvas.clientHeight;
   const x=16;
@@ -186,8 +189,8 @@ for(const b of document.querySelectorAll('button'))b.onclick=()=>{
   const a=b.dataset.action,t=state.tokens.find(x=>x.id===state.selected);
   if(a==='reset'){state.camera={yaw:-0.65,pitch:.72,zoom:1};state.view2d=false;}
   if(a==='2d'){state.view2d=!state.view2d;b.textContent=state.view2d?'3D View':'2D Fallback';}
-  if(a==='up')if(t)t.z=Math.min(120,t.z+30);
-  if(a==='down')if(t)t.z=Math.max(0,t.z-30);
+  if(a==='up')if(t)t.z=Math.min(MAX_ALTITUDE,t.z+ALTITUDE_STEP);
+  if(a==='down')if(t)t.z=Math.max(0,t.z-ALTITUDE_STEP);
   if(a==='yaw-left')state.camera.yaw-=.18;
   if(a==='yaw-right')state.camera.yaw+=.18;
   if(a==='pitch-up')state.camera.pitch=Math.max(.35,state.camera.pitch-.12);
