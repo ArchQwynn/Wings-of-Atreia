@@ -1,5 +1,5 @@
-const CACHE_VERSION="woa-pwa-20261005-1308";
-const RUNTIME_CACHE="woa-runtime-20261005-1308";
+const CACHE_VERSION="woa-pwa-20261005-1317";
+const RUNTIME_CACHE="woa-runtime-20261005-1317";
 const CORE=["index.html","offline.html","manifest.webmanifest","assets/css/style-v20260914-6.css","assets/js/search-v20260914-6.js","assets/js/search-index.json","assets/icons/icon-192.png","assets/icons/icon-512.png","about.html","companion/index.html","companion/assets/companion-v20260916-1.css","companion/assets/companion-v20260916-1.js","changelog.html","start-here.html","rules/index.html","rules/status.html","world/index.html"];
 let PRECACHE=[];
 function scopedUrl(path){return new URL(path,self.registration.scope).href;}
