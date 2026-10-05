@@ -10,7 +10,7 @@ const MIN_ZOOM = 0.2;
 const MAX_ZOOM = 6;
 
 const state = {
-  camera: { yaw: -0.65, pitch: 0.72, zoom: 1 },
+  camera: { yaw: -0.65, pitch: 0.72, zoom: 1, panX: 0, panY: 0 },
   selected: 'ranger',
   drag: null,
   pointers: new Map(),
@@ -43,7 +43,7 @@ function size(){
 
 function project(x,y,z){
   const {w,h}=size();
-  if(state.view2d) return {x:w/2+x*42*state.camera.zoom,y:h/2-y*42*state.camera.zoom};
+  if(state.view2d) return {x:w/2+x*42*state.camera.zoom+state.camera.panX,y:h/2-y*42*state.camera.zoom+state.camera.panY};
   const cy=Math.cos(state.camera.yaw),sy=Math.sin(state.camera.yaw);
   const x1=x*cy-y*sy;
   const y1=x*sy+y*cy;
@@ -138,7 +138,9 @@ function updateCameraHud(){
     hud.style.cssText='right:14px;bottom:14px;color:#cfe8ff;font-size:11px;line-height:1.4;pointer-events:none;';
     canvas.parentElement.appendChild(hud);
   }
-  hud.textContent=`Camera · yaw ${Math.round(state.camera.yaw*57.3)}° · pitch ${Math.round(state.camera.pitch*57.3)}° · zoom ${state.camera.zoom.toFixed(2)}×`;
+  hud.textContent=state.view2d
+    ? `2D View · pan ${Math.round(state.camera.panX)},${Math.round(state.camera.panY)} · zoom ${state.camera.zoom.toFixed(2)}×`
+    : `Camera · yaw ${Math.round(state.camera.yaw*57.3)}° · pitch ${Math.round(state.camera.pitch*57.3)}° · zoom ${state.camera.zoom.toFixed(2)}×`;
 }
 
 function render(){
@@ -208,7 +210,7 @@ canvas.addEventListener('pointermove',e=>{
   if(!state.pointers.has(e.pointerId))return;
   e.preventDefault();
   state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  if(state.pointers.size>=2 && !state.view2d){
+  if(state.pointers.size>=2){
     const pts=[...state.pointers.values()];
     const d=distance(pts[0],pts[1]);
     if(state.pinchDistance && d>0){
@@ -221,7 +223,10 @@ canvas.addEventListener('pointermove',e=>{
   if(!state.drag)return;
   const dx=e.clientX-state.drag.lastX,dy=e.clientY-state.drag.lastY;
   if(Math.abs(e.clientX-state.drag.x)+Math.abs(e.clientY-state.drag.y)>6)state.drag.moved=true;
-  if(!state.view2d){
+  if(state.view2d){
+    state.camera.panX+=dx;
+    state.camera.panY+=dy;
+  } else {
     state.camera.yaw+=dx*.022;
     state.camera.pitch=Math.max(.2,Math.min(1.35,state.camera.pitch+dy*.016));
   }
@@ -230,7 +235,7 @@ canvas.addEventListener('pointermove',e=>{
 
 function finishPointer(e){
   const wasSingle=state.pointers.size===1;
-  if(wasSingle && state.drag && !state.drag.moved){
+  if(wasSingle && state.drag && !state.drag.moved && !state.view2d){
     const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
     let hit=null,best=Infinity;
     for(const t of state.tokens){
@@ -256,7 +261,7 @@ canvas.addEventListener('wheel',e=>{e.preventDefault();state.camera.zoom=Math.ma
 
 for(const b of document.querySelectorAll('button'))b.onclick=()=>{
   const a=b.dataset.action,t=state.tokens.find(x=>x.id===state.selected);
-  if(a==='reset'){state.camera={yaw:-0.65,pitch:.72,zoom:1};state.view2d=false;}
+  if(a==='reset'){state.camera={yaw:-0.65,pitch:.72,zoom:1,panX:0,panY:0};state.view2d=false;}
   if(a==='2d'){state.view2d=!state.view2d;b.textContent=state.view2d?'3D View':'2D Fallback';}
   if(a==='up')if(t)t.z=Math.min(MAX_ALTITUDE,t.z+ALTITUDE_STEP);
   if(a==='down')if(t)t.z=Math.max(0,t.z-ALTITUDE_STEP);
