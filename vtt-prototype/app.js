@@ -50,18 +50,30 @@ function drawGrid(){
   ctx.restore();
 }
 
-function drawAltitudeLines(){
+// Keep altitude references out of the 3D scene so they never obscure tokens or camera movement.
+// The small fixed scale is intentionally screen-space and remains readable on phones.
+function drawAltitudeScale(){
+  const h=canvas.clientHeight;
+  const x=16;
+  const top=Math.max(92,h*.18);
+  const bottom=Math.min(h-32,Math.max(top+180,h*.78));
+  const layers=[{z:120,label:'120 ft'},{z:90,label:'90 ft'},{z:60,label:'60 ft'},{z:30,label:'30 ft'}];
   ctx.save();
-  ctx.font='11px system-ui';
+  ctx.font='10px system-ui';
   ctx.textAlign='left';
   ctx.textBaseline='middle';
-  for(const z of [30,60,90,120]){
-    ctx.beginPath();
-    for(let x=-9;x<=9;x+=1){const p=project(x,0,z);if(x===-9)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y)}
-    ctx.stroke();
-    const p=project(-9,0,z);
-    ctx.fillText(`${z} ft`,Math.max(4,p.x+4),p.y);
-  }
+  ctx.strokeStyle='rgba(143,211,255,.28)';
+  ctx.fillStyle='rgba(201,216,235,.72)';
+  ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(x+34,top);ctx.lineTo(x+34,bottom);ctx.stroke();
+  layers.forEach((layer,i)=>{
+    const y=top+(bottom-top)*(i/(layers.length-1));
+    ctx.strokeStyle='rgba(143,211,255,.24)';
+    ctx.beginPath();ctx.moveTo(x+27,y);ctx.lineTo(x+42,y);ctx.stroke();
+    ctx.fillText(layer.label,x+48,y);
+  });
+  ctx.fillStyle='rgba(154,168,189,.62)';
+  ctx.fillText('ALT',x,y-12);
   ctx.restore();
 }
 
@@ -85,7 +97,7 @@ function render(){
   const w=canvas.clientWidth,h=canvas.clientHeight;
   ctx.clearRect(0,0,w,h);
   ctx.fillStyle='#05070d';ctx.fillRect(0,0,w,h);
-  if(!state.view2d){drawGrid();drawAltitudeLines();}
+  if(!state.view2d){drawGrid();drawAltitudeScale();}
   const sorted=[...state.tokens].sort((a,b)=>a.z-b.z);
   sorted.forEach(drawToken);
   requestAnimationFrame(render);
@@ -112,7 +124,6 @@ function rebuildList(){
 rebuildList();
 
 function distance(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
-function midpoint(a,b){return {x:(a.x+b.x)/2,y:(a.y+b.y)/2}}
 
 canvas.addEventListener('pointerdown',e=>{
   canvas.setPointerCapture(e.pointerId);
@@ -145,7 +156,6 @@ canvas.addEventListener('pointermove',e=>{
   const dx=e.clientX-state.drag.lastX,dy=e.clientY-state.drag.lastY;
   if(Math.abs(e.clientX-state.drag.x)+Math.abs(e.clientY-state.drag.y)>6)state.drag.moved=true;
   if(!state.view2d){
-    // Slightly increased mobile sensitivity so a short finger movement rotates the camera.
     state.camera.yaw+=dx*.014;
     state.camera.pitch=Math.max(.35,Math.min(1.2,state.camera.pitch+dy*.010));
   }
@@ -154,13 +164,11 @@ canvas.addEventListener('pointermove',e=>{
 
 function finishPointer(e){
   const wasSingle=state.pointers.size===1;
-  if(wasSingle && state.drag){
-    if(!state.drag.moved){
-      const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
-      let hit=null,best=Infinity;
-      for(const t of state.tokens){const s=t._screen||{};if(Math.abs(x-s.x)<s.w/2&&y<s.y&&y>s.y-s.h){const d=Math.abs(x-s.x)+Math.abs(y-(s.y-s.h/2));if(d<best){best=d;hit=t}}}
-      if(hit)select(hit.id);
-    }
+  if(wasSingle && state.drag && !state.drag.moved){
+    const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+    let hit=null,best=Infinity;
+    for(const t of state.tokens){const s=t._screen||{};if(Math.abs(x-s.x)<s.w/2&&y<s.y&&y>s.y-s.h){const d=Math.abs(x-s.x)+Math.abs(y-(s.y-s.h/2));if(d<best){best=d;hit=t}}}
+    if(hit)select(hit.id);
   }
   state.pointers.delete(e.pointerId);
   if(state.pointers.size===0){state.drag=null;state.pinchDistance=null;}
@@ -187,7 +195,6 @@ for(const b of document.querySelectorAll('button'))b.onclick=()=>{
   rebuildList();
 };
 
-// Basic keyboard controls for desktop testing.
 window.addEventListener('keydown',e=>{
   if(e.key==='ArrowUp')state.camera.pitch=Math.max(.35,state.camera.pitch-.04);
   if(e.key==='ArrowDown')state.camera.pitch=Math.min(1.2,state.camera.pitch+.04);
