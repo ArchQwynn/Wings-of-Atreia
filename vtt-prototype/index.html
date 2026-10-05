@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
   <title>Wings of Atreia VTT — Prototype</title>
-  <link rel="stylesheet" href="style.css?v=20261005-2">
+  <link rel="stylesheet" href="style.css?v=20261005-3">
 </head>
 <body>
   <header class="topbar">
@@ -13,7 +13,7 @@
       <div class="eyebrow">TECHNICAL PROTOTYPE</div>
       <h1>WINGS OF ATREIA VTT</h1>
     </div>
-    <div class="status"><span class="dot"></span> Local prototype · Camera test v2</div>
+    <div class="status"><span class="dot"></span> Local prototype · 5-ft altitude test</div>
   </header>
 
   <main class="layout">
@@ -59,8 +59,8 @@
         <div class="eyebrow">TABLETOP</div>
         <div class="control-grid">
           <button data-action="2d">2D Fallback</button>
-          <button data-action="up">Raise +30 ft</button>
-          <button data-action="down">Lower −30 ft</button>
+          <button data-action="up">Raise +5 ft</button>
+          <button data-action="down">Lower −5 ft</button>
         </div>
       </section>
 
@@ -74,6 +74,7 @@
         <ul class="checklist">
           <li class="done">✓ Lightweight 3D scene</li>
           <li class="done">✓ X / Y / Z token position</li>
+          <li class="done">✓ 5-ft altitude increments</li>
           <li class="done">✓ Mobile touch camera</li>
           <li>○ Multiplayer synchronization</li>
           <li>○ Persistent save/load</li>
@@ -81,11 +82,11 @@
         </ul>
       </section>
 
-      <p class="note">This prototype is intentionally graphics-light. Standees are represented by lightweight planes and all rendering happens on the player's device.</p>
+      <p class="note">Altitude is tracked in 5-ft increments. The fixed scale shows major 30-ft reference tiers without cluttering the 3D battlefield.</p>
     </aside>
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept</footer>
-  <script src="app.js?v=20261005-2"></script>
+  <script src="app.js?v=20261005-3"></script>
 </body>
 </html>
