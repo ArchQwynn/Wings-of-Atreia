@@ -41,14 +41,14 @@ function size(){
 
 function project(x,y,z){
   const {w,h}=size();
-  if(state.view2d) return {x:w/2+x*34,y:h/2-y*34};
+  if(state.view2d) return {x:w/2+x*42*state.camera.zoom,y:h/2-y*42*state.camera.zoom};
   const cy=Math.cos(state.camera.yaw),sy=Math.sin(state.camera.yaw);
   const x1=x*cy-y*sy;
   const y1=x*sy+y*cy;
   const cp=Math.cos(state.camera.pitch),sp=Math.sin(state.camera.pitch);
   const y2=y1*cp-z/30*sp;
   const depth=y1*sp+z/30*cp;
-  const scale=state.camera.zoom*210/(depth+14);
+  const scale=state.camera.zoom*230/(depth+16);
   return {x:w/2+x1*scale,y:h/2-y2*scale,depth,scale};
 }
 
@@ -56,19 +56,27 @@ function line(a,b){ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y)}
 
 function drawGrid(){
   ctx.save();
-  ctx.strokeStyle='rgba(143,211,255,.22)';
+  ctx.strokeStyle='rgba(143,211,255,.38)';
   ctx.lineWidth=1;
   for(let i=-10;i<=10;i++){
     const a=project(i,-10,0),b=project(i,10,0);
     const c=project(-10,i,0),d=project(10,i,0);
     ctx.beginPath();line(a,b);line(c,d);ctx.stroke();
   }
-  // Strong center axes make camera movement immediately visible.
-  ctx.strokeStyle='rgba(143,211,255,.5)';
-  ctx.lineWidth=1.5;
+  ctx.strokeStyle='rgba(143,211,255,.9)';
+  ctx.lineWidth=2;
   const xA=project(-10,0,0),xB=project(10,0,0);
   const yA=project(0,-10,0),yB=project(0,10,0);
   ctx.beginPath();line(xA,xB);line(yA,yB);ctx.stroke();
+
+  // Asymmetric orientation markers make yaw rotation immediately obvious.
+  const north=project(0,8,0);
+  const east=project(8,0,0);
+  ctx.fillStyle='rgba(255,255,255,.9)';
+  ctx.font='700 12px system-ui';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('N',north.x,north.y-12);
+  ctx.fillText('E',east.x+12,east.y);
   ctx.restore();
 }
 
@@ -82,17 +90,17 @@ function drawAltitudeScale(){
   ctx.font='10px system-ui';
   ctx.textAlign='left';
   ctx.textBaseline='middle';
-  ctx.strokeStyle='rgba(143,211,255,.32)';
-  ctx.fillStyle='rgba(201,216,235,.82)';
+  ctx.strokeStyle='rgba(143,211,255,.45)';
+  ctx.fillStyle='rgba(201,216,235,.92)';
   ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(x+34,top);ctx.lineTo(x+34,bottom);ctx.stroke();
   layers.forEach((layer,i)=>{
     const y=top+(bottom-top)*(i/(layers.length-1));
-    ctx.strokeStyle='rgba(143,211,255,.25)';
+    ctx.strokeStyle='rgba(143,211,255,.4)';
     ctx.beginPath();ctx.moveTo(x+27,y);ctx.lineTo(x+42,y);ctx.stroke();
     ctx.fillText(layer.label,x+48,y);
   });
-  ctx.fillStyle='rgba(154,168,189,.7)';
+  ctx.fillStyle='rgba(154,168,189,.9)';
   ctx.fillText('ALT',x,y-12);
   ctx.restore();
 }
@@ -104,21 +112,33 @@ function drawToken(t){
   const selected=t.id===state.selected;
   ctx.save();
   ctx.translate(p.x,p.y);
-  // Use basic rects instead of roundRect for maximum mobile/WebView compatibility.
-  ctx.fillStyle=selected?'rgba(143,211,255,.25)':'rgba(255,255,255,.14)';
+  ctx.fillStyle=selected?'rgba(143,211,255,.45)':'rgba(255,255,255,.22)';
   ctx.strokeStyle=selected?'#8fd3ff':'#c5d0e0';
-  ctx.lineWidth=selected?2.5:1.5;
+  ctx.lineWidth=selected?3:2;
   ctx.fillRect(-w/2,-h,w,h);
   ctx.strokeRect(-w/2,-h,w,h);
-  ctx.fillStyle='#eef3ff';
-  ctx.font=`700 ${Math.max(16,Math.min(32,h*.28))}px system-ui`;
+  ctx.fillStyle='#ffffff';
+  ctx.font=`700 ${Math.max(18,Math.min(32,h*.28))}px system-ui`;
   ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillText(t.glyph,0,-h*.58);
-  ctx.fillStyle='#cbd6e8';
-  ctx.font=`${Math.max(10,Math.min(16,h*.12))}px system-ui`;
+  ctx.fillStyle='#e5edf9';
+  ctx.font=`700 ${Math.max(10,Math.min(16,h*.12))}px system-ui`;
   ctx.fillText(`${t.z} ft`,0,-h*.18);
   ctx.restore();
   t._screen={x:p.x,y:p.y,w,h};
+}
+
+function updateCameraHud(){
+  const r=canvas.getBoundingClientRect();
+  let hud=document.getElementById('camera-readout');
+  if(!hud){
+    hud=document.createElement('div');
+    hud.id='camera-readout';
+    hud.className='hud';
+    hud.style.cssText='right:14px;bottom:14px;color:#cfe8ff;font-size:11px;line-height:1.4;pointer-events:none;';
+    canvas.parentElement.appendChild(hud);
+  }
+  hud.textContent=`Camera · yaw ${Math.round(state.camera.yaw*57.3)}° · pitch ${Math.round(state.camera.pitch*57.3)}° · zoom ${state.camera.zoom.toFixed(2)}×`;
 }
 
 function render(){
@@ -128,16 +148,18 @@ function render(){
     ctx.clearRect(0,0,w,h);
     ctx.fillStyle='#101927';
     ctx.fillRect(0,0,w,h);
-    // A subtle horizon makes camera pitch/rotation obvious even on small screens.
     if(!state.view2d){
       const horizon=Math.max(40,Math.min(h-80,h*.42-state.camera.pitch*18));
-      ctx.fillStyle='rgba(50,70,94,.34)';
+      ctx.fillStyle='rgba(50,70,94,.48)';
       ctx.fillRect(0,horizon,w,h-horizon);
       drawGrid();
       drawAltitudeScale();
+    } else {
+      drawGrid();
     }
     const sorted=[...state.tokens].sort((a,b)=>a.z-b.z);
     sorted.forEach(drawToken);
+    updateCameraHud();
   }catch(err){
     ctx.fillStyle='#ffb4b4';
     ctx.font='14px system-ui';
@@ -170,6 +192,7 @@ rebuildList();
 function distance(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
 
 canvas.addEventListener('pointerdown',e=>{
+  e.preventDefault();
   canvas.setPointerCapture(e.pointerId);
   state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
   if(state.pointers.size===1){
@@ -179,17 +202,18 @@ canvas.addEventListener('pointerdown',e=>{
     state.pinchDistance=distance(pts[0],pts[1]);
     state.drag=null;
   }
-});
+},{passive:false});
 
 canvas.addEventListener('pointermove',e=>{
   if(!state.pointers.has(e.pointerId))return;
+  e.preventDefault();
   state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
   if(state.pointers.size>=2 && !state.view2d){
     const pts=[...state.pointers.values()];
     const d=distance(pts[0],pts[1]);
-    if(state.pinchDistance){
+    if(state.pinchDistance && d>0){
       const ratio=d/state.pinchDistance;
-      state.camera.zoom=Math.max(.55,Math.min(2.2,state.camera.zoom*ratio));
+      if(Math.abs(ratio-1)>.005) state.camera.zoom=Math.max(.35,Math.min(3,state.camera.zoom*ratio));
     }
     state.pinchDistance=d;
     return;
@@ -198,11 +222,11 @@ canvas.addEventListener('pointermove',e=>{
   const dx=e.clientX-state.drag.lastX,dy=e.clientY-state.drag.lastY;
   if(Math.abs(e.clientX-state.drag.x)+Math.abs(e.clientY-state.drag.y)>6)state.drag.moved=true;
   if(!state.view2d){
-    state.camera.yaw+=dx*.014;
-    state.camera.pitch=Math.max(.35,Math.min(1.2,state.camera.pitch+dy*.010));
+    state.camera.yaw+=dx*.022;
+    state.camera.pitch=Math.max(.2,Math.min(1.35,state.camera.pitch+dy*.016));
   }
   state.drag.lastX=e.clientX;state.drag.lastY=e.clientY;
-});
+},{passive:false});
 
 function finishPointer(e){
   const wasSingle=state.pointers.size===1;
@@ -228,7 +252,7 @@ function finishPointer(e){
 }
 canvas.addEventListener('pointerup',finishPointer);
 canvas.addEventListener('pointercancel',finishPointer);
-canvas.addEventListener('wheel',e=>{e.preventDefault();state.camera.zoom=Math.max(.55,Math.min(2.2,state.camera.zoom*(e.deltaY>0?.9:1.1)));},{passive:false});
+canvas.addEventListener('wheel',e=>{e.preventDefault();state.camera.zoom=Math.max(.35,Math.min(3,state.camera.zoom*(e.deltaY>0?.88:1.14)));},{passive:false});
 
 for(const b of document.querySelectorAll('button'))b.onclick=()=>{
   const a=b.dataset.action,t=state.tokens.find(x=>x.id===state.selected);
@@ -236,16 +260,16 @@ for(const b of document.querySelectorAll('button'))b.onclick=()=>{
   if(a==='2d'){state.view2d=!state.view2d;b.textContent=state.view2d?'3D View':'2D Fallback';}
   if(a==='up')if(t)t.z=Math.min(MAX_ALTITUDE,t.z+ALTITUDE_STEP);
   if(a==='down')if(t)t.z=Math.max(0,t.z-ALTITUDE_STEP);
-  if(a==='yaw-left')state.camera.yaw-=.18;
-  if(a==='yaw-right')state.camera.yaw+=.18;
-  if(a==='pitch-up')state.camera.pitch=Math.max(.35,state.camera.pitch-.12);
-  if(a==='pitch-down')state.camera.pitch=Math.min(1.2,state.camera.pitch+.12);
+  if(a==='yaw-left')state.camera.yaw-=.35;
+  if(a==='yaw-right')state.camera.yaw+=.35;
+  if(a==='pitch-up')state.camera.pitch=Math.max(.2,state.camera.pitch-.22);
+  if(a==='pitch-down')state.camera.pitch=Math.min(1.35,state.camera.pitch+.22);
   rebuildList();
 };
 
 window.addEventListener('keydown',e=>{
-  if(e.key==='ArrowUp')state.camera.pitch=Math.max(.35,state.camera.pitch-.04);
-  if(e.key==='ArrowDown')state.camera.pitch=Math.min(1.2,state.camera.pitch+.04);
-  if(e.key==='ArrowLeft')state.camera.yaw-=.05;
-  if(e.key==='ArrowRight')state.camera.yaw+=.05;
+  if(e.key==='ArrowUp')state.camera.pitch=Math.max(.2,state.camera.pitch-.05);
+  if(e.key==='ArrowDown')state.camera.pitch=Math.min(1.35,state.camera.pitch+.05);
+  if(e.key==='ArrowLeft')state.camera.yaw-=.08;
+  if(e.key==='ArrowRight')state.camera.yaw+=.08;
 });
