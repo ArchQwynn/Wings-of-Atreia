@@ -21,7 +21,16 @@
       <canvas id="scene" aria-label="Lightweight 3D tabletop prototype"></canvas>
       <div class="hud top-left">
         <strong>3D TABLETOP</strong>
-        <span>Touch: drag to rotate · pinch to zoom</span>
+        <span>Drag to rotate · pinch to zoom · use camera pad</span>
+      </div>
+      <div class="camera-pad" aria-label="Camera controls">
+        <button data-action="pitch-up" aria-label="Look up">▲</button>
+        <div>
+          <button data-action="yaw-left" aria-label="Rotate left">◀</button>
+          <button data-action="reset" aria-label="Reset camera">●</button>
+          <button data-action="yaw-right" aria-label="Rotate right">▶</button>
+        </div>
+        <button data-action="pitch-down" aria-label="Look down">▼</button>
       </div>
       <div class="hud bottom-left" id="selection">Select a standee</div>
       <div class="altitude" id="altitude">Altitude: —</div>
