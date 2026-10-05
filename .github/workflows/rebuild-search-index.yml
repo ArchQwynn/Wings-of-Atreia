@@ -37,8 +37,8 @@ jobs:
           sw = Path("sw.js")
           text = sw.read_text(encoding="utf-8")
           stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M")
-          text, n1 = re.subn(r'const CACHE_VERSION = "[^"]+";', f'const CACHE_VERSION = "woa-pwa-{stamp}";', text, count=1)
-          text, n2 = re.subn(r'const RUNTIME_CACHE = "[^"]+";', f'const RUNTIME_CACHE = "woa-runtime-{stamp}";', text, count=1)
+          text, n1 = re.subn(r'const\s+CACHE_VERSION\s*=\s*"[^"]+";', f'const CACHE_VERSION="woa-pwa-{stamp}";', text, count=1)
+          text, n2 = re.subn(r'const\s+RUNTIME_CACHE\s*=\s*"[^"]+";', f'const RUNTIME_CACHE="woa-runtime-{stamp}";', text, count=1)
           if n1 != 1 or n2 != 1:
               raise SystemExit("Could not locate PWA cache version constants in sw.js")
           sw.write_text(text, encoding="utf-8")
