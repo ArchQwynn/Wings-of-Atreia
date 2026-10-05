@@ -8,6 +8,8 @@ const state = {
   camera: { yaw: -0.65, pitch: 0.72, zoom: 1 },
   selected: 'ranger',
   drag: null,
+  pointers: new Map(),
+  pinchDistance: null,
   view2d: false,
   tokens: [
     { id:'ranger', name:'Ranger', x:-4, y:1, z:60, glyph:'R', size:1.25 },
@@ -49,13 +51,18 @@ function drawGrid(){
 }
 
 function drawAltitudeLines(){
+  ctx.save();
+  ctx.font='11px system-ui';
+  ctx.textAlign='left';
+  ctx.textBaseline='middle';
   for(const z of [30,60,90,120]){
     ctx.beginPath();
     for(let x=-9;x<=9;x+=1){const p=project(x,0,z);if(x===-9)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y)}
     ctx.stroke();
     const p=project(-9,0,z);
-    ctx.fillText(`${z} ft`,p.x+4,p.y-4);
+    ctx.fillText(`${z} ft`,Math.max(4,p.x+4),p.y);
   }
+  ctx.restore();
 }
 
 function drawToken(t){
@@ -78,7 +85,6 @@ function render(){
   const w=canvas.clientWidth,h=canvas.clientHeight;
   ctx.clearRect(0,0,w,h);
   ctx.fillStyle='#05070d';ctx.fillRect(0,0,w,h);
-  ctx.fillStyle='#9aa8bd';ctx.font='11px system-ui';
   if(!state.view2d){drawGrid();drawAltitudeLines();}
   const sorted=[...state.tokens].sort((a,b)=>a.z-b.z);
   sorted.forEach(drawToken);
@@ -105,35 +111,79 @@ function rebuildList(){
 }
 rebuildList();
 
+function distance(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+function midpoint(a,b){return {x:(a.x+b.x)/2,y:(a.y+b.y)/2}}
+
 canvas.addEventListener('pointerdown',e=>{
   canvas.setPointerCapture(e.pointerId);
-  state.drag={x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,moved:false};
+  state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(state.pointers.size===1){
+    state.drag={x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,moved:false};
+  } else if(state.pointers.size===2){
+    const pts=[...state.pointers.values()];
+    state.pinchDistance=distance(pts[0],pts[1]);
+    state.drag=null;
+  }
 });
+
 canvas.addEventListener('pointermove',e=>{
+  if(!state.pointers.has(e.pointerId))return;
+  state.pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+
+  if(state.pointers.size>=2 && !state.view2d){
+    const pts=[...state.pointers.values()];
+    const d=distance(pts[0],pts[1]);
+    if(state.pinchDistance){
+      const ratio=d/state.pinchDistance;
+      state.camera.zoom=Math.max(.55,Math.min(2.2,state.camera.zoom*ratio));
+    }
+    state.pinchDistance=d;
+    return;
+  }
+
   if(!state.drag)return;
   const dx=e.clientX-state.drag.lastX,dy=e.clientY-state.drag.lastY;
   if(Math.abs(e.clientX-state.drag.x)+Math.abs(e.clientY-state.drag.y)>6)state.drag.moved=true;
-  if(!state.view2d){state.camera.yaw+=dx*.008;state.camera.pitch=Math.max(.35,Math.min(1.2,state.camera.pitch+dy*.006));}
+  if(!state.view2d){
+    // Slightly increased mobile sensitivity so a short finger movement rotates the camera.
+    state.camera.yaw+=dx*.014;
+    state.camera.pitch=Math.max(.35,Math.min(1.2,state.camera.pitch+dy*.010));
+  }
   state.drag.lastX=e.clientX;state.drag.lastY=e.clientY;
 });
-canvas.addEventListener('pointerup',e=>{
-  if(!state.drag)return;
-  if(!state.drag.moved){
-    const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
-    let hit=null,best=Infinity;
-    for(const t of state.tokens){const s=t._screen||{};if(Math.abs(x-s.x)<s.w/2&&y<s.y&&y>s.y-s.h){const d=Math.abs(x-s.x)+Math.abs(y-(s.y-s.h/2));if(d<best){best=d;hit=t}}}
-    if(hit)select(hit.id);
+
+function finishPointer(e){
+  const wasSingle=state.pointers.size===1;
+  if(wasSingle && state.drag){
+    if(!state.drag.moved){
+      const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+      let hit=null,best=Infinity;
+      for(const t of state.tokens){const s=t._screen||{};if(Math.abs(x-s.x)<s.w/2&&y<s.y&&y>s.y-s.h){const d=Math.abs(x-s.x)+Math.abs(y-(s.y-s.h/2));if(d<best){best=d;hit=t}}}
+      if(hit)select(hit.id);
+    }
   }
-  state.drag=null;
-});
+  state.pointers.delete(e.pointerId);
+  if(state.pointers.size===0){state.drag=null;state.pinchDistance=null;}
+  else if(state.pointers.size===1){
+    const p=[...state.pointers.values()][0];
+    state.drag={x:p.x,y:p.y,lastX:p.x,lastY:p.y,moved:true};
+    state.pinchDistance=null;
+  }
+}
+canvas.addEventListener('pointerup',finishPointer);
+canvas.addEventListener('pointercancel',finishPointer);
 canvas.addEventListener('wheel',e=>{e.preventDefault();state.camera.zoom=Math.max(.55,Math.min(2.2,state.camera.zoom*(e.deltaY>0?.9:1.1)));},{passive:false});
 
 for(const b of document.querySelectorAll('button'))b.onclick=()=>{
   const a=b.dataset.action,t=state.tokens.find(x=>x.id===state.selected);
-  if(a==='reset'){state.camera={yaw:-.65,pitch:.72,zoom:1};state.view2d=false;}
+  if(a==='reset'){state.camera={yaw:-0.65,pitch:.72,zoom:1};state.view2d=false;}
   if(a==='2d'){state.view2d=!state.view2d;b.textContent=state.view2d?'3D View':'2D Fallback';}
-  if(t&&a==='up')t.z=Math.min(120,t.z+30);
-  if(t&&a==='down')t.z=Math.max(0,t.z-30);
+  if(a==='up')if(t)t.z=Math.min(120,t.z+30);
+  if(a==='down')if(t)t.z=Math.max(0,t.z-30);
+  if(a==='yaw-left')state.camera.yaw-=.18;
+  if(a==='yaw-right')state.camera.yaw+=.18;
+  if(a==='pitch-up')state.camera.pitch=Math.max(.35,state.camera.pitch-.12);
+  if(a==='pitch-down')state.camera.pitch=Math.min(1.2,state.camera.pitch+.12);
   rebuildList();
 };
 
