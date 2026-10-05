@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1020">
+  <title>Wings of Atreia VTT — Prototype</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">TECHNICAL PROTOTYPE</div>
+      <h1>WINGS OF ATREIA VTT</h1>
+    </div>
+    <div class="status"><span class="dot"></span> Local prototype</div>
+  </header>
+
+  <main class="layout">
+    <section class="stage-card">
+      <canvas id="scene" aria-label="Lightweight 3D tabletop prototype"></canvas>
+      <div class="hud top-left">
+        <strong>3D TABLETOP</strong>
+        <span>Touch: drag to rotate · pinch to zoom</span>
+      </div>
+      <div class="hud bottom-left" id="selection">Select a standee</div>
+      <div class="altitude" id="altitude">Altitude: —</div>
+    </section>
+
+    <aside class="panel">
+      <section>
+        <div class="eyebrow">SESSION</div>
+        <h2>Prototype Battle</h2>
+        <div class="room">ROOM <strong>ATREIA-4827</strong></div>
+      </section>
+
+      <section>
+        <div class="eyebrow">CONTROLS</div>
+        <div class="control-grid">
+          <button data-action="reset">Reset View</button>
+          <button data-action="2d">2D Fallback</button>
+          <button data-action="up">Raise +30 ft</button>
+          <button data-action="down">Lower −30 ft</button>
+        </div>
+      </section>
+
+      <section>
+        <div class="eyebrow">STANDEES</div>
+        <div id="tokens" class="token-list"></div>
+      </section>
+
+      <section>
+        <div class="eyebrow">TEST STATUS</div>
+        <ul class="checklist">
+          <li class="done">✓ Lightweight 3D scene</li>
+          <li class="done">✓ X / Y / Z token position</li>
+          <li class="done">✓ Mobile touch camera</li>
+          <li>○ Multiplayer synchronization</li>
+          <li>○ Persistent save/load</li>
+          <li>○ Cloud asset storage</li>
+        </ul>
+      </section>
+
+      <p class="note">This prototype is intentionally graphics-light. Standees are represented by lightweight planes and all rendering happens on the player's device.</p>
+    </aside>
+  </main>
+
+  <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept</footer>
+  <script src="app.js"></script>
+</body>
+</html>
