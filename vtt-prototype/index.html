@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
   <title>Wings of Atreia VTT — Prototype</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20261005-2">
 </head>
 <body>
   <header class="topbar">
@@ -13,7 +13,7 @@
       <div class="eyebrow">TECHNICAL PROTOTYPE</div>
       <h1>WINGS OF ATREIA VTT</h1>
     </div>
-    <div class="status"><span class="dot"></span> Local prototype</div>
+    <div class="status"><span class="dot"></span> Local prototype · Camera test v2</div>
   </header>
 
   <main class="layout">
@@ -21,9 +21,10 @@
       <canvas id="scene" aria-label="Lightweight 3D tabletop prototype"></canvas>
       <div class="hud top-left">
         <strong>3D TABLETOP</strong>
-        <span>Drag to rotate · pinch to zoom · use camera pad</span>
+        <span>Drag to rotate · pinch to zoom · camera pad below</span>
       </div>
       <div class="camera-pad" aria-label="Camera controls">
+        <div class="camera-label">CAMERA</div>
         <button data-action="pitch-up" aria-label="Look up">▲</button>
         <div>
           <button data-action="yaw-left" aria-label="Rotate left">◀</button>
@@ -44,9 +45,19 @@
       </section>
 
       <section>
-        <div class="eyebrow">CONTROLS</div>
+        <div class="eyebrow">CAMERA CONTROLS</div>
+        <div class="camera-grid">
+          <button data-action="pitch-up">▲ Look Up</button>
+          <button data-action="pitch-down">▼ Look Down</button>
+          <button data-action="yaw-left">◀ Rotate Left</button>
+          <button data-action="yaw-right">Rotate Right ▶</button>
+          <button data-action="reset" class="wide">Reset Camera</button>
+        </div>
+      </section>
+
+      <section>
+        <div class="eyebrow">TABLETOP</div>
         <div class="control-grid">
-          <button data-action="reset">Reset View</button>
           <button data-action="2d">2D Fallback</button>
           <button data-action="up">Raise +30 ft</button>
           <button data-action="down">Lower −30 ft</button>
@@ -75,6 +86,6 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept</footer>
-  <script src="app.js"></script>
+  <script src="app.js?v=20261005-2"></script>
 </body>
 </html>
