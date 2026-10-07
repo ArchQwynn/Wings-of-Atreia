@@ -45,3 +45,5 @@
   .stage-card{order:1!important;width:100%!important;min-width:0!important;border-right:0!important}
   .panel{order:2!important;width:100%!important;min-width:0!important;max-width:100%!important}
 }
+
+@media(max-width:520px){.panel{overflow-y:auto!important;-webkit-overflow-scrolling:touch;padding-bottom:24px!important}.panel section{margin-bottom:10px!important}.panel section:first-child{margin-bottom:8px!important}.panel h2{margin:1px 0 5px!important}.panel .room{padding:6px!important}.panel .camera-grid,.panel .control-grid{gap:6px!important}.panel .camera-grid button,.panel .control-grid button{min-height:42px!important;padding:7px!important}.panel .token-list{display:grid!important;grid-template-columns:1fr!important;gap:6px!important;max-height:none!important}.panel .token{padding:7px!important}.panel .checklist{margin:4px 0 0!important}.panel .checklist li{margin:3px 0!important}.panel .note{margin:6px 0 0!important}}
