@@ -16,3 +16,27 @@
   .top-left span{display:none}
   footer{display:none}
 }
+@media(max-width:520px){
+  html,body{width:100%;min-width:0;overflow-x:hidden}
+  .topbar{height:auto;width:100%;padding:9px 12px}
+  .status{display:none}
+  .layout{display:flex!important;flex-direction:column!important;width:100%!important;min-width:0!important;height:auto!important;min-height:0!important}
+  .stage-card{order:1!important;width:100%!important;min-width:0!important;height:58dvh!important;min-height:320px!important;flex:none!important;border-right:0!important;border-bottom:1px solid var(--line)!important}
+  .panel{order:2!important;width:100%!important;min-width:0!important;max-width:100%!important;height:auto!important;min-height:0!important;max-height:none!important;display:block!important;padding:12px!important;overflow:visible!important}
+  .panel section{display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;margin:0 0 14px!important}
+  .panel section:first-child{min-width:0!important}
+  .panel section:nth-child(2){min-width:0!important}
+  .panel section:nth-child(3){min-width:0!important}
+  .panel section:nth-child(4){min-width:0!important}
+  .panel section:nth-child(5),.panel .note{display:block!important}
+  .panel .camera-grid,.panel .control-grid{display:grid!important;grid-template-columns:1fr 1fr!important;width:100%!important;min-width:0!important}
+  .panel .camera-grid button,.panel .control-grid button{width:100%!important;min-width:0!important}
+  .panel .camera-grid .wide{grid-column:1/-1!important}
+  .panel .token-list{display:grid!important;grid-template-columns:1fr!important;width:100%!important}
+  .panel .token{width:100%!important;min-width:0!important}
+  .camera-pad{right:8px!important;bottom:8px!important}
+  .camera-pad button{width:42px!important;height:40px!important}
+  .hud{max-width:calc(100% - 16px)!important}
+  .top-left span{display:none!important}
+  footer{display:none!important}
+}
