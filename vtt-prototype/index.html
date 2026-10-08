@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
   <title>Wings of Atreia VTT — Prototype</title>
-  <link rel="stylesheet" href="style.css?v=20261008-1">
+  <link rel="stylesheet" href="style.css?v=20261008-2">
 </head>
 <body>
   <header class="topbar">
@@ -75,6 +75,41 @@
       </section>
 
       <section>
+        <div class="eyebrow">TOKEN MANAGEMENT</div>
+        <div class="token-editor">
+          <input id="token-name" type="text" placeholder="Token name">
+          <div class="editor-row">
+            <input id="token-glyph" type="text" maxlength="2" placeholder="Glyph">
+            <input id="token-color" type="color" value="#65d6a1" aria-label="Token color">
+          </div>
+          <div class="editor-row">
+            <label>Size
+              <select id="token-footprint">
+                <option value="1">1×1 · 5 ft</option>
+                <option value="2">2×2 · 10 ft</option>
+                <option value="3">3×3 · 15 ft</option>
+                <option value="4">4×4 · 20 ft</option>
+              </select>
+            </label>
+            <label>Access
+              <select id="token-assignment">
+                <option value="all">All Players</option>
+                <option value="unassigned">Unassigned</option>
+                <option value="gm">GM Only</option>
+                <option value="specific">Specific Player(s)</option>
+              </select>
+            </label>
+          </div>
+          <input id="token-players" type="text" placeholder="Player name(s), comma separated" hidden>
+          <div class="editor-row">
+            <button data-action="token-add">Add Token</button>
+            <button data-action="token-update">Update</button>
+            <button data-action="token-delete">Delete</button>
+          </div>
+        </div>
+      </section>
+
+      <section>
         <div class="eyebrow">TEST STATUS</div>
         <ul class="checklist">
           <li class="done">✓ Lightweight 3D scene</li>
@@ -95,6 +130,6 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept</footer>
-  <script src="app.js?v=20261008-1"></script>
+  <script src="app.js?v=20261008-2"></script>
 </body>
 </html>
