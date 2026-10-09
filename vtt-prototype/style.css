@@ -52,3 +52,5 @@
 
 .token-editor{display:grid;gap:7px}.token-editor input,.token-editor select{width:100%;min-width:0;border:1px solid var(--line);background:#0d1626;color:var(--text);border-radius:7px;padding:8px;font:inherit}.token-editor input[type=color]{padding:3px;height:38px}.editor-row{display:grid;grid-template-columns:1fr 1fr;gap:7px}.editor-row button{min-width:0}.token-editor label{font-size:.68rem;color:var(--muted);display:block}.token-editor label select{display:block;margin-top:3px}.token-editor button{padding:8px;font-size:.78rem}.token small{display:block;color:var(--muted);font-size:.65rem;margin-top:2px}.token-editor [hidden]{display:none!important}
 @media(max-width:520px){.token-editor{gap:5px}.token-editor input,.token-editor select{padding:7px}.editor-row{gap:5px}.token-editor button{padding:7px}}
+
+.identity-label{display:block;font-size:.72rem;color:var(--muted);margin-top:7px}.identity-label select,.identity-label input{display:block;width:100%;margin-top:4px;border:1px solid var(--line);border-radius:7px;background:#0d1626;color:var(--text);padding:8px;font:inherit}.panel button:disabled{opacity:.4;cursor:not-allowed}
