@@ -45,3 +45,59 @@ function end(e){if(state.movingToken){const t=state.movingToken;t.x=snapCell(t._
 function editorData(){const assignment=tokenAssignmentEl.value;return{name:tokenNameEl.value.trim()||'New Token',glyph:tokenGlyphEl.value.trim().slice(0,2)||'•',color:tokenColorEl.value,footprint:Math.max(1,Math.min(4,Number(tokenFootprintEl.value)||1)),assignment,players:assignment==='specific'?tokenPlayersEl.value.split(',').map(x=>x.trim()).filter(Boolean):[]}}
 tokenAssignmentEl.onchange=()=>{tokenPlayersEl.hidden=tokenAssignmentEl.value!=='specific'};
 for(const b of document.querySelectorAll('button'))b.onclick=()=>{const a=b.dataset.action,t=state.tokens.find(x=>x.id===state.selected);if(!isGM()&&['token-add','token-update','token-delete'].includes(a))return;if((a==='up'||a==='down')&&t&&!canControlToken(t))return;if(a==='token-add'){const d=editorData(),n={id:'token-'+Date.now(),name:d.name,x:0,y:0,z:0,glyph:d.glyph,color:d.color,footprint:d.footprint,assignment:d.assignment,players:d.players};state.tokens.push(n);select(n.id);list();return}if(a==='token-update'&&t&&isGM()){Object.assign(t,editorData());list();select(t.id);return}if(a==='token-delete'&&t&&isGM()){const i=state.tokens.indexOf(t);if(i>=0)state.tokens.splice(i,1);state.selected=state.tokens[0]?.id||null;list();return}if(a==='reset')resetCamera();if(a==='toggle-pan'){state.panMode=!state.panMode;document.querySelectorAll('[data-action="toggle-pan"]').forEach(x=>{x.textContent=state.panMode?'Pan: On':'Pan: Off';x.setAttribute('aria-pressed',String(state.panMode));x.classList.toggle('active',state.panMode)})}if(a==='2d'){state.view2d=!state.view2d;state.camera.panX=0;state.camera.panY=0;if(!state.view2d){state.camera.targetX=0;state.camera.targetY=0}b.textContent=state.view2d?'3D View':'2D Fallback'}if(a==='up'&&t)t.z=Math.min(MAX_ALTITUDE,t.z+ALTITUDE_STEP);if(a==='down'&&t)t.z=Math.max(0,t.z-ALTITUDE_STEP);if(a==='yaw-left')state.camera.yaw-=.28;if(a==='yaw-right')state.camera.yaw+=.28;if(a==='pitch-up')state.camera.elevation=Math.min(.95,state.camera.elevation+.1);if(a==='pitch-down')state.camera.elevation=Math.max(.38,state.camera.elevation-.1);list()};
+
+const SCENE_STORAGE_KEY='woa-vtt-scene-v1';
+const sceneSaveStatus=document.getElementById('scene-save-status');
+const sceneImportFile=document.getElementById('scene-import-file');
+function sceneSnapshot(){
+  return {format:'wings-of-atreia-vtt-scene',version:1,savedAt:new Date().toISOString(),
+    tokens:state.tokens.map(t=>({id:String(t.id),name:String(t.name||'Token'),x:Number.isFinite(t._dragX)?t._dragX:Number(t.x)||0,y:Number.isFinite(t._dragY)?t._dragY:Number(t.y)||0,z:Math.max(0,Math.min(MAX_ALTITUDE,Number(t.z)||0)),glyph:String(t.glyph||'•'),color:/^#[0-9a-f]{6}$/i.test(t.color||'')?t.color:'#65d6a1',footprint:Math.max(1,Math.min(4,Math.round(Number(t.footprint)||1))),assignment:['gm','specific','all','unassigned'].includes(t.assignment)?t.assignment:'all',players:Array.isArray(t.players)?t.players.map(String):[]})),
+    selected:state.selected,camera:{yaw:state.camera.yaw,elevation:state.camera.elevation,distance:state.camera.distance,zoom:state.camera.zoom,targetX:state.camera.targetX,targetY:state.camera.targetY,targetZ:state.camera.targetZ,panX:state.camera.panX,panY:state.camera.panY},
+    view2d:state.view2d,panMode:state.panMode,identity:{role:sessionRoleEl.value,playerName:sessionPlayerNameEl.value}
+  };
+}
+function validateScene(data){
+  if(!data||data.format!=='wings-of-atreia-vtt-scene'||data.version!==1||!Array.isArray(data.tokens)||data.tokens.length>500)throw new Error('This is not a supported Wings of Atreia scene file.');
+  const ids=new Set();
+  const tokens=data.tokens.map((t,i)=>{
+    if(!t||typeof t!=='object')throw new Error('Scene contains an invalid token.');
+    const id=String(t.id||'token-'+i);if(ids.has(id))throw new Error('Scene contains duplicate token IDs.');ids.add(id);
+    const num=(v,d=0)=>Number.isFinite(Number(v))?Number(v):d;
+    const assignment=['gm','specific','all','unassigned'].includes(t.assignment)?t.assignment:'all';
+    return{id,name:String(t.name||'Token').slice(0,120),x:num(t.x),y:num(t.y),z:Math.max(0,Math.min(MAX_ALTITUDE,num(t.z))),glyph:String(t.glyph||'•').slice(0,2),color:/^#[0-9a-f]{6}$/i.test(t.color||'')?t.color:'#65d6a1',footprint:Math.max(1,Math.min(4,Math.round(num(t.footprint,1)))),assignment,players:Array.isArray(t.players)?t.players.map(p=>String(p).slice(0,80)).slice(0,50):[]};
+  });
+  const c=data.camera&&typeof data.camera==='object'?data.camera:{};
+  const num=(v,d)=>Number.isFinite(Number(v))?Number(v):d;
+  const camera={yaw:num(c.yaw,-.65),elevation:Math.max(.38,Math.min(.95,num(c.elevation,.68))),distance:Math.max(5,Math.min(500,num(c.distance,60))),zoom:Math.max(MIN_ZOOM,Math.min(MAX_ZOOM,num(c.zoom,1))),targetX:num(c.targetX,0),targetY:num(c.targetY,0),targetZ:num(c.targetZ,0),panX:num(c.panX,0),panY:num(c.panY,0)};
+  return{tokens,camera,selected:tokens.some(t=>t.id===data.selected)?data.selected:(tokens[0]?.id||null),view2d:!!data.view2d,panMode:!!data.panMode,identity:data.identity&&typeof data.identity==='object'?data.identity:{}};
+}
+function applyScene(data){
+  const scene=validateScene(data);
+  state.tokens=scene.tokens;state.camera=scene.camera;state.selected=scene.selected;state.view2d=scene.view2d;state.panMode=scene.panMode;
+  state.drag=null;state.pointers.clear();state.pinchDistance=null;state.lastPinchMid=null;state.movingToken=null;state.moveStart=null;state.moveDistance=0;
+  if(scene.identity.role==='player'||scene.identity.role==='gm')sessionRoleEl.value=scene.identity.role;
+  if(typeof scene.identity.playerName==='string')sessionPlayerNameEl.value=scene.identity.playerName;
+  document.querySelectorAll('[data-action="toggle-pan"]').forEach(b=>{b.textContent=state.panMode?'Pan: On':'Pan: Off';b.setAttribute('aria-pressed',String(state.panMode));b.classList.toggle('active',state.panMode)});
+  document.querySelectorAll('[data-action="2d"]').forEach(b=>b.textContent=state.view2d?'3D View':'2D Fallback');
+  updateIdentityUI();resize();list();if(state.selected)select(state.selected);
+}
+function saveSceneToBrowser(){
+  try{localStorage.setItem(SCENE_STORAGE_KEY,JSON.stringify(sceneSnapshot()));sceneSaveStatus.textContent='Scene saved in this browser on this device.'}
+  catch(e){sceneSaveStatus.textContent='Could not save locally. Browser storage may be unavailable or full.'}
+}
+document.querySelector('[data-action="save-scene"]').onclick=saveSceneToBrowser;
+document.querySelector('[data-action="load-scene"]').onclick=()=>{
+  try{const raw=localStorage.getItem(SCENE_STORAGE_KEY);if(!raw){sceneSaveStatus.textContent='No saved scene found in this browser yet.';return}applyScene(JSON.parse(raw));sceneSaveStatus.textContent='Saved scene loaded.'}
+  catch(e){sceneSaveStatus.textContent='Could not load the saved scene: '+(e.message||'invalid scene data')}
+};
+document.querySelector('[data-action="export-scene"]').onclick=()=>{
+  try{const blob=new Blob([JSON.stringify(sceneSnapshot(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='wings-of-atreia-scene.json';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);sceneSaveStatus.textContent='Scene JSON export started.'}
+  catch(e){sceneSaveStatus.textContent='Could not export the scene.'}
+};
+document.querySelector('[data-action="import-scene"]').onclick=()=>sceneImportFile.click();
+sceneImportFile.addEventListener('change',async()=>{
+  const file=sceneImportFile.files?.[0];if(!file)return;
+  try{if(file.size>2_000_000)throw new Error('Scene file is too large (maximum 2 MB).');const data=JSON.parse(await file.text());applyScene(data);saveSceneToBrowser();sceneSaveStatus.textContent='Scene imported and saved in this browser.'}
+  catch(e){sceneSaveStatus.textContent='Import failed: '+(e.message||'could not read scene file')}
+  finally{sceneImportFile.value=''}
+});
