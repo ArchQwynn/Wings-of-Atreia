@@ -40,9 +40,8 @@ function drawTerrain(){
     if(n){const nh=cornerHeights(n),nc=corners(n),findHeight=pt=>{for(let k=0;k<4;k++)if(Math.abs(nc[k][0]-pt[0])<.001&&Math.abs(nc[k][1]-pt[1])<.001)return nh[k];return n.height};lowA=Math.min(hs[i],findHeight(c[i]));lowB=Math.min(hs[j],findHeight(c[j]));if(lowA>=hs[i]-.001&&lowB>=hs[j]-.001)continue}
     if(Math.abs(hs[i]-lowA)<.001&&Math.abs(hs[j]-lowB)<.001)continue;
     const b=basis(),normals=[[0,-1],[1,0],[0,1],[-1,0]],normal=normals[i];
-    // Only surfaces facing the camera can occlude the view. Back faces remain
-    // solid geometry, but are not painted through the front of the terrain.
-    if(normal[0]*(-b.f.x)+normal[1]*(-b.f.y)<=0)continue;
+    // Keep every exposed wall face in the depth-sorted opaque terrain pass.
+    // Camera-facing culling can discard a visible wall at oblique angles and expose terrain behind it.
     const world=[topWorld[i],topWorld[j],{x:c[j][0],y:c[j][1],z:lowB},{x:c[i][0],y:c[i][1],z:lowA}],pts=world.map(p=>project(p.x,p.y,p.z));
     const depths=world.map(p=>project(p.x,p.y,p.z).depth),depth=Math.max(...depths);
     surfaces.push({kind:'wall',points:pts,vertexDepths:depths,color:sideColors[i],depth,faceDepthMin:Math.min(...depths)});
