@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
   <title>Wings of Atreia VTT — Prototype</title>
-  <link rel="stylesheet" href="style.css?v=20261009-2">
+  <link rel="stylesheet" href="style.css?v=20261009-3">
 </head>
 <body>
   <header class="topbar">
@@ -124,6 +124,18 @@
       </section>
 
       <section>
+        <div class="eyebrow">BATTLEFIELD SAVE / LOAD</div>
+        <div class="control-grid">
+          <button data-action="save-scene">Save Scene</button>
+          <button data-action="load-scene">Load Saved</button>
+          <button data-action="export-scene">Export JSON</button>
+          <button data-action="import-scene">Import JSON</button>
+        </div>
+        <input id="scene-import-file" type="file" accept="application/json,.json" hidden>
+        <p class="note" id="scene-save-status">Scene saves are stored in this browser on this device. Use Export JSON to move a scene elsewhere.</p>
+      </section>
+
+      <section>
         <div class="eyebrow">TEST STATUS</div>
         <ul class="checklist">
           <li class="done">✓ Lightweight 3D scene</li>
@@ -144,6 +156,6 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept</footer>
-  <script src="app.js?v=20261009-2"></script>
+  <script src="app.js?v=20261009-3"></script>
 </body>
 </html>
