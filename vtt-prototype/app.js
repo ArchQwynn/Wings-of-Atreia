@@ -28,26 +28,30 @@ function drawTerrain(){
  const corners=t=>[[t.x-.5,t.y-.5],[t.x+.5,t.y-.5],[t.x+.5,t.y+.5],[t.x-.5,t.y+.5]];
  const cornerHeights=t=>t.type==='ramp'?({north:[0,0,t.height,t.height],south:[t.height,t.height,0,0],east:[0,t.height,t.height,0],west:[t.height,0,0,t.height]}[t.direction]):[t.height,t.height,t.height,t.height];
  const poly=(pts,color)=>{if(pts.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)))return;ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);pts.slice(1).forEach(p=>ctx.lineTo(p.x,p.y));ctx.closePath();ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#17212a';ctx.lineWidth=1;ctx.stroke()};
- const walls=[],tops=[],b=basis();
- for(const t of tiles){const c=corners(t),hs=cornerHeights(t),top=c.map((p,i)=>project(p[0],p[1],hs[i]));
-  if(!state.view2d&&t.height>0){const neighbors=[[t.x,t.y-1],[t.x+1,t.y],[t.x,t.y+1],[t.x-1,t.y]],normals=[[0,-1],[1,0],[0,1],[-1,0]];
+ const surfaces=[];
+ for(const t of tiles){
+  const c=corners(t),hs=cornerHeights(t),topWorld=c.map((p,i)=>({x:p[0],y:p[1],z:hs[i]}));
+  // Every raised tile has four opaque sides. Adjacent terrain only reduces the
+  // wall to the actual exposed height difference; no transparent canvas fills.
+  if(!state.view2d&&t.height>0){
+   const neighbors=[[t.x,t.y-1],[t.x+1,t.y],[t.x,t.y+1],[t.x-1,t.y]];
    for(let i=0;i<4;i++){
-    // Draw only the sides facing the camera. Back walls were painting across the top surfaces.
-    const normal=normals[i];if(normal[0]*(-b.f.x)+normal[1]*(-b.f.y)<=0)continue;
-    const n=tileMap.get(neighbors[i][0]+','+neighbors[i][1]),j=(i+1)%4;let lowA=0,lowB=0;
-    if(n){const nh=cornerHeights(n),nc=corners(n),findHeight=pt=>{for(let k=0;k<4;k++)if(Math.abs(nc[k][0]-pt[0])<.001&&Math.abs(nc[k][1]-pt[1])<.001)return nh[k];return n.height};lowA=findHeight(c[i]);lowB=findHeight(c[j]);if(lowA>=hs[i]-.001&&lowB>=hs[j]-.001)continue;lowA=Math.min(hs[i],lowA);lowB=Math.min(hs[j],lowB)}
+    const j=(i+1)%4,n=tileMap.get(neighbors[i][0]+','+neighbors[i][1]);let lowA=0,lowB=0;
+    if(n){const nh=cornerHeights(n),nc=corners(n),findHeight=pt=>{for(let k=0;k<4;k++)if(Math.abs(nc[k][0]-pt[0])<.001&&Math.abs(nc[k][1]-pt[1])<.001)return nh[k];return n.height};lowA=Math.min(hs[i],findHeight(c[i]));lowB=Math.min(hs[j],findHeight(c[j]));if(lowA>=hs[i]-.001&&lowB>=hs[j]-.001)continue}
     if(Math.abs(hs[i]-lowA)<.001&&Math.abs(hs[j]-lowB)<.001)continue;
-    const baseA=project(c[i][0],c[i][1],lowA),baseB=project(c[j][0],c[j][1],lowB),center={x:(c[i][0]+c[j][0])/2,y:(c[i][1]+c[j][1])/2,z:(hs[i]+hs[j]+lowA+lowB)/20};
-    walls.push({points:[top[i],top[j],baseB,baseA],color:sideColors[i],depth:project(center.x,center.y,center.z).depth});
+    const world=[topWorld[i],topWorld[j],{x:c[j][0],y:c[j][1],z:lowB},{x:c[i][0],y:c[i][1],z:lowA}],pts=world.map(p=>project(p.x,p.y,p.z));
+    const depth=world.reduce((sum,p)=>sum+project(p.x,p.y,p.z).depth,0)/world.length;
+    surfaces.push({kind:'wall',points:pts,color:sideColors[i],depth});
    }
   }
-  const centerZ=hs.reduce((sum,v)=>sum+v,0)/4;
-  tops.push({tile:t,points:top,color:palette[t.type]||palette.hill,depth:project(t.x,t.y,centerZ/5).depth});
+  const worldTop=topWorld,pts=worldTop.map(p=>project(p.x,p.y,p.z)),depth=worldTop.reduce((sum,p)=>sum+project(p.x,p.y,p.z).depth,0)/worldTop.length;
+  surfaces.push({kind:'top',tile:t,points:pts,color:palette[t.type]||palette.hill,depth});
  }
- // Paint every terrain top first; then opaque camera-facing walls occlude lower tiles behind them.
- tops.sort((a,b)=>(b.depth||0)-(a.depth||0));for(const f of tops)poly(f.points,f.color);
- walls.sort((a,b)=>(b.depth||0)-(a.depth||0));for(const f of walls)poly(f.points,f.color);
- for(const f of tops){const t=f.tile,c=project(t.x,t.y,t.type==='ramp'?t.height/2:t.height);if(c.depth>NEAR&&c.x>-100&&c.x<size().w+100&&c.y>-100&&c.y<size().h+100){ctx.fillStyle='#fff';ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t.type==='ramp'?'Ramp '+t.direction+' '+t.height+'ft':t.type+' '+t.height+'ft',c.x,c.y)}}
+ // Use average camera-space depth of each actual face; farther terrain is drawn
+ // first and nearer opaque walls naturally cover whatever lies behind them.
+ surfaces.sort((a,b)=>(b.depth||0)-(a.depth||0));
+ for(const f of surfaces)poly(f.points,f.color);
+ for(const f of surfaces){if(f.kind!=='top')continue;const t=f.tile,c=project(t.x,t.y,t.type==='ramp'?t.height/2:t.height);if(c.depth>NEAR&&c.x>-100&&c.x<size().w+100&&c.y>-100&&c.y<size().h+100){ctx.fillStyle='#fff';ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t.type==='ramp'?'Ramp '+t.direction+' '+t.height+'ft':t.type+' '+t.height+'ft',c.x,c.y)}}
 }
 function ground(t){const g=groundProject(t),p=tokenProject(t);if(g.depth<=NEAR||p.depth<=NEAR)return;const f=Math.max(1,t.footprint||1),rr=Math.max(7,Math.min(32,7+g.scale*CELL_PX*f*.12));ctx.save();ctx.strokeStyle=t.id===state.selected?'rgba(255,255,255,.9)':'rgba(143,211,255,.7)';ctx.lineWidth=t.id===state.selected?2.5:1.5;ctx.setLineDash([5,5]);ctx.beginPath();line(g,p);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='rgba(3,7,13,.7)';ctx.beginPath();ctx.ellipse(g.x,g.y,rr,rr*.32,0,0,Math.PI*2);ctx.fill();ctx.stroke();if(t.z){ctx.fillStyle='#e6f0fa';ctx.font='700 9px system-ui';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(`${t.z} ft`,g.x,g.y-rr-3)}ctx.restore()}
 function drawToken(t){const p=tokenProject(t);if(!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR)return;ground(t);const r=tokenRadius(t);if(!Number.isFinite(r)||r<=0)return;ctx.save();ctx.translate(p.x,p.y);ctx.shadowColor='rgba(0,0,0,.7)';ctx.shadowBlur=6;ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fillStyle=t.color||'#7aa7ff';ctx.fill();ctx.shadowBlur=0;ctx.lineWidth=t.id===state.selected?4:2;ctx.strokeStyle=t.id===state.selected?'#fff':'#0b1320';ctx.stroke();ctx.fillStyle='#08111d';ctx.font=`800 ${Math.max(12,r*.72)}px system-ui`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t.glyph||'•',0,-2);ctx.fillStyle='#fff';ctx.font=`700 ${Math.max(8,Math.min(12,r*.3))}px system-ui`;ctx.fillText(`${t.z} ft`,0,r*.5);ctx.restore();t._screen={x:p.x,y:p.y,radius:r}}
