@@ -56,3 +56,33 @@
 .identity-label{display:block;font-size:.72rem;color:var(--muted);margin-top:7px}.identity-label select,.identity-label input{display:block;width:100%;margin-top:4px;border:1px solid var(--line);border-radius:7px;background:#0d1626;color:var(--text);padding:8px;font:inherit}.panel button:disabled{opacity:.4;cursor:not-allowed}
 
 .terrain-editor label{display:block;font-size:.72rem;color:var(--muted)}.terrain-editor label select{display:block;width:100%;margin-top:4px;border:1px solid var(--line);border-radius:7px;background:#0d1626;color:var(--text);padding:8px;font:inherit}.terrain-editor button.active{border-color:#9de5a9;background:#244b37;color:#fff}.terrain-editor .note{margin:4px 0 0}
+
+
+/* Keep scrolling inside the controls panel; the battlefield stays fixed in place. */
+@media (min-width: 701px) {
+  html, body { height: 100%; min-height: 0; overflow: hidden; }
+  body { display: flex; flex-direction: column; }
+  .topbar { flex: 0 0 auto; }
+  .layout {
+    flex: 1 1 auto;
+    height: 0;
+    min-height: 0 !important;
+    overflow: hidden;
+  }
+  .stage-card {
+    height: 100%;
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+  .panel {
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+  footer { flex: 0 0 auto; }
+}
