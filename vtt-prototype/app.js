@@ -45,17 +45,19 @@ function drawTerrain(){
     if(normal[0]*(-b.f.x)+normal[1]*(-b.f.y)<=0)continue;
     const world=[topWorld[i],topWorld[j],{x:c[j][0],y:c[j][1],z:lowB},{x:c[i][0],y:c[i][1],z:lowA}],pts=world.map(p=>project(p.x,p.y,p.z));
     const depths=world.map(p=>project(p.x,p.y,p.z).depth),depth=Math.max(...depths);
-    surfaces.push({kind:'wall',points:pts,color:sideColors[i],depth,faceDepthMin:Math.min(...depths)});
+    surfaces.push({kind:'wall',points:pts,vertexDepths:depths,color:sideColors[i],depth,faceDepthMin:Math.min(...depths)});
    }
   }
   const worldTop=topWorld,pts=worldTop.map(p=>project(p.x,p.y,p.z)),depth=worldTop.reduce((sum,p)=>sum+project(p.x,p.y,p.z).depth,0)/worldTop.length;
-  surfaces.push({kind:'top',tile:t,points:pts,color:palette[t.type]||palette.hill,depth});
+  surfaces.push({kind:'top',tile:t,points:pts,vertexDepths:worldTop.map(p=>project(p.x,p.y,p.z).depth),color:palette[t.type]||palette.hill,depth});
  }
  // Use average camera-space depth of each actual face; farther terrain is drawn
  // first and nearer opaque walls naturally cover whatever lies behind them.
- surfaces.sort((a,b)=>(b.depth||0)-(a.depth||0));
- // Draw opaque surfaces in back-to-front order; camera-facing walls are never translucent.
- for(const f of surfaces)poly(f.points,f.color);
+ const triangles=[];
+ for(const f of surfaces){for(const ids of [[0,1,2],[0,2,3]])triangles.push({points:ids.map(i=>f.points[i]),color:f.color,kind:f.kind,tile:f.tile,depth:ids.reduce((sum,i)=>sum+(f.vertexDepths?.[i]||f.depth||0),0)/3})}
+ triangles.sort((a,b)=>(b.depth||0)-(a.depth||0));
+ // Render individual triangles back-to-front to reduce incorrect occlusion from overlapping quads.
+ for(const f of triangles)poly(f.points,f.color);
  for(const f of surfaces){if(f.kind!=='top')continue;const t=f.tile,c=project(t.x,t.y,t.type==='ramp'?t.height/2:t.height);if(c.depth>NEAR&&c.x>-100&&c.x<size().w+100&&c.y>-100&&c.y<size().h+100){ctx.fillStyle='#fff';ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t.type==='ramp'?'Ramp '+t.direction+' '+t.height+'ft':t.type+' '+t.height+'ft',c.x,c.y)}}
 }
 function ground(t){const g=groundProject(t),p=tokenProject(t);if(g.depth<=NEAR||p.depth<=NEAR)return;const f=Math.max(1,t.footprint||1),rr=Math.max(7,Math.min(32,7+g.scale*CELL_PX*f*.12));ctx.save();ctx.strokeStyle=t.id===state.selected?'rgba(255,255,255,.9)':'rgba(143,211,255,.7)';ctx.lineWidth=t.id===state.selected?2.5:1.5;ctx.setLineDash([5,5]);ctx.beginPath();line(g,p);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='rgba(3,7,13,.7)';ctx.beginPath();ctx.ellipse(g.x,g.y,rr,rr*.32,0,0,Math.PI*2);ctx.fill();ctx.stroke();if(t.z){ctx.fillStyle='#e6f0fa';ctx.font='700 9px system-ui';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(`${t.z} ft`,g.x,g.y-rr-3)}ctx.restore()}
