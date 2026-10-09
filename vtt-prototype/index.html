@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
   <title>Wings of Atreia VTT — Prototype</title>
-  <link rel="stylesheet" href="style.css?v=20261009-3">
+  <link rel="stylesheet" href="style.css?v=20261009-4">
 </head>
 <body>
   <header class="topbar">
@@ -84,6 +84,30 @@
       </section>
 
       <section>
+        <div class="eyebrow">TERRAIN EDITOR · GM</div>
+        <div class="token-editor terrain-editor">
+          <label>Terrain type
+            <select id="terrain-type">
+              <option value="hill">Hill</option><option value="mountain">Mountain</option>
+              <option value="cliff">Cliff</option><option value="canopy">Treetop / Canopy</option>
+              <option value="platform">Platform / Rooftop</option><option value="ground">Raised Ground</option>
+              <option value="erase">Erase Terrain</option>
+            </select>
+          </label>
+          <label>Surface elevation
+            <select id="terrain-height">
+              <option value="5">5 ft</option><option value="10">10 ft</option><option value="15">15 ft</option>
+              <option value="20" selected>20 ft</option><option value="25">25 ft</option><option value="30">30 ft</option>
+              <option value="40">40 ft</option><option value="50">50 ft</option><option value="60">60 ft</option>
+              <option value="80">80 ft</option><option value="100">100 ft</option><option value="120">120 ft</option>
+            </select>
+          </label>
+          <button data-action="terrain-toggle">Paint Terrain: Off</button>
+          <p class="note" id="terrain-status">Choose terrain and elevation, enable painting, then click grid squares. GM only.</p>
+        </div>
+      </section>
+
+      <section>
         <div class="eyebrow">STANDEES</div>
         <div id="tokens" class="token-list"></div>
       </section>
@@ -145,6 +169,7 @@
           <li class="done">✓ Circular camera-facing tokens</li>
           <li class="done">✓ 5-ft grid movement snapping</li>
           <li class="done">✓ Movement distance display</li>
+          <li class="done">✓ Paintable elevated terrain tiles</li>
           <li>○ Multiplayer synchronization</li>
           <li class="done">✓ Local scene save/load and JSON backup</li>
           <li>○ Cloud storage and multiplayer synchronization</li>
@@ -156,6 +181,6 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept</footer>
-  <script src="app.js?v=20261009-3"></script>
+  <script src="app.js?v=20261009-4"></script>
 </body>
 </html>
