@@ -39,9 +39,13 @@ function drawTerrain(){
     const j=(i+1)%4,n=tileMap.get(neighbors[i][0]+','+neighbors[i][1]);let lowA=0,lowB=0;
     if(n){const nh=cornerHeights(n),nc=corners(n),findHeight=pt=>{for(let k=0;k<4;k++)if(Math.abs(nc[k][0]-pt[0])<.001&&Math.abs(nc[k][1]-pt[1])<.001)return nh[k];return n.height};lowA=Math.min(hs[i],findHeight(c[i]));lowB=Math.min(hs[j],findHeight(c[j]));if(lowA>=hs[i]-.001&&lowB>=hs[j]-.001)continue}
     if(Math.abs(hs[i]-lowA)<.001&&Math.abs(hs[j]-lowB)<.001)continue;
+    const b=basis(),normals=[[0,-1],[1,0],[0,1],[-1,0]],normal=normals[i];
+    // Only surfaces facing the camera can occlude the view. Back faces remain
+    // solid geometry, but are not painted through the front of the terrain.
+    if(normal[0]*(-b.f.x)+normal[1]*(-b.f.y)<=0)continue;
     const world=[topWorld[i],topWorld[j],{x:c[j][0],y:c[j][1],z:lowB},{x:c[i][0],y:c[i][1],z:lowA}],pts=world.map(p=>project(p.x,p.y,p.z));
-    const depth=world.reduce((sum,p)=>sum+project(p.x,p.y,p.z).depth,0)/world.length;
-    surfaces.push({kind:'wall',points:pts,color:sideColors[i],depth});
+    const depths=world.map(p=>project(p.x,p.y,p.z).depth),depth=Math.max(...depths);
+    surfaces.push({kind:'wall',points:pts,color:sideColors[i],depth,faceDepthMin:Math.min(...depths)});
    }
   }
   const worldTop=topWorld,pts=worldTop.map(p=>project(p.x,p.y,p.z)),depth=worldTop.reduce((sum,p)=>sum+project(p.x,p.y,p.z).depth,0)/worldTop.length;
@@ -50,6 +54,7 @@ function drawTerrain(){
  // Use average camera-space depth of each actual face; farther terrain is drawn
  // first and nearer opaque walls naturally cover whatever lies behind them.
  surfaces.sort((a,b)=>(b.depth||0)-(a.depth||0));
+ // Draw opaque surfaces in back-to-front order; camera-facing walls are never translucent.
  for(const f of surfaces)poly(f.points,f.color);
  for(const f of surfaces){if(f.kind!=='top')continue;const t=f.tile,c=project(t.x,t.y,t.type==='ramp'?t.height/2:t.height);if(c.depth>NEAR&&c.x>-100&&c.x<size().w+100&&c.y>-100&&c.y<size().h+100){ctx.fillStyle='#fff';ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t.type==='ramp'?'Ramp '+t.direction+' '+t.height+'ft':t.type+' '+t.height+'ft',c.x,c.y)}}
 }
