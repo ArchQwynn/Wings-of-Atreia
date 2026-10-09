@@ -90,7 +90,7 @@
             <select id="terrain-type">
               <option value="hill">Hill</option><option value="mountain">Mountain</option>
               <option value="cliff">Cliff</option><option value="canopy">Treetop / Canopy</option>
-              <option value="platform">Platform / Rooftop</option><option value="ground">Raised Ground</option>
+              <option value="platform">Platform / Rooftop</option><option value="ramp">Ramp / Slope</option><option value="ground">Raised Ground</option>
               <option value="erase">Erase Terrain</option>
             </select>
           </label>
@@ -102,6 +102,7 @@
               <option value="80">80 ft</option><option value="100">100 ft</option><option value="120">120 ft</option>
             </select>
           </label>
+          <label>Ramp direction (high edge)<select id="terrain-direction"><option value="north">North edge high</option><option value="south">South edge high</option><option value="east">East edge high</option><option value="west">West edge high</option></select></label>
           <button data-action="terrain-toggle">Paint Terrain: Off</button>
           <p class="note" id="terrain-status">Choose terrain and elevation, enable painting, then click grid squares. GM only.</p>
         </div>
@@ -181,6 +182,6 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept</footer>
-  <script src="app.js?v=20261009-10"></script>
+  <script src="app.js?v=20261009-11"></script>
 </body>
 </html>
