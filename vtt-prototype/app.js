@@ -23,7 +23,7 @@ function grid(){ctx.save();ctx.beginPath();ctx.rect(0,0,size().w,size().h);ctx.c
 function drawTerrain(){
  const palette={ground:'#58734d',hill:'#79965a',mountain:'#8b929c',cliff:'#77717a',canopy:'#286b45',platform:'#9a7955',ramp:'#b58b58'};
  const sideColors=['#303943','#39434d','#424d58','#353e48'];
- const tiles=Object.entries(state.terrain).map(([key,t])=>{const xy=key.split(',').map(Number);return{x:xy[0],y:xy[1],type:t.type||'hill',height:Math.max(0,Math.min(120,Number(t.height)||0)),direction:['north','south','east','west'].includes(t.direction)?t.direction:'north'};});
+ const tiles=Object.entries(state.terrain).map(([key,t])=>{const xy=key.split(',').map(Number);const height=Math.max(0,Math.min(120,Number(t.height)||0));return{x:xy[0],y:xy[1],type:t.type||'hill',height,startHeight:Math.max(0,Math.min(height,Number(t.startHeight)||0)),direction:['north','south','east','west'].includes(t.direction)?t.direction:'north'};});
  const tileMap=new Map(tiles.map(t=>[t.x+','+t.y,t]));
  const corners=t=>[[t.x-.5,t.y-.5],[t.x+.5,t.y-.5],[t.x+.5,t.y+.5],[t.x-.5,t.y+.5]];
  const cornerHeights=t=>{if(t.type!=='ramp')return[t.height,t.height,t.height,t.height];const lo=Math.max(0,Math.min(t.height,Number(t.startHeight)||0)),hi=t.height;return({north:[lo,lo,hi,hi],south:[hi,hi,lo,lo],east:[lo,hi,hi,lo],west:[hi,lo,lo,hi]}[t.direction])};
