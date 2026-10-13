@@ -135,8 +135,20 @@
           </label>
           <div class="editor-row token-image-actions">
             <button type="button" data-action="token-image-remove">Remove Image</button>
-            <span id="token-image-status" class="token-image-status">No custom image; using the token glyph.</span>
+            <button type="button" data-action="token-image-reset">Reset Framing</button>
           </div>
+          <label class="token-image-adjust">Zoom <span id="token-image-zoom-value">1×</span>
+            <input id="token-image-zoom" type="range" min="1" max="3" step="0.05" value="1">
+          </label>
+          <div class="editor-row">
+            <label class="token-image-adjust">Horizontal offset
+              <input id="token-image-x" type="range" min="-0.8" max="0.8" step="0.02" value="0">
+            </label>
+            <label class="token-image-adjust">Vertical offset
+              <input id="token-image-y" type="range" min="-0.8" max="0.8" step="0.02" value="0">
+            </label>
+          </div>
+          <p id="token-image-status" class="token-image-status">No custom image; using the token glyph. Drag the selected token image to reposition it.</p>
           <div class="editor-row">
             <label>Size
               <select id="token-footprint">
@@ -199,6 +211,6 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept</footer>
-  <script src="app.js?v=20261013-25"></script>
+  <script src="app.js?v=20261013-26"></script>
 </body>
 </html>
