@@ -102,3 +102,6 @@
 .token-image-actions{align-items:center}
 .token-image-actions button{font-size:.72rem}
 .token-image-status{font-size:.68rem;color:var(--muted);overflow-wrap:anywhere}
+
+
+.token-image-adjust{display:block;font-size:.7rem;color:var(--muted);margin-top:6px}.token-image-adjust input[type=range]{display:block;width:100%;margin:5px 0;accent-color:#9de5a9}.token-image-actions{grid-template-columns:1fr 1fr}.token-image-status{display:block;font-size:.68rem;color:var(--muted);overflow-wrap:anywhere;margin:4px 0}.token-image-actions button:disabled,.token-image-adjust input:disabled{opacity:.4}
