@@ -86,3 +86,11 @@
   }
   footer { flex: 0 0 auto; }
 }
+
+.altitude-control{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:10px;background:rgba(8,15,27,.55)}
+.altitude-control-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.85rem}
+.altitude-control-heading strong{font-size:1rem;color:#9de5a9;white-space:nowrap}
+#token-altitude-slider{display:block;width:100%;margin:12px 0 2px;accent-color:#9de5a9;cursor:pointer}
+.altitude-scale{display:flex;justify-content:space-between;color:var(--muted);font-size:.72rem}
+.altitude-reference{display:flex;flex-direction:column;gap:4px;margin-top:10px;padding-top:9px;border-top:1px solid var(--line);font-size:.75rem;color:var(--muted)}
+.altitude-reference strong{color:var(--text);font-size:.85rem;letter-spacing:.02em}
