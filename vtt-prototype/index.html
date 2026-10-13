@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
   <title>Wings of Atreia VTT — Prototype</title>
-  <link rel="stylesheet" href="style.css?v=20261013-1">
+  <link rel="stylesheet" href="style.css?v=20261013-2">
 </head>
 <body>
   <header class="topbar">
@@ -118,6 +118,20 @@
       </section>
 
       <section>
+        <div class="eyebrow">PROPS & ASSETS · GM</div>
+        <div class="token-editor asset-editor">
+          <label>Asset name<input id="asset-name" type="text" value="Prop" maxlength="120" placeholder="Crate, tree, statue..."></label>
+          <label class="token-image-label">Asset image (PNG, WebP, or JPG)
+            <input id="asset-image-file" type="file" accept="image/png,image/webp,image/jpeg,.png,.webp,.jpg,.jpeg" aria-label="Upload prop or asset image">
+          </label>
+          <div class="editor-row"><label>Width (squares)<select id="asset-width"><option value="1">1 square</option><option value="2" selected>2 squares</option><option value="3">3 squares</option><option value="4">4 squares</option><option value="6">6 squares</option><option value="8">8 squares</option><option value="12">12 squares</option></select></label><label>Depth (squares)<select id="asset-depth"><option value="1">1 square</option><option value="2" selected>2 squares</option><option value="3">3 squares</option><option value="4">4 squares</option><option value="6">6 squares</option><option value="8">8 squares</option><option value="12">12 squares</option></select></label></div>
+          <div class="editor-row"><label>Rotation<select id="asset-rotation"><option value="0">0°</option><option value="45">45°</option><option value="90">90°</option><option value="135">135°</option><option value="180">180°</option><option value="225">225°</option><option value="270">270°</option><option value="315">315°</option></select></label><label>Height above terrain<select id="asset-altitude"><option value="0">0 ft</option><option value="5">5 ft</option><option value="10">10 ft</option><option value="15">15 ft</option><option value="20">20 ft</option><option value="30">30 ft</option><option value="40">40 ft</option><option value="60">60 ft</option><option value="90">90 ft</option><option value="120">120 ft</option></select></label></div>
+          <div class="editor-row"><button data-action="asset-add">Add Asset</button><button data-action="asset-delete">Delete Selected</button></div>
+          <p id="asset-status" class="token-image-status">Upload a prop or environmental asset image, add it, then drag it across the grid to position it. Assets are separate from tokens.</p>
+        </div>
+      </section>
+
+      <section>
         <div class="eyebrow">STANDEES</div>
         <div id="tokens" class="token-list"></div>
       </section>
@@ -211,6 +225,6 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept</footer>
-  <script src="app.js?v=20261013-31"></script>
+  <script src="app.js?v=20261013-32"></script>
 </body>
 </html>
