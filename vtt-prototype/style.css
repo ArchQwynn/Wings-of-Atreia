@@ -94,3 +94,11 @@
 .altitude-scale{display:flex;justify-content:space-between;color:var(--muted);font-size:.72rem}
 .altitude-reference{display:flex;flex-direction:column;gap:4px;margin-top:10px;padding-top:9px;border-top:1px solid var(--line);font-size:.75rem;color:var(--muted)}
 .altitude-reference strong{color:var(--text);font-size:.85rem;letter-spacing:.02em}
+
+
+/* Token artwork upload controls */
+.token-image-label{display:block;font-size:.72rem;color:var(--muted)}
+.token-image-label input[type=file]{display:block;width:100%;margin-top:5px;padding:7px;border:1px dashed var(--line);border-radius:7px;background:#0d1626;color:var(--text);font:inherit;font-size:.72rem}
+.token-image-actions{align-items:center}
+.token-image-actions button{font-size:.72rem}
+.token-image-status{font-size:.68rem;color:var(--muted);overflow-wrap:anywhere}
