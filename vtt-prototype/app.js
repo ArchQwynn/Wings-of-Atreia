@@ -63,6 +63,10 @@ function drawTerrain(){
  // Render surfaces and labels in one back-to-front pass. Nearer terrain triangles are
  // painted after farther labels, so opaque walls naturally cover text behind them.
  for(const tri of triangles)poly(tri.points,tri.color,false);
+ // Trace only the outside perimeter of each top face after depth-sorted fills.
+ // This keeps raised edges and ramp boundaries visually crisp without outlining
+ // the internal triangulation diagonal used for depth sorting.
+ ctx.save();ctx.strokeStyle='rgba(13,22,30,.68)';ctx.lineWidth=1;for(const f of surfaces){if(f.kind!=='top'||f.points.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)))continue;ctx.beginPath();ctx.moveTo(f.points[0].x,f.points[0].y);for(let i=1;i<f.points.length;i++)ctx.lineTo(f.points[i].x,f.points[i].y);ctx.closePath();ctx.stroke()}ctx.restore();
  // Labels are indivisible text: interleaving them with depth-sorted triangles
  // lets nearer triangles slice through individual letters. Draw each label after
  // terrain, but suppress it entirely when another terrain face covers its anchor.
