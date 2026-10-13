@@ -46,11 +46,13 @@ function drawTerrain(){
      lowA=Math.min(hs[i],neighborA);lowB=Math.min(hs[j],neighborB);
     }
     if(Math.abs(hs[i]-lowA)<.001&&Math.abs(hs[j]-lowB)<.001)continue;
-    const b=basis(),normals=[[0,-1],[1,0],[0,1],[-1,0]],normal=normals[i];
-    // Keep every exposed wall face in the depth-sorted opaque terrain pass.
-    // Camera-facing culling can discard a visible wall at oblique angles and expose terrain behind it.
-    const world=[topWorld[i],topWorld[j],{x:c[j][0],y:c[j][1],z:lowB},{x:c[i][0],y:c[i][1],z:lowA}],pts=world.map(p=>project(p.x,p.y,p.z));
-    const depths=world.map(p=>project(p.x,p.y,p.z).depth),depth=Math.max(...depths);
+    // Build the exposed wall from the shared edge's exact corner heights.
+    // Clip each endpoint independently so sloped ramp joins produce a tapered
+    // wall instead of a full-height rectangular slab or a gap at one corner.
+    const world=[{x:c[i][0],y:c[i][1],z:hs[i]},{x:c[j][0],y:c[j][1],z:hs[j]},{x:c[j][0],y:c[j][1],z:lowB},{x:c[i][0],y:c[i][1],z:lowA}];
+    if(world.every((p,k)=>k<2||Math.abs(p.z-world[k===2?1:0].z)<.001))continue;
+    const pts=world.map(p=>project(p.x,p.y,p.z));
+    const depths=world.map(p=>project(p.x,p.y,p.z).depth),depth=depths.reduce((sum,d)=>sum+d,0)/depths.length;
     // Shade taller exposed drops more deeply so stepped cliffs and ramp joins
     // remain legible without drawing diagonal outlines across triangulated faces.
     const exposedHeight=(Math.max(0,hs[i]-lowA)+Math.max(0,hs[j]-lowB))/2;
