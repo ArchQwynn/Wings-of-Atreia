@@ -105,3 +105,7 @@
 
 
 .token-image-adjust{display:block;font-size:.7rem;color:var(--muted);margin-top:6px}.token-image-adjust input[type=range]{display:block;width:100%;margin:5px 0;accent-color:#9de5a9}.token-image-actions{grid-template-columns:1fr 1fr}.token-image-status{display:block;font-size:.68rem;color:var(--muted);overflow-wrap:anywhere;margin:4px 0}.token-image-actions button:disabled,.token-image-adjust input:disabled{opacity:.4}
+
+
+/* Props and non-token battlefield assets */
+.asset-editor label{display:block;font-size:.72rem;color:var(--muted)}.asset-editor label select,.asset-editor label input:not([type=file]){display:block;width:100%;margin-top:4px;border:1px solid var(--line);border-radius:7px;background:#0d1626;color:var(--text);padding:8px}.asset-editor button.active{border-color:#ffe08a;background:#4a3a1d}.asset-editor .token-image-status{line-height:1.4}
