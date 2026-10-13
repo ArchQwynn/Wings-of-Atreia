@@ -38,7 +38,13 @@ function drawTerrain(){
    const neighbors=[[t.x,t.y-1],[t.x+1,t.y],[t.x,t.y+1],[t.x-1,t.y]];
    for(let i=0;i<4;i++){
     const j=(i+1)%4,n=tileMap.get(neighbors[i][0]+','+neighbors[i][1]);let lowA=0,lowB=0;
-    if(n){const nh=cornerHeights(n),nc=corners(n),findHeight=pt=>{for(let k=0;k<4;k++)if(Math.abs(nc[k][0]-pt[0])<.001&&Math.abs(nc[k][1]-pt[1])<.001)return nh[k];return n.height};lowA=Math.min(hs[i],findHeight(c[i]));lowB=Math.min(hs[j],findHeight(c[j]));if(lowA>=hs[i]-.001&&lowB>=hs[j]-.001)continue}
+    if(n){const nh=cornerHeights(n),nc=corners(n),findHeight=pt=>{for(let k=0;k<4;k++)if(Math.abs(nc[k][0]-pt[0])<.001&&Math.abs(nc[k][1]-pt[1])<.001)return nh[k];return n.height};const neighborA=findHeight(c[i]),neighborB=findHeight(c[j]);
+     // A shared edge belongs to the higher surface. Draw a wall only for the
+     // portion of this tile that actually drops below its neighbor; matching
+     // ramp endpoints therefore meet flat platforms without a false seam.
+     if(neighborA>=hs[i]-.001&&neighborB>=hs[j]-.001)continue;
+     lowA=Math.min(hs[i],neighborA);lowB=Math.min(hs[j],neighborB);
+    }
     if(Math.abs(hs[i]-lowA)<.001&&Math.abs(hs[j]-lowB)<.001)continue;
     const b=basis(),normals=[[0,-1],[1,0],[0,1],[-1,0]],normal=normals[i];
     // Keep every exposed wall face in the depth-sorted opaque terrain pass.
