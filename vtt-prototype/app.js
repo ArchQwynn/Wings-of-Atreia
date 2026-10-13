@@ -45,7 +45,11 @@ function drawTerrain(){
     // Camera-facing culling can discard a visible wall at oblique angles and expose terrain behind it.
     const world=[topWorld[i],topWorld[j],{x:c[j][0],y:c[j][1],z:lowB},{x:c[i][0],y:c[i][1],z:lowA}],pts=world.map(p=>project(p.x,p.y,p.z));
     const depths=world.map(p=>project(p.x,p.y,p.z).depth),depth=Math.max(...depths);
-    surfaces.push({kind:'wall',points:pts,vertexDepths:depths,color:sideColors[i],depth,faceDepthMin:Math.min(...depths)});
+    // Shade taller exposed drops more deeply so stepped cliffs and ramp joins
+    // remain legible without drawing diagonal outlines across triangulated faces.
+    const exposedHeight=(Math.max(0,hs[i]-lowA)+Math.max(0,hs[j]-lowB))/2;
+    const wallColor=exposedHeight>=40?'#252e38':exposedHeight>=20?sideColors[i]:exposedHeight>=10?'#46525e':'#53606b';
+    surfaces.push({kind:'wall',points:pts,vertexDepths:depths,color:wallColor,depth,faceDepthMin:Math.min(...depths)});
    }
   }
   const worldTop=topWorld,pts=worldTop.map(p=>project(p.x,p.y,p.z)),depth=worldTop.reduce((sum,p)=>sum+project(p.x,p.y,p.z).depth,0)/worldTop.length;
