@@ -18,6 +18,11 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use main branch for generated updates
+        run: git switch -C main
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -53,4 +58,7 @@ jobs:
             exit 0
           fi
           git commit -m "Auto-update WoA search index"
-          git push
+          # Other commits may reach main while this job is running. Rebase the
+          # generated update on the latest main instead of pushing stale history.
+          git pull --rebase origin main
+          git push origin main
