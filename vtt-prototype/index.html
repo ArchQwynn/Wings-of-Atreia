@@ -118,6 +118,17 @@
       </section>
 
       <section>
+        <div class="eyebrow">BATTLEFIELD MAP · GM</div>
+        <div class="token-editor">
+          <label>Map image (PNG, WebP, or JPG)<input id="map-image-file" type="file" accept="image/png,image/webp,image/jpeg,.png,.webp,.jpg,.jpeg"></label>
+          <div class="editor-row"><label>Map width (squares)<input id="map-width" type="number" min="1" max="200" value="24"></label><label>Map height (squares)<input id="map-height" type="number" min="1" max="200" value="24"></label></div>
+          <label>Map opacity <input id="map-opacity" type="range" min="5" max="100" value="78"></label>
+          <div class="editor-row"><button data-action="map-apply">Apply Map Settings</button><button data-action="map-clear">Remove Map Image</button></div>
+          <p id="map-status" class="note">Upload a top-down battlefield map. It will sit beneath the grid, terrain, props, and tokens. Set its width and height in 5-foot grid squares.</p>
+        </div>
+      </section>
+
+      <section>
         <div class="eyebrow">PROPS & ASSETS · GM</div>
         <div class="token-editor asset-editor">
           <label>Asset name<input id="asset-name" type="text" value="Prop" maxlength="120" placeholder="Crate, tree, statue..."></label>
@@ -227,6 +238,6 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept</footer>
-  <script src="app.js?v=20261014-8"></script>
+  <script src="app.js?v=20261014-9"></script>
 </body>
 </html>
