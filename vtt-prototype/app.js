@@ -31,9 +31,18 @@ function drawMapImage(){
  if(!state.mapImage)return;
  const img=getMapImage(state.mapImage);if(!img||!img.complete||!img.naturalWidth)return;
  const mw=Math.max(1,Math.min(200,Number(state.mapWidth)||24)),mh=Math.max(1,Math.min(200,Number(state.mapHeight)||24)),cx=Number(state.mapX)||0,cy=Number(state.mapY)||0;
- const world=[{x:cx-mw/2,y:cy+mh/2,z:0},{x:cx+mw/2,y:cy+mh/2,z:0},{x:cx+mw/2,y:cy-mh/2,z:0},{x:cx-mw/2,y:cy-mh/2,z:0}],pts=world.map(p=>project(p.x,p.y,p.z));
- if(pts.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR))return;
  const sw=img.naturalWidth,sh=img.naturalHeight,alpha=Math.max(.05,Math.min(1,Number(state.mapOpacity)||.78));
+ // Subdivide the map into small projected quads. This approximates perspective
+ // projection much more closely than stretching the whole image across two
+ // large affine triangles, which can look like it wobbles while orbiting.
+ const divisions=16,projected=[];
+ for(let j=0;j<=divisions;j++){
+  projected[j]=[];
+  for(let i=0;i<=divisions;i++){
+   const wx=cx-mw/2+mw*i/divisions,wy=cy+mh/2-mh*j/divisions;
+   projected[j][i]=project(wx,wy,0);
+  }
+ }
  const triangle=(src,dst)=>{
   const [s0,s1,s2]=src,[d0,d1,d2]=dst,den=s0.x*(s1.y-s2.y)+s1.x*(s2.y-s0.y)+s2.x*(s0.y-s1.y);
   if(Math.abs(den)<.0001)return;
@@ -45,8 +54,13 @@ function drawMapImage(){
   const f=(d0.y*(s1.x*s2.y-s2.x*s1.y)+d1.y*(s2.x*s0.y-s0.x*s2.y)+d2.y*(s0.x*s1.y-s1.x*s0.y))/den;
   ctx.save();ctx.beginPath();ctx.moveTo(d0.x,d0.y);ctx.lineTo(d1.x,d1.y);ctx.lineTo(d2.x,d2.y);ctx.closePath();ctx.clip();ctx.globalAlpha=alpha;ctx.transform(a,b,c,d,e,f);ctx.drawImage(img,0,0,sw,sh);ctx.restore();
  };
- triangle([{x:0,y:0},{x:sw,y:0},{x:sw,y:sh}],[pts[0],pts[1],pts[2]]);
- triangle([{x:0,y:0},{x:sw,y:sh},{x:0,y:sh}],[pts[0],pts[2],pts[3]]);
+ for(let j=0;j<divisions;j++)for(let i=0;i<divisions;i++){
+  const x0=sw*i/divisions,x1=sw*(i+1)/divisions,y0=sh*j/divisions,y1=sh*(j+1)/divisions;
+  const s00={x:x0,y:y0},s10={x:x1,y:y0},s11={x:x1,y:y1},s01={x:x0,y:y1};
+  const p00=projected[j][i],p10=projected[j][i+1],p11=projected[j+1][i+1],p01=projected[j+1][i];
+  if([p00,p10,p11,p01].some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR))continue;
+  triangle([s00,s10,s11],[p00,p10,p11]);triangle([s00,s11,s01],[p00,p11,p01]);
+ }
 }
 function grid(){const{w,h}=size(),min=-GRID_RADIUS-.5,max=GRID_RADIUS+.5,boundary=gridBoundary(min,max);if(boundary.length<3||boundary.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)))return;const pathBoundary=()=>{ctx.beginPath();ctx.moveTo(boundary[0].x,boundary[0].y);for(let i=1;i<boundary.length;i++)ctx.lineTo(boundary[i].x,boundary[i].y);ctx.closePath()};ctx.save();pathBoundary();ctx.fillStyle='#172230';ctx.fill();ctx.clip();drawMapImage();ctx.strokeStyle='rgba(143,211,255,.30)';ctx.lineWidth=1;for(let i=-GRID_RADIUS;i<=GRID_RADIUS+1;i++){const a=[],b=[],fixed=i-.5;for(let s=0;s<=82;s++){const q=min+(max-min)*s/82;a.push(project(fixed,q,0));b.push(project(q,fixed,0))}drawGridLine(a);drawGridLine(b)}ctx.restore();ctx.save();pathBoundary();ctx.strokeStyle='rgba(143,211,255,.42)';ctx.lineWidth=1.5;ctx.stroke();ctx.restore()}
 function drawTerrain(){
