@@ -31,7 +31,7 @@ function drawMapImage(){
  if(!state.mapImage)return;
  const img=getMapImage(state.mapImage);if(!img||!img.complete||!img.naturalWidth)return;
  const mw=Math.max(1,Math.min(200,Number(state.mapWidth)||24)),mh=Math.max(1,Math.min(200,Number(state.mapHeight)||24)),cx=Number(state.mapX)||0,cy=Number(state.mapY)||0;
- const world=[{x:cx-mw/2,y:cy-mh/2,z:0},{x:cx+mw/2,y:cy-mh/2,z:0},{x:cx+mw/2,y:cy+mh/2,z:0},{x:cx-mw/2,y:cy+mh/2,z:0}],pts=world.map(p=>project(p.x,p.y,p.z));
+ const world=[{x:cx-mw/2,y:cy+mh/2,z:0},{x:cx+mw/2,y:cy+mh/2,z:0},{x:cx+mw/2,y:cy-mh/2,z:0},{x:cx-mw/2,y:cy-mh/2,z:0}],pts=world.map(p=>project(p.x,p.y,p.z));
  if(pts.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR))return;
  const sw=img.naturalWidth,sh=img.naturalHeight,alpha=Math.max(.05,Math.min(1,Number(state.mapOpacity)||.78));
  const triangle=(src,dst)=>{
