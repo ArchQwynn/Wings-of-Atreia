@@ -1,3 +1,5 @@
+> **SUPERSEDED — 19 October 2026.** This is a historical copy of the v1.0.0 policy. The current authority and synchronization policy is [RULES-REFERENCE-v1.1.0.md](RULES-REFERENCE-v1.1.0.md), which explicitly states that the latest approved player-website mechanics override conflicting older copies. This file must not be used to resolve a current rules conflict.
+
 # Wings of Atreia — Website Rules Reference v1.0.0
 
 **Effective:** 28 September 2026
