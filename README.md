@@ -4,8 +4,8 @@ Player-facing GitHub Pages reference for Wings of Atreia.
 
 ## Current Rules Reference
 
-**Website Rules Reference: v1.0.0**  
-**Effective: 28 September 2026**
+**Website Rules Reference: v1.1.0**  
+**Effective: 19 October 2026**
 
 The GitHub website is the **overall authoritative mechanical reference** for Wings of Atreia.
 
@@ -17,7 +17,7 @@ The synchronization hierarchy is:
 
 If a book or the Character Manager conflicts with a current website mechanic, the website mechanic is authoritative and the downstream artifact must be corrected.
 
-See RULES-REFERENCE-v1.0.0.md for the complete authority and synchronization policy.
+See [RULES-REFERENCE-v1.1.0.md](RULES-REFERENCE-v1.1.0.md) for the current authority and synchronization policy. The latest approved player-website mechanic supersedes every conflicting older version; older documents and cached copies are historical only when they conflict.
 
 ## Publish with GitHub Pages
 
