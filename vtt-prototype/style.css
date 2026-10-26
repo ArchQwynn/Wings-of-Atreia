@@ -109,3 +109,76 @@
 
 /* Props and non-token battlefield assets */
 .asset-editor label{display:block;font-size:.72rem;color:var(--muted)}.asset-editor label select,.asset-editor label input:not([type=file]){display:block;width:100%;margin-top:4px;border:1px solid var(--line);border-radius:7px;background:#0d1626;color:var(--text);padding:8px}.asset-editor button.active{border-color:#ffe08a;background:#4a3a1d}.asset-editor .token-image-status{line-height:1.4}
+
+
+/* Responsive layout correction: keep the battlefield beside the GM panel in landscape.
+   These rules intentionally override the older, overlapping breakpoint rules above. */
+@media (orientation: landscape) and (min-width: 701px) {
+  html, body { height: 100%; min-height: 0; overflow: hidden; }
+  body { display: flex; flex-direction: column; }
+  .topbar { flex: 0 0 auto; }
+  .layout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 320px !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    flex: 1 1 auto;
+    width: 100%;
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden;
+  }
+  .stage-card {
+    order: 0 !important;
+    grid-column: 1;
+    grid-row: 1;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    flex: none !important;
+    border-right: 1px solid var(--line) !important;
+    border-bottom: 0 !important;
+  }
+  .panel {
+    order: 0 !important;
+    grid-column: 2;
+    grid-row: 1;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 320px !important;
+    height: 100% !important;
+    min-width: 0;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+}
+@media (orientation: portrait), (max-width: 700px) {
+  html, body { height: auto !important; min-height: 100%; overflow-x: hidden !important; overflow-y: auto !important; }
+  body { display: block !important; }
+  .layout {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  .stage-card {
+    order: 1 !important;
+    width: 100% !important;
+    height: 56dvh !important;
+    min-height: 300px !important;
+    flex: none !important;
+    border: 0 !important;
+  }
+  .panel {
+    order: 2 !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    display: block !important;
+    overflow: visible !important;
+  }
+}
