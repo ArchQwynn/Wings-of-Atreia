@@ -7,13 +7,16 @@
 - The GM's browser is the authoritative host for the live session.
 - Use a host-authoritative star topology: each player connects to the GM, rather than relying on players to synchronize authoritative game state directly with each other.
 - Support approximately 6–10 participants per session, including the GM, unless later testing establishes a different practical limit.
-- Players join through a shared invitation link and enter a display name. Avoid requiring players to configure network settings or manually establish peer connections.
+- Players join through a GM-provided invitation link and enter a display name.
+- Invitation links do not expire and may be reused. Reusing a link does not bypass entry approval: the GM must approve every join attempt before the player can access the session.
+- The initial player interface is desktop-first. Mobile-responsive support is outside the initial interface scope unless separately approved.
+- The initial player interface has no built-in chat and does not display GM controls.
 
 ### 2. Shared Tabletop State
 
 The following information is shared and synchronized for authorized participants:
 
-- **Active map/scene:** The GM-selected current map or scene is synchronized to the session.
+- **Active map/scene:** The GM-selected current map or scene is synchronized to the session, but the player interface does not show a separate scene-information panel.
 - **Tokens:** Token placement, position, movement, orientation, and supported gameplay-relevant state changes.
 - **Props and assets:** Placement, position, movement, orientation, and supported state changes for tabletop props and assets.
 - **Accepted scene edits:** Supported changes to shared tabletop objects are validated by the GM and propagated to participants.
@@ -21,29 +24,29 @@ The following information is shared and synchronized for authorized participants
 
 A participant's local camera changes must never be interpreted as changes to shared scene state.
 
-### 3. Camera Views and GM Synchronization
+### 3. Camera Views and Future GM Synchronization
 
-- By default, each participant controls their own camera view independently.
-- GM Access must provide an option to **Synchronize Everyone's Camera View**.
-- When the GM activates this option, the camera view of every connected participant is synchronized to match the GM's current camera view, including the supported camera position, viewing angle, rotation, and zoom.
-- While synchronization is enabled, changes to the GM's camera view are propagated to all participants so their views continue to match the GM's view.
-- Participants must not be able to override the synchronized view while the GM's synchronization option is enabled. Their camera controls may be temporarily restricted or their view may be corrected to match the GM.
-- When the GM disables synchronization, participants regain independent control of their own camera views. Their cameras should remain at their current synchronized views until they choose to move them independently.
-- The GM may enable or disable camera synchronization at any time during the session.
-- Camera synchronization changes only camera presentation. It must never move tokens, props, assets, or otherwise modify shared tabletop state.
-- Late-joining and reconnecting participants must follow the current GM setting: if synchronization is enabled, their camera should match the GM's current view; otherwise, they retain their own local camera preferences.
+- Each participant controls their own camera view independently by default.
+- Camera position, viewing angle, rotation, and zoom are local presentation state and must not modify shared tabletop objects.
+- Shared-state updates must not reset a participant's local camera.
+- Reconnecting participants should have their previous local camera view restored when possible; if it cannot be restored, the client should use a safe default view.
+- Optional GM-controlled **Synchronize Everyone's Camera View** functionality may be considered for a future version; it is not required for the initial player interface.
+- If implemented later, the GM may enable or disable synchronization during a session. While enabled, participants follow the GM's supported camera view and cannot override it. When disabled, participants regain independent control, starting from their current view.
+- Camera synchronization must only affect camera presentation. It must never move tokens, props, assets, or otherwise modify shared tabletop state.
+- Late-joining and reconnecting participants must follow the current setting if the optional feature is implemented.
 - The GM's synchronization setting is session-level presentation control, not a permanent change to each participant's personal camera preferences.
 
 ### 4. GM Authority and Permissions
 
 - The GM's browser is the source of truth for accepted shared gameplay state.
-- Player-originated changes are requests, not authoritative writes.
-- The GM host validates each request against the relevant permissions and allowed actions before accepting it.
+- Player-originated changes that require approval are requests, not authoritative writes.
+- The GM host validates each request against the relevant object, permissions, and allowed action before accepting it.
 - Accepted changes are assigned an authoritative state revision and broadcast to connected participants.
-- Rejected changes must not alter the authoritative shared state.
+- Rejected or cancelled requests must not alter authoritative shared state.
 - Reconnecting clients must not overwrite newer authoritative state with stale local data.
 - Display names are labels, not authentication credentials.
-- Enabling synchronization makes all participants match the GM's camera, and disabling it restores independent camera control.
+- Authorization is scoped per object and per action. Visibility or selection does not itself grant permission to edit.
+- Player controls and requests must not expose GM-only controls or restricted data.
 
 ### 5. Visibility and Hidden Information
 
@@ -52,35 +55,92 @@ A participant's local camera changes must never be interpreted as changes to sha
 - The trusted host must enforce permissions and filter snapshots and updates for each recipient where necessary.
 - Reconnection and recovery must preserve the same visibility rules as normal gameplay synchronization.
 
-### 6. Connection and Recovery Requirements
+### 6. Player-Side Interface and Permissions
 
-- Players should connect through a simple invitation link and display-name entry, with connection setup handled automatically.
+#### Session entry
+
+- Players open a GM-provided invitation link and enter a display name.
+- The link does not expire and may be reused.
+- The GM must approve every join attempt. A valid or previously used link does not grant immediate access or bypass approval.
+- The interface must distinguish at least awaiting approval, approved, and denied entry states.
+- Invalid links and connection failures must be communicated clearly.
+
+#### Player layout
+
+- The tabletop remains the primary workspace.
+- The initial layout is desktop-first.
+- The header shows the player's own connection status but does not show a participant roster or separate scene-information panel.
+- No built-in player chat is included.
+- No GM controls or GM-only administration tools are visible to players.
+- The character panel is compact and collapsible. Its exact displayed fields are deferred for later discussion.
+- Character management belongs to the separate Character Sheet/Manager. The VTT must not duplicate the Character Manager's character-management responsibilities. Players may switch among characters assigned to them; exact character-panel content and switching presentation remain to be specified separately.
+
+#### Token movement requests
+
+- Players request movement instead of directly changing authoritative token positions.
+- The player indicates a proposed destination using a destination marker. The shared token remains at its authoritative position until the GM approves the request.
+- A persistent, compact request queue shows each request's type, target, proposed change, and status.
+- Players may cancel their own requests while they remain pending and before the GM decision is being applied.
+- Approval, rejection, and cancellation must be reflected clearly in the queue.
+- Requests must be revalidated if the target token, scene, or relevant state changes before resolution.
+- Duplicate submissions should be prevented or safely deduplicated.
+
+#### Props and assets
+
+- Players request changes to props and assets instead of directly changing shared placement.
+- The request identifies the target asset and the proposed operation, such as move, rotate, resize, or change state, when that operation is supported.
+- Shared state changes only after approval, unless the GM has explicitly granted a specific immediate permission for that object and action.
+- General player-side creation and deletion of shared objects are denied by default.
+
+#### Authorized interaction
+
+- Interaction permissions are granted per object and per action.
+- The interface must not infer edit permission from visibility or selection.
+- The host must validate each shared-state mutation; client-side hiding or disabling of controls is not sufficient security.
+- Only the explicitly authorized action may be performed. Other actions on the same object remain unavailable unless separately authorized.
+
+#### Request queue and recovery
+
+- The request queue persists pending requests and displays their status.
+- After reconnecting, the client reconciles request statuses with authoritative host state rather than blindly replaying requests.
+- The interface must distinguish pending, approved, rejected, cancelled, unavailable, and disconnected states where applicable.
+- A request cannot be cancelled once its decision is being applied; the authoritative result resolves any race between cancellation and approval.
+
+### 7. Connection and Recovery Requirements
+
 - The session should detect lost connections and attempt reconnection automatically.
 - The system must track host generations and authoritative state revisions to reject stale messages and outdated hosts.
 - If the GM disconnects, the system should attempt the planned recovery process and restore a consistent session state where technically possible.
 - Recovery must not allow two hosts to independently write authoritative state at the same time.
 - PeerJS signaling reconnection alone is insufficient; gameplay data connections must also be re-established and synchronized.
 - The exact recovery mechanism and any required external coordination service must be implemented and tested before automatic GM recovery is considered complete.
+- Local camera state should be restored when possible.
+- Reconnecting clients must reconcile pending requests and authoritative shared state; stale requests must not be silently replayed.
 
-### 7. Compatibility and Safety
+### 8. Compatibility and Safety
 
 - Preserve the existing single-user VTT behavior while the multiplayer foundation is being developed.
 - Keep multiplayer modules isolated until they have automated tests and integration coverage.
 - Do not modify the live VTT entry point or integrate networking prematurely.
 - Test existing maps, tokens, props/assets, scene management, and local camera controls after integration.
 - Do not merge into `main` or deploy the multiplayer implementation until compatibility and multiplayer tests pass.
+- This specification documents approved behavior; it does not itself authorize implementation, live VTT modification, networking integration, merge, or deployment.
 
-### 8. Acceptance Criteria
+### 9. Acceptance Criteria
 
-The multiplayer implementation is ready for broader testing when:
+The player interface and multiplayer implementation are ready for broader testing when:
 
-1. A GM can create a session and players can join using a link and display name.
-2. The GM and players see the same active map and authorized shared tabletop objects.
-3. Token and prop/asset placement and movement synchronize consistently.
-4. Each participant can independently change their camera angle, position, rotation, and zoom without affecting anyone else.
-5. Incoming shared-state updates do not reset local camera preferences.
-6. Unauthorized actions and hidden information are correctly rejected or filtered.
-7. Disconnections trigger reconnection and state resynchronization without accepting stale updates.
-8. The intended GM-disconnection recovery behavior is tested, including prevention of conflicting authoritative hosts.
-9. The existing VTT remains functional when multiplayer is unused.
-10. The feature is reviewed and approved before merging into `main` or deploying.
+1. A GM-provided invitation link can be reused without expiring, and every join attempt still requires GM approval.
+2. The player interface has a desktop-first layout, no participant roster, no separate scene-information panel, no built-in chat, and no visible GM controls.
+3. The GM and players see the same active map and authorized shared tabletop objects.
+4. Token movement requests show a destination marker and do not move the shared token before approval.
+5. Prop and asset changes follow the request flow unless a specific immediate action has been authorized.
+6. Players can cancel their own pending requests before the GM decision is being applied.
+7. The request queue clearly reflects pending, approved, rejected, and cancelled outcomes.
+8. Character details remain in the separate Character Sheet/Manager; exact compact panel fields are deferred.
+9. Each participant can independently change their camera view without affecting anyone else's view or shared tabletop state. Optional GM camera synchronization is a future feature, not an initial requirement.
+10. Unauthorized actions and hidden information are correctly rejected or filtered before delivery.
+11. Disconnections trigger reconnection and state resynchronization without accepting stale updates or blindly replaying requests.
+12. The intended GM-disconnection recovery behavior is tested, including prevention of conflicting authoritative hosts.
+13. The existing VTT remains functional when multiplayer is unused.
+14. The feature is reviewed and approved before merging into `main` or deploying.
