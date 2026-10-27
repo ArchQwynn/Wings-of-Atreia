@@ -21,7 +21,7 @@ The following information is shared and synchronized for authorized participants
 
 A participant's local camera changes must never be interpreted as changes to shared scene state.
 
-#### GM Camera View Override and Synchronization
+### 3. Camera Views and GM Synchronization
 
 - By default, each participant controls their own camera view independently.
 - GM Access must provide an option to **Synchronize Everyone's Camera View**.
@@ -43,6 +43,7 @@ A participant's local camera changes must never be interpreted as changes to sha
 - Rejected changes must not alter the authoritative shared state.
 - Reconnecting clients must not overwrite newer authoritative state with stale local data.
 - Display names are labels, not authentication credentials.
+- Enabling synchronization makes all participants match the GM's camera, and disabling it restores independent camera control.
 
 ### 5. Visibility and Hidden Information
 
