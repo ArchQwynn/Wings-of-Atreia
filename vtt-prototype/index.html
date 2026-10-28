@@ -249,7 +249,7 @@
       if (sections.length < 10) return;
       const groups = [
         { title: 'Session & Access', sections: [0, 1], open: true },
-        { title: 'Tokens & Standees', combineSections: [3, 8], combinedTitle: 'Token Management' },
+        { title: 'Tokens & Standees', combineSections: [3, 7, 8], combinedTitle: 'Token Management' },
         { title: 'Battlefield Editor', sections: [4, 5, 6] },
         { title: 'Scene Save / Load', sections: [9] }
       ];
@@ -291,7 +291,7 @@
         panel.append(wrapper);
       }
       // Camera controls are already available on the map; standees and prototype status are removed.
-      [2, 7, 10].forEach(index => sections[index]?.remove());
+      [2, 10].forEach(index => sections[index]?.remove());
       panel.dataset.organized = 'true';
     })();
   </script>
