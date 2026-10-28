@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
   <title>Wings of Atreia VTT — Prototype</title>
-  <link rel="stylesheet" href="style.css?v=20261026-1">
+  <link rel="stylesheet" href="style.css?v=20261028-2">
 </head>
 <body>
   <header class="topbar">
@@ -243,5 +243,46 @@
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept</footer>
   <script src="app.js?v=20261028-7"></script>
   <script src="overlay.js?v=20261028-12"></script>
+
+  <script id="woa-panel-organization">
+    (() => {
+      const panel = document.querySelector('.panel');
+      if (!panel || panel.dataset.organized === 'true') return;
+      const sections = [...panel.querySelectorAll(':scope > section')];
+      if (sections.length < 10) return;
+      const groups = [
+        { title: 'Session & Access', sections: [0, 1], open: true },
+        { title: 'View & Movement', sections: [2, 3] },
+        { title: 'Battlefield Editor', sections: [4, 5, 6] },
+        { title: 'Tokens & Standees', sections: [7, 8] },
+        { title: 'Scene Management', sections: [9, 10] }
+      ];
+      const makeDetails = (title, className, open = false) => {
+        const details = document.createElement('details');
+        details.className = className;
+        if (open) details.open = true;
+        const summary = document.createElement('summary');
+        summary.textContent = title;
+        details.append(summary);
+        return details;
+      };
+      for (const group of groups) {
+        const wrapper = makeDetails(group.title, 'panel-group', !!group.open);
+        for (const index of group.sections) {
+          const section = sections[index];
+          if (!section) continue;
+          const eyebrow = section.querySelector(':scope > .eyebrow');
+          const title = eyebrow?.textContent.trim() || 'Options';
+          const nested = makeDetails(title, 'panel-subgroup', group.open && index === 1);
+          if (eyebrow) eyebrow.remove();
+          while (section.firstChild) nested.append(section.firstChild);
+          section.replaceWith(nested);
+          wrapper.append(nested);
+        }
+        panel.append(wrapper);
+      }
+      panel.dataset.organized = 'true';
+    })();
+  </script>
 </body>
 </html>
