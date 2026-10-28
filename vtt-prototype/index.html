@@ -241,6 +241,9 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept</footer>
+  <script src="app.js?v=20261028-7"></script>
+  <script src="overlay.js?v=20261028-12"></script>
+
   <script id="woa-panel-organization">
     (() => {
       const panel = document.querySelector('.panel');
@@ -249,9 +252,10 @@
       if (sections.length < 10) return;
       const groups = [
         { title: 'Session & Access', sections: [0, 1], open: true },
-        { title: 'Tokens & Standees', combineSections: [3, 7, 8], combinedTitle: 'Token Management' },
+        { title: 'View & Movement', sections: [2, 3] },
         { title: 'Battlefield Editor', sections: [4, 5, 6] },
-        { title: 'Scene Save / Load', sections: [9] }
+        { title: 'Tokens & Standees', sections: [7, 8], merge: true },
+        { title: 'Scene Management', sections: [9, 10] }
       ];
       const makeDetails = (title, className, open = false) => {
         const details = document.createElement('details');
@@ -264,40 +268,34 @@
       };
       for (const group of groups) {
         const wrapper = makeDetails(group.title, 'panel-group', !!group.open);
-        if (group.combineSections) {
-          const nested = makeDetails(group.combinedTitle, 'panel-subgroup', false);
-          for (const index of group.combineSections) {
-            const section = sections[index];
-            if (!section) continue;
-            const eyebrow = section.querySelector(':scope > .eyebrow');
-            if (eyebrow) eyebrow.remove();
-            while (section.firstChild) nested.append(section.firstChild);
+        for (const index of group.sections) {
+          const section = sections[index];
+          if (!section) continue;
+          const eyebrow = section.querySelector(':scope > .eyebrow');
+          const title = eyebrow?.textContent.trim() || 'Options';
+          if (group.merge && index === group.sections[1]) continue;
+          if (eyebrow) eyebrow.remove();
+          if (group.merge && index === group.sections[0]) {
+            const nextSection = sections[group.sections[1]];
+            const nextEyebrow = nextSection?.querySelector(':scope > .eyebrow');
+            if (nextEyebrow) nextEyebrow.remove();
+            while (section.firstChild) wrapper.append(section.firstChild);
+            if (nextSection) {
+              while (nextSection.firstChild) wrapper.append(nextSection.firstChild);
+              nextSection.remove();
+            }
             section.remove();
+            continue;
           }
+          const nested = makeDetails(title, 'panel-subgroup', group.open);
+          while (section.firstChild) nested.append(section.firstChild);
+          section.replaceWith(nested);
           wrapper.append(nested);
-        } else {
-          for (const index of group.sections) {
-            const section = sections[index];
-            if (!section) continue;
-            const eyebrow = section.querySelector(':scope > .eyebrow');
-            const title = eyebrow?.textContent.trim() || 'Options';
-            if (eyebrow) eyebrow.remove();
-            const nested = makeDetails(title, 'panel-subgroup', false);
-            while (section.firstChild) nested.append(section.firstChild);
-            section.replaceWith(nested);
-            wrapper.append(nested);
-          }
         }
         panel.append(wrapper);
       }
-      // Camera controls are already available on the map; standees and prototype status are removed.
-      [2, 10].forEach(index => sections[index]?.remove());
       panel.dataset.organized = 'true';
     })();
   </script>
-  <script src="app.js?v=20261028-7"></script>
-  <script src="overlay.js?v=20261028-12"></script>
-
-
 </body>
 </html>
