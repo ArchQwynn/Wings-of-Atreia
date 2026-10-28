@@ -81,6 +81,51 @@
     if(stroke){ctx.strokeStyle=color;ctx.lineWidth=lineWidth;ctx.stroke();}
   }
   function worldCircle(x,y,r,steps=48){const a=[];for(let i=0;i<=steps;i++){const q=i/steps*Math.PI*2;a.push(project(x+Math.cos(q)*r,y+Math.sin(q)*r,terrainHeightAt(x,y)));}return a;}
+  function screenGeometry(s){
+    const o=origin(s);if(!o)return {polygon:[],segments:[]};
+    const r=Math.max(1,Number(s.range)||6),w=Math.max(1,Number(s.width)||2);
+    const end={x:Number(s.endX??o.x+r),y:Number(s.endY??o.y)},dx=end.x-o.x,dy=end.y,len=Math.hypot(dx,dy)||r,ang=Math.atan2(dy,dx);
+    const P=(x,y)=>project(x,y,terrainHeightAt(x,y));
+    let polygon=[],segments=[];
+    if(s.kind==="aura"||s.kind==="circle"){
+      polygon=worldCircle(o.x,o.y,r,64);
+    }else if(s.kind==="line"){
+      const half=w/2,px=-Math.sin(ang)*half,py=Math.cos(ang)*half;
+      polygon=[[o.x+px,o.y+py],[o.x-px,o.y-py],[o.x+dx-px,o.y+dy-py],[o.x+dx+px,o.y+dy+py]].map(([x,y])=>P(x,y));
+    }else if(s.kind==="cone"){
+      const a=(Number(s.angle)||60)*Math.PI/180;polygon=[P(o.x,o.y)];
+      for(let i=0;i<=32;i++){const q=ang-a/2+i*a/32;polygon.push(P(o.x+Math.cos(q)*r,o.y+Math.sin(q)*r));}
+    }else if(s.kind==="cube"){
+      const half=r/2,cs=Math.cos(ang),sn=Math.sin(ang);
+      polygon=[[-half,-half],[half,-half],[half,half],[-half,half]].map(([x,y])=>P(o.x+x*cs-y*sn,o.y+x*sn+y*cs));
+    }else if(s.kind==="arrow"){
+      const a=P(o.x,o.y),b=P(end.x,end.y);
+      segments=[[a,b]];
+      const head=Math.max(10,Math.min(22,Math.hypot(b.x-a.x,b.y-a.y)*.18)),theta=Math.atan2(b.y-a.y,b.x-a.x);
+      segments.push([b,{x:b.x-head*Math.cos(theta-.48),y:b.y-head*Math.sin(theta-.48)}]);
+      segments.push([b,{x:b.x-head*Math.cos(theta+.48),y:b.y-head*Math.sin(theta+.48)}]);
+    }
+    if(polygon.length)segments=polygon.map((p,i)=>[p,polygon[(i+1)%polygon.length]]);
+    return {polygon,segments};
+  }
+  function pointInPolygon(p,poly){
+    let inside=false;
+    for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+      const a=poly[i],b=poly[j];
+      if(((a.y>p.y)!==(b.y>p.y))&&(p.x<(b.x-a.x)*(p.y-a.y)/(b.y-a.y||1e-9)+a.x))inside=!inside;
+    }
+    return inside;
+  }
+  function distanceToSegment(p,a,b){
+    const dx=b.x-a.x,dy=b.y-a.y,den=dx*dx+dy*dy;
+    const t=den?Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/den)):0;
+    return Math.hypot(p.x-(a.x+t*dx),p.y-(a.y+t*dy));
+  }
+  function hitTestShape(s,p){
+    const g=screenGeometry(s);
+    if(g.polygon.length>=3&&pointInPolygon(p,g.polygon))return true;
+    return g.segments.some(([a,b])=>distanceToSegment(p,a,b)<=12);
+  }
   function drawShape(s){
     const o=origin(s);if(!o)return;
     const color=s.color||"#55c8ff",r=Math.max(1,Number(s.range)||6),w=Math.max(1,Number(s.width)||2);
@@ -114,12 +159,18 @@
   canvas.addEventListener("pointerdown",e=>{
     if(!gm())return;
     if(tool==="select"){
-      const rect=canvas.getBoundingClientRect(),sx=e.clientX-rect.left,sy=e.clientY-rect.top;
-      let best=null,bestD=22;
-      for(const s of shapes){const o=origin(s);if(!o)continue;const p=project(o.x,o.y,terrainHeightAt(o.x,o.y)),d=Math.hypot(p.x-sx,p.y-sy);if(d<bestD){best=s;bestD=d;}}
+      const rect=canvas.getBoundingClientRect(),p={x:e.clientX-rect.left,y:e.clientY-rect.top};
+      let best=null;
+      // Test in reverse paint order so the visually topmost overlay is selected first.
+      for(let i=shapes.length-1;i>=0;i--){if(hitTestShape(shapes[i],p)){best=shapes[i];break;}}
       selected=best?.id||null;
-      if(best&&!(best.kind==="aura"&&best.tokenId)){e.preventDefault();e.stopImmediatePropagation();dragging={id:best.id};canvas.setPointerCapture?.(e.pointerId);status.textContent="Drag the selected overlay by its origin, or use Delete Selected.";}
-      else if(best){status.textContent="This aura follows its token. Disable token attachment to place a fixed aura.";}
+      if(best){
+        e.preventDefault();e.stopImmediatePropagation();
+        if(!(best.kind==="aura"&&best.tokenId)){dragging={id:best.id};canvas.setPointerCapture?.(e.pointerId);}
+        status.textContent=best.kind==="aura"&&best.tokenId
+          ?"Aura selected. It follows its attached token."
+          :"Overlay selected. Click anywhere inside its shape or on its outline; drag to reposition.";
+      }
       return;
     }
     e.preventDefault();e.stopImmediatePropagation();
