@@ -144,3 +144,21 @@ The player interface and multiplayer implementation are ready for broader testin
 12. The intended GM-disconnection recovery behavior is tested, including prevention of conflicting authoritative hosts.
 13. The existing VTT remains functional when multiplayer is unused.
 14. The feature is reviewed and approved before merging into `main` or deploying.
+
+
+### 10. Isolated Foundation Guards and Local Tests
+
+The following pure helpers are available for future integration:
+
+- `authority.js` checks host-generation and revision fences, compares expected revisions before advancing, validates per-actor/per-object/per-action permissions, tracks explicit join approval decisions, and filters object arrays through a visibility predicate.
+- The helper modules are not yet wired into the VTT or a network transport. They do not authenticate users, guarantee that a visibility predicate is correct, or elect a replacement GM host.
+- `activateGeneration` deliberately requires an explicit external authorization flag. This is a guardrail, not a distributed recovery protocol; a trusted coordinator or another tested recovery mechanism is still required to prevent split-brain hosts.
+- Action authorization is a validation helper, not the complete request lifecycle. The eventual GM integration must re-check target existence, permissions, scene identity, and relevant state immediately when resolving a request.
+
+Run the isolated Node.js tests from the repository root:
+
+```sh
+node --test vtt-prototype/multiplayer/tests/*.test.js
+```
+
+The tests cover message envelope validation, message size limits, legal lifecycle transitions, host-generation fencing, stale revision rejection, compare-and-swap revision advancement, exact object/action permission checks, explicit join approval states, and filtering hidden objects before a snapshot is returned. Passing these tests does not establish that multiplayer networking or VTT integration is complete.
