@@ -6,14 +6,14 @@
   if (!window.localStorage) return;
   const KEY = "woa-vtt-tactical-overlays-v1";
   const tools = [
-    ["select","Select / Move"],["aura","Token Aura"],["line","Line"],["cone","Cone"],
+    ["select","Select Overlay: Off"],["aura","Token Aura"],["line","Line"],["cone","Cone"],
     ["circle","Circle / Radius"],["cube","Cube"],["arrow","Direction Arrow"]
   ];
   const ui = document.createElement("section");
   ui.className = "tactical-overlay-panel";
   ui.innerHTML = `
     <div class="eyebrow">TACTICAL OVERLAYS · GM</div>
-    <div class="overlay-tool-grid">${tools.map(([v,l])=>`<button type="button" data-overlay-tool="${v}" aria-pressed="${v==="select"?"true":"false"}">${l}</button>`).join("")}</div>
+    <div class="overlay-tool-grid">${tools.map(([v,l])=>`<button type="button" data-overlay-tool="${v}" aria-pressed="false">${l}</button>`).join("")}</div>
     <div class="overlay-form-grid">
       <label>Range (ft)<input id="overlay-range" type="number" min="5" max="300" step="5" value="30"></label>
       <label>Width (ft)<input id="overlay-width" type="number" min="5" max="100" step="5" value="10"></label>
@@ -51,7 +51,7 @@
   const status = $("overlay-status");
   const shapes = [];
   try { const saved = JSON.parse(localStorage.getItem(KEY)||"[]"); if (Array.isArray(saved)) shapes.push(...saved.filter(s=>s&&typeof s==="object")); } catch {}
-  let tool = "select", selected = null, drawing = null, dragging = null, currentOpacity = opacityFallback();
+  let tool = "select", overlaySelectEnabled = false, overlayPointerSelecting = false, selected = null, drawing = null, dragging = null, currentOpacity = opacityFallback();
   function opacityFallback(){return 0.28;}
   const active = () => (typeof state !== "undefined" && state);
   const gm = () => !active() || !sessionRoleEl || sessionRoleEl.value === "gm";
@@ -153,8 +153,30 @@
   function render(){if(!ctx||!active())return;ctx.save();for(const s of shapes){try{currentOpacity=Number.isFinite(Number(s.opacity))?Number(s.opacity):opacity();drawShape(s)}catch{}}if(drawing){try{currentOpacity=Number.isFinite(Number(drawing.opacity))?Number(drawing.opacity):opacity();drawShape(drawing)}catch{}}ctx.restore();}
   // Called by the main scene renderer after terrain but before props/assets and tokens.
   window.drawTacticalOverlays=render;
-  function choose(t){tool=t;ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.overlayTool===tool)));status.textContent=t==="select"?"Select an overlay to move it, then drag.":t==="aura"?"Choose or select a token, then click the map to place its aura.":"Drag on the map to set the shape's direction and size.";}
+  function refreshToolButtons(){
+    ui.querySelectorAll("[data-overlay-tool]").forEach(b=>{
+      const isSelect=b.dataset.overlayTool==="select";
+      b.setAttribute("aria-pressed",String(isSelect?overlaySelectEnabled:b.dataset.overlayTool===tool&&tool!=="select"));
+      if(isSelect)b.textContent="Select Overlay: "+(overlaySelectEnabled?"On":"Off");
+    });
+  }
+  function setOverlaySelection(enabled, message){
+    overlaySelectEnabled=!!enabled;
+    tool="select";
+    refreshToolButtons();
+    if(message)status.textContent=message;
+    else status.textContent=overlaySelectEnabled
+      ?"Select Overlay is ON. Click or drag an overlay; it will turn OFF after you interact with one."
+      :"Select Overlay is OFF. Tokens and props can be clicked normally.";
+  }
+  function choose(t){
+    if(t==="select"){setOverlaySelection(!overlaySelectEnabled);return;}
+    tool=t;overlaySelectEnabled=false;refreshToolButtons();
+    status.textContent=t==="aura"?"Choose or select a token, then left-click the map once to place its aura.":"Drag on the map to set the shape's direction and size.";
+  }
   ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.overlayTool)));
+  refreshToolButtons();
+  status.textContent="Select Overlay is OFF. Tokens and props can be clicked normally.";
   $("overlay-opacity").addEventListener("input",()=>{$("overlay-opacity-value").textContent=$("overlay-opacity").value+"%";const s=shapes.find(s=>s.id===selected);if(s){s.opacity=opacity();save();}});
   $("overlay-delete").addEventListener("click",()=>{const i=shapes.findIndex(s=>s.id===selected);if(i>=0){shapes.splice(i,1);selected=null;save();}});
   $("overlay-clear").addEventListener("click",()=>{if(!gm())return;if(confirm("Delete every tactical overlay?")){shapes.length=0;selected=null;save();}});
@@ -163,12 +185,14 @@
     // Only primary-button presses interact with the canvas; right-click must never place objects.
     if(e.button!==0)return;
     if(tool==="select"){
+      if(!overlaySelectEnabled)return;
       const rect=canvas.getBoundingClientRect(),p={x:e.clientX-rect.left,y:e.clientY-rect.top};
       let best=null;
       // Test in reverse paint order so the visually topmost overlay is selected first.
       for(let i=shapes.length-1;i>=0;i--){if(hitTestShape(shapes[i],p)){best=shapes[i];break;}}
       selected=best?.id||null;
       if(best){
+        overlayPointerSelecting=true;
         e.preventDefault();e.stopImmediatePropagation();
         if(!(best.kind==="aura"&&best.tokenId)){dragging={id:best.id};canvas.setPointerCapture?.(e.pointerId);}
         status.textContent=best.kind==="aura"&&best.tokenId
@@ -194,14 +218,15 @@
     if(d>.1)drawing.range=d;
   },true);
   canvas.addEventListener("pointerup",e=>{
-    if(dragging){e.preventDefault();e.stopImmediatePropagation();dragging=null;save();return;}
+    if(dragging){e.preventDefault();e.stopImmediatePropagation();dragging=null;save();overlayPointerSelecting=false;setOverlaySelection(false,"Overlay interaction complete. Select Overlay is OFF; tokens and props can be clicked normally.");return;}
+    if(overlayPointerSelecting){e.preventDefault();e.stopImmediatePropagation();overlayPointerSelecting=false;setOverlaySelection(false,"Overlay selected. Select Overlay is now OFF; tokens and props can be clicked normally.");return;}
     if(!drawing)return;e.preventDefault();e.stopImmediatePropagation();
     drawing.id=crypto.randomUUID?.()||String(Date.now()+Math.random());
     if(["line","arrow","cone"].includes(drawing.kind)&&Math.hypot(drawing.endX-drawing.x,drawing.endY-drawing.y)<.1)drawing.endX=drawing.x+drawing.range;
     if(drawing.kind==="circle"||drawing.kind==="cube")drawing.range=Math.max(1,Math.hypot(drawing.endX-drawing.x,drawing.endY-drawing.y));
     shapes.push(drawing);selected=drawing.id;drawing=null;save();choose("select");
   },true);
-  canvas.addEventListener("pointercancel",()=>{drawing=null;dragging=null;},true);
+  canvas.addEventListener("pointercancel",()=>{drawing=null;dragging=null;overlayPointerSelecting=false;setOverlaySelection(false,"Select Overlay is OFF. Tokens and props can be clicked normally.");},true);
   $("overlay-range").addEventListener("change",()=>{const s=shapes.find(s=>s.id===selected);if(s){s.range=range();save();}});
   $("overlay-width").addEventListener("change",()=>{const s=shapes.find(s=>s.id===selected);if(s){s.width=width();save();}});
   // Keep the overlay renderer on top of the existing canvas scene.
