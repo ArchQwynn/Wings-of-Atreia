@@ -160,6 +160,8 @@
   $("overlay-clear").addEventListener("click",()=>{if(!gm())return;if(confirm("Delete every tactical overlay?")){shapes.length=0;selected=null;save();}});
   canvas.addEventListener("pointerdown",e=>{
     if(!gm())return;
+    // Only primary-button presses interact with the canvas; right-click must never place objects.
+    if(e.button!==0)return;
     if(tool==="select"){
       const rect=canvas.getBoundingClientRect(),p={x:e.clientX-rect.left,y:e.clientY-rect.top};
       let best=null;
@@ -179,7 +181,7 @@
     const p=snap(worldAt(e.clientX,e.clientY)),token=state.tokens.find(t=>t.id===state.selected);
     if(tool==="aura"){
       const s={id:crypto.randomUUID?.()||String(Date.now()+Math.random()),kind:"aura",x:p.x,y:p.y,range:range(),width:width(),color:$("overlay-color").value,opacity:opacity(),tokenId:$("overlay-attach").checked&&token?token.id:null};
-      shapes.push(s);selected=s.id;save();return;
+      shapes.push(s);selected=s.id;save();choose("select");return;
     }
     drawing={id:"preview",kind:tool,x:p.x,y:p.y,endX:p.x,endY:p.y,range:range(),width:width(),angle:Number($("overlay-angle").value),color:$("overlay-color").value,opacity:opacity()};
     canvas.setPointerCapture?.(e.pointerId);
