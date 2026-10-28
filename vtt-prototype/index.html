@@ -252,11 +252,9 @@
       if (sections.length < 10) return;
       const groups = [
         { title: 'Session & Access', sections: [0, 1], open: true },
-        { title: 'Tokens & Standees', sections: [7, 8] },
-        { title: 'View & Movement', sections: [2, 3] },
+        { title: 'Tokens & Standees', combineSections: [3, 8], combinedTitle: 'Token Management' },
         { title: 'Battlefield Editor', sections: [4, 5, 6] },
-        { title: 'Scene Save / Load', sections: [9] },
-        { title: 'Prototype Status', sections: [10] }
+        { title: 'Scene Save / Load', sections: [9] }
       ];
       const makeDetails = (title, className, open = false) => {
         const details = document.createElement('details');
@@ -269,19 +267,34 @@
       };
       for (const group of groups) {
         const wrapper = makeDetails(group.title, 'panel-group', !!group.open);
-        for (const index of group.sections) {
-          const section = sections[index];
-          if (!section) continue;
-          const eyebrow = section.querySelector(':scope > .eyebrow');
-          const title = eyebrow?.textContent.trim() || 'Options';
-          if (eyebrow) eyebrow.remove();
-          const nested = makeDetails(title, 'panel-subgroup', false);
-          while (section.firstChild) nested.append(section.firstChild);
-          section.replaceWith(nested);
+        if (group.combineSections) {
+          const nested = makeDetails(group.combinedTitle, 'panel-subgroup', false);
+          for (const index of group.combineSections) {
+            const section = sections[index];
+            if (!section) continue;
+            const eyebrow = section.querySelector(':scope > .eyebrow');
+            if (eyebrow) eyebrow.remove();
+            while (section.firstChild) nested.append(section.firstChild);
+            section.remove();
+          }
           wrapper.append(nested);
+        } else {
+          for (const index of group.sections) {
+            const section = sections[index];
+            if (!section) continue;
+            const eyebrow = section.querySelector(':scope > .eyebrow');
+            const title = eyebrow?.textContent.trim() || 'Options';
+            if (eyebrow) eyebrow.remove();
+            const nested = makeDetails(title, 'panel-subgroup', false);
+            while (section.firstChild) nested.append(section.firstChild);
+            section.replaceWith(nested);
+            wrapper.append(nested);
+          }
         }
         panel.append(wrapper);
       }
+      // Camera controls are already available on the map; standees and prototype status are removed.
+      [2, 7, 10].forEach(index => sections[index]?.remove());
       panel.dataset.organized = 'true';
     })();
   </script>
