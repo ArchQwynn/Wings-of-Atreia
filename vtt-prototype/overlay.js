@@ -26,6 +26,23 @@
     <div class="editor-row"><button type="button" id="overlay-delete">Delete Selected</button><button type="button" id="overlay-clear">Clear Overlays</button></div>
     <p id="overlay-status" class="note">Choose a tool, then drag on the map. Auras can follow the selected token. Overlays are saved locally in this browser.</p>
   `;
+  const style = document.createElement("style");
+  style.textContent = `
+    .tactical-overlay-panel{display:grid;gap:9px;padding:12px;border:1px solid #3a526d;border-radius:10px;background:linear-gradient(145deg,rgba(16,31,49,.98),rgba(12,19,33,.98))}
+    .overlay-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+    .overlay-tool-grid button{font-size:.72rem;padding:8px 6px}
+    .overlay-tool-grid button[aria-pressed="true"]{border-color:#8fd3ff;background:#21415a;box-shadow:inset 0 0 0 1px #8fd3ff}
+    .overlay-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .overlay-form-grid label{display:grid;gap:4px;font-size:.7rem;color:#9aa8bd}
+    .overlay-form-grid input:not([type=checkbox]):not([type=range]),.overlay-form-grid select{width:100%;min-width:0;padding:7px;border:1px solid #263247;border-radius:7px;background:#0d1626;color:#eef3ff}
+    .overlay-form-grid input[type=color]{height:34px;padding:2px}
+    .overlay-form-grid input[type=range]{width:100%;accent-color:#8fd3ff}
+    .overlay-form-grid .overlay-check{display:flex;align-items:center;gap:6px}
+    .overlay-form-grid .overlay-check input{accent-color:#8fd3ff}
+    .tactical-overlay-panel .note{margin:0;line-height:1.4}
+    @media(max-width:700px){.overlay-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  `;
+  document.head.appendChild(style);
   const panel = document.querySelector(".panel");
   const mapSection = [...(panel?.querySelectorAll("section") || [])].find(s => s.textContent.includes("BATTLEFIELD MAP"));
   if (mapSection) panel.insertBefore(ui, mapSection);
