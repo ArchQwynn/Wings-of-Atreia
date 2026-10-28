@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wings of Atreia VTT — Player Interface Mockup</title>
+<style>
+:root{color-scheme:dark;--bg:#080d16;--panel:#111a29;--panel2:#172337;--line:#293950;--text:#edf4ff;--muted:#9aacc3;--accent:#91d8ff;--good:#8fe0b1;--warn:#f4cc78;--bad:#ff9b9b;--shadow:0 16px 40px #0005}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 20% 0%,#182944 0,#080d16 48%);color:var(--text);font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}button,input{font:inherit}button{border:1px solid var(--line);background:#1a2a41;color:var(--text);border-radius:9px;padding:9px 12px;cursor:pointer;transition:background .15s,border-color .15s}button:hover{border-color:#7196bd;background:#223852}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:#bceaff;color:#102033;border-color:#bceaff;font-weight:750}.primary:hover{background:#d9f4ff}.quiet{background:transparent}.danger{color:#ffc2c2;border-color:#74404a;background:#301d29}.eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--muted)}h1,h2,h3,p{margin-top:0}h1{font-size:19px;letter-spacing:.02em;margin-bottom:2px}h2{font-size:16px;margin-bottom:10px}h3{font-size:13px;margin-bottom:7px}.muted{color:var(--muted)}.small{font-size:12px}.hidden{display:none!important}.status-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:5px 9px;color:var(--muted);font-size:12px;white-space:nowrap}.status-pill:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}.status-pill.good{color:var(--good)}.status-pill.warn{color:var(--warn)}.status-pill.bad{color:var(--bad)}
+header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px 22px;border-bottom:1px solid #293950;background:#09111de8;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}.brand{display:flex;align-items:center;gap:12px}.brand-mark{width:36px;height:36px;display:grid;place-items:center;border:1px solid #52718e;border-radius:10px;color:var(--accent);font-weight:900;font-size:17px;background:linear-gradient(145deg,#203c57,#101827)}.header-right{display:flex;align-items:center;gap:12px}.prototype-flag{font-size:11px;color:#ffdf9d;border:1px solid #705a30;background:#302719;border-radius:7px;padding:5px 8px}
+main{max-width:1480px;margin:auto;padding:22px}.notice{border:1px solid #65552f;background:#211d14;color:#f6e1b0;border-radius:10px;padding:10px 13px;margin-bottom:18px;font-size:12px}.screen{max-width:620px;margin:5vh auto 0}.entry-card,.panel-card{border:1px solid var(--line);background:linear-gradient(160deg,#152235,#101827);border-radius:15px;padding:24px;box-shadow:var(--shadow)}.entry-card h2{font-size:23px;margin:8px 0}.entry-card p{color:var(--muted)}label{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}input{width:100%;padding:12px;border-radius:9px;border:1px solid #33465f;background:#0b1320;color:var(--text);outline:none}input:focus{border-color:var(--accent)}.entry-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}.entry-actions button{flex:1}.entry-foot{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}.entry-state{margin-top:14px;padding:12px;border-radius:9px;background:#0b1421;border:1px solid var(--line)}.entry-state strong{display:block;margin-bottom:3px}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:start}.tabletop{min-width:0}.tabletop-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.tabletop-head .left{display:flex;align-items:center;gap:10px}.battlefield{position:relative;min-height:590px;height:calc(100vh - 190px);max-height:900px;overflow:hidden;border:1px solid #34485c;border-radius:14px;background:#1c2730;box-shadow:var(--shadow);isolation:isolate}.battlefield:before{content:"";position:absolute;inset:0;background:linear-gradient(145deg,#263a3b 0%,#273039 32%,#3a3531 67%,#1b2732 100%);z-index:-3}.battlefield:after{content:"";position:absolute;inset:-10%;opacity:.5;z-index:-2;background:repeating-linear-gradient(0deg,transparent 0 47px,#7b91a027 48px 49px),repeating-linear-gradient(90deg,transparent 0 47px,#7b91a027 48px 49px);transform:perspective(800px) rotateX(7deg) scale(1.05)}.ridge{position:absolute;left:5%;top:11%;width:34%;height:22%;background:linear-gradient(145deg,#5d5a51,#343c3c);clip-path:polygon(0 68%,18% 37%,33% 43%,53% 7%,68% 24%,84% 16%,100% 63%,88% 100%,9% 100%);opacity:.75}.ridge.two{left:58%;top:58%;width:36%;height:28%;transform:rotate(8deg);opacity:.7}.ruin{position:absolute;width:110px;height:75px;border:8px solid #69665e;background:#353c3b;transform:rotate(-13deg);opacity:.85}.ruin.one{left:36%;top:27%}.ruin.two{left:69%;top:16%;width:74px;height:100px;transform:rotate(18deg)}.marker-label{position:absolute;top:14px;left:14px;background:#08111ddd;border:1px solid #5b6d7a;padding:7px 10px;border-radius:8px;font-size:11px;color:#dbe8f2;max-width:calc(100% - 28px)}.terrain-label{position:absolute;right:14px;top:14px;background:#08111ddd;border:1px solid #5b6d7a;padding:7px 10px;border-radius:8px;font-size:11px;color:#b9c7d5}.token{position:absolute;width:44px;height:44px;border-radius:50%;border:3px solid #c8e7f5;box-shadow:0 5px 12px #0008,0 0 0 3px #101a27b8;display:grid;place-items:center;font-size:12px;font-weight:900;cursor:pointer;user-select:none;transform:translate(-50%,-50%);z-index:2;color:#10202c}.token:focus{outline:2px solid white;outline-offset:4px}.token.ally{background:radial-gradient(circle at 30% 20%,#b8f1d0,#3b977d)}.token.ally.selected{border-color:#ffe18a;box-shadow:0 0 0 4px #f4d27766,0 5px 12px #0008}.token.enemy{background:radial-gradient(circle at 30% 20%,#ffb1a7,#a8434b);color:#2b1015;border-color:#ffd0c8}.token-label{position:absolute;top:calc(100% + 5px);left:50%;transform:translateX(-50%);white-space:nowrap;background:#08111de8;color:#edf4ff;border:1px solid #45566a;padding:2px 6px;border-radius:5px;font-size:10px;font-weight:600}.destination{position:absolute;width:50px;height:50px;transform:translate(-50%,-50%);border:2px dashed #ffe08a;border-radius:50%;background:#f4d27722;z-index:3;pointer-events:none;display:none}.destination:before,.destination:after{content:"";position:absolute;background:#ffe08a;left:50%;top:50%;transform:translate(-50%,-50%)}.destination:before{width:2px;height:24px}.destination:after{height:2px;width:24px}.destination.active{display:block}.destination span{position:absolute;top:51px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#382e18;border:1px solid #9a7a37;color:#ffe7a9;border-radius:5px;padding:3px 6px;font-size:10px}.tabletop-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;color:var(--muted);font-size:12px}.side-column{display:grid;gap:14px}.panel-card{padding:16px;box-shadow:none}.panel-title{display:flex;align-items:center;justify-content:space-between;gap:8px}.panel-title h2{margin:0}.icon-button{width:30px;height:30px;padding:0;display:grid;place-items:center}.connection-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:13px}.request-list{display:grid;gap:9px;margin-top:12px}.request{border:1px solid var(--line);border-radius:10px;padding:10px;background:#0d1624}.request-top{display:flex;justify-content:space-between;align-items:start;gap:8px}.request-title{font-weight:750;font-size:12px}.request-detail{font-size:11px;color:var(--muted);margin-top:4px}.request-status{font-size:10px;border-radius:5px;padding:3px 6px;border:1px solid var(--line);color:var(--warn);white-space:nowrap}.request-status.approved{color:var(--good);border-color:#38644b}.request-status.rejected{color:var(--bad);border-color:#74404a}.request-status.cancelled{color:var(--muted)}.request-actions{display:flex;gap:6px;margin-top:9px}.request-actions button{font-size:11px;padding:5px 8px}.request-empty{font-size:12px;color:var(--muted);padding:12px 0}.character-body{margin-top:12px}.character-select{display:flex;gap:8px;align-items:center}.character-select select{min-width:0;flex:1;background:#0b1320;border:1px solid #33465f;color:var(--text);border-radius:8px;padding:8px}.character-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}.stat{background:#0c1421;border:1px solid #25354a;border-radius:8px;padding:8px}.stat span{display:block;color:var(--muted);font-size:10px}.stat strong{font-size:14px}.character-note{font-size:11px;color:var(--muted);margin:11px 0 0}.panel-collapsed .character-body{display:none}.test-harness{margin-top:18px;border:1px dashed #69572f;background:#171710;border-radius:12px;padding:12px 14px}.test-harness summary{cursor:pointer;color:#f4dca4;font-weight:750;font-size:12px}.harness-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.harness-actions button{font-size:12px}.harness-help{font-size:11px;color:#c5b991;margin:8px 0 0}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#e4f5ff;color:#102033;border-radius:9px;padding:10px 14px;box-shadow:var(--shadow);font-weight:700;z-index:10;max-width:90vw}
+@media(max-width:1000px){.workspace{grid-template-columns:minmax(0,1fr) 290px}.battlefield{height:calc(100vh - 210px);min-height:500px}main{padding:15px}}@media(max-width:760px){header{padding:12px;position:static}.header-right .prototype-flag{display:none}main{padding:12px}.workspace{grid-template-columns:1fr}.battlefield{height:55vh;min-height:360px}.side-column{grid-template-columns:1fr 1fr}.side-column .request-panel{grid-row:span 2}.screen{margin-top:20px}}@media(max-width:520px){.side-column{grid-template-columns:1fr}.side-column .request-panel{grid-row:auto}.tabletop-head{align-items:flex-start;flex-direction:column}.battlefield{min-height:330px}.header-right .status-pill{display:none}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="brand-mark">W</div><div><div class="eyebrow">Wings of Atreia · Virtual Tabletop</div><h1>Player Session</h1></div></div>
+ <div class="header-right"><span class="prototype-flag">DESIGN PREVIEW · NO LIVE SESSION</span><span id="headerStatus" class="status-pill">Not connected</span></div>
+</header>
+<main>
+ <div class="notice"><strong>Prototype only.</strong> This page is isolated from the live VTT. Join approval, token requests, and request outcomes are simulated locally; nothing is sent to a GM or saved to a shared scene.</div>
+ <section id="entryScreen" class="screen">
+  <div class="entry-card">
+   <div class="eyebrow">Session access</div><h2>Join your tabletop</h2>
+   <p>Use the invitation link provided by your GM and enter the display name they will recognize.</p>
+   <form id="joinForm">
+    <label for="inviteCode">Invitation link</label><input id="inviteCode" autocomplete="url" placeholder="Paste GM invitation link" required>
+    <label for="displayName">Display name</label><input id="displayName" autocomplete="nickname" maxlength="40" placeholder="Your player name" required>
+    <div class="entry-actions"><button class="primary" type="submit">Request to join</button></div>
+   </form>
+   <div id="entryState" class="entry-state hidden" aria-live="polite"></div>
+   <div class="entry-foot">A valid invitation does not bypass GM approval. Reusable invitation links still require approval for every join attempt.</div>
+  </div>
+ </section>
+ <section id="playerScreen" class="hidden">
+  <div class="workspace">
+   <section class="tabletop">
+    <div class="tabletop-head"><div class="left"><div><div class="eyebrow">Shared tabletop preview</div><h2 style="margin:2px 0 0">The Broken Ridge</h2></div></div><span class="status-pill good" id="sceneState">Sample scene</span></div>
+    <div class="battlefield" id="battlefield" aria-label="Illustrative tabletop with sample tokens">
+     <div class="ridge"></div><div class="ridge two"></div><div class="ruin one"></div><div class="ruin two"></div>
+     <div class="marker-label">3D tabletop preview · sample terrain</div><div class="terrain-label">Grid · illustrative</div>
+     <button class="token ally selected" data-token="lyra" style="left:26%;top:46%" aria-label="Select Lyra">LY<span class="token-label">Lyra · You</span></button>
+     <button class="token ally" data-token="doran" style="left:39%;top:63%" aria-label="Select Doran">DO<span class="token-label">Doran</span></button>
+     <button class="token ally" data-token="mira" style="left:19%;top:72%" aria-label="Select Mira">MI<span class="token-label">Mira</span></button>
+     <button class="token enemy" data-token="balaur" style="left:66%;top:43%" aria-label="Select Balaur Soldier">BS<span class="token-label">Balaur Soldier</span></button>
+     <button class="token enemy" data-token="scout" style="left:79%;top:62%" aria-label="Select Balaur Scout">SC<span class="token-label">Balaur Scout</span></button>
+     <div class="destination" id="destinationMarker"><span>Proposed destination</span></div>
+    </div>
+    <div class="tabletop-footer"><span id="selectionText">Selected: Lyra · your assigned character</span><span>Camera controls are local in the real VTT.</span></div>
+   </section>
+   <aside class="side-column">
+    <section class="panel-card">
+     <div class="panel-title"><h2>Connection</h2><span class="status-pill good" id="connectionBadge">Connected (simulated)</span></div>
+     <div class="connection-row"><span class="muted small">Your status</span><strong id="connectionLabel" style="font-size:12px">Connected</strong></div>
+     <p class="muted small" id="connectionHelp" style="margin:9px 0 0">This is a local UI preview, not a real session.</p>
+    </section>
+    <section class="panel-card request-panel">
+     <div class="panel-title"><h2>My requests</h2><span class="status-pill" id="pendingCount">0 pending</span></div>
+     <p class="muted small" style="margin:8px 0 0">Changes wait for GM approval. The shared token stays in place until an accepted update arrives.</p>
+     <div id="requestList" class="request-list"><div class="request-empty">No requests yet. Select your token and click a destination on the tabletop to request movement.</div></div>
+    </section>
+    <section class="panel-card" id="characterPanel">
+     <div class="panel-title"><h2>Character</h2><button class="icon-button quiet" id="collapseCharacter" aria-expanded="true" aria-label="Collapse character panel">−</button></div>
+     <div class="character-body" id="characterBody">
+      <div class="character-select"><select id="characterSelect" aria-label="Switch assigned character"><option value="lyra">Lyra · Cleric</option><option value="doran">Doran · Gladiator</option><option value="mira">Mira · Ranger</option></select><span class="muted small">Assigned</span></div>
+      <div class="character-summary"><div class="stat"><span>Level</span><strong>6</strong></div><div class="stat"><span>HP</span><strong>42 / 48</strong></div><div class="stat"><span>Resource</span><strong>4 DG</strong></div></div>
+      <p class="character-note">Placeholder only. Exact fields remain undecided. Character creation and full sheet management stay in the separate Character Manager.</p>
+     </div>
+    </section>
+   </aside>
+  </div>
+  <details class="test-harness">
+   <summary>Prototype test controls (not part of the player interface)</summary>
+   <div class="harness-actions">
+    <button id="simulateApprove">Simulate GM approval</button><button id="simulateReject">Simulate GM rejection</button><button id="simulateReconnect">Simulate reconnect</button><button id="simulateDisconnect">Simulate disconnect</button><button id="resetPreview" class="quiet">Reset preview</button>
+   </div>
+   <p class="harness-help">These controls exist only to preview visual states. They do not implement or imply real GM controls, networking, authority, or persistent storage.</p>
+  </details>
+ </section>
+</main>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+<script>
+(function(){
+ const $=id=>document.getElementById(id);
+ const entryScreen=$('entryScreen'),playerScreen=$('playerScreen'),entryState=$('entryState');
+ let connected=false,requests=[],nextId=1,selectedToken='lyra',pendingDestination=null,toastTimer=null;
+ const assigned=['lyra','doran','mira'];
+ const names={lyra:'Lyra',doran:'Doran',mira:'Mira',balaur:'Balaur Soldier',scout:'Balaur Scout'};
+ function notify(message){const t=$('toast');t.textContent=message;t.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add('hidden'),2400)}
+ function setHeader(text,kind=''){const el=$('headerStatus');el.textContent=text;el.className='status-pill '+kind}
+ function enterPending(name){entryState.classList.remove('hidden');entryState.innerHTML='<strong>Awaiting GM approval</strong><span class="muted small">Join request submitted for <b></b>. You will not enter the session until the GM approves this attempt.</span>';entryState.querySelector('b').textContent=name;setHeader('Awaiting approval','warn')}
+ $('joinForm').addEventListener('submit',e=>{
+  e.preventDefault();const link=$('inviteCode').value.trim(),name=$('displayName').value.trim();
+  if(!link||!name){notify('Enter an invitation link and display name.');return}
+  if(!/^https?:\/\//i.test(link)&&link.length<8){notify('That invitation link does not look valid.');return}
+  enterPending(name);
+  if(!$('previewApproval')){const b=document.createElement('button');b.id='previewApproval';b.className='primary';b.textContent='Preview approved state (simulation)';b.type='button';b.style.marginTop='10px';b.addEventListener('click',()=>{entryScreen.classList.add('hidden');playerScreen.classList.remove('hidden');connected=true;setHeader('Connected · simulated','good');$('connectionBadge').textContent='Connected (simulated)';$('connectionBadge').className='status-pill good';$('connectionLabel').textContent='Connected';$('connectionHelp').textContent='Entry approval is simulated for this preview. No session was joined.';notify('Entered the mockup preview. No live session connected.');renderRequests()});entryState.appendChild(b)}
+ });
+ function tokenPosition(el){const r=el.getBoundingClientRect(),b=$('battlefield').getBoundingClientRect();return{x:r.left+r.width/2-b.left,y:r.top+r.height/2-b.top}}
+ function chooseToken(id){if(!assigned.includes(id)){notify('This sample token is not assigned to you.');return}selectedToken=id;$('characterSelect').value=id;document.querySelectorAll('.token').forEach(t=>t.classList.toggle('selected',t.dataset.token===id));$('selectionText').textContent='Selected: '+names[id]+' · your assigned character';$('destinationMarker').classList.remove('active');pendingDestination=null}
+ document.querySelectorAll('.token').forEach(el=>el.addEventListener('click',()=>chooseToken(el.dataset.token)));
+ $('battlefield').addEventListener('click',e=>{
+  if(e.target.closest('.token'))return;
+  if(!playerScreen.classList.contains('hidden')&&!connected){notify('You are disconnected. Reconnect before submitting a request.');return}
+  if(!playerScreen.classList.contains('hidden')){
+   const b=$('battlefield').getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;
+   const marker=$('destinationMarker');marker.style.left=x+'px';marker.style.top=y+'px';marker.classList.add('active');pendingDestination={x:Math.round(x/b.width*100),y:Math.round(y/b.height*100)};
+   const req={id:nextId++,type:'Move token',target:names[selectedToken],detail:'Proposed destination '+pendingDestination.x+'% across, '+pendingDestination.y+'% down the tabletop',status:'Pending',destination:{...pendingDestination}};
+   requests.unshift(req);renderRequests();notify('Movement request added. Shared token has not moved.');
+  }
+ });
+ $('characterSelect').addEventListener('change',e=>chooseToken(e.target.value));
+ function renderRequests(){
+  const root=$('requestList');root.innerHTML='';
+  if(!requests.length)root.innerHTML='<div class="request-empty">No requests yet. Select your token and click a destination on the tabletop to request movement.</div>';
+  requests.forEach(r=>{
+   const item=document.createElement('article');item.className='request';
+   const top=document.createElement('div');top.className='request-top';
+   const title=document.createElement('div');title.className='request-title';title.textContent=r.type+' · '+r.target;
+   const status=document.createElement('span');status.className='request-status '+r.status.toLowerCase();status.textContent=r.status;
+   top.append(title,status);item.append(top);
+   const detail=document.createElement('div');detail.className='request-detail';detail.textContent=r.detail;item.append(detail);
+   if(r.status==='Pending'){
+    const actions=document.createElement('div');actions.className='request-actions';const cancel=document.createElement('button');cancel.className='quiet';cancel.textContent='Cancel request';cancel.addEventListener('click',()=>{r.status='Cancelled';if(requests.every(x=>x.status!=='Pending')){$('destinationMarker').classList.remove('active');pendingDestination=null}renderRequests();notify('Your pending request was cancelled (simulation).')});actions.append(cancel);item.append(actions)
+   }
+   root.append(item)
+  });
+  const n=requests.filter(r=>r.status==='Pending').length;$('pendingCount').textContent=n+' pending';$('pendingCount').className='status-pill '+(n?'warn':'');
+ }
+ function resolveLatest(status){const r=requests.find(x=>x.status==='Pending');if(!r){notify('There is no pending request to resolve.');return}r.status=status;r.detail+=(status==='Approved'?' · simulated approval received': ' · simulated rejection received');if(status==='Approved'){$('sceneState').textContent='Sample state · unchanged';$('sceneState').className='status-pill good'}if(requests.every(x=>x.status!=='Pending')){$('destinationMarker').classList.remove('active');pendingDestination=null}renderRequests();notify('Request marked '+status.toLowerCase()+' for preview only.')}
+ $('simulateApprove').addEventListener('click',()=>resolveLatest('Approved'));
+ $('simulateReject').addEventListener('click',()=>resolveLatest('Rejected'));
+ $('simulateDisconnect').addEventListener('click',()=>{connected=false;setHeader('Disconnected','bad');$('connectionBadge').textContent='Disconnected';$('connectionBadge').className='status-pill bad';$('connectionLabel').textContent='Disconnected';$('connectionHelp').textContent='Requests cannot be submitted while disconnected.';notify('Disconnected state preview')});
+ $('simulateReconnect').addEventListener('click',()=>{connected=true;setHeader('Connected · simulated','good');$('connectionBadge').textContent='Connected (simulated)';$('connectionBadge').className='status-pill good';$('connectionLabel').textContent='Connected';$('connectionHelp').textContent='Reconnect state preview only. Requests are not replayed automatically.';notify('Reconnected in preview. No requests replayed.')});
+ $('collapseCharacter').addEventListener('click',()=>{const panel=$('characterPanel'),collapsed=panel.classList.toggle('panel-collapsed');$('collapseCharacter').textContent=collapsed?'+':'−';$('collapseCharacter').setAttribute('aria-expanded',String(!collapsed));$('collapseCharacter').setAttribute('aria-label',collapsed?'Expand character panel':'Collapse character panel')});
+ $('resetPreview').addEventListener('click',()=>{requests=[];nextId=1;connected=true;selectedToken='lyra';pendingDestination=null;$('destinationMarker').classList.remove('active');chooseToken('lyra');setHeader('Connected · simulated','good');$('connectionBadge').textContent='Connected (simulated)';$('connectionBadge').className='status-pill good';$('connectionLabel').textContent='Connected';$('connectionHelp').textContent='This is a local UI preview, not a real session.';renderRequests();notify('Preview reset')});
+ renderRequests();
+})();
+</script>
+</body>
+</html>
