@@ -162,3 +162,37 @@ node --test vtt-prototype/multiplayer/tests/*.test.js
 ```
 
 The tests cover message envelope validation, message size limits, legal lifecycle transitions, host-generation fencing, stale revision rejection, compare-and-swap revision advancement, exact object/action permission checks, explicit join approval states, and filtering hidden objects before a snapshot is returned. Passing these tests does not establish that multiplayer networking or VTT integration is complete.
+
+
+### 11. Isolated GM-to-Player Connection Harness
+
+Open `vtt-prototype/multiplayer/connection-harness.html` through a local HTTP server (recommended) or a test web server. It loads the pinned PeerJS browser library from its CDN and the local `protocol.js` file.
+
+For a local checkout with Python installed, run this from the repository root:
+
+```sh
+python -m http.server 8000
+```
+
+Then open `http://localhost:8000/vtt-prototype/multiplayer/connection-harness.html` in one browser and choose **Start as GM**. Open the same URL in a second browser window (or another device that can reach the test server), enter the GM session ID and a display name, then request to join. The GM must explicitly approve the request. The generated invitation link can also be used when the harness is hosted at a URL reachable by both browsers.
+
+After approval, send a harmless test request from the player browser. Approve or reject it from the GM console and verify the player receives the result. Approved test requests advance a synthetic revision and send a test-only state update. Disconnect/reconnect can be tested by closing the player tab and reopening the invitation; the new join attempt still requires GM approval.
+
+**Harness boundaries:**
+
+- This is a transport/handshake test only. It does not import the VTT, load scenes, or synchronize actual characters, tokens, props, or assets.
+- The GM browser is the temporary session coordinator, but no secure host election or automatic GM recovery exists. Closing the GM tab ends the test session.
+- PeerJS signaling is a public third-party service in this harness. Network availability, browser WebRTC policy, and restrictive firewalls may affect connection success.
+- Display names and peer IDs are not authentication. Do not use this harness for real campaign data or treat its approval UI as production security.
+- The harness has not been integrated with the main VTT. Browser-based two-device testing is still required; adding the file does not itself prove the live connection works.
+
+Suggested test checklist:
+1. GM starts a session and receives a session ID and invitation link.
+2. Player connects and remains blocked pending GM approval.
+3. GM rejection is shown to the player and does not grant access.
+4. GM approval lets the player receive the test snapshot.
+5. Player test request reaches the GM; rejection leaves the revision unchanged.
+6. Approval increments the synthetic revision and the player receives the result/update.
+7. Player disconnects and rejoins; the GM must approve the new attempt.
+8. An unapproved peer's state/action messages are ignored.
+9. A second approved player receives a broadcast update after a synthetic revision advances.
