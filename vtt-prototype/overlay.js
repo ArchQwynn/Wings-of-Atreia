@@ -235,7 +235,7 @@
   function choose(t){
     if(t==="select"){setOverlaySelection(!overlaySelectEnabled);return;}
     tool=t;overlaySelectEnabled=false;refreshToolButtons();
-    if(t==="measure"){measurement=null;status.textContent=$("overlay-measure-mode").value==="3d"?"3D Measure: click token A, then token B. Horizontal and vertical components use 5-ft increments; distances under 5 ft count as 0, and values above 5 ft up to under 10 ft count as 10 ft.":"2D Measure: click token A, then token B. Measures horizontal grid distance only.";return;}
+    if(t==="measure"){measurement=null;status.textContent=$("overlay-measure-mode").value==="3d"?"3D Measure: click any token, prop, or asset for point A, then another object for point B. Horizontal and vertical components use 5-ft increments.":"2D Measure: click any token, prop, or asset for point A, then another object for point B. Measures horizontal grid distance only.";return;}
     status.textContent=t==="aura"?"Choose or select a token, then left-click the map once to place its aura.":"Drag on the map to set the shape's direction and size.";
   }
   ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.overlayTool)));
@@ -251,7 +251,6 @@
     if(e.button!==0)return;
     if(tool==="measure"){
       e.preventDefault();e.stopImmediatePropagation();
-      const token=measuredTokenAt(e.clientX,e.clientY);
       const object=measuredObjectAt(e.clientX,e.clientY);
       if(!object){status.textContent="Click directly on a token, prop, or asset to choose a measurement endpoint.";return;}
       const endpoint=object;
