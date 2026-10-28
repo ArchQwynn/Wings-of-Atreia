@@ -273,7 +273,7 @@
           if (!section) continue;
           const eyebrow = section.querySelector(':scope > .eyebrow');
           const title = eyebrow?.textContent.trim() || 'Options';
-          const nested = makeDetails(title, 'panel-subgroup', group.open && index === 1);
+          const nested = makeDetails(title, 'panel-subgroup', group.open);
           if (eyebrow) eyebrow.remove();
           while (section.firstChild) nested.append(section.firstChild);
           section.replaceWith(nested);
