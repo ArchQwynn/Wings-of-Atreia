@@ -51,7 +51,8 @@
   const status = $("overlay-status");
   const shapes = [];
   try { const saved = JSON.parse(localStorage.getItem(KEY)||"[]"); if (Array.isArray(saved)) shapes.push(...saved.filter(s=>s&&typeof s==="object")); } catch {}
-  let tool = "select", selected = null, drawing = null, dragging = null;
+  let tool = "select", selected = null, drawing = null, dragging = null, currentOpacity = opacityFallback();
+  function opacityFallback(){return 0.28;}
   const active = () => (typeof state !== "undefined" && state);
   const gm = () => !active() || !sessionRoleEl || sessionRoleEl.value === "gm";
   const clamp = (v,min,max) => Math.max(min,Math.min(max,Number(v)||min));
@@ -76,7 +77,7 @@
   function origin(s){if(s.kind==="aura"&&s.tokenId){const p=tokenCenter(s.tokenId);if(p)return p;}return{x:s.x,y:s.y};}
   function path(points,fill,stroke,color,lineWidth=2){
     if(points.length<2)return;ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);points.slice(1).forEach(p=>ctx.lineTo(p.x,p.y));
-    if(fill){ctx.closePath();ctx.globalAlpha=opacity();ctx.fillStyle=color;ctx.fill();ctx.globalAlpha=1;}
+    if(fill){ctx.closePath();ctx.globalAlpha=currentOpacity;ctx.fillStyle=color;ctx.fill();ctx.globalAlpha=1;}
     if(stroke){ctx.strokeStyle=color;ctx.lineWidth=lineWidth;ctx.stroke();}
   }
   function worldCircle(x,y,r,steps=48){const a=[];for(let i=0;i<=steps;i++){const q=i/steps*Math.PI*2;a.push(project(x+Math.cos(q)*r,y+Math.sin(q)*r,terrainHeightAt(x,y)));}return a;}
@@ -107,12 +108,20 @@
   function render(){if(!ctx||!active())return;ctx.save();for(const s of shapes){try{drawShape(s)}catch{}}if(drawing){try{drawShape(drawing)}catch{}}ctx.restore();requestAnimationFrame(render);}
   function choose(t){tool=t;ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.overlayTool===tool)));status.textContent=t==="select"?"Select an overlay to move it, then drag.":t==="aura"?"Choose or select a token, then click the map to place its aura.":"Drag on the map to set the shape's direction and size.";}
   ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.overlayTool)));
-  $("overlay-opacity").addEventListener("input",()=>{$("overlay-opacity-value").textContent=$("overlay-opacity").value+"%";shapes.forEach(s=>s.opacity=opacity());});
+  $("overlay-opacity").addEventListener("input",()=>{$("overlay-opacity-value").textContent=$("overlay-opacity").value+"%";const s=shapes.find(s=>s.id===selected);if(s){s.opacity=opacity();save();}});
   $("overlay-delete").addEventListener("click",()=>{const i=shapes.findIndex(s=>s.id===selected);if(i>=0){shapes.splice(i,1);selected=null;save();}});
   $("overlay-clear").addEventListener("click",()=>{if(!gm())return;if(confirm("Delete every tactical overlay?")){shapes.length=0;selected=null;save();}});
   canvas.addEventListener("pointerdown",e=>{
-    if(!gm()||tool==="select"&& !selected)return;
-    if(tool==="select")return;
+    if(!gm())return;
+    if(tool==="select"){
+      const rect=canvas.getBoundingClientRect(),sx=e.clientX-rect.left,sy=e.clientY-rect.top;
+      let best=null,bestD=22;
+      for(const s of shapes){const o=origin(s);if(!o)continue;const p=project(o.x,o.y,terrainHeightAt(o.x,o.y)),d=Math.hypot(p.x-sx,p.y-sy);if(d<bestD){best=s;bestD=d;}}
+      selected=best?.id||null;
+      if(best&&!(best.kind==="aura"&&best.tokenId)){e.preventDefault();e.stopImmediatePropagation();dragging={id:best.id};canvas.setPointerCapture?.(e.pointerId);status.textContent="Drag the selected overlay by its origin, or use Delete Selected.";}
+      else if(best){status.textContent="This aura follows its token. Disable token attachment to place a fixed aura.";}
+      return;
+    }
     e.preventDefault();e.stopImmediatePropagation();
     const p=snap(worldAt(e.clientX,e.clientY)),token=state.tokens.find(t=>t.id===state.selected);
     if(tool==="aura"){
@@ -123,19 +132,21 @@
     canvas.setPointerCapture?.(e.pointerId);
   },true);
   canvas.addEventListener("pointermove",e=>{
+    if(dragging){e.preventDefault();e.stopImmediatePropagation();const s=shapes.find(s=>s.id===dragging.id);if(s){const p=snap(worldAt(e.clientX,e.clientY));s.x=p.x;s.y=p.y;}return;}
     if(!drawing)return;e.preventDefault();e.stopImmediatePropagation();
     const p=snap(worldAt(e.clientX,e.clientY));drawing.endX=p.x;drawing.endY=p.y;
     const d=Math.hypot(p.x-drawing.x,p.y-drawing.y);
     if(d>.1)drawing.range=d;
   },true);
   canvas.addEventListener("pointerup",e=>{
+    if(dragging){e.preventDefault();e.stopImmediatePropagation();dragging=null;save();return;}
     if(!drawing)return;e.preventDefault();e.stopImmediatePropagation();
     drawing.id=crypto.randomUUID?.()||String(Date.now()+Math.random());
     if(["line","arrow","cone"].includes(drawing.kind)&&Math.hypot(drawing.endX-drawing.x,drawing.endY-drawing.y)<.1)drawing.endX=drawing.x+drawing.range;
     if(drawing.kind==="circle"||drawing.kind==="cube")drawing.range=Math.max(1,Math.hypot(drawing.endX-drawing.x,drawing.endY-drawing.y));
     shapes.push(drawing);selected=drawing.id;drawing=null;save();choose("select");
   },true);
-  canvas.addEventListener("pointercancel",()=>{drawing=null;},true);
+  canvas.addEventListener("pointercancel",()=>{drawing=null;dragging=null;},true);
   $("overlay-range").addEventListener("change",()=>{const s=shapes.find(s=>s.id===selected);if(s){s.range=range();save();}});
   $("overlay-width").addEventListener("change",()=>{const s=shapes.find(s=>s.id===selected);if(s){s.width=width();save();}});
   // Keep the overlay renderer on top of the existing canvas scene.
