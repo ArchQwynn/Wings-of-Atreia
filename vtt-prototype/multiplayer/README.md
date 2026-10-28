@@ -166,7 +166,7 @@ The tests cover message envelope validation, message size limits, legal lifecycl
 
 ### 11. Isolated GM-to-Player Connection Harness
 
-Open `vtt-prototype/multiplayer/connection-harness.html` through a local HTTP server (recommended) or a test web server. It loads the pinned PeerJS browser library from its CDN and the local `protocol.js` file.
+The harness is a standalone HTML file with the protocol helper embedded. You can download `connection-harness.html` and open it in a browser for a same-device test if your browser permits WebRTC from local files. For more reliable testing, serve it over HTTP. It loads the pinned PeerJS browser library from its CDN, so internet access is required.
 
 For a local checkout with Python installed, run this from the repository root:
 
