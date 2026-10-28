@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wings of Atreia — Multiplayer Connection Harness</title>
+<script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+<script src="./protocol.js"></script>
+<style>
+:root{color-scheme:dark;--bg:#11151b;--panel:#1b222c;--line:#354150;--text:#edf2f8;--muted:#a9b6c6;--accent:#8bc8ff;--good:#86e0ae;--warn:#ffd37a;--bad:#ff9999}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:1000px;margin:0 auto;padding:24px 16px 48px}h1{font-size:clamp(1.5rem,4vw,2.1rem);line-height:1.2;margin:0 0 8px}h2{font-size:1.1rem;margin:0 0 12px}.muted{color:var(--muted)}.notice{border:1px solid #806b36;background:#302919;color:#ffedc1;border-radius:10px;padding:12px 14px;margin:16px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}.panel{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:16px;margin:14px 0}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.row button{flex:0 0 auto}label{display:block;font-weight:650;margin:10px 0 5px}input{width:100%;border:1px solid var(--line);border-radius:8px;background:#10151c;color:var(--text);padding:11px;font:inherit}button{border:1px solid #52647a;border-radius:8px;background:#293747;color:var(--text);padding:10px 13px;font:inherit;font-weight:650;cursor:pointer}button.primary{background:#b8dcff;color:#101a24;border-color:#b8dcff}button.danger{border-color:#9c5757;background:#43272a}button:disabled{opacity:.45;cursor:not-allowed}.status{display:inline-flex;border:1px solid var(--line);border-radius:99px;padding:4px 9px;color:var(--muted);font-size:.86rem}.status.good{color:var(--good);border-color:#426e56}.status.warn{color:var(--warn);border-color:#806b36}.status.bad{color:var(--bad);border-color:#804b4b}.hidden{display:none!important}.item{padding:10px 0;border-top:1px solid var(--line)}.item:first-child{border-top:0}.item p{margin:3px 0 8px}.log{height:190px;overflow:auto;background:#0c1015;border:1px solid var(--line);border-radius:8px;padding:10px;font:12px/1.5 ui-monospace,SFMono-Regular,monospace;white-space:pre-wrap;overflow-wrap:anywhere}.small{font-size:.9rem}.linkbox{overflow-wrap:anywhere;background:#10151c;border:1px solid var(--line);padding:10px;border-radius:8px}.pill{display:inline-block;border-radius:5px;background:#293747;padding:2px 6px;font-size:.8rem}.counter{font-size:2rem;font-weight:750}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<main>
+  <h1>Wings of Atreia — Multiplayer Connection Harness</h1>
+  <p class="muted">An isolated two-browser connection test. This does not load or modify the VTT tabletop.</p>
+  <div class="notice"><strong>Test only:</strong> this harness uses the public PeerJS signaling service and browser WebRTC. Do not use real campaign secrets or sensitive data. A displayed name is not authentication. The GM must approve every connection. Closing the GM tab ends the session; host recovery and persistent sessions are not implemented here.</div>
+
+  <section class="panel" id="startPanel">
+    <h2>Start a test session</h2>
+    <div class="grid">
+      <div>
+        <p class="muted small">Open this page in one browser as the GM. Keep that tab open while testing.</p>
+        <button class="primary" id="startHost">Start as GM</button>
+      </div>
+      <div>
+        <p class="muted small">Open this page in another browser/device as a player. Use the GM's invitation link or enter the session ID.</p>
+        <label for="roomInput">GM session ID</label>
+        <input id="roomInput" autocomplete="off" placeholder="Paste the GM session ID">
+        <label for="nameInput">Display name</label>
+        <input id="nameInput" maxlength="40" autocomplete="nickname" placeholder="Your display name">
+        <button id="joinButton" class="primary">Request to join</button>
+      </div>
+    </div>
+    <p id="startupMessage" class="muted small" role="status">Waiting to start. Internet access and WebRTC support are required.</p>
+  </section>
+
+  <section class="panel hidden" id="sessionPanel">
+    <div class="section-head"><h2 id="roleTitle">Session</h2><span class="status" id="connectionStatus">Starting…</span></div>
+    <p id="sessionHint" class="muted small"></p>
+    <div id="inviteArea" class="hidden">
+      <label>Reusable test invitation link</label>
+      <div class="linkbox" id="inviteLink"></div>
+      <div class="row" style="margin-top:8px"><button id="copyInvite">Copy invitation</button><button id="copyId">Copy session ID</button></div>
+    </div>
+    <div id="playerStatus" class="hidden">
+      <p id="playerState" class="status warn">Waiting to request access</p>
+      <p class="muted small">You will not receive test state until the GM approves your request.</p>
+      <button id="reconnectButton">Reconnect</button>
+    </div>
+    <div id="gmArea" class="hidden">
+      <h2 style="margin-top:18px">Join requests <span class="pill" id="pendingCount">0 pending</span></h2>
+      <div id="joinQueue" class="muted small">No join requests yet.</div>
+      <h2 style="margin-top:22px">Connected players</h2>
+      <div id="connectedPlayers" class="muted small">No approved players connected.</div>
+    </div>
+    <div id="playerTools" class="hidden">
+      <h2 style="margin-top:18px">Connection checks</h2>
+      <p class="muted small">Send a harmless test request. The GM can approve or reject it. This does not change any game data.</p>
+      <button id="sendTestRequest" class="primary">Send test request to GM</button>
+      <p id="requestResult" class="muted small"></p>
+    </div>
+    <div class="grid" style="margin-top:18px">
+      <div class="panel" style="margin:0"><div class="muted small">Authoritative test revision</div><div class="counter" id="revisionValue">0</div><div class="muted small">Only advances after a GM-approved test request.</div></div>
+      <div class="panel" style="margin:0"><div class="muted small">Last received message</div><div id="lastMessage" class="small">None yet.</div><div class="muted small">Use this to verify messages arrive in both browsers.</div></div>
+    </div>
+  </section>
+
+  <section class="panel hidden" id="testQueuePanel">
+    <h2>Test requests</h2>
+    <div id="testQueue" class="muted small">No test requests yet.</div>
+  </section>
+
+  <section class="panel">
+    <div class="section-head"><h2>Connection log</h2><button id="clearLog">Clear log</button></div>
+    <div id="log" class="log" aria-live="polite">Harness loaded. No connection has been opened yet.</div>
+  </section>
+  <p class="muted small">The session ID is a connection address, not a secret or authentication token. This harness is not a production-ready multiplayer service.</p>
+</main>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:new Map(),approved:new Map(),testRequests:new Map(),revision:0,hostGeneration:1,joinAttemptId:null,playerConnection:null,playerApproved:false,requestCounter:0};
+const F=window.WoAMultiplayerFoundation;
+function log(message){const el=$('log');const stamp=new Date().toLocaleTimeString();el.textContent+='\n['+stamp+'] '+message;el.scrollTop=el.scrollHeight}
+function setStatus(text,kind){$('connectionStatus').textContent=text;$('connectionStatus').className='status '+(kind||'')}
+function setPlayerStatus(text,kind){$('playerState').textContent=text;$('playerState').className='status '+(kind||'')}
+function showSession(role){$('startPanel').classList.add('hidden');$('sessionPanel').classList.remove('hidden');state.role=role;$('roleTitle').textContent=role==='gm'?'GM test console':'Player test console';$('sessionHint').textContent=role==='gm'?'You are the session host. Approve every join request below.':'This is an isolated connection test; no actual tabletop is loaded.';$('inviteArea').classList.toggle('hidden',role!=='gm');$('gmArea').classList.toggle('hidden',role!=='gm');$('playerStatus').classList.toggle('hidden',role!=='player');$('playerTools').classList.toggle('hidden',role!=='player');$('testQueuePanel').classList.toggle('hidden',role!=='gm')}
+function message(type,payload,revision=state.revision){return F.createMessage(type,payload,{hostGeneration:state.hostGeneration,revision})}
+function send(conn,type,payload,revision=state.revision){if(!conn||!conn.open)throw new Error('Connection is not open.');conn.send(message(type,payload,revision))}
+function receive(conn,data,handler){let msg;try{msg=typeof data==='string'?JSON.parse(data):data}catch(_){log('Ignored malformed JSON message.');return}const valid=F.validateMessage(msg);if(!valid.ok){log('Rejected invalid envelope: '+valid.error);return}handler(msg,conn)}
+function renderJoinQueue(){
+ const list=$('joinQueue');const entries=Array.from(state.pending.values());$('pendingCount').textContent=entries.length+' pending';
+ if(!entries.length){list.innerHTML='<p class="muted small">No pending join requests.</p>';return}
+ list.replaceChildren();
+ entries.forEach(item=>{const row=document.createElement('div');row.className='item';const title=document.createElement('strong');title.textContent=item.name;const sub=document.createElement('p');sub.className='muted small';sub.textContent='Attempt '+item.attemptId+' · awaiting GM decision';const approve=document.createElement('button');approve.className='primary';approve.textContent='Approve';approve.addEventListener('click',()=>decideJoin(item.peerId,'approved'));const reject=document.createElement('button');reject.className='danger';reject.textContent='Reject';reject.addEventListener('click',()=>decideJoin(item.peerId,'rejected'));const actions=document.createElement('div');actions.className='row';actions.append(approve,reject);row.append(title,sub,actions);list.append(row)})
+}
+function renderConnected(){
+ const list=$('connectedPlayers');const entries=Array.from(state.approved.values());
+ if(!entries.length){list.textContent='No approved players connected.';return}
+ list.replaceChildren();entries.forEach(p=>{const row=document.createElement('div');row.className='item';const name=document.createElement('strong');name.textContent=p.name;const status=document.createElement('span');status.className='status '+(p.conn.open?'good':'bad');status.textContent=p.conn.open?'Connected':'Disconnected';row.append(name,document.createTextNode(' '),status);list.append(row)})
+}
+function renderTestQueue(){
+ const list=$('testQueue');const entries=Array.from(state.testRequests.values());
+ if(!entries.length){list.textContent='No test requests yet.';return}
+ list.replaceChildren();entries.forEach(item=>{const row=document.createElement('div');row.className='item';const title=document.createElement('strong');title.textContent=item.name+' — test request';const status=document.createElement('span');status.className='status '+(item.status==='pending'?'warn':item.status==='approved'?'good':'bad');status.textContent=item.status;const buttons=document.createElement('div');buttons.className='row';const approve=document.createElement('button');approve.textContent='Approve request';approve.className='primary';approve.disabled=item.status!=='pending';approve.addEventListener('click',()=>decideTest(item.id,'approved'));const reject=document.createElement('button');reject.textContent='Reject request';reject.className='danger';reject.disabled=item.status!=='pending';reject.addEventListener('click',()=>decideTest(item.id,'rejected'));buttons.append(approve,reject);row.append(title,document.createTextNode(' '),status,buttons);list.append(row)})
+}
+function updateRevision(value){if(!Number.isSafeInteger(value)||value<state.revision)return;state.revision=value;$('revisionValue').textContent=String(value)}
+function setLast(msg){$('lastMessage').textContent=msg}
+function makeInvite(){
+ const url=new URL(location.href);url.search='';url.hash='';url.searchParams.set('room',state.sessionId);
+ $('inviteLink').textContent=url.toString();
+}
+async function copyText(text){try{await navigator.clipboard.writeText(text);log('Copied to clipboard.')}catch(_){log('Clipboard access was blocked; select and copy the displayed text manually.');}}
+async function startHost(){
+ if(!window.Peer){$('startupMessage').textContent='PeerJS library did not load. Check your internet connection and reload.';return}
+ $('startHost').disabled=true;$('startupMessage').textContent='Opening a PeerJS connection…';
+ try{
+  const peer=new Peer();state.peer=peer;
+  peer.on('open',id=>{state.sessionId=id;showSession('gm');setStatus('Hosting','good');$('sessionHint').textContent='GM host is online. Keep this tab open during the test.';makeInvite();log('GM host ready. Session ID: '+id);});
+  peer.on('connection',conn=>handleIncoming(conn));
+  peer.on('disconnected',()=>{setStatus('Signaling disconnected','warn');log('PeerJS signaling disconnected.');});
+  peer.on('close',()=>{setStatus('Closed','bad');log('Peer connection closed.');});
+  peer.on('error',err=>{log('PeerJS error: '+err.type+' — '+err.message);setStatus('Connection error','bad');$('startupMessage').textContent='PeerJS error: '+err.message;$('startHost').disabled=false;});
+ }catch(error){$('startupMessage').textContent=error.message;$('startHost').disabled=false}
+}
+function handleIncoming(conn){
+ state.connections.set(conn.peer,conn);
+ conn.on('open',()=>log('Incoming peer connection opened: '+conn.peer));
+ conn.on('data',data=>receive(conn,data,(msg)=>{
+   if(msg.type==='JOIN_REQUEST'){
+    const payload=msg.payload||{};const name=typeof payload.displayName==='string'?payload.displayName.trim().slice(0,40):'';
+    const attemptId=typeof payload.attemptId==='string'?payload.attemptId:'';
+    if(!name||attemptId.length<8){sendError(conn,'Invalid join request.');return}
+    if(state.approved.has(conn.peer)){sendError(conn,'This peer is already approved.');return}
+    if(state.pending.has(conn.peer)){log('Duplicate join request ignored from '+name);return}
+    state.pending.set(conn.peer,{peerId:conn.peer,conn,name,attemptId});log('Join request received from '+name+'. GM approval required.');renderJoinQueue();return;
+   }
+   if(!state.approved.has(conn.peer)){log('Ignored '+msg.type+' from a peer that has not been approved.');return}
+   const player=state.approved.get(conn.peer);
+   if(msg.type==='PING'){send(conn,'PONG',{at:Date.now()},state.revision);setLast('PING from '+player.name);return}
+   if(msg.type==='STATE_SNAPSHOT_REQUEST'){send(conn,'STATE_SNAPSHOT',{testOnly:true,revision:state.revision,sessionId:state.sessionId},state.revision);setLast('Snapshot sent to '+player.name);return}
+   if(msg.type==='ACTION_REQUEST'){
+    const id=String(msg.payload.requestId||'');if(!id||state.testRequests.has(id))return;
+    state.testRequests.set(id,{id,peerId:conn.peer,name:player.name,status:'pending',request:msg.payload});log('Test request from '+player.name+' is waiting for GM decision.');renderTestQueue();return;
+   }
+   log('Received '+msg.type+' from '+player.name+'.');
+  }));
+  conn.on('close',()=>{state.connections.delete(conn.peer);state.pending.delete(conn.peer);const p=state.approved.get(conn.peer);if(p){p.conn=conn;renderConnected()}renderJoinQueue();log('Connection closed: '+conn.peer)});
+  conn.on('error',err=>log('Data connection error: '+err.message));
+}
+function sendError(conn,text){try{send(conn,'ERROR',{message:text})}catch(_){}}
+function decideJoin(peerId,decision){
+ const item=state.pending.get(peerId);if(!item)return;
+ state.pending.delete(peerId);
+ if(decision==='approved'){
+  state.approved.set(peerId,{name:item.name,conn:item.conn,attemptId:item.attemptId});
+  try{send(item.conn,'JOIN_ACCEPTED',{displayName:item.name,hostGeneration:state.hostGeneration},state.revision);send(item.conn,'STATE_SNAPSHOT',{testOnly:true,revision:state.revision,sessionId:state.sessionId},state.revision);log('Approved '+item.name+'.');}
+  catch(error){log('Approval send failed for '+item.name+': '+error.message);state.approved.delete(peerId)}
+ }else{try{send(item.conn,'JOIN_REJECTED',{reason:'The GM declined this join attempt.'})}catch(_){}item.conn.close();log('Rejected '+item.name+'.')}
+ renderJoinQueue();renderConnected();
+}
+function decideTest(id,decision){
+ const item=state.testRequests.get(id);if(!item||item.status!=='pending')return;
+ item.status=decision;
+ const p=state.approved.get(item.peerId);
+ if(decision==='approved'){
+  state.revision+=1;updateRevision(state.revision);
+  if(p&&p.conn.open){try{send(p.conn,'ACTION_RESULT',{requestId:id,status:'approved',revision:state.revision},state.revision);send(p.conn,'STATE_UPDATE',{testOnly:true,revision:state.revision,lastApprovedRequest:id},state.revision)}catch(error){log('Could not send approval result: '+error.message)}}
+  for(const participant of state.approved.values()){if(participant.conn.open&&participant.conn.peer!==item.peerId){try{send(participant.conn,'STATE_UPDATE',{testOnly:true,revision:state.revision,lastApprovedRequest:id},state.revision)}catch(_){} }}
+  log('Approved test request '+id+'; authoritative revision is now '+state.revision+'.');
+ }else if(p&&p.conn.open){try{send(p.conn,'ACTION_RESULT',{requestId:id,status:'rejected',revision:state.revision},state.revision)}catch(_){}log('Rejected test request '+id+'.')}
+ renderTestQueue();
+}
+function beginPlayer(roomId,name){
+ if(!window.Peer){$('startupMessage').textContent='PeerJS library did not load. Check your internet connection and reload.';return}
+ if(!roomId||!name.trim()){ $('startupMessage').textContent='Enter a GM session ID and display name.';return}
+ $('joinButton').disabled=true;$('startupMessage').textContent='Connecting to the GM…';
+ const peer=new Peer();state.peer=peer;state.sessionId=roomId;state.role='player';
+ peer.on('open',()=>{connectToHost(name.trim())});
+ peer.on('error',err=>{log('PeerJS error: '+err.type+' — '+err.message);setStatus('Connection error','bad');$('startupMessage').textContent='Connection error: '+err.message;$('joinButton').disabled=false});
+ peer.on('disconnected',()=>{setStatus('Signaling disconnected','warn');log('PeerJS signaling disconnected.')});
+}
+function connectToHost(name){
+ if(!state.peer||!state.sessionId)return;
+ if(state.playerConnection){try{state.playerConnection.close()}catch(_){}}
+ const conn=state.peer.connect(state.sessionId,{reliable:true,serialization:'json',metadata:{displayName:name}});
+ state.playerConnection=conn;
+ conn.on('open',()=>{
+  showSession('player');setStatus('Connected — awaiting GM','warn');setPlayerStatus('Join request sent','warn');log('Transport connected to GM. Sending join request; waiting for explicit approval.');
+  state.joinAttemptId='join-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
+  send(conn,'JOIN_REQUEST',{displayName:name,attemptId:state.joinAttemptId},0);
+ });
+ conn.on('data',data=>receive(conn,data,msg=>{
+  if(msg.type==='JOIN_ACCEPTED'){
+   state.playerApproved=true;setStatus('Connected','good');setPlayerStatus('Approved by GM','good');$('requestResult').textContent='You are approved. You may send a harmless test request.';log('GM approved the join request.');setLast('JOIN_ACCEPTED received');try{send(conn,'STATE_SNAPSHOT_REQUEST',{requestedAt:Date.now()})}catch(_){}return;
+  }
+  if(msg.type==='JOIN_REJECTED'){state.playerApproved=false;setStatus('Join rejected','bad');setPlayerStatus('The GM rejected this attempt','bad');log('GM rejected the join request.');return}
+  if(msg.type==='ERROR'){log('Host error: '+String(msg.payload.message||'Unknown error'));return}
+  if(!state.playerApproved){log('Ignored '+msg.type+' before GM approval.');return}
+  if(msg.type==='STATE_SNAPSHOT'){updateRevision(msg.payload.revision||msg.revision);setLast('STATE_SNAPSHOT received');log('Authoritative test snapshot received at revision '+state.revision+'.');return}
+  if(msg.type==='STATE_UPDATE'){if(msg.revision<state.revision){log('Ignored stale state update.');return}updateRevision(msg.revision);setLast('STATE_UPDATE received at revision '+msg.revision);log('Test state update received. Revision '+msg.revision+'.');return}
+  if(msg.type==='PONG'){setLast('PONG received');log('Ping round-trip response received.');return}
+  if(msg.type==='ACTION_RESULT'){const status=msg.payload.status||'unknown';$('requestResult').textContent='GM '+status+' your test request.';setLast('ACTION_RESULT: '+status);log('Test request result: '+status+'.');return}
+  log('Received '+msg.type+'.');
+ }));
+ conn.on('close',()=>{setStatus('Disconnected','bad');setPlayerStatus('Disconnected — reconnect to try again','bad');state.playerApproved=false;log('GM data connection closed.');$('reconnectButton').disabled=false});
+ conn.on('error',err=>{log('Data connection error: '+err.message);setStatus('Connection error','bad')});
+}
+$('startHost').addEventListener('click',startHost);
+$('joinButton').addEventListener('click',()=>beginPlayer($('roomInput').value.trim(),$('nameInput').value.trim()));
+$('sendTestRequest').addEventListener('click',()=>{
+ const conn=state.playerConnection;if(!state.playerApproved||!conn||!conn.open){$('requestResult').textContent='Wait for GM approval and an active connection first.';return}
+ const id='test-'+Date.now().toString(36)+'-'+(++state.requestCounter);
+ try{send(conn,'ACTION_REQUEST',{requestId:id,kind:'safe-connectivity-test',createdAt:Date.now()});$('requestResult').textContent='Test request sent. Waiting for GM decision.';log('Sent harmless test request '+id+'.')}catch(error){$('requestResult').textContent=error.message}
+});
+$('reconnectButton').addEventListener('click',()=>{
+ const name=$('nameInput').value.trim()||'Player';$('reconnectButton').disabled=true;
+ if(state.peer){try{state.peer.destroy()}catch(_){}}
+ state.peer=null;state.playerConnection=null;state.playerApproved=false;
+ beginPlayer(state.sessionId||$('roomInput').value.trim(),name);
+});
+$('copyInvite').addEventListener('click',()=>copyText($('inviteLink').textContent));
+$('copyId').addEventListener('click',()=>copyText(state.sessionId||''));
+$('clearLog').addEventListener('click',()=>$('log').textContent='');
+const query=new URLSearchParams(location.search);
+if(query.has('room')){$('roomInput').value=query.get('room');$('nameInput').focus();$('startupMessage').textContent='Invitation detected. Enter your display name and request GM approval.'}
+})();
+</script>
+</body>
+</html>
