@@ -27,7 +27,7 @@ main{max-width:1480px;margin:auto;padding:22px}.notice{border:1px solid #65552f;
    <form id="joinForm">
     <label for="inviteCode">Invitation link</label><input id="inviteCode" autocomplete="url" placeholder="Paste GM invitation link" required>
     <label for="displayName">Display name</label><input id="displayName" autocomplete="nickname" maxlength="40" placeholder="Your player name" required>
-    <div class="entry-actions"><button class="primary" type="submit">Request to join</button></div>
+    <div class="entry-actions"><button class="primary" type="submit">Request to join</button><button id="tryDemo" type="button">Try Demo — no invitation needed</button></div>
    </form>
    <div id="entryState" class="entry-state hidden" aria-live="polite"></div>
    <div class="entry-foot">A valid invitation does not bypass GM approval. Reusable invitation links still require approval for every join attempt.</div>
@@ -90,6 +90,15 @@ main{max-width:1480px;margin:auto;padding:22px}.notice{border:1px solid #65552f;
  function notify(message){const t=$('toast');t.textContent=message;t.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add('hidden'),2400)}
  function setHeader(text,kind=''){const el=$('headerStatus');el.textContent=text;el.className='status-pill '+kind}
  function enterPending(name){entryState.classList.remove('hidden');entryState.innerHTML='<strong>Awaiting GM approval</strong><span class="muted small">Join request submitted for <b></b>. You will not enter the session until the GM approves this attempt.</span>';entryState.querySelector('b').textContent=name;setHeader('Awaiting approval','warn')}
+ $('tryDemo').addEventListener('click',()=>{
+  $('displayName').value='Demo Player';
+  entryScreen.classList.add('hidden');playerScreen.classList.remove('hidden');connected=true;
+  setHeader('Demo mode · simulated','good');
+  $('connectionBadge').textContent='Demo mode (simulated)';$('connectionBadge').className='status-pill good';
+  $('connectionLabel').textContent='Demo mode';$('connectionHelp').textContent='You entered directly using sample data. No invitation, GM, or live session is required.';
+  $('sceneState').textContent='Demo scene';
+  notify('Demo started. Explore the mockup—no invitation needed.');renderRequests();
+ });
  $('joinForm').addEventListener('submit',e=>{
   e.preventDefault();const link=$('inviteCode').value.trim(),name=$('displayName').value.trim();
   if(!link||!name){notify('Enter an invitation link and display name.');return}
