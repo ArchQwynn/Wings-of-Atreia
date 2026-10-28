@@ -177,7 +177,7 @@
     const horizontal=Math.round(Math.max(dx,dy))*FEET_PER_GRID;
     const rawVertical=end.z-start.z,vertical=increment5(rawVertical)*(rawVertical<0?-1:rawVertical>0?1:0);
     const total=$("overlay-measure-mode").value==="3d"
-      ?Math.round(Math.sqrt(Math.pow(horizontal,2)+Math.pow(vertical,2)))
+      ?increment5(Math.sqrt(Math.pow(horizontal,2)+Math.pow(vertical,2)))
       :horizontal;
     return {horizontal,vertical,total,mode:$("overlay-measure-mode").value};
   }
