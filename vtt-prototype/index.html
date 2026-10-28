@@ -273,8 +273,9 @@
           if (!section) continue;
           const eyebrow = section.querySelector(':scope > .eyebrow');
           const title = eyebrow?.textContent.trim() || 'Options';
+          if (group.merge && index === group.sections[1]) continue;
           if (eyebrow) eyebrow.remove();
-          if (group.merge && index === 7) {
+          if (group.merge && index === group.sections[0]) {
             const nextSection = sections[group.sections[1]];
             const nextEyebrow = nextSection?.querySelector(':scope > .eyebrow');
             if (nextEyebrow) nextEyebrow.remove();
@@ -283,6 +284,7 @@
               while (nextSection.firstChild) wrapper.append(nextSection.firstChild);
               nextSection.remove();
             }
+            section.remove();
             continue;
           }
           const nested = makeDetails(title, 'panel-subgroup', group.open);
