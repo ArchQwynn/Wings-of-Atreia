@@ -150,7 +150,9 @@
     }
     if(s.id===selected){const p=P(o.x,o.y);ctx.beginPath();ctx.arc(p.x,p.y,7,0,Math.PI*2);ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.stroke();}
   }
-  function render(){if(!ctx||!active())return;ctx.save();for(const s of shapes){try{drawShape(s)}catch{}}if(drawing){try{drawShape(drawing)}catch{}}ctx.restore();requestAnimationFrame(render);}
+  function render(){if(!ctx||!active())return;ctx.save();for(const s of shapes){try{currentOpacity=Number.isFinite(Number(s.opacity))?Number(s.opacity):opacity();drawShape(s)}catch{}}if(drawing){try{currentOpacity=Number.isFinite(Number(drawing.opacity))?Number(drawing.opacity):opacity();drawShape(drawing)}catch{}}ctx.restore();}
+  // Called by the main scene renderer after terrain but before props/assets and tokens.
+  window.drawTacticalOverlays=render;
   function choose(t){tool=t;ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.overlayTool===tool)));status.textContent=t==="select"?"Select an overlay to move it, then drag.":t==="aura"?"Choose or select a token, then click the map to place its aura.":"Drag on the map to set the shape's direction and size.";}
   ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.overlayTool)));
   $("overlay-opacity").addEventListener("input",()=>{$("overlay-opacity-value").textContent=$("overlay-opacity").value+"%";const s=shapes.find(s=>s.id===selected);if(s){s.opacity=opacity();save();}});
