@@ -5,7 +5,126 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Wings of Atreia — Multiplayer Connection Harness</title>
 <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
-<script src="./protocol.js"></script>
+<script>
+/* Embedded protocol helper so this harness can be opened as a single downloaded HTML file. */
+(function (root) {
+  'use strict';
+
+  const PROTOCOL_VERSION = 1;
+  const MAX_MESSAGE_BYTES = 64 * 1024;
+  const MESSAGE_TYPES = new Set([
+    'JOIN_REQUEST',
+    'JOIN_ACCEPTED',
+    'JOIN_REJECTED',
+    'PING',
+    'PONG',
+    'STATE_SNAPSHOT_REQUEST',
+    'STATE_SNAPSHOT',
+    'STATE_UPDATE',
+    'CAMERA_SYNC_SETTING',
+    'CAMERA_VIEW_UPDATE',
+    'ACTION_REQUEST',
+    'ACTION_RESULT',
+    'HOST_PAUSED',
+    'HOST_RESUMED',
+    'RESYNC_REQUEST',
+    'SESSION_CLOSED',
+    'ERROR'
+  ]);
+
+  function byteLength(value) {
+    if (typeof TextEncoder !== 'undefined') {
+      return new TextEncoder().encode(value).length;
+    }
+    return unescape(encodeURIComponent(value)).length;
+  }
+
+  function createMessage(type, payload, metadata) {
+    if (!MESSAGE_TYPES.has(type)) {
+      throw new Error('Unsupported multiplayer message type.');
+    }
+
+    const meta = metadata && typeof metadata === 'object' ? metadata : {};
+    const message = {
+      protocolVersion: PROTOCOL_VERSION,
+      type: type,
+      messageId: createId(),
+      sentAt: Date.now(),
+      hostGeneration: safeNonNegativeInteger(meta.hostGeneration, 0),
+      revision: safeNonNegativeInteger(meta.revision, 0),
+      payload: payload == null ? {} : payload
+    };
+
+    const serialized = JSON.stringify(message);
+    if (byteLength(serialized) > MAX_MESSAGE_BYTES) {
+      throw new Error('Multiplayer message exceeds the size limit.');
+    }
+    return message;
+  }
+
+  function validateMessage(input) {
+    if (!input || typeof input !== 'object' || Array.isArray(input)) {
+      return { ok: false, error: 'Message must be an object.' };
+    }
+
+    if (input.protocolVersion !== PROTOCOL_VERSION) {
+      return { ok: false, error: 'Unsupported protocol version.' };
+    }
+    if (!MESSAGE_TYPES.has(input.type)) {
+      return { ok: false, error: 'Unsupported message type.' };
+    }
+    if (typeof input.messageId !== 'string' || input.messageId.length < 8 || input.messageId.length > 100) {
+      return { ok: false, error: 'Invalid message ID.' };
+    }
+    if (!Number.isFinite(input.sentAt) || input.sentAt < 0) {
+      return { ok: false, error: 'Invalid message timestamp.' };
+    }
+    if (!Number.isSafeInteger(input.hostGeneration) || input.hostGeneration < 0) {
+      return { ok: false, error: 'Invalid host generation.' };
+    }
+    if (!Number.isSafeInteger(input.revision) || input.revision < 0) {
+      return { ok: false, error: 'Invalid state revision.' };
+    }
+    if (!input.payload || typeof input.payload !== 'object' || Array.isArray(input.payload)) {
+      return { ok: false, error: 'Payload must be an object.' };
+    }
+
+    let size;
+    try {
+      size = byteLength(JSON.stringify(input));
+    } catch (_) {
+      return { ok: false, error: 'Message cannot be serialized.' };
+    }
+    if (size > MAX_MESSAGE_BYTES) {
+      return { ok: false, error: 'Message exceeds the size limit.' };
+    }
+
+    return { ok: true, message: input };
+  }
+
+  function createId() {
+    if (root.crypto && typeof root.crypto.randomUUID === 'function') {
+      return root.crypto.randomUUID();
+    }
+    const random = Math.random().toString(36).slice(2);
+    return 'woa-' + Date.now().toString(36) + '-' + random;
+  }
+
+  function safeNonNegativeInteger(value, fallback) {
+    return Number.isSafeInteger(value) && value >= 0 ? value : fallback;
+  }
+
+  root.WoAMultiplayerFoundation = root.WoAMultiplayerFoundation || {};
+  Object.assign(root.WoAMultiplayerFoundation, {
+    protocolVersion: PROTOCOL_VERSION,
+    maxMessageBytes: MAX_MESSAGE_BYTES,
+    messageTypes: Array.from(MESSAGE_TYPES),
+    createMessage: createMessage,
+    validateMessage: validateMessage
+  });
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
 <style>
 :root{color-scheme:dark;--bg:#11151b;--panel:#1b222c;--line:#354150;--text:#edf2f8;--muted:#a9b6c6;--accent:#8bc8ff;--good:#86e0ae;--warn:#ffd37a;--bad:#ff9999}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:1000px;margin:0 auto;padding:24px 16px 48px}h1{font-size:clamp(1.5rem,4vw,2.1rem);line-height:1.2;margin:0 0 8px}h2{font-size:1.1rem;margin:0 0 12px}.muted{color:var(--muted)}.notice{border:1px solid #806b36;background:#302919;color:#ffedc1;border-radius:10px;padding:12px 14px;margin:16px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}.panel{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:16px;margin:14px 0}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.row button{flex:0 0 auto}label{display:block;font-weight:650;margin:10px 0 5px}input{width:100%;border:1px solid var(--line);border-radius:8px;background:#10151c;color:var(--text);padding:11px;font:inherit}button{border:1px solid #52647a;border-radius:8px;background:#293747;color:var(--text);padding:10px 13px;font:inherit;font-weight:650;cursor:pointer}button.primary{background:#b8dcff;color:#101a24;border-color:#b8dcff}button.danger{border-color:#9c5757;background:#43272a}button:disabled{opacity:.45;cursor:not-allowed}.status{display:inline-flex;border:1px solid var(--line);border-radius:99px;padding:4px 9px;color:var(--muted);font-size:.86rem}.status.good{color:var(--good);border-color:#426e56}.status.warn{color:var(--warn);border-color:#806b36}.status.bad{color:var(--bad);border-color:#804b4b}.hidden{display:none!important}.item{padding:10px 0;border-top:1px solid var(--line)}.item:first-child{border-top:0}.item p{margin:3px 0 8px}.log{height:190px;overflow:auto;background:#0c1015;border:1px solid var(--line);border-radius:8px;padding:10px;font:12px/1.5 ui-monospace,SFMono-Regular,monospace;white-space:pre-wrap;overflow-wrap:anywhere}.small{font-size:.9rem}.linkbox{overflow-wrap:anywhere;background:#10151c;border:1px solid var(--line);padding:10px;border-radius:8px}.pill{display:inline-block;border-radius:5px;background:#293747;padding:2px 6px;font-size:.8rem}.counter{font-size:2rem;font-weight:750}.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
