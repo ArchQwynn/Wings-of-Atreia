@@ -139,9 +139,40 @@ function drawAsset(a){
    ctx.save();ctx.strokeStyle=a.id===state.selectedAsset?'rgba(255,224,138,.98)':'rgba(143,211,255,.95)';ctx.lineWidth=2;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(groundPoint.x,groundPoint.y);ctx.lineTo(elevatedPoint.x,elevatedPoint.y);ctx.stroke();ctx.setLineDash([]);
    ctx.fillStyle='#e6f0fa';ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(altitude+' ft',groundPoint.x,groundPoint.y-7);ctx.restore();
   }
+  ctx.save();ctx.translate(p.x,p.y);ctx.rotate(rotation);ctx.drawImage(img,-w/2,-h/2,w,h);ctx.restore();
+  a._screen={x:p.x,y:p.y,width:w,height:h,hitWidth:standW+20,hitHeight:standH+16,rotation:Number(a.rotation)||0};
+  return;
  }
- ctx.save();ctx.translate(p.x,p.y);ctx.rotate(rotation);ctx.drawImage(img,-w/2,-h/2,w,h);ctx.restore();
- a._screen={x:p.x,y:p.y,width:w,height:h,hitWidth:standee?standW+20:w+12,hitHeight:standee?standH+16:h+12,rotation:Number(a.rotation)||0};
+ // Flat assets are textures laid onto the world ground plane, like the battle map,
+ // rather than camera-facing billboards. Subdivide the texture to follow perspective.
+ const cos=Math.cos(rotation),sin=Math.sin(rotation),divisions=10,sw=img.naturalWidth,sh=img.naturalHeight,projected=[];
+ for(let j=0;j<=divisions;j++){
+  projected[j]=[];
+  for(let i=0;i<=divisions;i++){
+   const lx=(i/divisions-.5)*width,ly=(.5-j/divisions)*depth;
+   const wx=a.x+lx*cos-ly*sin,wy=a.y+lx*sin+ly*cos,wz=terrainHeightAt(wx,wy);
+   projected[j][i]=project(wx,wy,wz);
+  }
+ }
+ const triangle=(src,dst)=>{
+  const [s0,s1,s2]=src,[d0,d1,d2]=dst,den=s0.x*(s1.y-s2.y)+s1.x*(s2.y-s0.y)+s2.x*(s0.y-s1.y);
+  if(Math.abs(den)<.0001)return;
+  const aa=(d0.x*(s1.y-s2.y)+d1.x*(s2.y-s0.y)+d2.x*(s0.y-s1.y))/den;
+  const cc=(d0.x*(s2.x-s1.x)+d1.x*(s0.x-s2.x)+d2.x*(s1.x-s0.x))/den;
+  const ee=(d0.x*(s1.x*s2.y-s2.x*s1.y)+d1.x*(s2.x*s0.y-s0.x*s2.y)+d2.x*(s0.x*s1.y-s1.x*s0.y))/den;
+  const bb=(d0.y*(s1.y-s2.y)+d1.y*(s2.y-s0.y)+d2.y*(s0.y-s1.y))/den;
+  const dd=(d0.y*(s2.x-s1.x)+d1.y*(s0.x-s2.x)+d2.y*(s1.x-s0.x))/den;
+  const ff=(d0.y*(s1.x*s2.y-s2.x*s1.y)+d1.y*(s2.x*s0.y-s0.x*s2.y)+d2.y*(s0.x*s1.y-s1.x*s0.y))/den;
+  ctx.save();ctx.beginPath();ctx.moveTo(d0.x,d0.y);ctx.lineTo(d1.x,d1.y);ctx.lineTo(d2.x,d2.y);ctx.closePath();ctx.clip();ctx.transform(aa,bb,cc,dd,ee,ff);ctx.drawImage(img,0,0,sw,sh);ctx.restore();
+ };
+ for(let j=0;j<divisions;j++)for(let i=0;i<divisions;i++){
+  const x0=sw*i/divisions,x1=sw*(i+1)/divisions,y0=sh*j/divisions,y1=sh*(j+1)/divisions;
+  const s00={x:x0,y:y0},s10={x:x1,y:y0},s11={x:x1,y:y1},s01={x:x0,y:y1};
+  const p00=projected[j][i],p10=projected[j][i+1],p11=projected[j+1][i+1],p01=projected[j+1][i];
+  if([p00,p10,p11,p01].some(q=>!Number.isFinite(q.x)||!Number.isFinite(q.y)||q.depth<=NEAR))continue;
+  triangle([s00,s10,s11],[p00,p10,p11]);triangle([s00,s11,s01],[p00,p11,p01]);
+ }
+ a._screen={x:groundPoint.x,y:groundPoint.y,width:width*scale,height:depth*scale,hitWidth:width*scale+12,hitHeight:depth*scale+12,rotation:Number(a.rotation)||0};
 }
 function getAssetImage(src){if(!src)return null;let img=assetImageCache.get(src);if(!img){img=new Image();img.onload=()=>{};img.src=src;assetImageCache.set(src,img)}return img}
 function syncAssetEditor(a){
