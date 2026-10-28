@@ -27,3 +27,10 @@ This is a **local rendering prototype**. It does not yet provide multiplayer syn
 ## Acceptance milestone
 
 The next technical milestone is to connect the prototype to a realtime room so that one GM and several players can see the same standee positions and altitude changes without refreshing the page.
+
+
+## Tactical overlays
+
+The prototype now includes a tactical overlay layer for token auras, line templates, cones, circles/radii, cubes, and directional arrows. Shapes use the existing 5-ft grid and camera projection, can be styled, selected, repositioned, and removed. Auras can optionally follow the currently selected token.
+
+Overlay records are stored separately in browser local storage. They are currently local to that browser/device and are not yet synchronized between players or included in the existing scene JSON export/import. Multiplayer synchronization and unified scene persistence remain future integration work.
