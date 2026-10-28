@@ -150,13 +150,32 @@
     }
     if(s.id===selected){const p=P(o.x,o.y);ctx.beginPath();ctx.arc(p.x,p.y,7,0,Math.PI*2);ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.stroke();}
   }
+  function measuredTokenAt(clientX,clientY){
+    const rect=canvas.getBoundingClientRect(),p={x:clientX-rect.left,y:clientY-rect.top};
+    for(let i=state.tokens.length-1;i>=0;i--){
+      const t=state.tokens[i],q=tokenProject(t),rad=Math.max(12,tokenRadius(t));
+      if(Number.isFinite(q.x)&&Number.isFinite(q.y)&&Math.hypot(p.x-q.x,p.y-q.y)<=rad+6)return t;
+    }
+    return null;
+  }
+  function measurementPoint(endpoint){
+    if(endpoint?.tokenId){
+      const t=state.tokens.find(t=>t.id===endpoint.tokenId);
+      if(t){const p=tokenWorld(t),z=terrainHeightAt(p.x,p.y)+Math.max(0,Math.min(MAX_ALTITUDE,Number(t.z)||0));return{x:p.x,y:p.y,z,token:t};}
+    }
+    if(endpoint)return{x:endpoint.x,y:endpoint.y,z:terrainHeightAt(endpoint.x,endpoint.y),token:null};
+    return null;
+  }
   function drawMeasurement(){
     if(!measurement?.end)return;
-    const a=project(measurement.start.x,measurement.start.y,terrainHeightAt(measurement.start.x,measurement.start.y));
-    const b=project(measurement.end.x,measurement.end.y,terrainHeightAt(measurement.end.x,measurement.end.y));
+    const ap=measurementPoint(measurement.start),bp=measurementPoint(measurement.end);
+    if(!ap||!bp)return;
+    const a=project(ap.x,ap.y,ap.z),b=project(bp.x,bp.y,bp.z);
     if(!Number.isFinite(a.x)||!Number.isFinite(b.x))return;
-    const squares=Math.max(Math.abs(measurement.end.x-measurement.start.x),Math.abs(measurement.end.y-measurement.start.y));
-    const count=Math.round(squares),feet=count*FEET_PER_GRID,label=feet+" ft · "+count+" square"+(count===1?"":"s"),midX=(a.x+b.x)/2,midY=(a.y+b.y)/2-14;
+    const dx=Math.abs(bp.x-ap.x),dy=Math.abs(bp.y-ap.y),horizontalSquares=Math.max(dx,dy),horizontal=Math.round(horizontalSquares)*FEET_PER_GRID;
+    const vertical=Math.round(bp.z-ap.z),straight=Math.sqrt(Math.pow((bp.x-ap.x)*FEET_PER_GRID,2)+Math.pow((bp.y-ap.y)*FEET_PER_GRID,2)+Math.pow(vertical,2));
+    const label=Math.round(straight)+" ft  |  H "+horizontal+" ft  |  V "+(vertical>0?"+":"")+vertical+" ft";
+    const midX=(a.x+b.x)/2,midY=(a.y+b.y)/2-16;
     ctx.save();ctx.strokeStyle="#ffe878";ctx.fillStyle="#ffe878";ctx.lineWidth=3;ctx.setLineDash([8,6]);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.setLineDash([]);
     for(const p of [a,b]){ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();}
     ctx.font="700 13px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";const tw=ctx.measureText(label).width+16;ctx.fillStyle="rgba(5,8,15,.92)";ctx.beginPath();ctx.roundRect(midX-tw/2,midY-12,tw,24,7);ctx.fill();ctx.fillStyle="#fff";ctx.fillText(label,midX,midY);ctx.restore();
@@ -183,7 +202,7 @@
   function choose(t){
     if(t==="select"){setOverlaySelection(!overlaySelectEnabled);return;}
     tool=t;overlaySelectEnabled=false;refreshToolButtons();
-    if(t==="measure"){measurement=null;status.textContent="Measure Distance: click point A, then point B. Distance is measured in 5-ft grid increments.";return;}
+    if(t==="measure"){measurement=null;status.textContent="Measure Distance: click flying token A, then token B. Uses each token's elevation; H = horizontal grid distance, V = altitude difference, total = straight-line 3D distance.";return;}
     status.textContent=t==="aura"?"Choose or select a token, then left-click the map once to place its aura.":"Drag on the map to set the shape's direction and size.";
   }
   ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.overlayTool)));
@@ -199,13 +218,17 @@
     if(e.button!==0)return;
     if(tool==="measure"){
       e.preventDefault();e.stopImmediatePropagation();
-      const p=snap(worldAt(e.clientX,e.clientY));
-      if(!measurement||measurement.complete){measurement={start:p,end:p,complete:false};status.textContent="Point A set. Click point B to finish measuring.";}
+      const token=measuredTokenAt(e.clientX,e.clientY);
+      if(!token){status.textContent="Click directly on a token to measure 3D distance between tokens.";return;}
+      const endpoint={tokenId:token.id};
+      if(!measurement||measurement.complete){measurement={start:endpoint,end:endpoint,complete:false};status.textContent="Point A: "+token.name+". Click the second token.";}
       else{
-        measurement.end=p;measurement.complete=true;
-        const squares=Math.max(Math.abs(p.x-measurement.start.x),Math.abs(p.y-measurement.start.y)),count=Math.round(squares),feet=count*FEET_PER_GRID;
+        measurement.end=endpoint;measurement.complete=true;
+        const ap=measurementPoint(measurement.start),bp=measurementPoint(measurement.end);
+        const h=Math.round(Math.max(Math.abs(bp.x-ap.x),Math.abs(bp.y-ap.y)))*FEET_PER_GRID,v=Math.round(bp.z-ap.z);
+        const straight=Math.round(Math.sqrt(Math.pow((bp.x-ap.x)*FEET_PER_GRID,2)+Math.pow((bp.y-ap.y)*FEET_PER_GRID,2)+Math.pow(v,2)));
         tool="select";overlaySelectEnabled=false;refreshToolButtons();
-        status.textContent="Measured "+feet+" ft ("+count+" grid square"+(count===1?"":"s")+"). Choose Measure Distance to measure again.";
+        status.textContent="3D distance: "+straight+" ft (horizontal grid "+h+" ft; vertical "+(v>0?"+":"")+v+" ft). Choose Measure Distance to measure again.";
       }
       return;
     }
