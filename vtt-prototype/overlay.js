@@ -15,6 +15,7 @@
     <div class="eyebrow">TACTICAL OVERLAYS · GM</div>
     <div class="overlay-tool-grid">${tools.map(([v,l])=>`<button type="button" data-overlay-tool="${v}" aria-pressed="false">${l}</button>`).join("")}</div>
     <div class="overlay-form-grid">
+      <label>Distance Mode<select id="overlay-measure-mode"><option value="2d" selected>2D · Horizontal</option><option value="3d">3D · Horizontal + Vertical</option></select></label>
       <label>Range (ft)<input id="overlay-range" type="number" min="5" max="300" step="5" value="30"></label>
       <label>Width (ft)<input id="overlay-width" type="number" min="5" max="100" step="5" value="10"></label>
       <label>Cone angle<select id="overlay-angle"><option value="30">30°</option><option value="45">45°</option><option value="60" selected>60°</option><option value="90">90°</option><option value="120">120°</option></select></label>
@@ -166,15 +167,30 @@
     if(endpoint)return{x:endpoint.x,y:endpoint.y,z:terrainHeightAt(endpoint.x,endpoint.y),token:null};
     return null;
   }
+  function increment5(value){
+    const d=Math.abs(Number(value)||0);
+    if(d<5)return 0;
+    return Math.ceil((d-1e-8)/5)*5;
+  }
+  function distanceValues(start,end){
+    const dx=Math.abs(end.x-start.x),dy=Math.abs(end.y-start.y);
+    const horizontal=Math.round(Math.max(dx,dy))*FEET_PER_GRID;
+    const rawVertical=end.z-start.z,vertical=increment5(rawVertical)*(rawVertical<0?-1:rawVertical>0?1:0);
+    const total=$("overlay-measure-mode").value==="3d"
+      ?Math.round(Math.sqrt(Math.pow(horizontal,2)+Math.pow(vertical,2)))
+      :horizontal;
+    return {horizontal,vertical,total,mode:$("overlay-measure-mode").value};
+  }
   function drawMeasurement(){
     if(!measurement?.end)return;
     const ap=measurementPoint(measurement.start),bp=measurementPoint(measurement.end);
     if(!ap||!bp)return;
     const a=project(ap.x,ap.y,ap.z),b=project(bp.x,bp.y,bp.z);
     if(!Number.isFinite(a.x)||!Number.isFinite(b.x))return;
-    const dx=Math.abs(bp.x-ap.x),dy=Math.abs(bp.y-ap.y),horizontalSquares=Math.max(dx,dy),horizontal=Math.round(horizontalSquares)*FEET_PER_GRID;
-    const vertical=Math.round(bp.z-ap.z),straight=Math.sqrt(Math.pow((bp.x-ap.x)*FEET_PER_GRID,2)+Math.pow((bp.y-ap.y)*FEET_PER_GRID,2)+Math.pow(vertical,2));
-    const label=Math.round(straight)+" ft  |  H "+horizontal+" ft  |  V "+(vertical>0?"+":"")+vertical+" ft";
+    const values=distanceValues(ap,bp);
+    const label=values.mode==="3d"
+      ?values.total+" ft  |  H "+values.horizontal+" ft  |  V "+(values.vertical>0?"+":"")+values.vertical+" ft"
+      :values.horizontal+" ft  |  2D Horizontal";
     const midX=(a.x+b.x)/2,midY=(a.y+b.y)/2-16;
     ctx.save();ctx.strokeStyle="#ffe878";ctx.fillStyle="#ffe878";ctx.lineWidth=3;ctx.setLineDash([8,6]);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.setLineDash([]);
     for(const p of [a,b]){ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();}
@@ -202,7 +218,7 @@
   function choose(t){
     if(t==="select"){setOverlaySelection(!overlaySelectEnabled);return;}
     tool=t;overlaySelectEnabled=false;refreshToolButtons();
-    if(t==="measure"){measurement=null;status.textContent="Measure Distance: click flying token A, then token B. Uses each token's elevation; H = horizontal grid distance, V = altitude difference, total = straight-line 3D distance.";return;}
+    if(t==="measure"){measurement=null;status.textContent=$("overlay-measure-mode").value==="3d"?"3D Measure: click token A, then token B. Horizontal and vertical components use 5-ft increments; distances under 5 ft count as 0, and values above 5 ft up to under 10 ft count as 10 ft.":"2D Measure: click token A, then token B. Measures horizontal grid distance only.";return;}
     status.textContent=t==="aura"?"Choose or select a token, then left-click the map once to place its aura.":"Drag on the map to set the shape's direction and size.";
   }
   ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.overlayTool)));
@@ -224,11 +240,11 @@
       if(!measurement||measurement.complete){measurement={start:endpoint,end:endpoint,complete:false};status.textContent="Point A: "+token.name+". Click the second token.";}
       else{
         measurement.end=endpoint;measurement.complete=true;
-        const ap=measurementPoint(measurement.start),bp=measurementPoint(measurement.end);
-        const h=Math.round(Math.max(Math.abs(bp.x-ap.x),Math.abs(bp.y-ap.y)))*FEET_PER_GRID,v=Math.round(bp.z-ap.z);
-        const straight=Math.round(Math.sqrt(Math.pow((bp.x-ap.x)*FEET_PER_GRID,2)+Math.pow((bp.y-ap.y)*FEET_PER_GRID,2)+Math.pow(v,2)));
+        const ap=measurementPoint(measurement.start),bp=measurementPoint(measurement.end),v=distanceValues(ap,bp);
         tool="select";overlaySelectEnabled=false;refreshToolButtons();
-        status.textContent="3D distance: "+straight+" ft (horizontal grid "+h+" ft; vertical "+(v>0?"+":"")+v+" ft). Choose Measure Distance to measure again.";
+        status.textContent=v.mode==="3d"
+          ?"3D distance: "+v.total+" ft (horizontal "+v.horizontal+" ft; vertical "+(v.vertical>0?"+":"")+v.vertical+" ft). Choose Measure Distance to measure again."
+          :"2D horizontal distance: "+v.horizontal+" ft. Choose Measure Distance to measure again.";
       }
       return;
     }
