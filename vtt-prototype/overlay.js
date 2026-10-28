@@ -6,7 +6,7 @@
   if (!window.localStorage) return;
   const KEY = "woa-vtt-tactical-overlays-v1";
   const tools = [
-    ["select","Select Overlay: Off"],["aura","Token Aura"],["line","Line"],["cone","Cone"],
+    ["select","Select Overlay: Off"],["measure","Measure Distance"],["aura","Token Aura"],["line","Line"],["cone","Cone"],
     ["circle","Circle / Radius"],["cube","Cube"],["arrow","Direction Arrow"]
   ];
   const ui = document.createElement("section");
@@ -51,7 +51,7 @@
   const status = $("overlay-status");
   const shapes = [];
   try { const saved = JSON.parse(localStorage.getItem(KEY)||"[]"); if (Array.isArray(saved)) shapes.push(...saved.filter(s=>s&&typeof s==="object")); } catch {}
-  let tool = "select", overlaySelectEnabled = false, overlayPointerSelecting = false, selected = null, drawing = null, dragging = null, currentOpacity = opacityFallback();
+  let tool = "select", overlaySelectEnabled = false, overlayPointerSelecting = false, selected = null, drawing = null, dragging = null, measurement = null, currentOpacity = opacityFallback();
   function opacityFallback(){return 0.28;}
   const active = () => (typeof state !== "undefined" && state);
   const gm = () => !active() || !sessionRoleEl || sessionRoleEl.value === "gm";
@@ -150,7 +150,18 @@
     }
     if(s.id===selected){const p=P(o.x,o.y);ctx.beginPath();ctx.arc(p.x,p.y,7,0,Math.PI*2);ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.stroke();}
   }
-  function render(){if(!ctx||!active())return;ctx.save();for(const s of shapes){try{currentOpacity=Number.isFinite(Number(s.opacity))?Number(s.opacity):opacity();drawShape(s)}catch{}}if(drawing){try{currentOpacity=Number.isFinite(Number(drawing.opacity))?Number(drawing.opacity):opacity();drawShape(drawing)}catch{}}ctx.restore();}
+  function drawMeasurement(){
+    if(!measurement?.end)return;
+    const a=project(measurement.start.x,measurement.start.y,terrainHeightAt(measurement.start.x,measurement.start.y));
+    const b=project(measurement.end.x,measurement.end.y,terrainHeightAt(measurement.end.x,measurement.end.y));
+    if(!Number.isFinite(a.x)||!Number.isFinite(b.x))return;
+    const squares=Math.max(Math.abs(measurement.end.x-measurement.start.x),Math.abs(measurement.end.y-measurement.start.y));
+    const count=Math.round(squares),feet=count*FEET_PER_GRID,label=feet+" ft · "+count+" square"+(count===1?"":"s"),midX=(a.x+b.x)/2,midY=(a.y+b.y)/2-14;
+    ctx.save();ctx.strokeStyle="#ffe878";ctx.fillStyle="#ffe878";ctx.lineWidth=3;ctx.setLineDash([8,6]);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.setLineDash([]);
+    for(const p of [a,b]){ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();}
+    ctx.font="700 13px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";const tw=ctx.measureText(label).width+16;ctx.fillStyle="rgba(5,8,15,.92)";ctx.beginPath();ctx.roundRect(midX-tw/2,midY-12,tw,24,7);ctx.fill();ctx.fillStyle="#fff";ctx.fillText(label,midX,midY);ctx.restore();
+  }
+  function render(){if(!ctx||!active())return;ctx.save();for(const s of shapes){try{currentOpacity=Number.isFinite(Number(s.opacity))?Number(s.opacity):opacity();drawShape(s)}catch{}}if(drawing){try{currentOpacity=Number.isFinite(Number(drawing.opacity))?Number(drawing.opacity):opacity();drawShape(drawing)}catch{}}try{drawMeasurement()}catch{}ctx.restore();}
   // Called by the main scene renderer after terrain but before props/assets and tokens.
   window.drawTacticalOverlays=render;
   function refreshToolButtons(){
@@ -172,6 +183,7 @@
   function choose(t){
     if(t==="select"){setOverlaySelection(!overlaySelectEnabled);return;}
     tool=t;overlaySelectEnabled=false;refreshToolButtons();
+    if(t==="measure"){measurement=null;status.textContent="Measure Distance: click point A, then point B. Distance is measured in 5-ft grid increments.";return;}
     status.textContent=t==="aura"?"Choose or select a token, then left-click the map once to place its aura.":"Drag on the map to set the shape's direction and size.";
   }
   ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.overlayTool)));
@@ -181,9 +193,22 @@
   $("overlay-delete").addEventListener("click",()=>{const i=shapes.findIndex(s=>s.id===selected);if(i>=0){shapes.splice(i,1);selected=null;save();}});
   $("overlay-clear").addEventListener("click",()=>{if(!gm())return;if(confirm("Delete every tactical overlay?")){shapes.length=0;selected=null;save();}});
   canvas.addEventListener("pointerdown",e=>{
-    if(!gm())return;
+    // Measurement is available to everyone; editing tactical overlays remains GM-only.
+    if(tool!=="measure"&&!gm())return;
     // Only primary-button presses interact with the canvas; right-click must never place objects.
     if(e.button!==0)return;
+    if(tool==="measure"){
+      e.preventDefault();e.stopImmediatePropagation();
+      const p=snap(worldAt(e.clientX,e.clientY));
+      if(!measurement||measurement.complete){measurement={start:p,end:p,complete:false};status.textContent="Point A set. Click point B to finish measuring.";}
+      else{
+        measurement.end=p;measurement.complete=true;
+        const squares=Math.max(Math.abs(p.x-measurement.start.x),Math.abs(p.y-measurement.start.y)),count=Math.round(squares),feet=count*FEET_PER_GRID;
+        tool="select";overlaySelectEnabled=false;refreshToolButtons();
+        status.textContent="Measured "+feet+" ft ("+count+" grid square"+(count===1?"":"s")+"). Choose Measure Distance to measure again.";
+      }
+      return;
+    }
     if(tool==="select"){
       if(!overlaySelectEnabled)return;
       const rect=canvas.getBoundingClientRect(),p={x:e.clientX-rect.left,y:e.clientY-rect.top};
@@ -211,6 +236,7 @@
     canvas.setPointerCapture?.(e.pointerId);
   },true);
   canvas.addEventListener("pointermove",e=>{
+    if(tool==="measure"&&measurement&&!measurement.complete){e.preventDefault();e.stopImmediatePropagation();measurement.end=snap(worldAt(e.clientX,e.clientY));return;}
     if(dragging){e.preventDefault();e.stopImmediatePropagation();const s=shapes.find(s=>s.id===dragging.id);if(s){const p=snap(worldAt(e.clientX,e.clientY));s.x=p.x;s.y=p.y;}return;}
     if(!drawing)return;e.preventDefault();e.stopImmediatePropagation();
     const p=snap(worldAt(e.clientX,e.clientY));drawing.endX=p.x;drawing.endY=p.y;
