@@ -182,3 +182,66 @@
     overflow: visible !important;
   }
 }
+
+
+/* Collapsible VTT control groups */
+.panel-group,
+.panel-subgroup {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(8, 15, 27, .42);
+  overflow: clip;
+}
+.panel-group { margin: 0 0 10px; }
+.panel-group > summary,
+.panel-subgroup > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+  user-select: none;
+  padding: 12px;
+  font-weight: 700;
+  color: var(--text);
+  background: rgba(255,255,255,.025);
+}
+.panel-group > summary::-webkit-details-marker,
+.panel-subgroup > summary::-webkit-details-marker { display: none; }
+.panel-group > summary::before,
+.panel-subgroup > summary::before {
+  content: "▸";
+  display: inline-block;
+  color: var(--accent);
+  font-size: 1rem;
+  transition: transform .15s ease;
+}
+.panel-group[open] > summary::before,
+.panel-subgroup[open] > summary::before { transform: rotate(90deg); }
+.panel-group > summary { font-size: .82rem; letter-spacing: .03em; }
+.panel-subgroup { margin: 8px; background: rgba(17,24,39,.55); }
+.panel-subgroup > summary { padding: 9px 10px; font-size: .72rem; color: var(--muted); }
+.panel-subgroup[open] > summary { border-bottom: 1px solid var(--line); color: var(--text); }
+.panel-subgroup > :not(summary) { margin-left: 10px; margin-right: 10px; }
+.panel-subgroup > .identity-label,
+.panel-subgroup > .room,
+.panel-subgroup > .note,
+.panel-subgroup > .camera-grid,
+.panel-subgroup > .camera-readout,
+.panel-subgroup > .control-grid,
+.panel-subgroup > .altitude-control,
+.panel-subgroup > .token-editor,
+.panel-subgroup > .checklist,
+.panel-subgroup > #tokens { margin-top: 10px; margin-bottom: 10px; }
+.panel-subgroup > .token-editor { margin-left: 10px; margin-right: 10px; }
+.panel-subgroup > .note { margin-left: 10px; margin-right: 10px; }
+.panel-group > summary:hover,
+.panel-subgroup > summary:hover { background: rgba(143,211,255,.07); }
+.panel-group > summary:focus-visible,
+.panel-subgroup > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+@media (max-width: 700px) {
+  .panel-group { margin-bottom: 9px; }
+  .panel-group > summary { padding: 13px 12px; }
+  .panel-subgroup { margin: 7px; }
+}
