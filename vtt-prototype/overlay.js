@@ -151,20 +151,37 @@
     }
     if(s.id===selected){const p=P(o.x,o.y);ctx.beginPath();ctx.arc(p.x,p.y,7,0,Math.PI*2);ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.stroke();}
   }
-  function measuredTokenAt(clientX,clientY){
+  function measuredObjectAt(clientX,clientY){
     const rect=canvas.getBoundingClientRect(),p={x:clientX-rect.left,y:clientY-rect.top};
+    let found=null,best=Infinity;
     for(let i=state.tokens.length-1;i>=0;i--){
       const t=state.tokens[i],q=tokenProject(t),rad=Math.max(12,tokenRadius(t));
-      if(Number.isFinite(q.x)&&Number.isFinite(q.y)&&Math.hypot(p.x-q.x,p.y-q.y)<=rad+6)return t;
+      if(Number.isFinite(q.x)&&Number.isFinite(q.y)){
+        const d=Math.hypot(p.x-q.x,p.y-q.y);
+        if(d<=rad+6&&d<best){found={tokenId:t.id,name:t.name||"Token"};best=d;}
+      }
     }
-    return null;
+    for(let i=(state.assets||[]).length-1;i>=0;i--){
+      const a=state.assets[i],s=a._screen;if(!s)continue;
+      const dx=p.x-s.x,dy=p.y-s.y,ang=-(s.rotation||0)*Math.PI/180;
+      const rx=dx*Math.cos(ang)-dy*Math.sin(ang),ry=dx*Math.sin(ang)+dy*Math.cos(ang);
+      if(Math.abs(rx)<=(s.hitWidth||s.width||16)/2+6&&Math.abs(ry)<=(s.hitHeight||s.height||16)/2+6){
+        const d=Math.hypot(dx,dy);
+        if(d<best){found={assetId:a.id,name:a.name||"Prop"};best=d;}
+      }
+    }
+    return found;
   }
   function measurementPoint(endpoint){
     if(endpoint?.tokenId){
       const t=state.tokens.find(t=>t.id===endpoint.tokenId);
-      if(t){const p=tokenWorld(t),z=terrainHeightAt(p.x,p.y)+Math.max(0,Math.min(MAX_ALTITUDE,Number(t.z)||0));return{x:p.x,y:p.y,z,token:t};}
+      if(t){const p=tokenWorld(t),z=terrainHeightAt(p.x,p.y)+Math.max(0,Math.min(MAX_ALTITUDE,Number(t.z)||0));return{x:p.x,y:p.y,z,name:t.name||"Token",token:t};}
     }
-    if(endpoint)return{x:endpoint.x,y:endpoint.y,z:terrainHeightAt(endpoint.x,endpoint.y),token:null};
+    if(endpoint?.assetId){
+      const a=(state.assets||[]).find(a=>a.id===endpoint.assetId);
+      if(a){const z=terrainHeightAt(a.x,a.y)+Math.max(0,Math.min(MAX_ALTITUDE,Number(a.z)||0));return{x:a.x,y:a.y,z,name:a.name||"Prop",asset:a};}
+    }
+    if(endpoint&&Number.isFinite(endpoint.x)&&Number.isFinite(endpoint.y))return{x:endpoint.x,y:endpoint.y,z:terrainHeightAt(endpoint.x,endpoint.y),name:"Point"};
     return null;
   }
   function increment5(value){
@@ -235,9 +252,10 @@
     if(tool==="measure"){
       e.preventDefault();e.stopImmediatePropagation();
       const token=measuredTokenAt(e.clientX,e.clientY);
-      if(!token){status.textContent="Click directly on a token to measure 3D distance between tokens.";return;}
-      const endpoint={tokenId:token.id};
-      if(!measurement||measurement.complete){measurement={start:endpoint,end:endpoint,complete:false};status.textContent="Point A: "+token.name+". Click the second token.";}
+      const object=measuredObjectAt(e.clientX,e.clientY);
+      if(!object){status.textContent="Click directly on a token, prop, or asset to choose a measurement endpoint.";return;}
+      const endpoint=object;
+      if(!measurement||measurement.complete){measurement={start:endpoint,end:endpoint,complete:false};status.textContent="Point A: "+(object.name||"object")+". Click a token, prop, or asset for point B.";}
       else{
         measurement.end=endpoint;measurement.complete=true;
         const ap=measurementPoint(measurement.start),bp=measurementPoint(measurement.end),v=distanceValues(ap,bp);
@@ -275,7 +293,6 @@
     canvas.setPointerCapture?.(e.pointerId);
   },true);
   canvas.addEventListener("pointermove",e=>{
-    if(tool==="measure"&&measurement&&!measurement.complete){e.preventDefault();e.stopImmediatePropagation();measurement.end=snap(worldAt(e.clientX,e.clientY));return;}
     if(dragging){e.preventDefault();e.stopImmediatePropagation();const s=shapes.find(s=>s.id===dragging.id);if(s){const p=snap(worldAt(e.clientX,e.clientY));s.x=p.x;s.y=p.y;}return;}
     if(!drawing)return;e.preventDefault();e.stopImmediatePropagation();
     const p=snap(worldAt(e.clientX,e.clientY));drawing.endX=p.x;drawing.endY=p.y;
