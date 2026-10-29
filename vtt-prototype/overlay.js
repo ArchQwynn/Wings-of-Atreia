@@ -9,10 +9,11 @@
     ["select","Select Overlay: Off"],["measure","Measure Distance"],["aura","Token Aura"],["line","Line"],["cone","Cone"],
     ["circle","Circle / Radius"],["cube","Cube"],["arrow","Direction Arrow"]
   ];
-  const ui = document.createElement("section");
-  ui.className = "tactical-overlay-panel";
+  const ui = document.createElement("details");
+  ui.className = "panel-group tactical-overlay-panel";
   ui.innerHTML = `
-    <div class="eyebrow">TACTICAL OVERLAYS · GM</div>
+    <summary>Tactical Overlays</summary>
+    <div class="overlay-content">
     <div class="overlay-tool-grid">${tools.map(([v,l])=>`<button type="button" data-overlay-tool="${v}" aria-pressed="false">${l}</button>`).join("")}</div>
     <div class="overlay-form-grid">
       <label>Distance Mode<select id="overlay-measure-mode"><option value="2d" selected>2D · Horizontal</option><option value="3d">3D · Horizontal + Vertical</option></select></label>
@@ -26,10 +27,12 @@
     </div>
     <div class="editor-row"><button type="button" id="overlay-delete">Delete Selected</button><button type="button" id="overlay-clear">Clear Overlays</button></div>
     <p id="overlay-status" class="note">Choose a tool, then drag on the map. Auras can follow the selected token. Overlays are saved locally in this browser.</p>
+    </div>
   `;
   const style = document.createElement("style");
   style.textContent = `
-    .tactical-overlay-panel{display:grid;gap:9px;padding:12px;border:1px solid #3a526d;border-radius:10px;background:linear-gradient(145deg,rgba(16,31,49,.98),rgba(12,19,33,.98))}
+    .tactical-overlay-panel{display:block;padding:0;border:1px solid var(--line);border-radius:10px;background:rgba(8,15,27,.42)}
+    .tactical-overlay-panel[open] > .overlay-content{display:grid;gap:9px;padding:12px}
     .overlay-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
     .overlay-tool-grid button{font-size:.72rem;padding:8px 6px}
     .overlay-tool-grid button[aria-pressed="true"]{border-color:#8fd3ff;background:#21415a;box-shadow:inset 0 0 0 1px #8fd3ff}
