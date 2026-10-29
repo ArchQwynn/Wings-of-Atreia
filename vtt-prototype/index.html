@@ -309,6 +309,12 @@
         .find(group => group.dataset.panelTitle === 'Scene Management');
       if (tacticalOverlays && sceneManagement) panel.insertBefore(tacticalOverlays, sceneManagement);
 
+      // Keep the informational note after the controls; its auto top margin otherwise pushes
+      // the entire organized sidebar downward and leaves a large blank area above it.
+      const sidebarNote = [...panel.querySelectorAll(':scope > .note')]
+        .find(note => note.textContent.includes('This prototype is intentionally graphics-light'));
+      if (sidebarNote) panel.append(sidebarNote);
+
       panel.dataset.organized = 'true';
     })();
   </script>
