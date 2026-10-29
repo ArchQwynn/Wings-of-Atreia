@@ -131,16 +131,21 @@ function drawAsset(a){
  const pixelMode=a.sizeMode==='pixel',w=pixelMode?Math.max(16,Math.min(1200,Number(a.imageWidthPx)||180)):width*scale,h=pixelMode?Math.max(16,Math.min(1200,Number(a.imageHeightPx)||180)):depth*scale;
  const standW=Math.max(width*scale,w)+20,standH=Math.max(depth*scale,h)+16;
  if(standee){
+  // Draw a visible stand base on the battlefield surface, then anchor the upright
+  // image by its bottom edge so it rises from the base instead of extending below it.
+  const baseWidth=Math.max(12,Math.min(width*scale*.72,standW*.72));
+  const baseDepth=Math.max(5,Math.min(scale*.2,standH*.12));
   ctx.save();ctx.translate(groundPoint.x,groundPoint.y);ctx.rotate(rotation);
-  ctx.fillStyle='rgba(3,7,13,.24)';
-  ctx.beginPath();ctx.ellipse(0,0,Math.max(10,standW*.54),Math.max(7,standH*.34),0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='rgba(3,7,13,.88)';ctx.strokeStyle=a.id===state.selectedAsset?'rgba(255,224,138,.98)':'rgba(210,220,232,.88)';ctx.lineWidth=1.25;
+  ctx.beginPath();ctx.ellipse(0,0,baseWidth/2,baseDepth,0,0,Math.PI*2);ctx.fill();ctx.stroke();
   ctx.restore();
   if(altitude>0){
    ctx.save();ctx.strokeStyle=a.id===state.selectedAsset?'rgba(255,224,138,.98)':'rgba(143,211,255,.95)';ctx.lineWidth=2;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(groundPoint.x,groundPoint.y);ctx.lineTo(elevatedPoint.x,elevatedPoint.y);ctx.stroke();ctx.setLineDash([]);
    ctx.fillStyle='#e6f0fa';ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(altitude+' ft',groundPoint.x,groundPoint.y-7);ctx.restore();
   }
-  ctx.save();ctx.translate(p.x,p.y);ctx.rotate(rotation);ctx.drawImage(img,-w/2,-h/2,w,h);ctx.restore();
-  a._screen={x:p.x,y:p.y,width:w,height:h,hitWidth:standW+20,hitHeight:standH+16,rotation:Number(a.rotation)||0};
+  const imageBottom=p.y-baseDepth*.45;
+  ctx.save();ctx.translate(p.x,imageBottom-h/2);ctx.rotate(rotation);ctx.drawImage(img,-w/2,-h/2,w,h);ctx.restore();
+  a._screen={x:p.x,y:imageBottom-h/2,width:w,height:h,hitWidth:standW+20,hitHeight:standH+16,rotation:Number(a.rotation)||0};
   return;
  }
  // Flat assets are textures laid onto the world ground plane, like the battle map,
