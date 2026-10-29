@@ -254,7 +254,7 @@
         { title: 'Session & Access', sections: [0, 1], open: true },
         { title: 'View & Movement', sections: [2, 3] },
         { title: 'Battlefield Editor', sections: [4, 5, 6] },
-        { title: 'Tokens & Standees', sections: [7, 8], merge: true },
+        { title: 'Tokens & Standees', sections: [7, 8], tokenManagement: true },
         { title: 'Scene Management', sections: [9, 10] }
       ];
       const makeDetails = (title, className, open = false) => {
@@ -273,18 +273,20 @@
           if (!section) continue;
           const eyebrow = section.querySelector(':scope > .eyebrow');
           const title = eyebrow?.textContent.trim() || 'Options';
-          if (group.merge && index === group.sections[1]) continue;
+          if (group.tokenManagement && index === group.sections[1]) continue;
           if (eyebrow) eyebrow.remove();
-          if (group.merge && index === group.sections[0]) {
+          if (group.tokenManagement && index === group.sections[0]) {
             const nextSection = sections[group.sections[1]];
             const nextEyebrow = nextSection?.querySelector(':scope > .eyebrow');
             if (nextEyebrow) nextEyebrow.remove();
-            while (section.firstChild) wrapper.append(section.firstChild);
+            const nested = makeDetails('Token Management', 'panel-subgroup', false);
+            while (section.firstChild) nested.append(section.firstChild);
             if (nextSection) {
-              while (nextSection.firstChild) wrapper.append(nextSection.firstChild);
+              while (nextSection.firstChild) nested.append(nextSection.firstChild);
               nextSection.remove();
             }
             section.remove();
+            wrapper.append(nested);
             continue;
           }
           const nested = makeDetails(title, 'panel-subgroup', group.open);
