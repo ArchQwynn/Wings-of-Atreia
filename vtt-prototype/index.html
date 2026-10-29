@@ -267,8 +267,8 @@
 
       const groups = [
         { title: 'Session & Access', headings: ['SESSION', 'LOCAL PLAYER / GM PREVIEW'], open: true },
-        { title: 'Battlefield Editor', headings: ['TERRAIN EDITOR · GM', 'BATTLEFIELD MAP · GM', 'PROPS & ASSETS · GM'] },
         { title: 'Tokens & Standees', headings: ['STANDEES', 'TOKEN MANAGEMENT'], tokenManagement: true },
+        { title: 'Battlefield Editor', headings: ['TERRAIN EDITOR · GM', 'BATTLEFIELD MAP · GM', 'PROPS & ASSETS · GM'] },
         { title: 'Scene Management', headings: ['BATTLEFIELD SAVE / LOAD', 'TEST STATUS'] }
       ];
 
@@ -302,6 +302,12 @@
         }
         panel.append(wrapper);
       }
+
+      // Keep Tactical Overlays in the same top-level panel sequence, between the editor and scene tools.
+      const tacticalOverlays = panel.querySelector(':scope > .tactical-overlay-panel');
+      const sceneManagement = [...panel.querySelectorAll(':scope > .panel-group')]
+        .find(group => group.dataset.panelTitle === 'Scene Management');
+      if (tacticalOverlays && sceneManagement) panel.insertBefore(tacticalOverlays, sceneManagement);
 
       panel.dataset.organized = 'true';
     })();
