@@ -293,6 +293,12 @@
           const standees = sectionFor('STANDEES');
           const management = sectionFor('TOKEN MANAGEMENT');
           const tabletop = sectionFor('TABLETOP');
+          const camera = sectionFor('CAMERA CONTROLS');
+          // Put the view-mode switch alongside camera controls.
+          const viewModeButton = tabletop?.querySelector('[data-action="2d"]');
+          const cameraGrid = camera?.querySelector('.camera-grid');
+          if (viewModeButton && cameraGrid) cameraGrid.append(viewModeButton);
+
           for (const section of [standees, management]) {
             if (!section) continue;
             const eyebrow = section.querySelector(':scope > .eyebrow');
@@ -300,7 +306,14 @@
             while (section.firstChild) tokenPanel.append(section.firstChild);
             section.remove();
           }
-          moveSectionInto(tabletop, tokenPanel, 'Tabletop & Altitude Controls');
+
+          // Keep altitude adjustment controls directly inside the same Token Management frame.
+          if (tabletop) {
+            const eyebrow = tabletop.querySelector(':scope > .eyebrow');
+            if (eyebrow) eyebrow.remove();
+            while (tabletop.firstChild) tokenPanel.append(tabletop.firstChild);
+            tabletop.remove();
+          }
           wrapper.append(tokenPanel);
         } else {
           for (const heading of group.headings) {
