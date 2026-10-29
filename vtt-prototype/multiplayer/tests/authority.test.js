@@ -43,6 +43,7 @@ test('revision updates use compare-and-swap semantics and stop while host is ina
   assert.equal(authority.advanceRevision(2, 5).code, 'HOST_GENERATION_MISMATCH');
   assert.equal(authority.advanceRevision(1, 5).ok, true);
   assert.equal(authority.getVersion().revision, 6);
+  assert.equal(authority.advanceRevision(1, 5).code, 'REVISION_CONFLICT', 'replaying the same approval must not advance twice');
   authority.setHostActive(false);
   assert.equal(authority.advanceRevision(1, 6).code, 'HOST_INACTIVE');
 });
