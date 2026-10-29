@@ -253,7 +253,7 @@
       const byHeading = new Map();
       for (const section of topSections) {
         const heading = section.querySelector(':scope > .eyebrow');
-        if (heading) byHeading.set(heading.textContent.trim().replace(/\\s+/g, ' ').toUpperCase(), section);
+        if (heading) byHeading.set(heading.textContent.trim().replace(/\s+/g, ' ').toUpperCase(), section);
       }
 
       const makeDetails = (title, className, open = false) => {
@@ -302,7 +302,7 @@
           wrapper.append(tokenPanel);
         } else {
           for (const heading of group.headings) {
-            moveSectionInto(sectionFor(heading), wrapper, heading.replace(/\\s*·\\s*GM$/i, '').replace(/\\s*\\/\\s*GM PREVIEW$/i, '').replace(/^LOCAL PLAYER$/i, 'Local Player'));
+            moveSectionInto(sectionFor(heading), wrapper, heading.replace(/\s*·\s*GM$/i, '').replace(/\s*\/\s*GM PREVIEW$/i, '').replace(/^LOCAL PLAYER$/i, 'Local Player'));
           }
         }
         panel.append(wrapper);
