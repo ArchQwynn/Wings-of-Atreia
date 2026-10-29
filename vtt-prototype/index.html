@@ -280,7 +280,7 @@
 
       const groups = [
         { title: 'Session & Access', headings: ['SESSION', 'LOCAL PLAYER / GM PREVIEW'], open: true },
-        { title: 'View & Movement', headings: ['CAMERA CONTROLS', 'TABLETOP'] },
+        { title: 'View & Movement', headings: ['CAMERA CONTROLS'] },
         { title: 'Battlefield Editor', headings: ['TERRAIN EDITOR · GM', 'BATTLEFIELD MAP · GM', 'PROPS & ASSETS · GM'] },
         { title: 'Tokens & Standees', headings: ['STANDEES', 'TOKEN MANAGEMENT'], tokenManagement: true },
         { title: 'Scene Management', headings: ['BATTLEFIELD SAVE / LOAD', 'TEST STATUS'] }
@@ -292,6 +292,7 @@
           const tokenPanel = makeDetails('Token Management', 'panel-subgroup');
           const standees = sectionFor('STANDEES');
           const management = sectionFor('TOKEN MANAGEMENT');
+          const tabletop = sectionFor('TABLETOP');
           for (const section of [standees, management]) {
             if (!section) continue;
             const eyebrow = section.querySelector(':scope > .eyebrow');
@@ -299,6 +300,7 @@
             while (section.firstChild) tokenPanel.append(section.firstChild);
             section.remove();
           }
+          moveSectionInto(tabletop, tokenPanel, 'Tabletop & Altitude Controls');
           wrapper.append(tokenPanel);
         } else {
           for (const heading of group.headings) {
