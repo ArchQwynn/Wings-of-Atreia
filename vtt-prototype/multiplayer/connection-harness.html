@@ -366,9 +366,9 @@ function connectToHost(name){
   if(!checkHostMessage(msg))return;
   if(msg.type==='STATE_UPDATE'&&msg.revision>state.revision+1){log('Ignored state update with a revision gap.');return}
   if(msg.type==='STATE_SNAPSHOT'){if(msg.revision<state.revision){log('Ignored stale snapshot.');return}updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});setLast('STATE_SNAPSHOT received');log('Authoritative test snapshot received at revision '+state.revision+'.');return}
-  if(msg.type==='STATE_UPDATE'){if(msg.revision<state.revision){log('Ignored stale state update.');return}updateRevision(msg.revision);setLast('STATE_UPDATE received at revision '+msg.revision);log('Test state update received. Revision '+msg.revision+'.');return}
+  if(msg.type==='STATE_UPDATE'){if(msg.revision<state.revision){log('Ignored stale state update.');return}updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});setLast('STATE_UPDATE received at revision '+msg.revision);log('Test state update received. Revision '+msg.revision+'.');return}
   if(msg.type==='PONG'){setLast('PONG received');log('Ping round-trip response received.');return}
-  if(msg.type==='ACTION_RESULT'){const status=msg.payload.status||'unknown';$('requestResult').textContent='GM '+status+' your test request.';setLast('ACTION_RESULT: '+status);log('Test request result: '+status+'.');return}
+  if(msg.type==='ACTION_RESULT'){const status=msg.payload.status||'unknown';if(Number.isSafeInteger(msg.revision)&&msg.revision>state.revision){updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision})}$('requestResult').textContent='GM '+status+' your test request.';setLast('ACTION_RESULT: '+status);log('Test request result: '+status+'.');return}
   log('Received '+msg.type+'.');
  }));
  conn.on('close',()=>{setStatus('Disconnected','bad');setPlayerStatus('Disconnected — reconnect to try again','bad');state.playerApproved=false;log('GM data connection closed.');$('reconnectButton').disabled=false});
