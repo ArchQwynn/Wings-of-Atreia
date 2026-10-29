@@ -294,11 +294,6 @@
           const management = sectionFor('TOKEN MANAGEMENT');
           const tabletop = sectionFor('TABLETOP');
           const camera = sectionFor('CAMERA CONTROLS');
-          // Put the view-mode switch alongside camera controls.
-          const viewModeButton = tabletop?.querySelector('[data-action="2d"]');
-          const cameraGrid = camera?.querySelector('.camera-grid');
-          if (viewModeButton && cameraGrid) cameraGrid.append(viewModeButton);
-
           for (const section of [standees, management]) {
             if (!section) continue;
             const eyebrow = section.querySelector(':scope > .eyebrow');
@@ -322,6 +317,14 @@
         }
         panel.append(wrapper);
       }
+
+      // Relocate the 2D Fallback / 3D View toggle only after the camera subgroup
+      // has been moved into View & Movement, so it cannot remain with token controls.
+      const viewModeButton = panel.querySelector('[data-action="2d"]');
+      const cameraSubgroup = [...panel.querySelectorAll('details.panel-subgroup')]
+        .find(details => details.querySelector('.camera-grid'));
+      const cameraGrid = cameraSubgroup?.querySelector('.camera-grid');
+      if (viewModeButton && cameraGrid) cameraGrid.append(viewModeButton);
 
       panel.dataset.organized = 'true';
     })();
