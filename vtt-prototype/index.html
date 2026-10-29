@@ -151,6 +151,18 @@
       </section>
 
       <section>
+        <div class="eyebrow">ATTACHMENTS · GM</div>
+        <div class="token-editor">
+          <p class="note">Connect any two tokens or assets. Dragging any connected object moves the entire attached group together, preserving relative X, Y, and Z offsets.</p>
+          <label>Object A<select id="attachment-object-a"><option value="">Choose an object</option></select></label>
+          <label>Object B<select id="attachment-object-b"><option value="">Choose an object</option></select></label>
+          <div class="editor-row"><button type="button" id="attachment-connect">Attach Objects</button><button type="button" id="attachment-disconnect">Detach Pair</button></div>
+          <p class="note" id="attachment-status">No attachment selected. Attachments are saved with the scene.</p>
+          <div id="attachment-list" class="note">No attached objects.</div>
+        </div>
+      </section>
+
+      <section>
         <div class="eyebrow">STANDEES</div>
         <div id="tokens" class="token-list"></div>
       </section>
