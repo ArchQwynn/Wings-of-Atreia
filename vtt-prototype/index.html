@@ -29,7 +29,7 @@
         <button data-action="pitch-up" aria-label="Look up">▲</button>
         <div>
           <button data-action="yaw-left" aria-label="Rotate left">◀</button>
-          <button data-action="reset" aria-label="Reset camera">●</button>
+          <button data-action="2d" aria-label="Toggle 2D / 3D view" title="Toggle 2D / 3D view">2D / 3D</button>
           <button data-action="yaw-right" aria-label="Rotate right">▶</button>
         </div>
         <button data-action="pitch-down" aria-label="Look down">▼</button>
@@ -58,19 +58,6 @@
           <input id="session-player-name" type="text" value="Clark" placeholder="Enter player name">
         </label>
         <p class="note" id="permission-status">GM view: all tokens and controls available.</p>
-      </section>
-
-      <section>
-        <div class="eyebrow">CAMERA CONTROLS</div>
-        <div class="camera-grid">
-          <button data-action="pitch-up">▲ Look Up</button>
-          <button data-action="pitch-down">▼ Look Down</button>
-          <button data-action="yaw-left">◀ Rotate Left</button>
-          <button data-action="yaw-right">Rotate Right ▶</button>
-          <button data-action="toggle-pan" class="wide" aria-pressed="false">Pan: Off</button>
-          <button data-action="reset" class="wide">Reset Camera</button>
-        </div>
-        <div class="camera-readout" id="camera-readout">Yaw 0° · Pitch 41° · Zoom 1.00×</div>
       </section>
 
       <section>
@@ -280,7 +267,6 @@
 
       const groups = [
         { title: 'Session & Access', headings: ['SESSION', 'LOCAL PLAYER / GM PREVIEW'], open: true },
-        { title: 'View & Movement', headings: ['CAMERA CONTROLS'] },
         { title: 'Battlefield Editor', headings: ['TERRAIN EDITOR · GM', 'BATTLEFIELD MAP · GM', 'PROPS & ASSETS · GM'] },
         { title: 'Tokens & Standees', headings: ['STANDEES', 'TOKEN MANAGEMENT'], tokenManagement: true },
         { title: 'Scene Management', headings: ['BATTLEFIELD SAVE / LOAD', 'TEST STATUS'] }
@@ -293,7 +279,6 @@
           const standees = sectionFor('STANDEES');
           const management = sectionFor('TOKEN MANAGEMENT');
           const tabletop = sectionFor('TABLETOP');
-          const camera = sectionFor('CAMERA CONTROLS');
           for (const section of [standees, management]) {
             if (!section) continue;
             const eyebrow = section.querySelector(':scope > .eyebrow');
@@ -317,14 +302,6 @@
         }
         panel.append(wrapper);
       }
-
-      // Relocate the 2D Fallback / 3D View toggle only after the camera subgroup
-      // has been moved into View & Movement, so it cannot remain with token controls.
-      const viewModeButton = panel.querySelector('[data-action="2d"]');
-      const cameraSubgroup = [...panel.querySelectorAll('details.panel-subgroup')]
-        .find(details => details.querySelector('.camera-grid'));
-      const cameraGrid = cameraSubgroup?.querySelector('.camera-grid');
-      if (viewModeButton && cameraGrid) cameraGrid.append(viewModeButton);
 
       panel.dataset.organized = 'true';
     })();
