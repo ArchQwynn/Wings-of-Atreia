@@ -223,7 +223,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const F=window.WoAMultiplayerFoundation;
-const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:new Map(),approved:new Map(),testRequests:new Map(),revision:0,hostGeneration:1,authority:F.createAuthority({hostGeneration:1,revision:0}),seenMessageIds:new Set(),seenRequestIds:new Set(),joinAttemptId:null,playerConnection:null,playerApproved:false,requestCounter:0};
+const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:new Map(),approved:new Map(),testRequests:new Map(),revision:0,hostGeneration:1,authority:F.createAuthority({hostGeneration:1,revision:0}),seenMessageIds:new Set(),seenRequestIds:new Set(),seenJoinAttemptIds:new Set(),joinAttemptId:null,playerConnection:null,playerApproved:false,requestCounter:0};
 function log(message){const el=$('log');const stamp=new Date().toLocaleTimeString();el.textContent+='\n['+stamp+'] '+message;el.scrollTop=el.scrollHeight}
 function setStatus(text,kind){$('connectionStatus').textContent=text;$('connectionStatus').className='status '+(kind||'')}
 function setPlayerStatus(text,kind){$('playerState').textContent=text;$('playerState').className='status '+(kind||'')}
@@ -279,7 +279,8 @@ function handleIncoming(conn){
     if(msg.hostGeneration!==state.hostGeneration||msg.revision>state.revision){sendError(conn,'Join request belongs to an invalid session version.');return}
     if(state.approved.has(conn.peer)){sendError(conn,'This peer is already approved.');return}
     if(state.pending.has(conn.peer)){log('Duplicate join request ignored from '+name);return}
-    if(Array.from(state.pending.values()).some(entry=>entry.attemptId===attemptId)){sendError(conn,'Duplicate join attempt.');return}
+    if(state.seenJoinAttemptIds.has(attemptId)){sendError(conn,'Duplicate join attempt. Request a new attempt after reconnecting.');return}
+    state.seenJoinAttemptIds.add(attemptId);
     state.pending.set(conn.peer,{peerId:conn.peer,conn,name,attemptId});log('Join request received from '+name+'. GM approval required.');renderJoinQueue();return;
    }
    if(!state.approved.has(conn.peer)){log('Ignored '+msg.type+' from a peer that has not been approved.');return}
