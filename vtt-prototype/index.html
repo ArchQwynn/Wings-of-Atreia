@@ -246,56 +246,68 @@
 
   <script id="woa-panel-organization">
     (() => {
-      const panel = document.querySelector('.panel');
+      const panel = document.querySelector('aside.panel');
       if (!panel || panel.dataset.organized === 'true') return;
-      const sections = [...panel.querySelectorAll(':scope > section')];
-      if (sections.length < 10) return;
-      const groups = [
-        { title: 'Session & Access', sections: [0, 1], open: true },
-        { title: 'View & Movement', sections: [2, 3] },
-        { title: 'Battlefield Editor', sections: [4, 5, 6] },
-        { title: 'Tokens & Standees', sections: [7, 8], tokenManagement: true },
-        { title: 'Scene Management', sections: [9, 10] }
-      ];
+
+      const topSections = [...panel.querySelectorAll(':scope > section')];
+      const byHeading = new Map();
+      for (const section of topSections) {
+        const heading = section.querySelector(':scope > .eyebrow');
+        if (heading) byHeading.set(heading.textContent.trim().replace(/\\s+/g, ' ').toUpperCase(), section);
+      }
+
       const makeDetails = (title, className, open = false) => {
         const details = document.createElement('details');
         details.className = className;
+        details.dataset.panelTitle = title;
         if (open) details.open = true;
         const summary = document.createElement('summary');
         summary.textContent = title;
         details.append(summary);
         return details;
       };
+
+      const sectionFor = (heading) => byHeading.get(heading.toUpperCase());
+      const moveSectionInto = (section, parent, title) => {
+        if (!section) return;
+        const eyebrow = section.querySelector(':scope > .eyebrow');
+        if (eyebrow) eyebrow.remove();
+        const nested = makeDetails(title, 'panel-subgroup');
+        while (section.firstChild) nested.append(section.firstChild);
+        section.remove();
+        parent.append(nested);
+      };
+
+      const groups = [
+        { title: 'Session & Access', headings: ['SESSION', 'LOCAL PLAYER / GM PREVIEW'], open: true },
+        { title: 'View & Movement', headings: ['CAMERA CONTROLS', 'TABLETOP'] },
+        { title: 'Battlefield Editor', headings: ['TERRAIN EDITOR · GM', 'BATTLEFIELD MAP · GM', 'PROPS & ASSETS · GM'] },
+        { title: 'Tokens & Standees', headings: ['STANDEES', 'TOKEN MANAGEMENT'], tokenManagement: true },
+        { title: 'Scene Management', headings: ['BATTLEFIELD SAVE / LOAD', 'TEST STATUS'] }
+      ];
+
       for (const group of groups) {
         const wrapper = makeDetails(group.title, 'panel-group', !!group.open);
-        for (const index of group.sections) {
-          const section = sections[index];
-          if (!section) continue;
-          const eyebrow = section.querySelector(':scope > .eyebrow');
-          const title = eyebrow?.textContent.trim() || 'Options';
-          if (group.tokenManagement && index === group.sections[1]) continue;
-          if (eyebrow) eyebrow.remove();
-          if (group.tokenManagement && index === group.sections[0]) {
-            const nextSection = sections[group.sections[1]];
-            const nextEyebrow = nextSection?.querySelector(':scope > .eyebrow');
-            if (nextEyebrow) nextEyebrow.remove();
-            const nested = makeDetails('Token Management', 'panel-subgroup', false);
-            while (section.firstChild) nested.append(section.firstChild);
-            if (nextSection) {
-              while (nextSection.firstChild) nested.append(nextSection.firstChild);
-              nextSection.remove();
-            }
+        if (group.tokenManagement) {
+          const tokenPanel = makeDetails('Token Management', 'panel-subgroup');
+          const standees = sectionFor('STANDEES');
+          const management = sectionFor('TOKEN MANAGEMENT');
+          for (const section of [standees, management]) {
+            if (!section) continue;
+            const eyebrow = section.querySelector(':scope > .eyebrow');
+            if (eyebrow) eyebrow.remove();
+            while (section.firstChild) tokenPanel.append(section.firstChild);
             section.remove();
-            wrapper.append(nested);
-            continue;
           }
-          const nested = makeDetails(title, 'panel-subgroup', group.open);
-          while (section.firstChild) nested.append(section.firstChild);
-          section.replaceWith(nested);
-          wrapper.append(nested);
+          wrapper.append(tokenPanel);
+        } else {
+          for (const heading of group.headings) {
+            moveSectionInto(sectionFor(heading), wrapper, heading.replace(/\\s*·\\s*GM$/i, '').replace(/\\s*\\/\\s*GM PREVIEW$/i, '').replace(/^LOCAL PLAYER$/i, 'Local Player'));
+          }
         }
         panel.append(wrapper);
       }
+
       panel.dataset.organized = 'true';
     })();
   </script>
