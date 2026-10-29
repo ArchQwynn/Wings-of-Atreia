@@ -267,8 +267,8 @@
 
       const groups = [
         { title: 'Session & Access', headings: ['SESSION', 'LOCAL PLAYER / GM PREVIEW'], open: true },
-        { title: 'Tokens & Standees', headings: ['STANDEES', 'TOKEN MANAGEMENT'], tokenManagement: true },
-        { title: 'Battlefield Editor', headings: ['TERRAIN EDITOR · GM', 'BATTLEFIELD MAP · GM', 'PROPS & ASSETS · GM'] },
+        { title: 'Tokens & Standees', headings: ['STANDEES', 'TOKEN MANAGEMENT', 'PROPS & ASSETS · GM'], tokenManagement: true },
+        { title: 'Battlefield Editor', headings: ['TERRAIN EDITOR · GM', 'BATTLEFIELD MAP · GM'] },
         { title: 'Scene Management', headings: ['BATTLEFIELD SAVE / LOAD', 'TEST STATUS'] }
       ];
 
@@ -295,6 +295,9 @@
             tabletop.remove();
           }
           wrapper.append(tokenPanel);
+
+          // Keep Props & Assets beside Token Management inside Tokens & Standees.
+          moveSectionInto(sectionFor('PROPS & ASSETS · GM'), wrapper, 'Props & Assets');
         } else {
           for (const heading of group.headings) {
             moveSectionInto(sectionFor(heading), wrapper, heading.replace(/\s*·\s*GM$/i, '').replace(/\s*\/\s*GM PREVIEW$/i, '').replace(/^LOCAL PLAYER$/i, 'Local Player'));
