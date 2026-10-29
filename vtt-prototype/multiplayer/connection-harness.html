@@ -114,13 +114,34 @@
     return Number.isSafeInteger(value) && value >= 0 ? value : fallback;
   }
 
+  function createAuthority(options) {
+    const settings = options && typeof options === 'object' ? options : {};
+    let hostGeneration = safeNonNegativeInteger(settings.hostGeneration, 1);
+    let revision = safeNonNegativeInteger(settings.revision, 0);
+    let hostActive = settings.hostActive !== false;
+    function getVersion() { return Object.freeze({ hostGeneration, revision, hostActive }); }
+    function checkMessage(message, options) {
+      const valid = validateMessage(message);
+      if (!valid.ok) return { ok: false, code: 'INVALID_MESSAGE', error: valid.error };
+      if (message.hostGeneration !== hostGeneration) return { ok: false, code: 'HOST_GENERATION_MISMATCH' };
+      if (message.revision < revision) return { ok: false, code: 'STALE_REVISION' };
+      if (options && options.requireNextRevision === true && message.revision !== revision + 1) return { ok: false, code: 'REVISION_GAP' };
+      return { ok: true, version: getVersion() };
+    }
+    function advanceRevision(expectedGeneration, expectedRevision) {
+      if (!hostActive) return { ok: false, code: 'HOST_INACTIVE' };
+      if (expectedGeneration !== hostGeneration) return { ok: false, code: 'HOST_GENERATION_MISMATCH' };
+      if (expectedRevision !== revision) return { ok: false, code: 'REVISION_CONFLICT' };
+      if (revision >= Number.MAX_SAFE_INTEGER) return { ok: false, code: 'REVISION_EXHAUSTED' };
+      revision += 1; return { ok: true, version: getVersion() };
+    }
+    return Object.freeze({ getVersion, checkMessage, advanceRevision });
+  }
   root.WoAMultiplayerFoundation = root.WoAMultiplayerFoundation || {};
   Object.assign(root.WoAMultiplayerFoundation, {
-    protocolVersion: PROTOCOL_VERSION,
-    maxMessageBytes: MAX_MESSAGE_BYTES,
-    messageTypes: Array.from(MESSAGE_TYPES),
-    createMessage: createMessage,
-    validateMessage: validateMessage
+    protocolVersion: PROTOCOL_VERSION, maxMessageBytes: MAX_MESSAGE_BYTES,
+    messageTypes: Array.from(MESSAGE_TYPES), createMessage: createMessage,
+    validateMessage: validateMessage, createAuthority: createAuthority
   });
 })(typeof window !== 'undefined' ? window : globalThis);
 
@@ -201,8 +222,8 @@
 (function(){
 'use strict';
 const $=id=>document.getElementById(id);
-const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:new Map(),approved:new Map(),testRequests:new Map(),revision:0,hostGeneration:1,joinAttemptId:null,playerConnection:null,playerApproved:false,requestCounter:0};
 const F=window.WoAMultiplayerFoundation;
+const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:new Map(),approved:new Map(),testRequests:new Map(),revision:0,hostGeneration:1,authority:F.createAuthority({hostGeneration:1,revision:0}),seenMessageIds:new Set(),seenRequestIds:new Set(),joinAttemptId:null,playerConnection:null,playerApproved:false,requestCounter:0};
 function log(message){const el=$('log');const stamp=new Date().toLocaleTimeString();el.textContent+='\n['+stamp+'] '+message;el.scrollTop=el.scrollHeight}
 function setStatus(text,kind){$('connectionStatus').textContent=text;$('connectionStatus').className='status '+(kind||'')}
 function setPlayerStatus(text,kind){$('playerState').textContent=text;$('playerState').className='status '+(kind||'')}
@@ -227,6 +248,8 @@ function renderTestQueue(){
  list.replaceChildren();entries.forEach(item=>{const row=document.createElement('div');row.className='item';const title=document.createElement('strong');title.textContent=item.name+' — test request';const status=document.createElement('span');status.className='status '+(item.status==='pending'?'warn':item.status==='approved'?'good':'bad');status.textContent=item.status;const buttons=document.createElement('div');buttons.className='row';const approve=document.createElement('button');approve.textContent='Approve request';approve.className='primary';approve.disabled=item.status!=='pending';approve.addEventListener('click',()=>decideTest(item.id,'approved'));const reject=document.createElement('button');reject.textContent='Reject request';reject.className='danger';reject.disabled=item.status!=='pending';reject.addEventListener('click',()=>decideTest(item.id,'rejected'));buttons.append(approve,reject);row.append(title,document.createTextNode(' '),status,buttons);list.append(row)})
 }
 function updateRevision(value){if(!Number.isSafeInteger(value)||value<state.revision)return;state.revision=value;$('revisionValue').textContent=String(value)}
+function syncAuthority(){const v=state.authority.getVersion();state.hostGeneration=v.hostGeneration;state.revision=v.revision;$('revisionValue').textContent=String(state.revision)}
+function checkHostMessage(msg){const result=state.authority.checkMessage(msg);if(!result.ok){log('Rejected message by authority guard: '+result.code);return false}return true}
 function setLast(msg){$('lastMessage').textContent=msg}
 function makeInvite(){
  const url=new URL(location.href);url.search='';url.hash='';url.searchParams.set('room',state.sessionId);
@@ -252,45 +275,64 @@ function handleIncoming(conn){
    if(msg.type==='JOIN_REQUEST'){
     const payload=msg.payload||{};const name=typeof payload.displayName==='string'?payload.displayName.trim().slice(0,40):'';
     const attemptId=typeof payload.attemptId==='string'?payload.attemptId:'';
-    if(!name||attemptId.length<8){sendError(conn,'Invalid join request.');return}
+    if(!name||attemptId.length<8||attemptId.length>100){sendError(conn,'Invalid join request.');return}
+    if(msg.hostGeneration!==state.hostGeneration||msg.revision>state.revision){sendError(conn,'Join request belongs to an invalid session version.');return}
     if(state.approved.has(conn.peer)){sendError(conn,'This peer is already approved.');return}
     if(state.pending.has(conn.peer)){log('Duplicate join request ignored from '+name);return}
+    if(Array.from(state.pending.values()).some(entry=>entry.attemptId===attemptId)){sendError(conn,'Duplicate join attempt.');return}
     state.pending.set(conn.peer,{peerId:conn.peer,conn,name,attemptId});log('Join request received from '+name+'. GM approval required.');renderJoinQueue();return;
    }
    if(!state.approved.has(conn.peer)){log('Ignored '+msg.type+' from a peer that has not been approved.');return}
    const player=state.approved.get(conn.peer);
+   if(player.conn!==conn||!conn.open){log('Ignored message from a stale or disconnected connection.');return}
+   if(!checkHostMessage(msg))return;
+   if(state.seenMessageIds.has(msg.messageId)){log('Ignored duplicate message ID from '+player.name+'.');return}
+   state.seenMessageIds.add(msg.messageId);
    if(msg.type==='PING'){send(conn,'PONG',{at:Date.now()},state.revision);setLast('PING from '+player.name);return}
    if(msg.type==='STATE_SNAPSHOT_REQUEST'){send(conn,'STATE_SNAPSHOT',{testOnly:true,revision:state.revision,sessionId:state.sessionId},state.revision);setLast('Snapshot sent to '+player.name);return}
    if(msg.type==='ACTION_REQUEST'){
-    const id=String(msg.payload.requestId||'');if(!id||state.testRequests.has(id))return;
-    state.testRequests.set(id,{id,peerId:conn.peer,name:player.name,status:'pending',request:msg.payload});log('Test request from '+player.name+' is waiting for GM decision.');renderTestQueue();return;
+    const id=typeof msg.payload.requestId==='string'?msg.payload.requestId:'';
+    if(!id||id.length>100||state.seenRequestIds.has(id)||state.testRequests.has(id)){log('Ignored duplicate or invalid test request ID.');return}
+    if(msg.revision!==state.revision){sendError(conn,'Test request is stale; refresh and retry.');return}
+    state.seenRequestIds.add(id);
+    state.testRequests.set(id,{id,peerId:conn.peer,name:player.name,status:'pending',baseRevision:msg.revision,hostGeneration:msg.hostGeneration,request:msg.payload});log('Test request from '+player.name+' is waiting for GM decision.');renderTestQueue();return;
    }
    log('Received '+msg.type+' from '+player.name+'.');
   }));
-  conn.on('close',()=>{state.connections.delete(conn.peer);state.pending.delete(conn.peer);const p=state.approved.get(conn.peer);if(p){p.conn=conn;renderConnected()}renderJoinQueue();log('Connection closed: '+conn.peer)});
+  conn.on('close',()=>{
+    if(state.connections.get(conn.peer)===conn)state.connections.delete(conn.peer);
+    const pending=state.pending.get(conn.peer);if(pending&&pending.conn===conn)state.pending.delete(conn.peer);
+    const approved=state.approved.get(conn.peer);
+    if(approved&&approved.conn===conn){state.approved.delete(conn.peer);for(const item of state.testRequests.values()){if(item.peerId===conn.peer&&item.status==='pending')item.status='cancelled';}renderTestQueue();log('Removed disconnected participant '+approved.name+'; rejoining requires GM approval.')}
+    renderConnected();renderJoinQueue();log('Connection closed: '+conn.peer)
+  });
   conn.on('error',err=>log('Data connection error: '+err.message));
 }
 function sendError(conn,text){try{send(conn,'ERROR',{message:text})}catch(_){}}
 function decideJoin(peerId,decision){
  const item=state.pending.get(peerId);if(!item)return;
+ if(item.conn!==state.connections.get(peerId)||!item.conn.open){state.pending.delete(peerId);renderJoinQueue();log('Join decision ignored: connection is no longer active.');return}
  state.pending.delete(peerId);
  if(decision==='approved'){
   state.approved.set(peerId,{name:item.name,conn:item.conn,attemptId:item.attemptId});
   try{send(item.conn,'JOIN_ACCEPTED',{displayName:item.name,hostGeneration:state.hostGeneration},state.revision);send(item.conn,'STATE_SNAPSHOT',{testOnly:true,revision:state.revision,sessionId:state.sessionId},state.revision);log('Approved '+item.name+'.');}
-  catch(error){log('Approval send failed for '+item.name+': '+error.message);state.approved.delete(peerId)}
- }else{try{send(item.conn,'JOIN_REJECTED',{reason:'The GM declined this join attempt.'})}catch(_){}item.conn.close();log('Rejected '+item.name+'.')}
+  catch(error){log('Approval send failed for '+item.name+': '+error.message);state.approved.delete(peerId);try{item.conn.close()}catch(_){}}
+ }else{try{send(item.conn,'JOIN_REJECTED',{reason:'The GM declined this join attempt.'})}catch(_){}try{item.conn.close()}catch(_){}log('Rejected '+item.name+'.')}
  renderJoinQueue();renderConnected();
 }
 function decideTest(id,decision){
  const item=state.testRequests.get(id);if(!item||item.status!=='pending')return;
- item.status=decision;
  const p=state.approved.get(item.peerId);
  if(decision==='approved'){
-  state.revision+=1;updateRevision(state.revision);
-  if(p&&p.conn.open){try{send(p.conn,'ACTION_RESULT',{requestId:id,status:'approved',revision:state.revision},state.revision);send(p.conn,'STATE_UPDATE',{testOnly:true,revision:state.revision,lastApprovedRequest:id},state.revision)}catch(error){log('Could not send approval result: '+error.message)}}
+  if(!p||!p.conn.open){item.status='cancelled';renderTestQueue();log('Request cancelled because the player is no longer connected.');return}
+  if(item.hostGeneration!==state.hostGeneration||item.baseRevision!==state.revision){item.status='stale';try{send(p.conn,'ACTION_RESULT',{requestId:id,status:'stale',revision:state.revision},state.revision)}catch(_){}renderTestQueue();log('Rejected stale test request '+id+'; no revision change was applied.');return}
+  const advanced=state.authority.advanceRevision(state.hostGeneration,state.revision);
+  if(!advanced.ok){item.status='rejected';renderTestQueue();log('Authority refused revision advance: '+advanced.code);return}
+  syncAuthority();item.status='approved';
+  try{send(p.conn,'ACTION_RESULT',{requestId:id,status:'approved',revision:state.revision},state.revision);send(p.conn,'STATE_UPDATE',{testOnly:true,revision:state.revision,lastApprovedRequest:id},state.revision)}catch(error){log('Could not send approval result: '+error.message)}
   for(const participant of state.approved.values()){if(participant.conn.open&&participant.conn.peer!==item.peerId){try{send(participant.conn,'STATE_UPDATE',{testOnly:true,revision:state.revision,lastApprovedRequest:id},state.revision)}catch(_){} }}
   log('Approved test request '+id+'; authoritative revision is now '+state.revision+'.');
- }else if(p&&p.conn.open){try{send(p.conn,'ACTION_RESULT',{requestId:id,status:'rejected',revision:state.revision},state.revision)}catch(_){}log('Rejected test request '+id+'.')}
+ }else{item.status='rejected';if(p&&p.conn.open){try{send(p.conn,'ACTION_RESULT',{requestId:id,status:'rejected',revision:state.revision},state.revision)}catch(_){}}log('Rejected test request '+id+'.')}
  renderTestQueue();
 }
 function beginPlayer(roomId,name){
@@ -314,12 +356,16 @@ function connectToHost(name){
  });
  conn.on('data',data=>receive(conn,data,msg=>{
   if(msg.type==='JOIN_ACCEPTED'){
+   if(msg.payload.hostGeneration!==msg.hostGeneration){log('Rejected inconsistent host generation in join acceptance.');return}
+   state.hostGeneration=msg.hostGeneration;state.revision=msg.revision;state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});updateRevision(state.revision);
    state.playerApproved=true;setStatus('Connected','good');setPlayerStatus('Approved by GM','good');$('requestResult').textContent='You are approved. You may send a harmless test request.';log('GM approved the join request.');setLast('JOIN_ACCEPTED received');try{send(conn,'STATE_SNAPSHOT_REQUEST',{requestedAt:Date.now()})}catch(_){}return;
   }
   if(msg.type==='JOIN_REJECTED'){state.playerApproved=false;setStatus('Join rejected','bad');setPlayerStatus('The GM rejected this attempt','bad');log('GM rejected the join request.');return}
   if(msg.type==='ERROR'){log('Host error: '+String(msg.payload.message||'Unknown error'));return}
   if(!state.playerApproved){log('Ignored '+msg.type+' before GM approval.');return}
-  if(msg.type==='STATE_SNAPSHOT'){updateRevision(msg.payload.revision||msg.revision);setLast('STATE_SNAPSHOT received');log('Authoritative test snapshot received at revision '+state.revision+'.');return}
+  if(!checkHostMessage(msg))return;
+  if(msg.type==='STATE_UPDATE'&&msg.revision>state.revision+1){log('Ignored state update with a revision gap.');return}
+  if(msg.type==='STATE_SNAPSHOT'){if(msg.revision<state.revision){log('Ignored stale snapshot.');return}updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});setLast('STATE_SNAPSHOT received');log('Authoritative test snapshot received at revision '+state.revision+'.');return}
   if(msg.type==='STATE_UPDATE'){if(msg.revision<state.revision){log('Ignored stale state update.');return}updateRevision(msg.revision);setLast('STATE_UPDATE received at revision '+msg.revision);log('Test state update received. Revision '+msg.revision+'.');return}
   if(msg.type==='PONG'){setLast('PONG received');log('Ping round-trip response received.');return}
   if(msg.type==='ACTION_RESULT'){const status=msg.payload.status||'unknown';$('requestResult').textContent='GM '+status+' your test request.';setLast('ACTION_RESULT: '+status);log('Test request result: '+status+'.');return}
