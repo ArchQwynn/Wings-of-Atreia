@@ -193,7 +193,7 @@
   background: rgba(8, 15, 27, .42);
   overflow: clip;
 }
-.panel-group { margin: 0 0 10px; }
+.panel-group { margin: 0; }
 .panel-group > summary,
 .panel-subgroup > summary {
   list-style: none;
@@ -241,7 +241,7 @@
 .panel-group > summary:focus-visible,
 .panel-subgroup > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
 @media (max-width: 700px) {
-  .panel-group { margin-bottom: 9px; }
+  .panel-group { margin-bottom: 0; }
   .panel-group > summary { padding: 13px 12px; }
   .panel-subgroup { margin: 7px; }
 }
