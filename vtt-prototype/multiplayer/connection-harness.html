@@ -224,6 +224,9 @@
 const $=id=>document.getElementById(id);
 const F=window.WoAMultiplayerFoundation;
 const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:new Map(),approved:new Map(),testRequests:new Map(),revision:0,hostGeneration:1,authority:F.createAuthority({hostGeneration:1,revision:0}),seenMessageIds:new Set(),seenRequestIds:new Set(),seenJoinAttemptIds:new Set(),joinAttemptId:null,playerConnection:null,playerApproved:false,requestCounter:0};
+const HEARTBEAT_INTERVAL_MS=5000;
+const HEARTBEAT_TIMEOUT_MS=16000;
+let heartbeatTimer=null;
 function log(message){const el=$('log');const stamp=new Date().toLocaleTimeString();el.textContent+='\n['+stamp+'] '+message;el.scrollTop=el.scrollHeight}
 function setStatus(text,kind){$('connectionStatus').textContent=text;$('connectionStatus').className='status '+(kind||'')}
 function setPlayerStatus(text,kind){$('playerState').textContent=text;$('playerState').className='status '+(kind||'')}
@@ -251,6 +254,27 @@ function updateRevision(value){if(!Number.isSafeInteger(value)||value<state.revi
 function syncAuthority(){const v=state.authority.getVersion();state.hostGeneration=v.hostGeneration;state.revision=v.revision;$('revisionValue').textContent=String(state.revision)}
 function checkHostMessage(msg){const result=state.authority.checkMessage(msg);if(!result.ok){log('Rejected message by authority guard: '+result.code);return false}return true}
 function setLast(msg){$('lastMessage').textContent=msg}
+function startHostHeartbeat(){
+ if(heartbeatTimer!==null)clearInterval(heartbeatTimer);
+ heartbeatTimer=setInterval(()=>{
+  const now=Date.now();
+  for(const [peerId,player] of state.approved){
+   if(!player.conn.open||now-player.lastPongAt>HEARTBEAT_TIMEOUT_MS){
+    state.approved.delete(peerId);
+    for(const item of state.testRequests.values()){if(item.peerId===peerId&&item.status==='pending')item.status='cancelled';}
+    renderTestQueue();renderConnected();
+    log('Heartbeat timed out for '+player.name+'; participant marked disconnected and must rejoin with GM approval.');
+    try{player.conn.close()}catch(_){}
+    continue;
+   }
+   try{send(player.conn,'PING',{sentAt:now},state.revision)}catch(_){
+    state.approved.delete(peerId);renderConnected();
+    log('Heartbeat could not be sent to '+player.name+'; participant marked disconnected.');
+    try{player.conn.close()}catch(_){}
+   }
+  }
+ },HEARTBEAT_INTERVAL_MS);
+}
 function makeInvite(){
  const url=new URL(location.href);url.search='';url.hash='';url.searchParams.set('room',state.sessionId);
  $('inviteLink').textContent=url.toString();
@@ -261,7 +285,7 @@ async function startHost(){
  $('startHost').disabled=true;$('startupMessage').textContent='Opening a PeerJS connection…';
  try{
   const peer=new Peer();state.peer=peer;
-  peer.on('open',id=>{state.sessionId=id;showSession('gm');setStatus('Hosting','good');$('sessionHint').textContent='GM host is online. Keep this tab open during the test.';makeInvite();log('GM host ready. Session ID: '+id);});
+  peer.on('open',id=>{state.sessionId=id;showSession('gm');setStatus('Hosting','good');$('sessionHint').textContent='GM host is online. Keep this tab open during the test.';makeInvite();startHostHeartbeat();log('GM host ready. Session ID: '+id);});
   peer.on('connection',conn=>handleIncoming(conn));
   peer.on('disconnected',()=>{setStatus('Signaling disconnected','warn');log('PeerJS signaling disconnected.');});
   peer.on('close',()=>{setStatus('Closed','bad');log('Peer connection closed.');});
@@ -290,6 +314,7 @@ function handleIncoming(conn){
    if(state.seenMessageIds.has(msg.messageId)){log('Ignored duplicate message ID from '+player.name+'.');return}
    state.seenMessageIds.add(msg.messageId);
    if(msg.type==='PING'){send(conn,'PONG',{at:Date.now()},state.revision);setLast('PING from '+player.name);return}
+   if(msg.type==='PONG'){player.lastPongAt=Date.now();setLast('PONG from '+player.name);return}
    if(msg.type==='STATE_SNAPSHOT_REQUEST'){send(conn,'STATE_SNAPSHOT',{testOnly:true,revision:state.revision,sessionId:state.sessionId},state.revision);setLast('Snapshot sent to '+player.name);return}
    if(msg.type==='ACTION_REQUEST'){
     const id=typeof msg.payload.requestId==='string'?msg.payload.requestId:'';
@@ -315,7 +340,7 @@ function decideJoin(peerId,decision){
  if(item.conn!==state.connections.get(peerId)||!item.conn.open){state.pending.delete(peerId);renderJoinQueue();log('Join decision ignored: connection is no longer active.');return}
  state.pending.delete(peerId);
  if(decision==='approved'){
-  state.approved.set(peerId,{name:item.name,conn:item.conn,attemptId:item.attemptId});
+  state.approved.set(peerId,{name:item.name,conn:item.conn,attemptId:item.attemptId,lastPongAt:Date.now()});
   try{send(item.conn,'JOIN_ACCEPTED',{displayName:item.name,hostGeneration:state.hostGeneration},state.revision);send(item.conn,'STATE_SNAPSHOT',{testOnly:true,revision:state.revision,sessionId:state.sessionId},state.revision);log('Approved '+item.name+'.');}
   catch(error){log('Approval send failed for '+item.name+': '+error.message);state.approved.delete(peerId);try{item.conn.close()}catch(_){}}
  }else{try{send(item.conn,'JOIN_REJECTED',{reason:'The GM declined this join attempt.'})}catch(_){}try{item.conn.close()}catch(_){}log('Rejected '+item.name+'.')}
@@ -365,6 +390,7 @@ function connectToHost(name){
   if(msg.type==='ERROR'){log('Host error: '+String(msg.payload.message||'Unknown error'));return}
   if(!state.playerApproved){log('Ignored '+msg.type+' before GM approval.');return}
   if(!checkHostMessage(msg))return;
+  if(msg.type==='PING'){try{send(conn,'PONG',{at:Date.now()},msg.revision)}catch(error){log('Could not answer host heartbeat: '+error.message)}return}
   if(msg.type==='STATE_UPDATE'&&msg.revision>state.revision+1){log('Ignored state update with a revision gap.');return}
   if(msg.type==='STATE_SNAPSHOT'){if(msg.revision<state.revision){log('Ignored stale snapshot.');return}updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});setLast('STATE_SNAPSHOT received');log('Authoritative test snapshot received at revision '+state.revision+'.');return}
   if(msg.type==='STATE_UPDATE'){if(msg.revision<state.revision){log('Ignored stale state update.');return}updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});setLast('STATE_UPDATE received at revision '+msg.revision);log('Test state update received. Revision '+msg.revision+'.');return}
