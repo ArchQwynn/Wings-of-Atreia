@@ -246,7 +246,7 @@ function renderJoinQueue(){
  entries.forEach(item=>{const row=document.createElement('div');row.className='item';const title=document.createElement('strong');title.textContent=item.name;const sub=document.createElement('p');sub.className='muted small';sub.textContent=(item.role==='spectator'?'Spectator':'Player')+' · Attempt '+item.attemptId+' · awaiting GM decision';const approve=document.createElement('button');approve.className='primary';approve.textContent='Approve';approve.addEventListener('click',()=>decideJoin(item.peerId,'approved'));const reject=document.createElement('button');reject.className='danger';reject.textContent='Reject';reject.addEventListener('click',()=>decideJoin(item.peerId,'rejected'));const actions=document.createElement('div');actions.className='row';actions.append(approve,reject);row.append(title,sub,actions);list.append(row)})
 }
 function getRoleCounts(){const counts={player:0,spectator:0};for(const p of state.approved.values())if(counts[p.role]!==undefined)counts[p.role]++;for(const p of state.pending.values())if(counts[p.role]!==undefined)counts[p.role]++;return counts}
-function roleCapacityAvailable(role){const counts=getRoleCounts();return role==='player'?counts.player<MAX_PLAYERS:role==='spectator'?counts.spectator<MAX_SPECTATORS:false}
+function roleCapacityAvailable(role,excludePeerId){const counts={player:0,spectator:0};for(const [id,p] of state.approved)if(counts[p.role]!==undefined)counts[p.role]++;for(const [id,p] of state.pending)if(id!==excludePeerId&&counts[p.role]!==undefined)counts[p.role]++;return role==='player'?counts.player<MAX_PLAYERS:role==='spectator'?counts.spectator<MAX_SPECTATORS:false}
 function renderConnected(){
  const list=$('connectedPlayers');const entries=Array.from(state.approved.values());const counts=getRoleCounts();$('capacitySummary').textContent='Players: '+counts.player+' / '+MAX_PLAYERS+' · Spectators: '+counts.spectator+' / '+MAX_SPECTATORS+' (pending approvals reserve a slot)';
  if(!entries.length){list.textContent='No approved participants connected.';return}
@@ -316,7 +316,7 @@ function handleIncoming(conn){
     if(!roleCapacityAvailable(role)){sendError(conn,role==='player'?'Player capacity is full (15).':'Spectator capacity is full (10).');log('Join request from '+name+' refused: '+role+' capacity is full.');try{conn.close()}catch(_){}return}
     if(state.seenJoinAttemptIds.has(attemptId)){sendError(conn,'Duplicate join attempt. Request a new attempt after reconnecting.');return}
     state.seenJoinAttemptIds.add(attemptId);
-    state.pending.set(conn.peer,{peerId:conn.peer,conn,name,attemptId,role});log('Join request received from '+name+' as '+role+'. GM approval required.');renderJoinQueue();return;
+    state.pending.set(conn.peer,{peerId:conn.peer,conn,name,attemptId,role});log('Join request received from '+name+' as '+role+'. GM approval required.');renderJoinQueue();renderConnected();return;
    }
    if(!state.approved.has(conn.peer)){log('Ignored '+msg.type+' from a peer that has not been approved.');return}
    const player=state.approved.get(conn.peer);
@@ -350,7 +350,7 @@ function sendError(conn,text){try{send(conn,'ERROR',{message:text})}catch(_){}}
 function decideJoin(peerId,decision){
  const item=state.pending.get(peerId);if(!item)return;
  if(item.conn!==state.connections.get(peerId)||!item.conn.open){state.pending.delete(peerId);renderJoinQueue();renderConnected();log('Join decision ignored: connection is no longer active.');return}
- if(decision==='approved'&&!roleCapacityAvailable(item.role)){state.pending.delete(peerId);renderJoinQueue();renderConnected();sendError(item.conn,item.role==='player'?'Player capacity is full (15).':'Spectator capacity is full (10).');try{item.conn.close()}catch(_){}log('Approval refused: '+item.role+' capacity reached before decision.');return}
+ if(decision==='approved'&&!roleCapacityAvailable(item.role,peerId)){state.pending.delete(peerId);renderJoinQueue();renderConnected();sendError(item.conn,item.role==='player'?'Player capacity is full (15).':'Spectator capacity is full (10).');try{item.conn.close()}catch(_){}log('Approval refused: '+item.role+' capacity reached before decision.');return}
  state.pending.delete(peerId);
  if(decision==='approved'){
   state.approved.set(peerId,{name:item.name,role:item.role,conn:item.conn,attemptId:item.attemptId,lastPongAt:Date.now()});
