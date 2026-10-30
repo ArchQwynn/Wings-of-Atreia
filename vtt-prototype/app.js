@@ -252,14 +252,56 @@ function assignmentLabel(t){if(t.assignment==='specific')return t.players?.lengt
 function loadEditor(t){if(!t)return;tokenNameEl.value=t.name;tokenGlyphEl.value=t.glyph||'';tokenColorEl.value=t.color||'#65d6a1';tokenFootprintEl.value=String(t.footprint||1);if(tokenVisibilityEl)tokenVisibilityEl.value=t.visibility==='gm'?'gm':'players';tokenAssignmentEl.value=t.assignment||'all';tokenPlayersEl.value=(t.players||[]).join(', ');tokenPlayersEl.hidden=tokenAssignmentEl.value!=='specific';if(tokenImageStatusEl)tokenImageStatusEl.textContent=t.image?'Custom image attached. Drag the preview or use zoom and offsets to align it.':'No custom image; using the token glyph.';if(tokenImageFileEl)tokenImageFileEl.value='';if(tokenImageZoomEl)tokenImageZoomEl.value=String(t.imageZoom||1);if(tokenImageXEl)tokenImageXEl.value=String(t.imageX||0);if(tokenImageYEl)tokenImageYEl.value=String(t.imageY||0);updateImageControlState(t)}
 function updateImageControlState(t){const disabled=!t?.image||!!t?.locked||!isGM();[tokenImageZoomEl,tokenImageXEl,tokenImageYEl].forEach(el=>{if(el)el.disabled=disabled});const reset=document.querySelector('[data-action="token-image-reset"]');if(reset)reset.disabled=disabled}
 function updateAltitudeDisplay(t){const slider=document.getElementById('token-altitude-slider'),value=document.getElementById('altitude-value'),detail=document.getElementById('altitude-detail');if(slider)slider.value=String(Math.max(0,Math.min(MAX_ALTITUDE,Math.round((Number(t?.z)||0)/ALTITUDE_STEP)*ALTITUDE_STEP)));if(value)value.textContent=t?`${t.z} ft above terrain`:'— ft';if(detail){if(!t){detail.textContent='Select a token to adjust its altitude.'}else{const p=tokenWorld(t),terrain=Math.round(terrainHeightAt(p.x,p.y)*10)/10,above=Math.round(Number(t.z)||0),overall=Math.round((terrain+above)*10)/10;detail.textContent=`${t.name} · Overall altitude: ${overall} ft · Terrain: ${terrain} ft · Height above terrain: ${above} ft`}}}
+const APPROVED_CONDITIONS=["Blinded","Charmed","Deafened","Frightened","Grappled","Incapacitated","Invisible","Paralyzed","Petrified","Poisoned","Prone","Restrained","Stunned","Unconscious"];
 function updateConditionsPanel(token){
  const nameEl=document.getElementById('condition-token-name'),listEl=document.getElementById('condition-list');
+ const controls=document.getElementById('condition-controls'),selectEl=document.getElementById('condition-select'),removeList=document.getElementById('condition-remove-list'),applyButton=document.querySelector('[data-condition-apply]');
  if(!nameEl||!listEl)return;
- const approved=["Blinded","Charmed","Deafened","Frightened","Grappled","Incapacitated","Invisible","Paralyzed","Petrified","Poisoned","Prone","Restrained","Stunned","Unconscious"];
- if(!token||!canSeeToken(token)){nameEl.textContent='No token selected';listEl.textContent='Select a token to view its active Conditions.';return;}
+ const valid=!!token&&canSeeToken(token);
+ if(!valid){
+  nameEl.textContent='No token selected';listEl.textContent='Select a token to view its active Conditions.';
+  if(controls)controls.hidden=true;if(removeList)removeList.replaceChildren();return;
+ }
  nameEl.textContent=token.name||'Unnamed Token';
- const active=Array.isArray(token.conditions)?[...new Set(token.conditions.map(c=>String(c)).filter(c=>approved.includes(c)))]:[];
+ const active=Array.isArray(token.conditions)?[...new Set(token.conditions.map(c=>String(c)).filter(c=>APPROVED_CONDITIONS.includes(c)))]:[];
  listEl.textContent=active.length?active.join(' · '):'No active Conditions.';
+ if(controls)controls.hidden=!isGM();
+ if(selectEl){const selected=selectEl.value;for(const option of selectEl.options)if(option.value)option.disabled=active.includes(option.value);if(selected&&active.includes(selected))selectEl.value='';}
+ if(applyButton)applyButton.disabled=!isGM()||!selectEl||!selectEl.value||active.includes(selectEl.value);
+ if(removeList){
+  removeList.replaceChildren();
+  if(isGM()&&active.length){
+   const heading=document.createElement('div');heading.className='condition-remove-heading';heading.textContent='Remove Condition';removeList.appendChild(heading);
+   active.forEach(condition=>{
+    const button=document.createElement('button');button.type='button';button.className='condition-remove-button';button.dataset.conditionRemove=condition;button.textContent='Remove '+condition;removeList.appendChild(button);
+   });
+  }
+ }
+}
+const conditionPanel=document.getElementById('condition-panel');
+if(conditionPanel)conditionPanel.addEventListener('click',event=>{
+ const apply=event.target.closest('[data-condition-apply]'),remove=event.target.closest('[data-condition-remove]');
+ if(!apply&&!remove)return;
+ if(!isGM()){if(sceneSaveStatus)sceneSaveStatus.textContent='Only the GM can change token Conditions.';return;}
+ const token=state.tokens.find(t=>t.id===state.selected);
+ if(!token||!canSeeToken(token)){if(sceneSaveStatus)sceneSaveStatus.textContent='Select a token before changing its Conditions.';return;}
+ const current=Array.isArray(token.conditions)?[...new Set(token.conditions.filter(c=>APPROVED_CONDITIONS.includes(c)))]:[];
+ if(apply){
+  const selectEl=document.getElementById('condition-select'),condition=selectEl?.value;
+  if(!APPROVED_CONDITIONS.includes(condition)||current.includes(condition))return;
+  recordUndo();token.conditions=[...current,condition];selectEl.value='';saveSceneToBrowser();
+  if(sceneSaveStatus)sceneSaveStatus.textContent=condition+' applied to '+(token.name||'token')+'.';
+ }else if(remove){
+  const condition=remove.dataset.conditionRemove;
+  if(!current.includes(condition))return;
+  recordUndo();token.conditions=current.filter(c=>c!==condition);saveSceneToBrowser();
+  if(sceneSaveStatus)sceneSaveStatus.textContent=condition+' removed from '+(token.name||'token')+'.';
+ }
+ updateConditionsPanel(token);
+});
+if(conditionPanel){
+ const selectEl=document.getElementById('condition-select'),applyButton=conditionPanel.querySelector('[data-condition-apply]');
+ selectEl?.addEventListener('change',()=>{if(applyButton)applyButton.disabled=!isGM()||!selectEl.value;});
 }
 function updateSelectionInfo(){
  const asset=state.selectedAsset?state.assets.find(a=>a.id===state.selectedAsset):null;
