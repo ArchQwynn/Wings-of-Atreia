@@ -260,7 +260,7 @@ function updateConditionsPanel(token){
  const valid=!!token&&canSeeToken(token);
  if(!valid){
   nameEl.textContent='No token selected';listEl.textContent='Select a token to view its active Conditions.';
-  if(controls)controls.hidden=true;if(removeList)removeList.replaceChildren();return;
+  if(controls)controls.hidden=true;if(removeList){removeList.replaceChildren();removeList.dataset.conditionsKey='';}return;
  }
  nameEl.textContent=token.name||'Unnamed Token';
  const active=Array.isArray(token.conditions)?[...new Set(token.conditions.map(c=>String(c)).filter(c=>APPROVED_CONDITIONS.includes(c)))]:[];
