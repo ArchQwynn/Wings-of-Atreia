@@ -269,12 +269,15 @@ function updateConditionsPanel(token){
  if(selectEl){const selected=selectEl.value;for(const option of selectEl.options)if(option.value)option.disabled=active.includes(option.value);if(selected&&active.includes(selected))selectEl.value='';}
  if(applyButton)applyButton.disabled=!isGM()||!selectEl||!selectEl.value||active.includes(selectEl.value);
  if(removeList){
-  removeList.replaceChildren();
-  if(isGM()&&active.length){
-   const heading=document.createElement('div');heading.className='condition-remove-heading';heading.textContent='Remove Condition';removeList.appendChild(heading);
-   active.forEach(condition=>{
-    const button=document.createElement('button');button.type='button';button.className='condition-remove-button';button.dataset.conditionRemove=condition;button.textContent='Remove '+condition;removeList.appendChild(button);
-   });
+  const removeKey=(isGM()?active.join('|'):'')+'|'+(isGM()?'gm':'player');
+  if(removeList.dataset.conditionsKey!==removeKey){
+   removeList.replaceChildren();removeList.dataset.conditionsKey=removeKey;
+   if(isGM()&&active.length){
+    const heading=document.createElement('div');heading.className='condition-remove-heading';heading.textContent='Remove Condition';removeList.appendChild(heading);
+    active.forEach(condition=>{
+     const button=document.createElement('button');button.type='button';button.className='condition-remove-button';button.dataset.conditionRemove=condition;button.textContent='Remove '+condition;removeList.appendChild(button);
+    });
+   }
   }
  }
 }
