@@ -82,6 +82,20 @@
         <div class="token-editor condition-panel" id="condition-panel" aria-live="polite">
           <strong id="condition-token-name">No token selected</strong>
           <div id="condition-list" class="condition-list">Select a token to view its active Conditions.</div>
+          <div id="condition-controls" class="condition-controls" hidden>
+            <label for="condition-select">Add Condition
+              <select id="condition-select">
+                <option value="">Choose a Condition</option>
+                <option>Blinded</option><option>Charmed</option><option>Deafened</option>
+                <option>Frightened</option><option>Grappled</option><option>Incapacitated</option>
+                <option>Invisible</option><option>Paralyzed</option><option>Petrified</option>
+                <option>Poisoned</option><option>Prone</option><option>Restrained</option>
+                <option>Stunned</option><option>Unconscious</option>
+              </select>
+            </label>
+            <button type="button" data-condition-apply>Apply Condition</button>
+          </div>
+          <div id="condition-remove-list" class="condition-remove-list"></div>
         </div>
       </section>
       <section>
@@ -264,7 +278,7 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept<br><strong>Clark Michael Zafra</strong></footer>
-  <script src="app.js?v=20261030-6"></script>
+  <script src="app.js?v=20261031-1"></script>
   <script src="overlay.js?v=20261028-12"></script>
 
   <script id="woa-panel-organization">
