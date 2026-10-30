@@ -256,8 +256,10 @@ function checkHostMessage(msg){const result=state.authority.checkMessage(msg);if
 function setLast(msg){$('lastMessage').textContent=msg}
 function startHostHeartbeat(){
  if(heartbeatTimer!==null)clearInterval(heartbeatTimer);
+ log('Heartbeat monitor started (5-second interval; 16-second timeout).');
  heartbeatTimer=setInterval(()=>{
   const now=Date.now();
+  log('Heartbeat check: '+state.approved.size+' approved participant(s).');
   for(const [peerId,player] of state.approved){
    if(!player.conn.open||now-player.lastPongAt>HEARTBEAT_TIMEOUT_MS){
     state.approved.delete(peerId);
@@ -267,7 +269,7 @@ function startHostHeartbeat(){
     try{player.conn.close()}catch(_){}
     continue;
    }
-   try{send(player.conn,'PING',{sentAt:now},state.revision)}catch(_){
+   try{send(player.conn,'PING',{sentAt:now},state.revision);log('PING sent to '+player.name+'.')}catch(_){
     state.approved.delete(peerId);renderConnected();
     log('Heartbeat could not be sent to '+player.name+'; participant marked disconnected.');
     try{player.conn.close()}catch(_){}
@@ -314,7 +316,7 @@ function handleIncoming(conn){
    if(state.seenMessageIds.has(msg.messageId)){log('Ignored duplicate message ID from '+player.name+'.');return}
    state.seenMessageIds.add(msg.messageId);
    if(msg.type==='PING'){send(conn,'PONG',{at:Date.now()},state.revision);setLast('PING from '+player.name);return}
-   if(msg.type==='PONG'){player.lastPongAt=Date.now();setLast('PONG from '+player.name);return}
+   if(msg.type==='PONG'){player.lastPongAt=Date.now();setLast('PONG from '+player.name);log('PONG received from '+player.name+'.');return}
    if(msg.type==='STATE_SNAPSHOT_REQUEST'){send(conn,'STATE_SNAPSHOT',{testOnly:true,revision:state.revision,sessionId:state.sessionId},state.revision);setLast('Snapshot sent to '+player.name);return}
    if(msg.type==='ACTION_REQUEST'){
     const id=typeof msg.payload.requestId==='string'?msg.payload.requestId:'';
