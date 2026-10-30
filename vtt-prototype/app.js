@@ -4,7 +4,7 @@ const tokenImageCache=new Map();
 const tokenImageZoomEl=document.getElementById('token-image-zoom'),tokenImageXEl=document.getElementById('token-image-x'),tokenImageYEl=document.getElementById('token-image-y');
 
 const canvas=document.getElementById('scene'),ctx=canvas?.getContext('2d'),selectionEl=document.getElementById('selection'),altitudeEl=document.getElementById('altitude'),movementEl=document.getElementById('movement-readout'),tokenList=document.getElementById('tokens');
-const FEET_PER_GRID=5,ALTITUDE_STEP=5,MAX_ALTITUDE=120,MIN_ZOOM=.35,MAX_ZOOM=10,GRID_RADIUS=20,CELL_PX=42,NEAR=.5;
+const FEET_PER_GRID=5,ALTITUDE_STEP=5,MAX_ALTITUDE=120,MIN_ZOOM=.35,MAX_ZOOM=10,GRID_RADIUS=30,CELL_PX=42,NEAR=.5;
 const terrainTypeEl=document.getElementById('terrain-type'),terrainHeightEl=document.getElementById('terrain-height'),terrainStatusEl=document.getElementById('terrain-status');
 const assetNameEl=document.getElementById('asset-name'),assetImageFileEl=document.getElementById('asset-image-file'),assetSwapImageFileEl=document.getElementById('asset-swap-image-file'),assetWidthEl=document.getElementById('asset-width'),assetDepthEl=document.getElementById('asset-depth'),assetRotationEl=document.getElementById('asset-rotation'),assetAltitudeEl=document.getElementById('asset-altitude'),assetVisibilityEl=document.getElementById('asset-visibility'),assetStatusEl=document.getElementById('asset-status');
 const assetImageCache=new Map();
