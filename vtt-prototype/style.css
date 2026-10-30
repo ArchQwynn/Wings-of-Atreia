@@ -245,3 +245,10 @@
   .panel-group > summary { padding: 13px 12px; }
   .panel-subgroup { margin: 7px; }
 }
+
+/* GM object context menu for renaming and managing attachments. */
+.object-context-menu { position: fixed; z-index: 10000; min-width: 170px; padding: 6px; display: grid; gap: 3px; border: 1px solid var(--line); border-radius: 10px; background: #111c2c; box-shadow: 0 12px 32px rgba(0,0,0,.48); }
+.object-context-menu[hidden] { display: none; }
+.object-context-menu button { width: 100%; text-align: left; padding: 9px 11px; border: 0; border-radius: 6px; background: transparent; color: var(--text); }
+.object-context-menu button:hover:not(:disabled) { background: rgba(143,211,255,.12); }
+.object-context-menu button:disabled { opacity: .4; cursor: not-allowed; }
