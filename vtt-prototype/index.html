@@ -8,6 +8,11 @@
   <link rel="stylesheet" href="style.css?v=20261028-2">
 </head>
 <body>
+  <div id="object-context-menu" class="object-context-menu" role="menu" hidden>
+    <button type="button" data-object-action="rename" role="menuitem">Rename</button>
+    <button type="button" data-object-action="attach" role="menuitem">Attach to…</button>
+    <button type="button" data-object-action="detach" role="menuitem">Detach from…</button>
+  </div>
   <header class="topbar">
     <div>
       <div class="eyebrow">TECHNICAL PROTOTYPE</div>
@@ -151,18 +156,6 @@
       </section>
 
       <section>
-        <div class="eyebrow">ATTACHMENTS · GM</div>
-        <div class="token-editor">
-          <p class="note">Connect any two tokens or assets. Dragging any connected object moves the entire attached group together, preserving relative X, Y, and Z offsets.</p>
-          <label>Object A<select id="attachment-object-a"><option value="">Choose an object</option></select></label>
-          <label>Object B<select id="attachment-object-b"><option value="">Choose an object</option></select></label>
-          <div class="editor-row"><button type="button" id="attachment-connect">Attach Objects</button><button type="button" id="attachment-disconnect">Detach Pair</button></div>
-          <p class="note" id="attachment-status">No attachment selected. Attachments are saved with the scene.</p>
-          <div id="attachment-list" class="note">No attached objects.</div>
-        </div>
-      </section>
-
-      <section>
         <div class="eyebrow">STANDEES</div>
         <div id="tokens" class="token-list"></div>
       </section>
@@ -269,7 +262,7 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept</footer>
-  <script src="app.js?v=20261029-2"></script>
+  <script src="app.js?v=20261030-1"></script>
   <script src="overlay.js?v=20261028-12"></script>
 
   <script id="woa-panel-organization">
