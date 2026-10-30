@@ -24,9 +24,9 @@
   <main class="layout">
     <section class="stage-card">
       <canvas id="scene" aria-label="Lightweight 3D tabletop prototype"></canvas>
-      <div class="hud top-left">
-        <strong>3D TABLETOP</strong>
-        <span>Pan Off: drag to rotate · Pan On: drag to move map · pinch to zoom</span>
+      <div class="hud top-left session-display">
+        <strong>SESSION</strong>
+        <span>Prototype Battle · ROOM ATREIA-4827</span>
       </div>
       <div class="camera-pad" aria-label="Camera controls">
         <div class="camera-label">CAMERA</div>
@@ -45,12 +45,6 @@
     </section>
 
     <aside class="panel">
-      <section>
-        <div class="eyebrow">SESSION</div>
-        <h2>Prototype Battle</h2>
-        <div class="room">ROOM <strong>ATREIA-4827</strong></div>
-      </section>
-
       <section>
         <div class="eyebrow">LOCAL PLAYER / GM PREVIEW</div>
         <label class="identity-label">View as
@@ -300,7 +294,7 @@
       };
 
       const groups = [
-        { title: 'Session & Access', headings: ['SESSION', 'LOCAL PLAYER / GM PREVIEW'], open: true },
+        { title: 'Access', headings: ['LOCAL PLAYER / GM PREVIEW'], open: true },
         { title: 'Tokens & Standees', headings: ['STANDEES', 'TOKEN MANAGEMENT', 'PROPS & ASSETS · GM'], tokenManagement: true },
         { title: 'Battlefield Editor', headings: ['TERRAIN EDITOR · GM', 'BATTLEFIELD MAP · GM'] },
         { title: 'Scene Management', headings: ['BATTLEFIELD SAVE / LOAD', 'TEST STATUS'] }
