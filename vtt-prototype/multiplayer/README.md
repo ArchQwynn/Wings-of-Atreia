@@ -193,6 +193,7 @@ Harness guard behavior added during the branch audit:
 - Revision changes use compare-and-swap semantics; a duplicate approval cannot advance the same revision twice.
 - Duplicate message IDs, test request IDs, and join-attempt IDs are rejected. A reused join-attempt ID remains rejected after the original request is decided or the connection closes.
 - Disconnected participants are removed from the active approved list; their pending test requests are cancelled, and reconnecting requires a fresh GM approval.
+- The connection harness now sends host heartbeats every 5 seconds. If a participant does not answer within 16 seconds, the GM marks that participant disconnected, removes them from the active approved list, cancels their pending test requests, and requires fresh GM approval to rejoin. The PeerJS `close` event remains an additional immediate cleanup path.
 - The embedded guard is duplicated from the pure authority helper so the harness remains a single-file test page. Keep both implementations aligned when making future changes.
 
 Suggested test checklist:
@@ -203,7 +204,7 @@ Suggested test checklist:
 5. Player test request reaches the GM; rejection leaves the revision unchanged.
 6. Approval increments the synthetic revision and the player receives the result/update.
 7. Two requests created at the same revision are tested: after one is approved, the other must be marked stale.
-8. Player disconnects; the GM participant list removes the player and pending requests are cancelled.
+8. Player disconnects; the GM participant list removes the player either on the PeerJS close event or after the heartbeat timeout (up to approximately 16 seconds), and pending requests are cancelled.
 9. Rejoining requires a new attempt ID and fresh GM approval; replaying an old attempt ID is rejected.
 10. Unapproved peers, duplicate messages/requests, old host generations, and stale revisions are rejected.
 11. A second approved player receives a broadcast update after a synthetic revision advances.
