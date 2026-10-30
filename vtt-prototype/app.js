@@ -383,7 +383,45 @@ sceneImportFile.addEventListener('change',async()=>{
   finally{sceneImportFile.value=''}
 });
 
-document.addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||e.key.toLowerCase()!=='z'||e.shiftKey)return;const target=e.target;if(target&&(/INPUT|TEXTAREA|SELECT/.test(target.tagName)||target.isContentEditable))return;e.preventDefault();undoLastAction()});
+let vttClipboard=null;
+function selectedClipboardObject(){
+ const token=state.tokens.find(t=>t.id===state.selected);
+ if(token&&canControlToken(token))return{type:'token',data:JSON.parse(JSON.stringify(token))};
+ const asset=state.assets.find(a=>a.id===state.selectedAsset);
+ if(asset&&isGM())return{type:'asset',data:JSON.parse(JSON.stringify(asset))};
+ return null;
+}
+function pasteClipboardObject(){
+ if(!vttClipboard)return;
+ if(vttClipboard.type==='asset'&&!isGM())return;
+ const rect=canvas.getBoundingClientRect(),ground=screenToGround(rect.width/2,rect.height/2),x=snapCell(ground.x),y=snapCell(ground.y);
+ recordUndo();
+ const copy=JSON.parse(JSON.stringify(vttClipboard.data));
+ copy.id=(vttClipboard.type==='token'?'token-copy-':'asset-copy-')+Date.now()+'-'+Math.floor(Math.random()*100000);
+ copy.name=String(copy.name|| (vttClipboard.type==='token'?'Token':'Prop')).slice(0,108)+' (Copy)';
+ copy.x=x;copy.y=y;
+ delete copy._screen;delete copy._dragX;delete copy._dragY;
+ if(vttClipboard.type==='token'){
+  if(!isGM()&&copy.assignment==='gm')copy.assignment='specific';
+  state.tokens.push(copy);state.selectedAsset=null;select(copy.id);list();
+ }else{
+  state.assets.push(copy);state.selectedAsset=copy.id;state.selected=null;syncAssetEditor(copy);refreshAttachmentControls();
+ }
+ saveSceneToBrowser();
+}
+document.addEventListener('keydown',e=>{
+ const mod=e.ctrlKey||e.metaKey;if(!mod||e.altKey)return;
+ const key=e.key.toLowerCase(),target=e.target,typing=target&&(/INPUT|TEXTAREA|SELECT/.test(target.tagName)||target.isContentEditable);
+ if(key==='z'&&!e.shiftKey){if(!isGM()||typing)return;e.preventDefault();undoLastAction();return}
+ if(key==='s'){if(typing||!isGM())return;e.preventDefault();saveSceneToBrowser();return}
+ if(key==='l'){if(typing||!isGM())return;e.preventDefault();const raw=localStorage.getItem(SCENE_STORAGE_KEY);if(!raw){if(sceneSaveStatus)sceneSaveStatus.textContent='No saved scene found in this browser yet.';return}try{recordUndo();applyScene(JSON.parse(raw));sceneSaveStatus.textContent='Saved scene loaded.'}catch(err){sceneSaveStatus.textContent='Could not load the saved scene: '+(err.message||'invalid scene data')}return}
+ if(typing)return;
+ if(key==='c'){const selected=selectedClipboardObject();if(!selected)return;e.preventDefault();vttClipboard=selected;if(sceneSaveStatus)sceneSaveStatus.textContent='Copied '+(selected.data.name||'object')+' to the VTT clipboard.';return}
+ if(key==='x'){if(!isGM())return;const selected=selectedClipboardObject();if(!selected)return;e.preventDefault();vttClipboard=selected;recordUndo();if(selected.type==='token'){state.tokens=state.tokens.filter(t=>t.id!==selected.data.id);state.attachments=state.attachments.filter(edge=>edge.a!==objectKey('token',selected.data.id)&&edge.b!==objectKey('token',selected.data.id));state.selected=state.tokens[0]?.id||null;select(state.selected);list()}else{state.assets=state.assets.filter(a=>a.id!==selected.data.id);state.attachments=state.attachments.filter(edge=>edge.a!==objectKey('asset',selected.data.id)&&edge.b!==objectKey('asset',selected.data.id));state.selectedAsset=null;refreshAttachmentControls()}saveSceneToBrowser();if(sceneSaveStatus)sceneSaveStatus.textContent='Cut '+(selected.data.name||'object')+'.';return}
+ if(key==='v'){if(!vttClipboard)return;e.preventDefault();pasteClipboardObject()}
+});
+// Ctrl+Shift+L is provided as a reliable alternative because browsers reserve Ctrl+L for the address bar.
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.shiftKey&&e.key.toLowerCase()==='l'&&!e.altKey){if(e.target&&(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.target.isContentEditable))return;if(!isGM())return;e.preventDefault();const raw=localStorage.getItem(SCENE_STORAGE_KEY);if(!raw){if(sceneSaveStatus)sceneSaveStatus.textContent='No saved scene found in this browser yet.';return}try{recordUndo();applyScene(JSON.parse(raw));sceneSaveStatus.textContent='Saved scene loaded.'}catch(err){sceneSaveStatus.textContent='Could not load the saved scene: '+(err.message||'invalid scene data')}}});
 
 // Restore the most recent local scene only after all scene controls are registered.
 restoreSceneOnStartup();
