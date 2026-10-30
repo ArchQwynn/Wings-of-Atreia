@@ -76,6 +76,14 @@
         <p class="note">The slider changes only the selected token’s height. Altitude is measured in 5-ft increments; 30-ft values are reference levels, not automatic movement limits.</p>
       </section>
 
+
+      <section>
+        <div class="eyebrow">CONDITIONS</div>
+        <div class="token-editor condition-panel" id="condition-panel" aria-live="polite">
+          <strong id="condition-token-name">No token selected</strong>
+          <div id="condition-list" class="condition-list">Select a token to view its active Conditions.</div>
+        </div>
+      </section>
       <section>
         <div class="eyebrow">TERRAIN EDITOR · GM</div>
         <div class="token-editor terrain-editor">
@@ -296,6 +304,7 @@
       const groups = [
         { title: 'Access', headings: ['LOCAL PLAYER / GM PREVIEW'], open: true },
         { title: 'Tokens & Standees', headings: ['STANDEES', 'TOKEN MANAGEMENT', 'PROPS & ASSETS · GM'], tokenManagement: true },
+        { title: 'Conditions', headings: ['CONDITIONS'] },
         { title: 'Battlefield Editor', headings: ['TERRAIN EDITOR · GM', 'BATTLEFIELD MAP · GM'] },
         { title: 'Scene Management', headings: ['BATTLEFIELD SAVE / LOAD', 'TEST STATUS'] }
       ];
