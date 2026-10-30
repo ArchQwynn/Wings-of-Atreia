@@ -269,6 +269,7 @@ function updateTurnCounter(){
  const el=document.getElementById('turn-counter');
  if(el)el.textContent='Round '+Math.max(1,Number(state.combatRound)||1)+' · Turn '+Math.max(0,Number(state.combatTurn)||0);
 }
+updateTurnCounter();
 function updateConditionsPanel(token){
  const nameEl=document.getElementById('condition-token-name'),listEl=document.getElementById('condition-list');
  const controls=document.getElementById('condition-controls'),selectEl=document.getElementById('condition-select'),removeList=document.getElementById('condition-remove-list'),applyButton=document.querySelector('[data-condition-apply]');
