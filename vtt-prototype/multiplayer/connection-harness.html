@@ -387,8 +387,16 @@ function startPlayerHeartbeat(){
  if(state.playerHeartbeatTimer!==null)clearInterval(state.playerHeartbeatTimer);
  state.playerLastHostPingAt=Date.now();
  state.playerHeartbeatTimer=setInterval(()=>{
-  if(!state.playerApproved||!state.playerConnection||!state.playerConnection.open)return;
-  if(Date.now()-state.playerLastHostPingAt>HEARTBEAT_TIMEOUT_MS){
+  if(!state.playerApproved)return;
+  const now=Date.now();
+  const elapsed=state.playerLastHostPingAt?now-state.playerLastHostPingAt:0;
+  if(!state.playerConnection||!state.playerConnection.open){
+   log('Player heartbeat check: approved='+state.playerApproved+', connectionOpen='+(!!(state.playerConnection&&state.playerConnection.open))+'. Treating missing/closed data connection as GM loss.');
+   handlePlayerConnectionLost('GM data connection is no longer open.');
+   return;
+  }
+  log('Player heartbeat check: data connection open; last GM PING '+Math.round(elapsed/1000)+' seconds ago.');
+  if(elapsed>HEARTBEAT_TIMEOUT_MS){
    log('No GM heartbeat received within 16 seconds. Starting automatic reconnection.');
    handlePlayerConnectionLost('GM heartbeat timed out.');
   }
