@@ -6,11 +6,10 @@
 - The multiplayer implementation must be developed on `feature/vtt-peerjs-multiplayer` until it has been tested and approved for merging.
 - The GM's browser is the authoritative host for the live session.
 - Use a host-authoritative star topology: each player connects to the GM, rather than relying on players to synchronize authoritative game state directly with each other.
-- Target capacity: 1 GM, up to 15 players, and up to 10 spectators (26 total connections including the GM). This is a design target; actual 25-remote-peer load capacity must be demonstrated through staged browser/network testing before production use.
-- Players and spectators are distinct approved roles. The GM approves every join attempt and the host enforces separate player and spectator capacity limits, counting pending approvals so concurrent requests cannot overbook a role.
-- Spectators are read-only: they may receive only spectator-visible shared state and may not submit movement, interaction, or other gameplay action requests. The host must enforce this server-side/host-side, not merely hide controls in the client.
+- Target capacity: 1 GM and up to 25 players (26 total connections including the GM). This is a design target; actual 25-remote-peer load capacity must be demonstrated through staged browser/network testing before production use.
+- Every remote participant has the same Player role. The GM approves every join attempt and the host enforces one shared 25-player capacity limit, counting pending approvals so concurrent requests cannot overbook the session.
 - Players join through a GM-provided invitation link and enter a display name.
-- The join interface lets the participant request either the Player or Spectator role; the requested role is included in the join request and shown in the GM approval queue and connected-participant list.
+- There is no role selector: every join request is a Player request, and the GM approval queue identifies each request as a player.
 - Invitation links do not expire and may be reused. Reusing a link does not bypass entry approval: the GM must approve every join attempt before the player can access the session.
 - The initial player interface is desktop-first. Mobile-responsive support is outside the initial interface scope unless separately approved.
 - The initial player interface has no built-in chat and does not display GM controls.
@@ -184,7 +183,7 @@ After approval, send a harmless test request from the player browser. Approve or
 **Harness boundaries:**
 
 - This is a transport/handshake test only. It does not import the VTT, load scenes, or synchronize actual characters, tokens, props, or assets.
-- The harness role/capacity test supports up to 15 approved or pending players and 10 approved or pending spectators, plus the GM. Pending approvals reserve a slot. Spectator test clients are read-only and cannot submit the harmless player action request. This validates role admission logic only; it does not prove 25 remote WebRTC connections can be sustained.
+- The harness capacity test supports up to 25 approved or pending players, plus the GM. Pending approvals reserve a slot. Every approved participant has the same Player role and can submit the harmless test action request. This validates admission logic only; it does not prove 25 remote WebRTC connections can be sustained.
 - The GM browser is the temporary session coordinator, but no secure host election or automatic GM recovery exists. Closing the GM tab ends the test session.
 - PeerJS signaling is a public third-party service in this harness. Network availability, browser WebRTC policy, and restrictive firewalls may affect connection success.
 - Display names and peer IDs are not authentication. Do not use this harness for real campaign data or treat its approval UI as production security.
@@ -212,7 +211,7 @@ Suggested test checklist:
 9. Rejoining requires a new attempt ID and fresh GM approval; replaying an old attempt ID is rejected.
 10. Unapproved peers, duplicate messages/requests, old host generations, and stale revisions are rejected.
 11. A second approved player receives a broadcast update after a synthetic revision advances.
-12. Player and spectator joins are distinguished in the GM queue; spectator clients cannot submit test action requests.
-13. The 15-player and 10-spectator limits are enforced independently, including pending approval slots; a 16th player or 11th spectator is refused.
+12. All join requests are treated as Player requests and the GM approves or rejects each one.
+13. The shared 25-player limit is enforced, including pending approval slots; a 26th player is refused.
 
 Automated test command (run from the repository root): `node --test vtt-prototype/multiplayer/tests/*.test.js`. Static syntax and the existing 18 protocol/lifecycle/authority assertions were checked during this audit, but the native Node test runner and live two-browser WebRTC flow have not yet been run in this environment.
