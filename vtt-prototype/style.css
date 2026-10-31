@@ -272,3 +272,8 @@
 .gm-note-popup-actions button{padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:#182536;color:var(--text);font:inherit;font-size:.7rem}
 .gm-note-popup-actions .danger{border-color:#8c4444;color:#ffb0a8}
 .gm-note-hover{pointer-events:none;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.74rem;max-height:110px;overflow:hidden}
+
+
+/* Movement readout sits beneath altitude at the upper-right, clear of selection details. */
+.movement-readout{left:auto;right:14px;top:58px;bottom:auto;max-width:min(300px,calc(100% - 28px));text-align:right}
+@media(max-width:700px){.movement-readout{right:8px;top:46px;left:auto;bottom:auto;max-width:calc(100% - 16px);text-align:right}}
