@@ -71,20 +71,20 @@ function setupObjectContextMenu(){
  menu.querySelector('[data-token-name]')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();menu.querySelector('[data-token-name-apply]')?.click()}});
  menu.addEventListener('pointerover',e=>{const row=e.target.closest('.context-submenu');if(!row||e.pointerType==='touch')return;menu.querySelectorAll('.context-submenu.is-open').forEach(el=>{if(el!==row)el.classList.remove('is-open')});row.classList.add('is-open')});
  menu.addEventListener('pointerleave',()=>menu.querySelectorAll('.context-submenu.is-open').forEach(el=>el.classList.remove('is-open')));
+ menu.addEventListener('change',e=>{
+  if(!e.target.matches('[data-token-hp-current],[data-token-hp-maximum],[data-token-temp-hp],[data-token-ac],[data-token-life-status]'))return;
+  const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!isGM()||t.locked)return;
+  const read=(selector,fallback,max)=>{const el=menu.querySelector(selector),n=Math.floor(Number(el?.value));const value=Number.isFinite(n)?Math.max(0,Math.min(max,n)):fallback;if(el)el.value=String(value);return value};
+  const next={hpCurrent:read('[data-token-hp-current]',0,9999),hpMaximum:read('[data-token-hp-maximum]',0,9999),tempHp:read('[data-token-temp-hp]',0,9999),ac:read('[data-token-ac]',10,999),lifeStatus:menu.querySelector('[data-token-life-status]')?.value||'Alive'};
+  if(!['Alive','Unconscious','Dead'].includes(next.lifeStatus))next.lifeStatus='Alive';
+  const prev=t.status&&typeof t.status==='object'?t.status:{hpCurrent:0,hpMaximum:0,tempHp:0,ac:10,lifeStatus:'Alive'};
+  if(Object.keys(next).every(k=>String(prev[k]??(k==='ac'?10:k==='lifeStatus'?'Alive':0))===String(next[k])))return;
+  recordUndo();t.status=next;saveSceneToBrowser();updateSelectionInfo();if(sceneSaveStatus)sceneSaveStatus.textContent='Status updated for '+(t.name||'token')+'.';
+ });
  menu.addEventListener('click',e=>{
   const trigger=e.target.closest('[data-submenu-trigger]');
   if(trigger){const row=trigger.closest('.context-submenu');if(row){const open=row.classList.contains('is-open');menu.querySelectorAll('.context-submenu.is-open').forEach(el=>el.classList.remove('is-open'));if(!open)row.classList.add('is-open')}return}
 
-  const statusInput=e.target.closest('[data-token-hp-current],[data-token-hp-maximum],[data-token-temp-hp],[data-token-ac],[data-token-life-status]');
-  if(statusInput){
-   const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!isGM()||t.locked)return;
-   const read=(selector,fallback,max)=>{const el=menu.querySelector(selector),n=Math.floor(Number(el?.value));const value=Number.isFinite(n)?Math.max(0,Math.min(max,n)):fallback;if(el)el.value=String(value);return value};
-   const next={hpCurrent:read('[data-token-hp-current]',0,9999),hpMaximum:read('[data-token-hp-maximum]',0,9999),tempHp:read('[data-token-temp-hp]',0,9999),ac:read('[data-token-ac]',10,999),lifeStatus:menu.querySelector('[data-token-life-status]')?.value||'Alive'};
-   if(!['Alive','Unconscious','Dead'].includes(next.lifeStatus))next.lifeStatus='Alive';
-   const prev=t.status&&typeof t.status==='object'?t.status:{hpCurrent:0,hpMaximum:0,tempHp:0,ac:10,lifeStatus:'Alive'};
-   if(Object.keys(next).every(k=>Number(prev[k]??(k==='ac'?10:k==='lifeStatus'?'Alive':0))===Number(next[k])||prev[k]===next[k]))return;
-   recordUndo();t.status=next;saveSceneToBrowser();updateSelectionInfo();if(sceneSaveStatus)sceneSaveStatus.textContent='Status updated for '+(t.name||'token')+'.';return;
-  }
   const conditionApply=e.target.closest('[data-token-condition-apply]'),conditionRemove=e.target.closest('[data-token-condition-remove]');
   if(conditionApply||conditionRemove){
    const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!isGM()||t.locked)return;
