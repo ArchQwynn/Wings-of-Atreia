@@ -307,3 +307,7 @@
 /* Token identity submenu controls */
 .object-context-menu [data-token-border-color]{width:100%;height:38px;padding:3px;border:1px solid var(--line);border-radius:7px;background:#0d1626;cursor:pointer}
 .object-context-menu [data-token-name]{width:100%;min-width:0;border:1px solid var(--line);background:#0d1626;color:var(--text);border-radius:7px;padding:8px;font:inherit}
+
+
+/* GM-only token Status submenu */
+.context-status-note{display:block;padding:3px 6px 6px;color:var(--muted);font-size:.66rem;line-height:1.4}.context-menu-label input[type="number"]{width:100%;padding:7px;border:1px solid var(--line);border-radius:6px;background:#0d1626;color:var(--text);font:inherit;font-size:.75rem}
