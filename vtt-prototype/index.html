@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
   <title>Wings of Atreia VTT — Prototype</title>
-  <link rel="stylesheet" href="style.css?v=20261031-6">
+  <link rel="stylesheet" href="style.css?v=20261031-7">
 </head>
 <body>
   <div id="object-context-menu" class="object-context-menu" role="menu" hidden>
@@ -47,6 +47,12 @@
       <div class="hud bottom-left" id="selection">Select a standee</div>
       <div class="hud movement-readout" id="movement-readout">Horizontal movement: — · Adjust altitude separately</div>
       <div class="altitude" id="altitude">Altitude: —</div>
+      <div id="gm-note-hover" class="gm-note-hover" hidden></div>
+      <div id="gm-note-popup" class="gm-note-popup" hidden>
+        <div class="gm-note-popup-heading"><strong>GM Map Note</strong><button type="button" id="gm-note-close" aria-label="Collapse note">×</button></div>
+        <textarea id="gm-note-text" rows="6" maxlength="5000" placeholder="Write a private preparation note..."></textarea>
+        <div class="gm-note-popup-actions"><button type="button" id="gm-note-save">Save Note</button><button type="button" id="gm-note-clear">Clear Text</button><button type="button" id="gm-note-delete" class="danger">Delete Pin</button></div>
+      </div>
     </section>
 
     <aside class="panel">
@@ -299,11 +305,19 @@
       </section>
 
       <p class="note">This prototype is intentionally graphics-light. Tokens are lightweight camera-facing circles and all rendering happens on the player's device.</p>
+      <section>
+        <div class="eyebrow">GM NOTES & PINS · GM</div>
+        <div class="token-editor gm-notes-tools">
+          <button type="button" data-action="gm-note-pin-toggle" aria-pressed="false">＋ Place GM Note Pin</button>
+          <p class="note">Place a small private pin at the center of a 5-ft grid cell. Hover to preview its note; click to open or collapse it. Only the GM can see or edit these pins.</p>
+          <div id="gm-note-status" class="note" aria-live="polite">No note pin selected.</div>
+        </div>
+      </section>
     </aside>
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept<br><strong>Clark Michael Zafra</strong></footer>
-  <script src="app.js?v=20261031-10"></script>
+  <script src="app.js?v=20261031-11"></script>
   <script src="overlay.js?v=20261028-12"></script>
 
   <script id="woa-panel-organization">
@@ -346,6 +360,7 @@
         { title: 'Conditions', headings: ['CONDITIONS'] },
         { title: 'Class Resource', headings: ['CLASS RESOURCE'] },
         { title: 'Battlefield Editor', headings: ['TERRAIN EDITOR · GM', 'BATTLEFIELD MAP · GM'] },
+        { title: 'GM Notes & Pins', headings: ['GM NOTES & PINS · GM'] },
         { title: 'Scene Management', headings: ['BATTLEFIELD SAVE / LOAD', 'TEST STATUS'] }
       ];
 
