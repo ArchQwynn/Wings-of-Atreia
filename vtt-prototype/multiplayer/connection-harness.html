@@ -329,6 +329,7 @@ function handleIncoming(conn){
    if(!state.approved.has(conn.peer)){log('Ignored '+msg.type+' from a peer that has not been approved.');return}
    const player=state.approved.get(conn.peer);
    if(player.conn!==conn||!conn.open){log('Ignored message from a stale or disconnected connection.');return}
+   if(msg.type==='ACTION_REQUEST'){log('ACTION_REQUEST received from '+player.name+'; message ID '+msg.messageId+'.')}
    if(msg.type==='ACTION_REQUEST'&&msg.payload&&msg.payload.kind==='old-generation-diagnostic'){
     log('Received outdated-generation diagnostic from '+(state.approved.get(conn.peer)?.name||conn.peer)+': message generation '+msg.hostGeneration+', current generation '+state.hostGeneration+'.');
    }
@@ -340,7 +341,7 @@ function handleIncoming(conn){
     if(msg.type==='ACTION_REQUEST'&&msg.payload&&msg.payload.kind==='stale-revision-diagnostic')log('Stale-revision diagnostic rejected by the authority guard; it will not enter the test request queue.');
     return;
    }
-   if(state.seenMessageIds.has(msg.messageId)){log('Ignored duplicate message ID from '+player.name+'.');return}
+   if(state.seenMessageIds.has(msg.messageId)){log('DUPLICATE CONFIRMED: ignored repeated message ID from '+player.name+'.');sendError(conn,'Duplicate message ID ignored: '+msg.messageId);return}
    state.seenMessageIds.add(msg.messageId);
    if(msg.type==='PING'){send(conn,'PONG',{at:Date.now()},state.revision);setLast('PING from '+player.name);return}
    if(msg.type==='PONG'){player.lastPongAt=Date.now();setLast('PONG from '+player.name);log('PONG received from '+player.name+'.');return}
@@ -464,7 +465,7 @@ function connectToHost(name,isRetry){
    startPlayerHeartbeat();state.role='player';setStatus('Connected','good');setPlayerStatus('Approved by GM','good');$('requestResult').textContent='You are approved. You may send a harmless test request.';showSession('player');log('GM approved the join request.');setLast('JOIN_ACCEPTED received');try{send(conn,'STATE_SNAPSHOT_REQUEST',{requestedAt:Date.now()})}catch(_){}return;
   }
   if(msg.type==='JOIN_REJECTED'){state.playerApproved=false;state.playerReconnectActive=false;state.playerConnectInProgress=false;if(state.playerReconnectTimer!==null){clearInterval(state.playerReconnectTimer);state.playerReconnectTimer=null;}setStatus('Join rejected','bad');setPlayerStatus('The GM rejected this attempt','bad');log('GM rejected the join request. Automatic reconnection stopped because the GM rejected the request.');return}
-  if(msg.type==='ERROR'){log('Host error: '+String(msg.payload.message||'Unknown error'));$('startupMessage').textContent=String(msg.payload.message||'Host error');$('joinButton').disabled=false;return}
+  if(msg.type==='ERROR'){const hostMessage=String(msg.payload.message||'Unknown error');log('Host error: '+hostMessage);$('startupMessage').textContent=hostMessage;$('joinButton').disabled=false;return}
   if(!state.playerApproved){log('Ignored '+msg.type+' before GM approval.');return}
   if(!checkHostMessage(msg))return;
   if(msg.type==='PING'){state.playerLastHostPingAt=Date.now();try{send(conn,'PONG',{at:Date.now()},msg.revision)}catch(error){log('Could not answer host heartbeat: '+error.message)}return}
