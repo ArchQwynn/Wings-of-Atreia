@@ -522,8 +522,10 @@ function updateSelectionInfo(){
   const resources=CLASS_RESOURCE_DEFS[token.className]||[],resourceValues=normalizeClassResource(token.className,token.classResource),resourceText=token.className==='Assassin'?'Rune Marks: '+runeMarksForAssassin(token.id).length+' / 3 targets':resources.length?resources.map(resource=>resource+': '+resourceValues[resource].current+' / '+resourceValues[resource].maximum).join(' · '):'No class resource';
   const conditions=normalizeTokenConditions(token.conditions),statusText=conditions.length?conditions.map(condition=>condition.name+(condition.durationType==='until-removed'?'':' ('+condition.remaining+' '+(condition.durationType==='turn'?'turn(s)':'round(s)')+')')).join(', '):'None';
   const runeText=normalizeRuneMarks(token.runeMarks).map(mark=>{const assassin=state.tokens.find(t=>t.id===mark.assassinId);return(assassin?.name||'Unknown Assassin')+' × '+mark.count}).join(' · ');
-  const gmStatus= isGM() ? (token.status&&typeof token.status==='object'?token.status:{}) : null;
-  const privateStatusText=gmStatus?'\nHP: '+(Number(gmStatus.hpCurrent)||0)+' / '+(Number(gmStatus.hpMaximum)||0)+' · Temp HP: '+(Number(gmStatus.tempHp)||0)+' · AC: '+(Number.isFinite(Number(gmStatus.ac))?Number(gmStatus.ac):10)+' · Life: '+(['Alive','Unconscious','Dead'].includes(gmStatus.lifeStatus)?gmStatus.lifeStatus:'Alive'):'';
+  const playerAssignedVitals=token.assignment==='all'||(token.assignment==='specific'&&(token.players||[]).some(name=>name.trim().toLowerCase()===currentPlayer()));
+  const canViewVitals=isGM()||playerAssignedVitals;
+  const visibleStatus=canViewVitals?(token.status&&typeof token.status==='object'?token.status:{}):null;
+  const privateStatusText=visibleStatus?'\nHP: '+(Number(visibleStatus.hpCurrent)||0)+' / '+(Number(visibleStatus.hpMaximum)||0)+' · Temp HP: '+(Number(visibleStatus.tempHp)||0)+' · AC: '+(Number.isFinite(Number(visibleStatus.ac))?Number(visibleStatus.ac):10)+' · Life: '+(['Alive','Unconscious','Dead'].includes(visibleStatus.lifeStatus)?visibleStatus.lifeStatus:'Alive'):'';
   selectionEl.hidden=false;selectionEl.textContent=(token.name||'Unnamed Token')+' · Token'+(token.locked?' · 🔒 LOCKED':'')+'\nX: '+x+' ft · Y: '+y+' ft · Overall altitude: '+overall+' ft\nResources: '+resourceText+'\nConditions: '+statusText+privateStatusText+(runeText?'\nRune Marks: '+runeText:'');
  }else{selectionEl.hidden=true;selectionEl.textContent=''}
 }
