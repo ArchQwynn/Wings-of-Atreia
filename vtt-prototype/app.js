@@ -44,7 +44,12 @@ function setupObjectContextMenu(){
   if(conditionApply)conditionApply.disabled=!isGM()||!conditionSelect?.value||!!t.locked;
   if(conditionList){conditionList.replaceChildren();if(!active.length){const empty=document.createElement('small');empty.textContent='No active Conditions.';conditionList.appendChild(empty)}else active.forEach(condition=>{const row=document.createElement('div');row.className='context-condition-row';const label=document.createElement('span');label.textContent=condition.name+' · '+(condition.durationType==='until-removed'?'Until removed':condition.remaining+' '+(condition.durationType==='turn'?'turn(s)':'round(s)'));const remove=document.createElement('button');remove.type='button';remove.textContent='×';remove.title='Remove '+condition.name;remove.dataset.tokenConditionRemove=condition.name;remove.disabled=!!t.locked;row.append(label,remove);conditionList.appendChild(row)})}
  };
+ menu.addEventListener('pointerover',e=>{const row=e.target.closest('.context-submenu');if(!row||e.pointerType==='touch')return;menu.querySelectorAll('.context-submenu.is-open').forEach(el=>{if(el!==row)el.classList.remove('is-open')});row.classList.add('is-open')});
+ menu.addEventListener('pointerleave',()=>menu.querySelectorAll('.context-submenu.is-open').forEach(el=>el.classList.remove('is-open')));
  menu.addEventListener('click',e=>{
+  const trigger=e.target.closest('[data-submenu-trigger]');
+  if(trigger){const row=trigger.closest('.context-submenu');if(row){const open=row.classList.contains('is-open');menu.querySelectorAll('.context-submenu.is-open').forEach(el=>el.classList.remove('is-open'));if(!open)row.classList.add('is-open')}return}
+
   const conditionApply=e.target.closest('[data-token-condition-apply]'),conditionRemove=e.target.closest('[data-token-condition-remove]');
   if(conditionApply||conditionRemove){
    const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!isGM()||t.locked)return;
