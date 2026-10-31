@@ -195,12 +195,18 @@
       <h2 style="margin-top:22px">Connected participants</h2>
       <div class="muted small" id="capacitySummary">Players: 0 / 25</div>
       <div id="connectedPlayers" class="muted small">No approved participants connected.</div>
+      <h2 style="margin-top:22px">Authority diagnostics</h2>
+      <p class="muted small">Send a harmless simulated update using an outdated host generation. Approved players should reject it.</p>
+      <button id="sendOldGenerationToPlayers" class="danger">Send outdated-generation test update</button>
     </div>
     <div id="playerTools" class="hidden">
       <h2 style="margin-top:18px">Connection checks</h2>
       <p class="muted small">Send a harmless test request. The GM can approve or reject it. This does not change any game data.</p>
       <button id="sendTestRequest" class="primary">Send test request to GM</button>
       <p id="requestResult" class="muted small"></p>
+      <h2 style="margin-top:22px">Authority diagnostics</h2>
+      <p class="muted small">Send a harmless simulated request using an outdated host generation. The GM should reject it.</p>
+      <button id="sendOldGenerationToGM" class="danger">Send outdated-generation test request</button>
     </div>
     <div class="grid" style="margin-top:18px">
       <div class="panel" style="margin:0"><div class="muted small">Authoritative test revision</div><div class="counter" id="revisionValue">0</div><div class="muted small">Only advances after a GM-approved test request.</div></div>
@@ -234,6 +240,7 @@ function setStatus(text,kind){$('connectionStatus').textContent=text;$('connecti
 function setPlayerStatus(text,kind){$('playerState').textContent=text;$('playerState').className='status '+(kind||'')}
 function showSession(role){$('startPanel').classList.add('hidden');$('sessionPanel').classList.remove('hidden');state.role=role;$('roleTitle').textContent=role==='gm'?'GM test console':'Player test console';$('sessionHint').textContent=role==='gm'?'You are the session host. Approve every join request below.':'You are connected as a player. This is an isolated test; no actual tabletop is loaded.';$('inviteArea').classList.toggle('hidden',role!=='gm');$('gmArea').classList.toggle('hidden',role!=='gm');$('playerStatus').classList.toggle('hidden',role==='gm');$('playerTools').classList.toggle('hidden',role==='gm');$('testQueuePanel').classList.toggle('hidden',role!=='gm')}
 function message(type,payload,revision=state.revision){return F.createMessage(type,payload,{hostGeneration:state.hostGeneration,revision})}
+function messageWithGeneration(type,payload,hostGeneration,revision=state.revision){return F.createMessage(type,payload,{hostGeneration,revision})}
 function send(conn,type,payload,revision=state.revision){if(!conn||!conn.open)throw new Error('Connection is not open.');conn.send(message(type,payload,revision))}
 function receive(conn,data,handler){let msg;try{msg=typeof data==='string'?JSON.parse(data):data}catch(_){log('Ignored malformed JSON message.');return}const valid=F.validateMessage(msg);if(!valid.ok){log('Rejected invalid envelope: '+valid.error);return}handler(msg,conn)}
 function renderJoinQueue(){
@@ -467,6 +474,29 @@ $('sendTestRequest').addEventListener('click',()=>{
  const conn=state.playerConnection;if(!state.playerApproved||!conn||!conn.open){$('requestResult').textContent='Wait for GM approval and an active connection first.';return}
  const id='test-'+Date.now().toString(36)+'-'+(++state.requestCounter);
  try{send(conn,'ACTION_REQUEST',{requestId:id,kind:'safe-connectivity-test',createdAt:Date.now()});$('requestResult').textContent='Test request sent. Waiting for GM decision.';log('Sent harmless test request '+id+'.')}catch(error){$('requestResult').textContent=error.message}
+});
+$('sendOldGenerationToGM').addEventListener('click',()=>{
+ const conn=state.playerConnection;
+ if(!state.playerApproved||!conn||!conn.open){log('Old-generation test not sent: wait for GM approval and an active connection.');return}
+ const oldGeneration=Math.max(0,state.hostGeneration-1);
+ const id='oldgen-player-'+Date.now().toString(36)+'-'+(++state.requestCounter);
+ try{
+  conn.send(messageWithGeneration('ACTION_REQUEST',{requestId:id,kind:'old-generation-diagnostic',createdAt:Date.now()},oldGeneration,state.revision));
+  log('Sent diagnostic ACTION_REQUEST with outdated host generation '+oldGeneration+' (current '+state.hostGeneration+'). GM should reject it.');
+ }catch(error){log('Could not send old-generation diagnostic: '+error.message)}
+});
+$('sendOldGenerationToPlayers').addEventListener('click',()=>{
+ if(state.role!=='gm'||state.approved.size===0){log('Old-generation test not sent: no approved players are connected.');return}
+ const oldGeneration=Math.max(0,state.hostGeneration-1);
+ let sent=0;
+ for(const player of state.approved.values()){
+  if(!player.conn.open)continue;
+  try{
+   player.conn.send(messageWithGeneration('STATE_UPDATE',{testOnly:true,diagnostic:'old-host-generation'},oldGeneration,state.revision));
+   sent+=1;
+  }catch(error){log('Could not send old-generation diagnostic to '+player.name+': '+error.message)}
+ }
+ log('Sent outdated-generation STATE_UPDATE to '+sent+' approved player(s), using generation '+oldGeneration+' (current '+state.hostGeneration+'). Each player should reject it.');
 });
 $('reconnectButton').addEventListener('click',()=>{
  const name=$('nameInput').value.trim()||state.playerName||'Player';$('reconnectButton').disabled=true;
