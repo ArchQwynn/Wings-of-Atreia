@@ -38,6 +38,12 @@ function setupObjectContextMenu(){
   const altitude=menu.querySelector('[data-token-altitude-slider]');if(altitude){altitude.value=String(Math.max(0,Math.min(MAX_ALTITUDE,Number(t.z)||0)));altitude.disabled=!!t.locked}
   if(value)value.disabled=!!t.locked;
   const readout=menu.querySelector('[data-token-altitude]');if(readout)readout.textContent=(Number(t.z)||0)+' ft';
+  const classSelect=menu.querySelector('[data-token-class]'),accessSelect=menu.querySelector('[data-token-assignment]'),playersInput=menu.querySelector('[data-token-players]'),playersWrap=menu.querySelector('[data-token-players-wrap]');
+  if(classSelect){classSelect.value=CLASS_RESOURCE_DEFS[t.className]?t.className:'';classSelect.disabled=!isGM()||!!t.locked}
+  if(accessSelect){accessSelect.value=t.visibility==='gm'||t.assignment==='gm'?'gm':['specific','all','unassigned'].includes(t.assignment)?t.assignment:'all';accessSelect.disabled=!isGM()||!!t.locked}
+  if(playersInput)playersInput.value=(t.players||[]).join(', ');
+  if(playersWrap)playersWrap.hidden=accessSelect?.value!=='specific';
+  if(playersInput)playersInput.disabled=!isGM()||!!t.locked;
   const conditionSelect=menu.querySelector('[data-token-condition-select]'),conditionList=menu.querySelector('[data-token-condition-list]'),conditionApply=menu.querySelector('[data-token-condition-apply]');
   const active=normalizeTokenConditions(t.conditions);
   if(conditionSelect){const selected=conditionSelect.value;[...conditionSelect.options].forEach(option=>{if(option.value)option.disabled=active.some(c=>c.name===option.value)});if(selected&&active.some(c=>c.name===selected))conditionSelect.value='';}
@@ -100,9 +106,33 @@ function setupObjectContextMenu(){
  });
  altitudeSlider?.addEventListener('change',()=>{delete altitudeSlider.dataset.undoRecorded});
  menu.querySelector('[data-token-size]')?.addEventListener('change',e=>{
-  const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!canControlToken(t)||t.locked)return;
+  const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!isGM()||t.locked)return;
   const next=Math.max(1,Math.min(4,Number(e.target.value)||1));if(next===(Number(t.footprint)||1))return;
   recordUndo();t.footprint=next;list();select(t.id);saveSceneToBrowser();if(sceneSaveStatus)sceneSaveStatus.textContent=t.name+' size changed to '+next+'×'+next+' squares.';
+ });
+ menu.querySelector('[data-token-class]')?.addEventListener('change',e=>{
+  const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!isGM()||t.locked)return;
+  const next=CLASS_RESOURCE_DEFS[e.target.value]?e.target.value:'';
+  if((t.className||'')===next)return;
+  recordUndo();const wasAssassin=t.className==='Assassin';t.className=next;t.classResource=normalizeClassResource(next,t.classResource);
+  if(wasAssassin&&next!=='Assassin'){state.tokens.forEach(target=>{target.runeMarks=normalizeRuneMarks(target.runeMarks).filter(mark=>mark.assassinId!==t.id)});if(runeMarkModeAssassinId===t.id)runeMarkModeAssassinId=null}
+  list();select(t.id);saveSceneToBrowser();refreshTokenMenu(t);if(sceneSaveStatus)sceneSaveStatus.textContent=(next||'No class')+' assigned to '+(t.name||'token')+'.';
+ });
+ menu.querySelector('[data-token-assignment]')?.addEventListener('change',e=>{
+  const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!isGM()||t.locked)return;
+  const next=['gm','all','unassigned','specific'].includes(e.target.value)?e.target.value:'all';
+  const playersWrap=menu.querySelector('[data-token-players-wrap]');if(playersWrap)playersWrap.hidden=next!=='specific';
+  if(t.assignment===next&&(next!=='gm'||t.visibility==='gm'))return;
+  recordUndo();t.assignment=next;t.visibility=next==='gm'?'gm':'players';
+  list();select(t.id);saveSceneToBrowser();refreshTokenMenu(t);
+  if(sceneSaveStatus)sceneSaveStatus.textContent='Token access set to '+assignmentLabel(t)+'.';
+ });
+ menu.querySelector('[data-token-players]')?.addEventListener('change',e=>{
+  const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!isGM()||t.locked||t.assignment!=='specific')return;
+  const players=[...new Set(e.target.value.split(',').map(name=>name.trim()).filter(Boolean))].slice(0,50);
+  if(JSON.stringify(players)===JSON.stringify(t.players||[]))return;
+  recordUndo();t.players=players;list();select(t.id);saveSceneToBrowser();refreshTokenMenu(t);
+  if(sceneSaveStatus)sceneSaveStatus.textContent=players.length?'Specific access assigned to: '+players.join(', ')+'.':'Specific access selected; no player names assigned yet.';
  });
  document.addEventListener('pointerdown',e=>{if(!menu.contains(e.target))hideObjectContextMenu()});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(runeMarkModeAssassinId){const source=state.tokens.find(t=>t.id===runeMarkModeAssassinId);runeMarkModeAssassinId=null;if(source)updateClassResourcePanel(source)}pendingAttachmentAction=null;hideObjectContextMenu();if(sceneSaveStatus)sceneSaveStatus.textContent='Object action cancelled.'}});
