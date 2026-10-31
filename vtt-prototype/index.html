@@ -114,6 +114,13 @@
         </div>
       </section>
       <section>
+        <div class="eyebrow">CLASS RESOURCE</div>
+        <div class="token-editor class-resource-panel" aria-live="polite">
+          <strong id="class-resource-token-name">No token selected</strong>
+          <div id="class-resource-fields" class="class-resource-fields">Select a token to view its class resource.</div>
+        </div>
+      </section>
+      <section>
         <div class="eyebrow">TERRAIN EDITOR · GM</div>
         <div class="token-editor terrain-editor">
           <label>Terrain type
@@ -240,7 +247,10 @@
                 <option value="4">4×4 · 20 ft</option>
               </select>
             </label>
-            <label>Access
+            <label>Class
+              <select id="token-class"><option value="">No Class Assigned</option><option>Gladiator</option><option>Templar</option><option>Assassin</option><option>Ranger</option><option>Sorcerer</option><option>Spiritmaster</option><option>Cleric</option><option>Chanter</option><option>Aethertech</option><option>Gunslinger</option><option>Songweaver</option></select>
+          </label>
+          <label>Access
               <select id="token-assignment">
                 <option value="all">All Players</option>
                 <option value="unassigned">Unassigned</option>
@@ -293,7 +303,7 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept<br><strong>Clark Michael Zafra</strong></footer>
-  <script src="app.js?v=20261031-5"></script>
+  <script src="app.js?v=20261031-6"></script>
   <script src="overlay.js?v=20261028-12"></script>
 
   <script id="woa-panel-organization">
@@ -334,6 +344,7 @@
         { title: 'Access', headings: ['LOCAL PLAYER / GM PREVIEW'], open: true },
         { title: 'Tokens & Standees', headings: ['STANDEES', 'TOKEN MANAGEMENT', 'PROPS & ASSETS · GM'], tokenManagement: true },
         { title: 'Conditions', headings: ['CONDITIONS'] },
+        { title: 'Class Resource', headings: ['CLASS RESOURCE'] },
         { title: 'Battlefield Editor', headings: ['TERRAIN EDITOR · GM', 'BATTLEFIELD MAP · GM'] },
         { title: 'Scene Management', headings: ['BATTLEFIELD SAVE / LOAD', 'TEST STATUS'] }
       ];
