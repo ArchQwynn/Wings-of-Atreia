@@ -303,3 +303,7 @@
 
 /* Desktop-style cascading context menu. */
 .object-context-menu{overflow:visible;max-height:none}.context-submenu{position:relative}.context-submenu-trigger{display:flex;align-items:center;justify-content:space-between;gap:20px;width:100%;text-align:left}.context-submenu-trigger span{margin-left:auto;color:var(--muted);font-size:1.05rem}.context-submenu-panel{display:none;position:absolute;z-index:1002;left:calc(100% - 2px);top:-5px;width:258px;max-height:min(70vh,520px);overflow-y:auto;padding:9px;border:1px solid var(--line);border-radius:9px;background:#111b2b;box-shadow:0 12px 32px rgba(0,0,0,.48)}.context-submenu.is-open>.context-submenu-panel{display:block}.context-submenu-panel .token-context-tools{display:grid;gap:8px}.context-submenu-panel .context-menu-heading{margin-top:2px}.context-submenu-disabled .context-submenu-trigger{opacity:.5;cursor:not-allowed}.context-submenu-disabled .context-submenu-trigger span{visibility:hidden}@media(hover:none),(pointer:coarse){.context-submenu-panel{position:static;width:100%;max-height:45vh;margin:4px 0 6px;box-shadow:none}.context-submenu.is-open>.context-submenu-panel{display:block}}
+
+/* Token identity submenu controls */
+.object-context-menu [data-token-border-color]{width:100%;height:38px;padding:3px;border:1px solid var(--line);border-radius:7px;background:#0d1626;cursor:pointer}
+.object-context-menu [data-token-name]{width:100%;min-width:0;border:1px solid var(--line);background:#0d1626;color:var(--text);border-radius:7px;padding:8px;font:inherit}
