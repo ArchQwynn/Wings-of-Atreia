@@ -209,6 +209,7 @@
       <h2>Authority diagnostics</h2>
       <p class="muted small">Send a harmless simulated request using an outdated host generation. The GM should reject it.</p>
       <button id="sendOldGenerationToGM" class="danger">Send outdated-generation test request</button>
+      <button id="sendStaleRevisionToGM" class="danger" style="margin-top:8px">Send stale-revision test request</button>
     </div>
     <div class="grid" style="margin-top:18px">
       <div class="panel" style="margin:0"><div class="muted small">Authoritative test revision</div><div class="counter" id="revisionValue">0</div><div class="muted small">Only advances after a GM-approved test request.</div></div>
@@ -329,8 +330,12 @@ function handleIncoming(conn){
    if(msg.type==='ACTION_REQUEST'&&msg.payload&&msg.payload.kind==='old-generation-diagnostic'){
     log('Received outdated-generation diagnostic from '+(state.approved.get(conn.peer)?.name||conn.peer)+': message generation '+msg.hostGeneration+', current generation '+state.hostGeneration+'.');
    }
+   if(msg.type==='ACTION_REQUEST'&&msg.payload&&msg.payload.kind==='stale-revision-diagnostic'){
+    log('Received stale-revision diagnostic from '+(state.approved.get(conn.peer)?.name||conn.peer)+': message revision '+msg.revision+', current revision '+state.revision+'.');
+   }
    if(!checkHostMessage(msg)){
     if(msg.type==='ACTION_REQUEST'&&msg.payload&&msg.payload.kind==='old-generation-diagnostic')log('Outdated-generation diagnostic rejected; it will not enter the test request queue.');
+    if(msg.type==='ACTION_REQUEST'&&msg.payload&&msg.payload.kind==='stale-revision-diagnostic')log('Stale-revision diagnostic rejected by the authority guard; it will not enter the test request queue.');
     return;
    }
    if(state.seenMessageIds.has(msg.messageId)){log('Ignored duplicate message ID from '+player.name+'.');return}
@@ -492,6 +497,17 @@ $('sendOldGenerationToGM').addEventListener('click',()=>{
   conn.send(messageWithGeneration('ACTION_REQUEST',{requestId:id,kind:'old-generation-diagnostic',createdAt:Date.now()},oldGeneration,state.revision));
   log('Sent diagnostic ACTION_REQUEST with outdated host generation '+oldGeneration+' (current '+state.hostGeneration+'). GM should reject it.');
  }catch(error){log('Could not send old-generation diagnostic: '+error.message)}
+});
+$('sendStaleRevisionToGM').addEventListener('click',()=>{
+ const conn=state.playerConnection;
+ if(!state.playerApproved||!conn||!conn.open){log('Stale-revision test not sent: wait for GM approval and an active connection.');return}
+ if(state.revision<1){log('Stale-revision test requires revision 1 or higher. First send a normal test request and have the GM approve it.');return}
+ const staleRevision=state.revision-1;
+ const id='stale-rev-player-'+Date.now().toString(36)+'-'+(++state.requestCounter);
+ try{
+  conn.send(messageWithGeneration('ACTION_REQUEST',{requestId:id,kind:'stale-revision-diagnostic',createdAt:Date.now()},state.hostGeneration,staleRevision));
+  log('Sent diagnostic ACTION_REQUEST with stale revision '+staleRevision+' (current '+state.revision+'). GM should reject it.');
+ }catch(error){log('Could not send stale-revision diagnostic: '+error.message)}
 });
 $('sendOldGenerationToPlayers').addEventListener('click',()=>{
  if(state.role!=='gm'||state.approved.size===0){log('Old-generation test not sent: no approved players are connected.');return}
