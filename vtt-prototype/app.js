@@ -35,7 +35,7 @@ function setupObjectContextMenu(){
   const value=menu.querySelector('[data-token-size]');if(value)value.value=String(Math.max(1,Math.min(4,Number(t.footprint)||1)));
   menu.querySelectorAll('[data-token-slot]').forEach(button=>{const slot=Number(button.dataset.tokenSlot),saved=!!t.imageSlots?.[slot];button.disabled=!saved||!!t.locked;button.textContent='Use Image '+(slot+1)+(saved?'':' · Empty')});
   const swap=menu.querySelector('[data-token-action="swap-image"]');if(swap)swap.disabled=!!t.locked;
-  menu.querySelectorAll('[data-token-action^="altitude-"]').forEach(button=>button.disabled=!!t.locked);
+  const altitude=menu.querySelector('[data-token-altitude-slider]');if(altitude){altitude.value=String(Math.max(0,Math.min(MAX_ALTITUDE,Number(t.z)||0)));altitude.disabled=!!t.locked}
   if(value)value.disabled=!!t.locked;
   const readout=menu.querySelector('[data-token-altitude]');if(readout)readout.textContent=(Number(t.z)||0)+' ft';
  };
@@ -46,11 +46,7 @@ function setupObjectContextMenu(){
    const action=tokenButton.dataset.tokenAction;
    if(tokenButton.dataset.tokenSlot!==undefined){const slot=tokenButton.dataset.tokenSlot;hideObjectContextMenu();document.querySelector('[data-image-slot-action="token-use"][data-image-slot="'+slot+'"]')?.click();return}
    if(action==='swap-image'){hideObjectContextMenu();tokenImageFileEl?.click();return}
-   if(action==='altitude-up'||action==='altitude-down'){
-    if(!canControlToken(t)||t.locked)return;
-    const next=Math.max(0,Math.min(MAX_ALTITUDE,(Number(t.z)||0)+(action==='altitude-up'?ALTITUDE_STEP:-ALTITUDE_STEP)));if(next===(Number(t.z)||0))return;
-    recordUndo();changeGroupAltitude('token',t.id,next);list();select(t.id);saveSceneToBrowser();if(sceneSaveStatus)sceneSaveStatus.textContent=t.name+' altitude set to '+t.z+' ft.';refreshTokenMenu(t);return;
-   }
+
   }
   const button=e.target.closest('button[data-object-action]');if(!button)return;
   const key=menu.dataset.objectKey,action=button.dataset.objectAction,obj=objectFromKey(key);hideObjectContextMenu();if(!obj)return;
@@ -61,6 +57,16 @@ function setupObjectContextMenu(){
    saveSceneToBrowser();if(sceneSaveStatus)sceneSaveStatus.textContent='Renamed object to '+name+'.';
   }else if(action==='attach'||action==='detach')setAttachmentMode(action,key);
  });
+ const altitudeSlider=menu.querySelector('[data-token-altitude-slider]');
+ altitudeSlider?.addEventListener('input',e=>{
+  const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!canControlToken(t)||t.locked)return;
+  const next=Math.max(0,Math.min(MAX_ALTITUDE,Math.round(Number(e.target.value)/ALTITUDE_STEP)*ALTITUDE_STEP));
+  if(next===(Number(t.z)||0))return;
+  if(!altitudeSlider.dataset.undoRecorded){recordUndo();altitudeSlider.dataset.undoRecorded='1'}
+  changeGroupAltitude('token',t.id,next);list();select(t.id);saveSceneToBrowser();
+  const readout=menu.querySelector('[data-token-altitude]');if(readout)readout.textContent=t.z+' ft';
+ });
+ altitudeSlider?.addEventListener('change',()=>{delete altitudeSlider.dataset.undoRecorded});
  menu.querySelector('[data-token-size]')?.addEventListener('change',e=>{
   const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!canControlToken(t)||t.locked)return;
   const next=Math.max(1,Math.min(4,Number(e.target.value)||1));if(next===(Number(t.footprint)||1))return;
