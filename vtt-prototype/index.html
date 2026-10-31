@@ -9,6 +9,28 @@
 </head>
 <body>
   <div id="object-context-menu" class="object-context-menu" role="menu" hidden>
+    <div class="token-context-tools" data-token-tools hidden>
+      <div class="context-menu-heading">TOKEN QUICK CONTROLS</div>
+      <div class="context-menu-row"><span>Altitude</span><strong data-token-altitude>— ft</strong></div>
+      <div class="context-menu-actions">
+        <button type="button" data-token-action="altitude-down" aria-label="Lower altitude by 5 feet">− 5 ft</button>
+        <button type="button" data-token-action="altitude-up" aria-label="Raise altitude by 5 feet">+ 5 ft</button>
+      </div>
+      <label class="context-menu-label">Size
+        <select data-token-size aria-label="Token size">
+          <option value="1">1×1 · 5 ft</option><option value="2">2×2 · 10 ft</option>
+          <option value="3">3×3 · 15 ft</option><option value="4">4×4 · 20 ft</option>
+        </select>
+      </label>
+      <button type="button" data-token-action="swap-image">Swap Image…</button>
+      <div class="context-menu-heading">SAVED IMAGES</div>
+      <div class="context-menu-actions">
+        <button type="button" data-token-slot="0">Use Image 1</button>
+        <button type="button" data-token-slot="1">Use Image 2</button>
+        <button type="button" data-token-slot="2">Use Image 3</button>
+      </div>
+      <div class="context-menu-divider"></div>
+    </div>
     <button type="button" data-object-action="rename" role="menuitem">Rename</button>
     <button type="button" data-object-action="attach" role="menuitem">Attach to…</button>
     <button type="button" data-object-action="detach" role="menuitem">Detach from…</button>
