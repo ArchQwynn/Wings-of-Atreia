@@ -204,7 +204,9 @@
       <p class="muted small">Send a harmless test request. The GM can approve or reject it. This does not change any game data.</p>
       <button id="sendTestRequest" class="primary">Send test request to GM</button>
       <p id="requestResult" class="muted small"></p>
-      <h2 style="margin-top:22px">Authority diagnostics</h2>
+    </div>
+    <div id="playerAuthorityDiagnostics" class="panel hidden" style="margin-top:18px">
+      <h2>Authority diagnostics</h2>
       <p class="muted small">Send a harmless simulated request using an outdated host generation. The GM should reject it.</p>
       <button id="sendOldGenerationToGM" class="danger">Send outdated-generation test request</button>
     </div>
@@ -238,7 +240,7 @@ let heartbeatTimer=null;
 function log(message){const el=$('log');const stamp=new Date().toLocaleTimeString();el.textContent+='\n['+stamp+'] '+message;el.scrollTop=el.scrollHeight}
 function setStatus(text,kind){$('connectionStatus').textContent=text;$('connectionStatus').className='status '+(kind||'')}
 function setPlayerStatus(text,kind){$('playerState').textContent=text;$('playerState').className='status '+(kind||'')}
-function showSession(role){$('startPanel').classList.add('hidden');$('sessionPanel').classList.remove('hidden');state.role=role;$('roleTitle').textContent=role==='gm'?'GM test console':'Player test console';$('sessionHint').textContent=role==='gm'?'You are the session host. Approve every join request below.':'You are connected as a player. This is an isolated test; no actual tabletop is loaded.';$('inviteArea').classList.toggle('hidden',role!=='gm');$('gmArea').classList.toggle('hidden',role!=='gm');$('playerStatus').classList.toggle('hidden',role==='gm');$('playerTools').classList.toggle('hidden',role==='gm');$('testQueuePanel').classList.toggle('hidden',role!=='gm')}
+function showSession(role){$('startPanel').classList.add('hidden');$('sessionPanel').classList.remove('hidden');state.role=role;$('roleTitle').textContent=role==='gm'?'GM test console':'Player test console';$('sessionHint').textContent=role==='gm'?'You are the session host. Approve every join request below.':'You are connected as a player. This is an isolated test; no actual tabletop is loaded.';$('inviteArea').classList.toggle('hidden',role!=='gm');$('gmArea').classList.toggle('hidden',role!=='gm');$('playerStatus').classList.toggle('hidden',role==='gm');$('playerTools').classList.toggle('hidden',role==='gm');$('playerAuthorityDiagnostics').classList.toggle('hidden',role==='gm');$('testQueuePanel').classList.toggle('hidden',role!=='gm')}
 function message(type,payload,revision=state.revision){return F.createMessage(type,payload,{hostGeneration:state.hostGeneration,revision})}
 function messageWithGeneration(type,payload,hostGeneration,revision=state.revision){return F.createMessage(type,payload,{hostGeneration,revision})}
 function send(conn,type,payload,revision=state.revision){if(!conn||!conn.open)throw new Error('Connection is not open.');conn.send(message(type,payload,revision))}
