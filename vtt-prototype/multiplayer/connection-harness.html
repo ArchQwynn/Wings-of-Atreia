@@ -321,7 +321,7 @@ function handleIncoming(conn){
     if(!capacityAvailable()){sendError(conn,'Player capacity is full (25).');log('Join request from '+name+' refused: player capacity is full.');try{conn.close()}catch(_){}return}
     if(state.seenJoinAttemptIds.has(attemptId)){sendError(conn,'Duplicate join attempt. Request a new attempt after reconnecting.');return}
     state.seenJoinAttemptIds.add(attemptId);
-    state.pending.set(conn.peer,{peerId:conn.peer,conn,name,attemptId});log('Join request received from '+name+' as '+role+'. GM approval required.');renderJoinQueue();renderConnected();return;
+    state.pending.set(conn.peer,{peerId:conn.peer,conn,name,attemptId});log('Join request received from '+name+' as player. GM approval required.');renderJoinQueue();renderConnected();return;
    }
    if(!state.approved.has(conn.peer)){log('Ignored '+msg.type+' from a peer that has not been approved.');return}
    const player=state.approved.get(conn.peer);
