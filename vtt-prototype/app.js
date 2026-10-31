@@ -38,8 +38,31 @@ function setupObjectContextMenu(){
   const altitude=menu.querySelector('[data-token-altitude-slider]');if(altitude){altitude.value=String(Math.max(0,Math.min(MAX_ALTITUDE,Number(t.z)||0)));altitude.disabled=!!t.locked}
   if(value)value.disabled=!!t.locked;
   const readout=menu.querySelector('[data-token-altitude]');if(readout)readout.textContent=(Number(t.z)||0)+' ft';
+  const conditionSelect=menu.querySelector('[data-token-condition-select]'),conditionList=menu.querySelector('[data-token-condition-list]'),conditionApply=menu.querySelector('[data-token-condition-apply]');
+  const active=normalizeTokenConditions(t.conditions);
+  if(conditionSelect){const selected=conditionSelect.value;[...conditionSelect.options].forEach(option=>{if(option.value)option.disabled=active.some(c=>c.name===option.value)});if(selected&&active.some(c=>c.name===selected))conditionSelect.value='';}
+  if(conditionApply)conditionApply.disabled=!isGM()||!conditionSelect?.value||!!t.locked;
+  if(conditionList){conditionList.replaceChildren();if(!active.length){const empty=document.createElement('small');empty.textContent='No active Conditions.';conditionList.appendChild(empty)}else active.forEach(condition=>{const row=document.createElement('div');row.className='context-condition-row';const label=document.createElement('span');label.textContent=condition.name+' · '+(condition.durationType==='until-removed'?'Until removed':condition.remaining+' '+(condition.durationType==='turn'?'turn(s)':'round(s)'));const remove=document.createElement('button');remove.type='button';remove.textContent='×';remove.title='Remove '+condition.name;remove.dataset.tokenConditionRemove=condition.name;remove.disabled=!!t.locked;row.append(label,remove);conditionList.appendChild(row)})}
  };
  menu.addEventListener('click',e=>{
+  const conditionApply=e.target.closest('[data-token-condition-apply]'),conditionRemove=e.target.closest('[data-token-condition-remove]');
+  if(conditionApply||conditionRemove){
+   const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!isGM()||t.locked)return;
+   const current=normalizeTokenConditions(t.conditions);
+   if(conditionApply){
+    const selectEl=menu.querySelector('[data-token-condition-select]'),typeEl=menu.querySelector('[data-token-condition-duration]'),countEl=menu.querySelector('[data-token-condition-count]'),name=selectEl?.value,type=typeEl?.value||'until-removed';
+    if(!APPROVED_CONDITIONS.includes(name)||current.some(c=>c.name===name))return;
+    const remaining=type==='until-removed'?null:Math.max(1,Math.min(99,Math.floor(Number(countEl?.value)||1)));
+    recordUndo();t.conditions=[...current,{name,durationType:['turn','round'].includes(type)?type:'until-removed',remaining}];
+    if(selectEl)selectEl.value='';
+    if(sceneSaveStatus)sceneSaveStatus.textContent=name+' applied to '+(t.name||'token')+'.';
+   }else{
+    const name=conditionRemove.dataset.tokenConditionRemove;if(!current.some(c=>c.name===name))return;
+    recordUndo();t.conditions=current.filter(c=>c.name!==name);
+    if(sceneSaveStatus)sceneSaveStatus.textContent=name+' removed from '+(t.name||'token')+'.';
+   }
+   saveSceneToBrowser();updateConditionsPanel(t);refreshTokenMenu(t);return;
+  }
   const tokenButton=e.target.closest('[data-token-action],[data-token-slot]');
   if(tokenButton){
    const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:'))return;
@@ -57,7 +80,11 @@ function setupObjectContextMenu(){
    saveSceneToBrowser();if(sceneSaveStatus)sceneSaveStatus.textContent='Renamed object to '+name+'.';
   }else if(action==='attach'||action==='detach')setAttachmentMode(action,key);
  });
- const altitudeSlider=menu.querySelector('[data-token-altitude-slider]');
+ const conditionSelect=menu.querySelector('[data-token-condition-select]'),conditionApply=menu.querySelector('[data-token-condition-apply]');
+  conditionSelect?.addEventListener('change',()=>{if(conditionApply)conditionApply.disabled=!isGM()||!conditionSelect.value||!!objectFromKey(menu.dataset.objectKey)?.locked;});
+  const conditionDuration=menu.querySelector('[data-token-condition-duration]'),conditionCountWrap=menu.querySelector('[data-token-condition-count-wrap]');
+  conditionDuration?.addEventListener('change',()=>{if(conditionCountWrap)conditionCountWrap.hidden=conditionDuration.value==='until-removed';});
+  const altitudeSlider=menu.querySelector('[data-token-altitude-slider]');
  altitudeSlider?.addEventListener('input',e=>{
   const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!canControlToken(t)||t.locked)return;
   const next=Math.max(0,Math.min(MAX_ALTITUDE,Math.round(Number(e.target.value)/ALTITUDE_STEP)*ALTITUDE_STEP));
