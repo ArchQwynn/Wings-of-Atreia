@@ -291,3 +291,5 @@
 .token-context-tools>button{padding:8px 9px;font-size:.74rem}
 .context-menu-divider{height:1px;margin:4px 0;background:var(--line)}
 .object-context-menu [data-token-slot]:disabled,.object-context-menu [data-token-action]:disabled{opacity:.4;cursor:not-allowed}
+
+.context-menu-label input[type="range"]{width:100%;accent-color:#9de5a9;cursor:pointer}
