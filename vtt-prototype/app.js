@@ -45,6 +45,13 @@ function setupObjectContextMenu(){
   if(playersInput)playersInput.value=(t.players||[]).join(', ');
   if(playersWrap)playersWrap.hidden=accessSelect?.value!=='specific';
   if(playersInput)playersInput.disabled=!isGM()||!!t.locked;
+  const statusFields={hpCurrent:menu.querySelector('[data-token-hp-current]'),hpMaximum:menu.querySelector('[data-token-hp-maximum]'),tempHp:menu.querySelector('[data-token-temp-hp]'),ac:menu.querySelector('[data-token-ac]')};
+  const statusData=t.status&&typeof t.status==='object'?t.status:{};
+  if(statusFields.hpCurrent){statusFields.hpCurrent.value=String(Math.max(0,Number(statusData.hpCurrent)||0));statusFields.hpCurrent.disabled=!isGM()||!!t.locked}
+  if(statusFields.hpMaximum){statusFields.hpMaximum.value=String(Math.max(0,Number(statusData.hpMaximum)||0));statusFields.hpMaximum.disabled=!isGM()||!!t.locked}
+  if(statusFields.tempHp){statusFields.tempHp.value=String(Math.max(0,Number(statusData.tempHp)||0));statusFields.tempHp.disabled=!isGM()||!!t.locked}
+  if(statusFields.ac){statusFields.ac.value=String(Math.max(0,Number.isFinite(Number(statusData.ac))?Number(statusData.ac):10));statusFields.ac.disabled=!isGM()||!!t.locked}
+  const lifeStatus=menu.querySelector('[data-token-life-status]');if(lifeStatus){lifeStatus.value=['Alive','Unconscious','Dead'].includes(statusData.lifeStatus)?statusData.lifeStatus:'Alive';lifeStatus.disabled=!isGM()||!!t.locked}
   const conditionSelect=menu.querySelector('[data-token-condition-select]'),conditionList=menu.querySelector('[data-token-condition-list]'),conditionApply=menu.querySelector('[data-token-condition-apply]');
   const active=normalizeTokenConditions(t.conditions);
   if(conditionSelect){const selected=conditionSelect.value;[...conditionSelect.options].forEach(option=>{if(option.value)option.disabled=active.some(c=>c.name===option.value)});if(selected&&active.some(c=>c.name===selected))conditionSelect.value='';}
@@ -68,6 +75,16 @@ function setupObjectContextMenu(){
   const trigger=e.target.closest('[data-submenu-trigger]');
   if(trigger){const row=trigger.closest('.context-submenu');if(row){const open=row.classList.contains('is-open');menu.querySelectorAll('.context-submenu.is-open').forEach(el=>el.classList.remove('is-open'));if(!open)row.classList.add('is-open')}return}
 
+  const statusInput=e.target.closest('[data-token-hp-current],[data-token-hp-maximum],[data-token-temp-hp],[data-token-ac],[data-token-life-status]');
+  if(statusInput){
+   const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!isGM()||t.locked)return;
+   const read=(selector,fallback,max)=>{const el=menu.querySelector(selector),n=Math.floor(Number(el?.value));const value=Number.isFinite(n)?Math.max(0,Math.min(max,n)):fallback;if(el)el.value=String(value);return value};
+   const next={hpCurrent:read('[data-token-hp-current]',0,9999),hpMaximum:read('[data-token-hp-maximum]',0,9999),tempHp:read('[data-token-temp-hp]',0,9999),ac:read('[data-token-ac]',10,999),lifeStatus:menu.querySelector('[data-token-life-status]')?.value||'Alive'};
+   if(!['Alive','Unconscious','Dead'].includes(next.lifeStatus))next.lifeStatus='Alive';
+   const prev=t.status&&typeof t.status==='object'?t.status:{hpCurrent:0,hpMaximum:0,tempHp:0,ac:10,lifeStatus:'Alive'};
+   if(Object.keys(next).every(k=>Number(prev[k]??(k==='ac'?10:k==='lifeStatus'?'Alive':0))===Number(next[k])||prev[k]===next[k]))return;
+   recordUndo();t.status=next;saveSceneToBrowser();updateSelectionInfo();if(sceneSaveStatus)sceneSaveStatus.textContent='Status updated for '+(t.name||'token')+'.';return;
+  }
   const conditionApply=e.target.closest('[data-token-condition-apply]'),conditionRemove=e.target.closest('[data-token-condition-remove]');
   if(conditionApply||conditionRemove){
    const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!isGM()||t.locked)return;
@@ -505,7 +522,9 @@ function updateSelectionInfo(){
   const resources=CLASS_RESOURCE_DEFS[token.className]||[],resourceValues=normalizeClassResource(token.className,token.classResource),resourceText=token.className==='Assassin'?'Rune Marks: '+runeMarksForAssassin(token.id).length+' / 3 targets':resources.length?resources.map(resource=>resource+': '+resourceValues[resource].current+' / '+resourceValues[resource].maximum).join(' · '):'No class resource';
   const conditions=normalizeTokenConditions(token.conditions),statusText=conditions.length?conditions.map(condition=>condition.name+(condition.durationType==='until-removed'?'':' ('+condition.remaining+' '+(condition.durationType==='turn'?'turn(s)':'round(s)')+')')).join(', '):'None';
   const runeText=normalizeRuneMarks(token.runeMarks).map(mark=>{const assassin=state.tokens.find(t=>t.id===mark.assassinId);return(assassin?.name||'Unknown Assassin')+' × '+mark.count}).join(' · ');
-  selectionEl.hidden=false;selectionEl.textContent=(token.name||'Unnamed Token')+' · Token'+(token.locked?' · 🔒 LOCKED':'')+'\nX: '+x+' ft · Y: '+y+' ft · Overall altitude: '+overall+' ft\nResources: '+resourceText+'\nStatus: '+statusText+(runeText?'\nRune Marks: '+runeText:'');
+  const gmStatus= isGM() ? (token.status&&typeof token.status==='object'?token.status:{}) : null;
+  const privateStatusText=gmStatus?'\nHP: '+(Number(gmStatus.hpCurrent)||0)+' / '+(Number(gmStatus.hpMaximum)||0)+' · Temp HP: '+(Number(gmStatus.tempHp)||0)+' · AC: '+(Number.isFinite(Number(gmStatus.ac))?Number(gmStatus.ac):10)+' · Life: '+(['Alive','Unconscious','Dead'].includes(gmStatus.lifeStatus)?gmStatus.lifeStatus:'Alive'):'';
+  selectionEl.hidden=false;selectionEl.textContent=(token.name||'Unnamed Token')+' · Token'+(token.locked?' · 🔒 LOCKED':'')+'\nX: '+x+' ft · Y: '+y+' ft · Overall altitude: '+overall+' ft\nResources: '+resourceText+'\nConditions: '+statusText+privateStatusText+(runeText?'\nRune Marks: '+runeText:'');
  }else{selectionEl.hidden=true;selectionEl.textContent=''}
 }
 function select(id){const t=state.tokens.find(x=>x.id===id);if(!t||!canSeeToken(t))return;state.selected=id;state.selectedTokenIds=[id];state.selectedAssetIds=[];const p=tokenWorld(t);selectionEl.textContent=`${t.name}${t.locked?' · 🔒 LOCKED':''} · X ${p.x*FEET_PER_GRID} ft · Y ${p.y*FEET_PER_GRID} ft · Z ${t.z} ft · ${t.footprint||1}×${t.footprint||1} squares · ${assignmentLabel(t)}`;altitudeEl.textContent=`Altitude: ${t.z} ft`;updateAltitudeDisplay(t);[...tokenList.children].forEach(e=>e.classList.toggle('selected',(state.selectedTokenIds||[state.selected]).includes(e.dataset.id)));loadEditor(t);const lockButton=document.querySelector('[data-action="token-lock"]');if(lockButton){lockButton.textContent=t.locked?'Unlock Token':'Lock Token';lockButton.disabled=!isGM()}updateImageControlState(t);updateClassResourcePanel(t)}
