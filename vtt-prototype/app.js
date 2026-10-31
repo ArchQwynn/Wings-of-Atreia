@@ -27,7 +27,58 @@ let pendingAttachmentAction=null;
 function hideObjectContextMenu(){const menu=document.getElementById('object-context-menu');if(menu)menu.hidden=true}
 function setAttachmentMode(action,key){pendingAttachmentAction={action,key};hideObjectContextMenu();const obj=objectFromKey(key);if(sceneSaveStatus)sceneSaveStatus.textContent=(action==='attach'?'Attach '+(obj?.name||'object')+': click another object.':'Detach '+(obj?.name||'object')+': click an object directly attached to it.')+' Press Escape to cancel.'}
 function applyPendingAttachment(targetKey){const pending=pendingAttachmentAction;if(!pending)return true;pendingAttachmentAction=null;if(targetKey===pending.key){if(sceneSaveStatus)sceneSaveStatus.textContent='Choose a different object.';return true}const exists=objectFromKey(targetKey),source=objectFromKey(pending.key);if(!exists||!source)return true;const same=e=>(e.a===pending.key&&e.b===targetKey)||(e.a===targetKey&&e.b===pending.key);if(pending.action==='attach'){if(state.attachments.some(same)){if(sceneSaveStatus)sceneSaveStatus.textContent='Those objects are already attached.';return true}recordUndo();state.attachments.push({a:pending.key,b:targetKey});if(sceneSaveStatus)sceneSaveStatus.textContent='Attached '+objectLabel(pending.key)+' to '+objectLabel(targetKey)+'.'}else{if(!state.attachments.some(same)){if(sceneSaveStatus)sceneSaveStatus.textContent='Those objects are not directly attached.';return true}recordUndo();state.attachments=state.attachments.filter(e=>!same(e));if(sceneSaveStatus)sceneSaveStatus.textContent='Detached '+objectLabel(pending.key)+' from '+objectLabel(targetKey)+'.'}saveSceneToBrowser();return true}
-function setupObjectContextMenu(){const menu=document.getElementById('object-context-menu');if(!menu)return;menu.addEventListener('click',e=>{const button=e.target.closest('button[data-object-action]');if(!button)return;const key=menu.dataset.objectKey,action=button.dataset.objectAction,obj=objectFromKey(key);hideObjectContextMenu();if(!obj)return;if(action==='rename'){const next=prompt('Enter a name for this '+(key.startsWith('token:')?'token':'prop / asset')+':',obj.name||'');if(next===null)return;const name=next.trim().slice(0,120);if(!name){if(sceneSaveStatus)sceneSaveStatus.textContent='Name cannot be empty.';return}recordUndo();obj.name=name;if(key.startsWith('token:')){list();select(obj.id)}else{syncAssetEditor(obj);refreshAttachmentControls()}saveSceneToBrowser();if(sceneSaveStatus)sceneSaveStatus.textContent='Renamed object to '+name+'.'}else if(action==='attach'||action==='detach')setAttachmentMode(action,key)});document.addEventListener('pointerdown',e=>{if(!menu.contains(e.target))hideObjectContextMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(runeMarkModeAssassinId){const source=state.tokens.find(t=>t.id===runeMarkModeAssassinId);runeMarkModeAssassinId=null;if(source)updateClassResourcePanel(source)}pendingAttachmentAction=null;hideObjectContextMenu();if(sceneSaveStatus)sceneSaveStatus.textContent='Object action cancelled.'}});canvas.addEventListener('contextmenu',e=>{e.preventDefault();if(!isGM())return;const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,t=hit(x,y),a=t?null:hitAsset(x,y),obj=t||a;if(!obj)return;const key=objectKey(t?'token':'asset',obj.id);menu.dataset.objectKey=key;const attached=state.attachments.filter(edge=>edge.a===key||edge.b===key).length;menu.querySelector('[data-object-action="detach"]').disabled=!attached;menu.hidden=false;menu.style.left=Math.max(8,Math.min(window.innerWidth-menu.offsetWidth-8,e.clientX))+'px';menu.style.top=Math.max(8,Math.min(window.innerHeight-menu.offsetHeight-8,e.clientY))+'px'});}
+function setupObjectContextMenu(){
+ const menu=document.getElementById('object-context-menu');if(!menu)return;
+ const tokenTools=menu.querySelector('[data-token-tools]');
+ const refreshTokenMenu=t=>{
+  if(!tokenTools)return;tokenTools.hidden=!t;if(!t)return;
+  const value=menu.querySelector('[data-token-size]');if(value)value.value=String(Math.max(1,Math.min(4,Number(t.footprint)||1)));
+  menu.querySelectorAll('[data-token-slot]').forEach(button=>{const slot=Number(button.dataset.tokenSlot),saved=!!t.imageSlots?.[slot];button.disabled=!saved||!!t.locked;button.textContent='Use Image '+(slot+1)+(saved?'':' · Empty')});
+  const swap=menu.querySelector('[data-token-action="swap-image"]');if(swap)swap.disabled=!!t.locked;
+  menu.querySelectorAll('[data-token-action^="altitude-"]').forEach(button=>button.disabled=!!t.locked);
+  if(value)value.disabled=!!t.locked;
+  const readout=menu.querySelector('[data-token-altitude]');if(readout)readout.textContent=(Number(t.z)||0)+' ft';
+ };
+ menu.addEventListener('click',e=>{
+  const tokenButton=e.target.closest('[data-token-action],[data-token-slot]');
+  if(tokenButton){
+   const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:'))return;
+   const action=tokenButton.dataset.tokenAction;
+   if(tokenButton.dataset.tokenSlot!==undefined){const slot=tokenButton.dataset.tokenSlot;hideObjectContextMenu();document.querySelector('[data-image-slot-action="token-use"][data-image-slot="'+slot+'"]')?.click();return}
+   if(action==='swap-image'){hideObjectContextMenu();tokenImageFileEl?.click();return}
+   if(action==='altitude-up'||action==='altitude-down'){
+    if(!canControlToken(t)||t.locked)return;
+    const next=Math.max(0,Math.min(MAX_ALTITUDE,(Number(t.z)||0)+(action==='altitude-up'?ALTITUDE_STEP:-ALTITUDE_STEP)));if(next===(Number(t.z)||0))return;
+    recordUndo();changeGroupAltitude('token',t.id,next);list();select(t.id);saveSceneToBrowser();if(sceneSaveStatus)sceneSaveStatus.textContent=t.name+' altitude set to '+t.z+' ft.';refreshTokenMenu(t);return;
+   }
+  }
+  const button=e.target.closest('button[data-object-action]');if(!button)return;
+  const key=menu.dataset.objectKey,action=button.dataset.objectAction,obj=objectFromKey(key);hideObjectContextMenu();if(!obj)return;
+  if(action==='rename'){
+   const next=prompt('Enter a name for this '+(key.startsWith('token:')?'token':'prop / asset')+':',obj.name||'');if(next===null)return;
+   const name=next.trim().slice(0,120);if(!name){if(sceneSaveStatus)sceneSaveStatus.textContent='Name cannot be empty.';return}
+   recordUndo();obj.name=name;if(key.startsWith('token:')){list();select(obj.id)}else{syncAssetEditor(obj);refreshAttachmentControls()}
+   saveSceneToBrowser();if(sceneSaveStatus)sceneSaveStatus.textContent='Renamed object to '+name+'.';
+  }else if(action==='attach'||action==='detach')setAttachmentMode(action,key);
+ });
+ menu.querySelector('[data-token-size]')?.addEventListener('change',e=>{
+  const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!canControlToken(t)||t.locked)return;
+  const next=Math.max(1,Math.min(4,Number(e.target.value)||1));if(next===(Number(t.footprint)||1))return;
+  recordUndo();t.footprint=next;list();select(t.id);saveSceneToBrowser();if(sceneSaveStatus)sceneSaveStatus.textContent=t.name+' size changed to '+next+'×'+next+' squares.';
+ });
+ document.addEventListener('pointerdown',e=>{if(!menu.contains(e.target))hideObjectContextMenu()});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(runeMarkModeAssassinId){const source=state.tokens.find(t=>t.id===runeMarkModeAssassinId);runeMarkModeAssassinId=null;if(source)updateClassResourcePanel(source)}pendingAttachmentAction=null;hideObjectContextMenu();if(sceneSaveStatus)sceneSaveStatus.textContent='Object action cancelled.'}});
+ canvas.addEventListener('contextmenu',e=>{
+  e.preventDefault();if(!isGM())return;
+  const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,t=hit(x,y),a=t?null:hitAsset(x,y),obj=t||a;if(!obj)return;
+  const key=objectKey(t?'token':'asset',obj.id);menu.dataset.objectKey=key;
+  if(t){select(t.id);refreshTokenMenu(t)}else if(tokenTools)tokenTools.hidden=true;
+  const attached=state.attachments.filter(edge=>edge.a===key||edge.b===key).length;
+  menu.querySelector('[data-object-action="detach"]').disabled=!attached;
+  menu.hidden=false;menu.style.left=Math.max(8,Math.min(window.innerWidth-menu.offsetWidth-8,e.clientX))+'px';
+  menu.style.top=Math.max(8,Math.min(window.innerHeight-menu.offsetHeight-8,e.clientY))+'px';
+ });
+}
 
 function basis(){const c=state.camera,cp=Math.cos(c.elevation),sp=Math.sin(c.elevation),sy=Math.sin(c.yaw),cy=Math.cos(c.yaw);const f={x:sy*cp,y:cy*cp,z:-sp},r={x:cy,y:-sy,z:0},u={x:r.y*f.z,y:-r.x*f.z,z:r.x*f.y-r.y*f.x},pos={x:c.targetX-f.x*c.distance,y:c.targetY-f.y*c.distance,z:c.targetZ/5-f.z*c.distance};return{pos,f,r,u}}
 function project(x,y,z){const{w,h}=size();if(state.view2d)return{x:w/2+x*CELL_PX*state.camera.zoom+state.camera.panX,y:h/2-y*CELL_PX*state.camera.zoom+state.camera.panY,depth:1,scale:state.camera.zoom};const b=basis(),q={x:x-b.pos.x,y:y-b.pos.y,z:z/5-b.pos.z},cx=q.x*b.r.x+q.y*b.r.y+q.z*b.r.z,cy=q.x*b.u.x+q.y*b.u.y+q.z*b.u.z,depth=q.x*b.f.x+q.y*b.f.y+q.z*b.f.z,focal=Math.min(w,h)*.86*state.camera.zoom,s=focal/Math.max(NEAR,depth);return{x:w/2+cx*s,y:h*.56-cy*s,depth,scale:s/CELL_PX}}
