@@ -14,13 +14,6 @@
       <div class="context-submenu-panel" data-submenu-panel="quick">
         <div class="token-context-tools" data-token-tools>
           <div class="context-menu-heading">TOKEN QUICK CONTROLS</div>
-          <div class="context-menu-row"><span>Altitude</span><strong data-token-altitude>— ft</strong></div>
-          <label class="context-menu-label">Height above terrain
-            <input type="range" min="0" max="120" step="5" value="0" data-token-altitude-slider aria-label="Token altitude in 5-foot increments">
-          </label>
-          <label class="context-menu-label">Size
-            <select data-token-size aria-label="Token size"><option value="1">1×1 · 5 ft</option><option value="2">2×2 · 10 ft</option><option value="3">3×3 · 15 ft</option><option value="4">4×4 · 20 ft</option></select>
-          </label>
           <div class="context-menu-heading">CHARACTER CLASS</div>
           <label class="context-menu-label">Class
             <select data-token-class aria-label="Character class"><option value="">No class assigned</option><option>Gladiator</option><option>Templar</option><option>Assassin</option><option>Ranger</option><option>Sorcerer</option><option>Spiritmaster</option><option>Cleric</option><option>Chanter</option><option>Aethertech</option><option>Gunslinger</option><option>Songweaver</option></select>
@@ -31,6 +24,13 @@
           </label>
           <label class="context-menu-label" data-token-players-wrap hidden>Player name(s), comma-separated
             <input type="text" data-token-players placeholder="e.g. Player 1, Player 2" maxlength="1000" aria-label="Specific player names">
+          </label>
+          <div class="context-menu-row"><span>Altitude</span><strong data-token-altitude>— ft</strong></div>
+          <label class="context-menu-label">Height above terrain
+            <input type="range" min="0" max="120" step="5" value="0" data-token-altitude-slider aria-label="Token altitude in 5-foot increments">
+          </label>
+          <label class="context-menu-label">Size
+            <select data-token-size aria-label="Token size"><option value="1">1×1 · 5 ft</option><option value="2">2×2 · 10 ft</option><option value="3">3×3 · 15 ft</option><option value="4">4×4 · 20 ft</option></select>
           </label>
           <button type="button" data-token-action="swap-image">Swap Image…</button>
           <div class="context-menu-heading">SAVED IMAGES</div>
