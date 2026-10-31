@@ -326,7 +326,13 @@ function handleIncoming(conn){
    if(!state.approved.has(conn.peer)){log('Ignored '+msg.type+' from a peer that has not been approved.');return}
    const player=state.approved.get(conn.peer);
    if(player.conn!==conn||!conn.open){log('Ignored message from a stale or disconnected connection.');return}
-   if(!checkHostMessage(msg))return;
+   if(msg.type==='ACTION_REQUEST'&&msg.payload&&msg.payload.kind==='old-generation-diagnostic'){
+    log('Received outdated-generation diagnostic from '+(state.approved.get(conn.peer)?.name||conn.peer)+': message generation '+msg.hostGeneration+', current generation '+state.hostGeneration+'.');
+   }
+   if(!checkHostMessage(msg)){
+    if(msg.type==='ACTION_REQUEST'&&msg.payload&&msg.payload.kind==='old-generation-diagnostic')log('Outdated-generation diagnostic rejected; it will not enter the test request queue.');
+    return;
+   }
    if(state.seenMessageIds.has(msg.messageId)){log('Ignored duplicate message ID from '+player.name+'.');return}
    state.seenMessageIds.add(msg.messageId);
    if(msg.type==='PING'){send(conn,'PONG',{at:Date.now()},state.revision);setLast('PING from '+player.name);return}
