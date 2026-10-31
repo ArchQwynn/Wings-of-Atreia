@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
   <title>Wings of Atreia VTT — Prototype</title>
-  <link rel="stylesheet" href="style.css?v=20261031-10">
+  <link rel="stylesheet" href="style.css?v=20261031-11">
 </head>
 <body>
   <div id="object-context-menu" class="object-context-menu" role="menu" hidden>
@@ -28,6 +28,35 @@
         <button type="button" data-token-slot="1">Use Image 2</button>
         <button type="button" data-token-slot="2">Use Image 3</button>
       </div>
+      <div class="context-menu-divider"></div>
+      <div class="context-menu-heading">CONDITIONS</div>
+      <label class="context-menu-label">Apply condition
+        <select data-token-condition-select aria-label="Condition to apply">
+          <option value="">Choose condition…</option>
+          <option value="Blinded">Blinded</option>
+          <option value="Charmed">Charmed</option>
+          <option value="Deafened">Deafened</option>
+          <option value="Frightened">Frightened</option>
+          <option value="Grappled">Grappled</option>
+          <option value="Incapacitated">Incapacitated</option>
+          <option value="Invisible">Invisible</option>
+          <option value="Paralyzed">Paralyzed</option>
+          <option value="Petrified">Petrified</option>
+          <option value="Poisoned">Poisoned</option>
+          <option value="Prone">Prone</option>
+          <option value="Restrained">Restrained</option>
+          <option value="Stunned">Stunned</option>
+          <option value="Unconscious">Unconscious</option>
+        </select>
+      </label>
+      <label class="context-menu-label">Duration
+        <select data-token-condition-duration><option value="until-removed">Until Removed</option><option value="turn">Turns</option><option value="round">Rounds</option></select>
+      </label>
+      <label class="context-menu-label" data-token-condition-count-wrap hidden>Duration count
+        <input type="number" min="1" max="99" step="1" value="1" data-token-condition-count>
+      </label>
+      <button type="button" data-token-condition-apply disabled>Apply Condition</button>
+      <div class="context-condition-list" data-token-condition-list><small>No active Conditions.</small></div>
       <div class="context-menu-divider"></div>
     </div>
     <button type="button" data-object-action="rename" role="menuitem">Rename</button>
@@ -338,7 +367,7 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept<br><strong>Clark Michael Zafra</strong></footer>
-  <script src="app.js?v=20261031-13"></script>
+  <script src="app.js?v=20261031-14"></script>
   <script src="overlay.js?v=20261028-12"></script>
 
   <script id="woa-panel-organization">
