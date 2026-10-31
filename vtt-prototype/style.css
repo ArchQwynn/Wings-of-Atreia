@@ -259,3 +259,16 @@
 
 /* Assassin Rune Mark target tracker */
 .rune-mark-toggle{width:100%;margin-top:8px;padding:9px;border:1px solid #9b7b35;border-radius:8px;background:#3a2e18;color:#ffe3a0;font:inherit;font-weight:700;cursor:pointer}.rune-mark-toggle[aria-pressed="true"]{background:#57421c;border-color:#ffd166}.rune-mark-target-list{display:grid;gap:6px;margin-top:8px}.rune-mark-target{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 8px;border:1px solid var(--line);border-radius:7px;background:rgba(255,209,102,.06);font-size:.76rem}.rune-mark-target span{min-width:0;overflow-wrap:anywhere}.rune-mark-target button{flex:0 0 30px;width:30px;padding:4px;border:1px solid var(--line);border-radius:6px;background:#182536;color:var(--text)}.rune-mark-target button:hover:not(:disabled){border-color:#ffd166;color:#ffe3a0}.class-resource-fields>small{display:block;line-height:1.4;margin-top:7px}
+
+/* GM-only map note pins */
+.gm-notes-tools [data-action="gm-note-pin-toggle"]{width:100%;padding:9px;border:1px solid #9b7b35;border-radius:8px;background:#3a2e18;color:#ffe3a0;font:inherit;font-weight:700;cursor:pointer}
+.gm-notes-tools [data-action="gm-note-pin-toggle"].active{background:#57421c;border-color:#ffd166}
+.gm-note-popup,.gm-note-hover{position:absolute;z-index:30;width:min(280px,calc(100% - 16px));padding:10px;border:1px solid #b58a3b;border-radius:10px;background:rgba(13,21,34,.97);color:var(--text);box-shadow:0 12px 32px rgba(0,0,0,.55)}
+.gm-note-popup[hidden],.gm-note-hover[hidden]{display:none}
+.gm-note-popup-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;color:#ffe3a0;font-size:.82rem}
+.gm-note-popup-heading button{width:28px;padding:3px;border:1px solid var(--line);border-radius:6px;background:#182536;color:var(--text);font-size:1.1rem}
+.gm-note-popup textarea{display:block;width:100%;min-height:100px;resize:vertical;padding:8px;border:1px solid var(--line);border-radius:7px;background:#080f1b;color:var(--text);font:inherit;font-size:.78rem}
+.gm-note-popup-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.gm-note-popup-actions button{padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:#182536;color:var(--text);font:inherit;font-size:.7rem}
+.gm-note-popup-actions .danger{border-color:#8c4444;color:#ffb0a8}
+.gm-note-hover{pointer-events:none;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.74rem;max-height:110px;overflow:hidden}
