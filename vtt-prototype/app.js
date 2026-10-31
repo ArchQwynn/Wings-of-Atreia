@@ -59,7 +59,7 @@ function setupObjectContextMenu(){
  menu.querySelector('[data-token-border-color]')?.addEventListener('change',e=>{
   const t=objectFromKey(menu.dataset.objectKey);if(!t||!menu.dataset.objectKey?.startsWith('token:')||!isGM()||t.locked)return;
   const color=e.target.value;if(!/^#[0-9a-f]{6}$/i.test(color)||color===(t.borderColor||'#0b1320'))return;
-  recordUndo();t.borderColor=color;saveSceneToBrowser();draw();
+  recordUndo();t.borderColor=color;saveSceneToBrowser();render();
  });
  menu.querySelector('[data-token-name]')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();menu.querySelector('[data-token-name-apply]')?.click()}});
  menu.addEventListener('pointerover',e=>{const row=e.target.closest('.context-submenu');if(!row||e.pointerType==='touch')return;menu.querySelectorAll('.context-submenu.is-open').forEach(el=>{if(el!==row)el.classList.remove('is-open')});row.classList.add('is-open')});
