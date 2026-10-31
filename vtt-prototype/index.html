@@ -21,6 +21,17 @@
           <label class="context-menu-label">Size
             <select data-token-size aria-label="Token size"><option value="1">1×1 · 5 ft</option><option value="2">2×2 · 10 ft</option><option value="3">3×3 · 15 ft</option><option value="4">4×4 · 20 ft</option></select>
           </label>
+          <div class="context-menu-heading">CHARACTER CLASS</div>
+          <label class="context-menu-label">Class
+            <select data-token-class aria-label="Character class"><option value="">No class assigned</option><option>Gladiator</option><option>Templar</option><option>Assassin</option><option>Ranger</option><option>Sorcerer</option><option>Spiritmaster</option><option>Cleric</option><option>Chanter</option><option>Aethertech</option><option>Gunslinger</option><option>Songweaver</option></select>
+          </label>
+          <div class="context-menu-heading">TOKEN ACCESS</div>
+          <label class="context-menu-label">Who can access this token?
+            <select data-token-assignment aria-label="Token access"><option value="gm">GM Only</option><option value="all">All Players</option><option value="unassigned">Unassigned</option><option value="specific">Specific Player(s)</option></select>
+          </label>
+          <label class="context-menu-label" data-token-players-wrap hidden>Player name(s), comma-separated
+            <input type="text" data-token-players placeholder="e.g. Player 1, Player 2" maxlength="1000" aria-label="Specific player names">
+          </label>
           <button type="button" data-token-action="swap-image">Swap Image…</button>
           <div class="context-menu-heading">SAVED IMAGES</div>
           <div class="context-menu-actions"><button type="button" data-token-slot="0">Use Image 1</button><button type="button" data-token-slot="1">Use Image 2</button><button type="button" data-token-slot="2">Use Image 3</button></div>
@@ -353,7 +364,7 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept<br><strong>Clark Michael Zafra</strong></footer>
-  <script src="app.js?v=20261031-15"></script>
+  <script src="app.js?v=20261031-16"></script>
   <script src="overlay.js?v=20261028-12"></script>
 
   <script id="woa-panel-organization">
