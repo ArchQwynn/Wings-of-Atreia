@@ -155,7 +155,7 @@
 <main>
   <h1>Wings of Atreia — Multiplayer Connection Harness</h1>
   <p class="muted">An isolated multiplayer role and connection test. This does not load or modify the VTT tabletop.</p>
-  <div class="notice"><strong>Test only:</strong> this harness uses the public PeerJS signaling service and browser WebRTC. Capacity is configured for 15 players and 10 spectators, plus 1 GM. Do not use real campaign secrets or sensitive data. Display names are not authentication. The GM must approve every connection. Closing the GM tab ends the session; host recovery and persistent sessions are not implemented here.</div>
+  <div class="notice"><strong>Test only:</strong> this harness uses the public PeerJS signaling service and browser WebRTC. Capacity is configured for up to 25 players, plus 1 GM. Do not use real campaign secrets or sensitive data. Display names are not authentication. The GM must approve every connection. Closing the GM tab ends the session; host recovery and persistent sessions are not implemented here.</div>
 
   <section class="panel" id="startPanel">
     <h2>Start a test session</h2>
@@ -165,13 +165,11 @@
         <button class="primary" id="startHost">Start as GM</button>
       </div>
       <div>
-        <p class="muted small">Open this page in another browser/device as a player or spectator. Use the GM's invitation link or enter the session ID.</p>
+        <p class="muted small">Open this page in another browser/device as a player. Use the GM's invitation link or enter the session ID.</p>
         <label for="roomInput">GM session ID</label>
         <input id="roomInput" autocomplete="off" placeholder="Paste the GM session ID">
         <label for="nameInput">Display name</label>
         <input id="nameInput" maxlength="40" autocomplete="nickname" placeholder="Your display name">
-        <label for="roleInput">Join as</label>
-        <select id="roleInput"><option value="player">Player</option><option value="spectator">Spectator</option></select>
         <button id="joinButton" class="primary">Request to join</button>
       </div>
     </div>
@@ -195,7 +193,7 @@
       <h2 style="margin-top:18px">Join requests <span class="pill" id="pendingCount">0 pending</span></h2>
       <div id="joinQueue" class="muted small">No join requests yet.</div>
       <h2 style="margin-top:22px">Connected participants</h2>
-      <div class="muted small" id="capacitySummary">Players: 0 / 15 · Spectators: 0 / 10</div>
+      <div class="muted small" id="capacitySummary">Players: 0 / 25</div>
       <div id="connectedPlayers" class="muted small">No approved participants connected.</div>
     </div>
     <div id="playerTools" class="hidden">
@@ -227,15 +225,14 @@
 const $=id=>document.getElementById(id);
 const F=window.WoAMultiplayerFoundation;
 const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:new Map(),approved:new Map(),testRequests:new Map(),revision:0,hostGeneration:1,authority:F.createAuthority({hostGeneration:1,revision:0}),seenMessageIds:new Set(),seenRequestIds:new Set(),seenJoinAttemptIds:new Set(),joinAttemptId:null,playerConnection:null,playerApproved:false,requestCounter:0};
-const MAX_PLAYERS=15;
-const MAX_SPECTATORS=10;
+const MAX_PLAYERS=25;
 const HEARTBEAT_INTERVAL_MS=5000;
 const HEARTBEAT_TIMEOUT_MS=16000;
 let heartbeatTimer=null;
 function log(message){const el=$('log');const stamp=new Date().toLocaleTimeString();el.textContent+='\n['+stamp+'] '+message;el.scrollTop=el.scrollHeight}
 function setStatus(text,kind){$('connectionStatus').textContent=text;$('connectionStatus').className='status '+(kind||'')}
 function setPlayerStatus(text,kind){$('playerState').textContent=text;$('playerState').className='status '+(kind||'')}
-function showSession(role){$('startPanel').classList.add('hidden');$('sessionPanel').classList.remove('hidden');state.role=role;$('roleTitle').textContent=role==='gm'?'GM test console':role==='spectator'?'Spectator test console':'Player test console';$('sessionHint').textContent=role==='gm'?'You are the session host. Approve every join request below.':role==='spectator'?'You are connected as a read-only spectator.':'You are connected as a player. This is an isolated test; no actual tabletop is loaded.';$('inviteArea').classList.toggle('hidden',role!=='gm');$('gmArea').classList.toggle('hidden',role!=='gm');$('playerStatus').classList.toggle('hidden',role==='gm');$('playerTools').classList.toggle('hidden',role!=='player');$('testQueuePanel').classList.toggle('hidden',role!=='gm')}
+function showSession(role){$('startPanel').classList.add('hidden');$('sessionPanel').classList.remove('hidden');state.role=role;$('roleTitle').textContent=role==='gm'?'GM test console':'Player test console';$('sessionHint').textContent=role==='gm'?'You are the session host. Approve every join request below.':'You are connected as a player. This is an isolated test; no actual tabletop is loaded.';$('inviteArea').classList.toggle('hidden',role!=='gm');$('gmArea').classList.toggle('hidden',role!=='gm');$('playerStatus').classList.toggle('hidden',role==='gm');$('playerTools').classList.toggle('hidden',role==='gm');$('testQueuePanel').classList.toggle('hidden',role!=='gm')}
 function message(type,payload,revision=state.revision){return F.createMessage(type,payload,{hostGeneration:state.hostGeneration,revision})}
 function send(conn,type,payload,revision=state.revision){if(!conn||!conn.open)throw new Error('Connection is not open.');conn.send(message(type,payload,revision))}
 function receive(conn,data,handler){let msg;try{msg=typeof data==='string'?JSON.parse(data):data}catch(_){log('Ignored malformed JSON message.');return}const valid=F.validateMessage(msg);if(!valid.ok){log('Rejected invalid envelope: '+valid.error);return}handler(msg,conn)}
@@ -243,14 +240,14 @@ function renderJoinQueue(){
  const list=$('joinQueue');const entries=Array.from(state.pending.values());$('pendingCount').textContent=entries.length+' pending';
  if(!entries.length){list.innerHTML='<p class="muted small">No pending join requests.</p>';return}
  list.replaceChildren();
- entries.forEach(item=>{const row=document.createElement('div');row.className='item';const title=document.createElement('strong');title.textContent=item.name;const sub=document.createElement('p');sub.className='muted small';sub.textContent=(item.role==='spectator'?'Spectator':'Player')+' · Attempt '+item.attemptId+' · awaiting GM decision';const approve=document.createElement('button');approve.className='primary';approve.textContent=item.role==='spectator'?'Approve as Spectator':'Approve as Player';approve.addEventListener('click',()=>decideJoin(item.peerId,'approved'));const reject=document.createElement('button');reject.className='danger';reject.textContent='Reject';reject.addEventListener('click',()=>decideJoin(item.peerId,'rejected'));const actions=document.createElement('div');actions.className='row';actions.append(approve,reject);row.append(title,sub,actions);list.append(row)})
+ entries.forEach(item=>{const row=document.createElement('div');row.className='item';const title=document.createElement('strong');title.textContent=item.name;const sub=document.createElement('p');sub.className='muted small';sub.textContent='Player · Attempt '+item.attemptId+' · awaiting GM decision';const approve=document.createElement('button');approve.className='primary';approve.textContent='Approve Player';approve.addEventListener('click',()=>decideJoin(item.peerId,'approved'));const reject=document.createElement('button');reject.className='danger';reject.textContent='Reject';reject.addEventListener('click',()=>decideJoin(item.peerId,'rejected'));const actions=document.createElement('div');actions.className='row';actions.append(approve,reject);row.append(title,sub,actions);list.append(row)})
 }
-function getRoleCounts(){const counts={player:0,spectator:0};for(const p of state.approved.values())if(counts[p.role]!==undefined)counts[p.role]++;for(const p of state.pending.values())if(counts[p.role]!==undefined)counts[p.role]++;return counts}
-function roleCapacityAvailable(role,excludePeerId){const counts={player:0,spectator:0};for(const [id,p] of state.approved)if(counts[p.role]!==undefined)counts[p.role]++;for(const [id,p] of state.pending)if(id!==excludePeerId&&counts[p.role]!==undefined)counts[p.role]++;return role==='player'?counts.player<MAX_PLAYERS:role==='spectator'?counts.spectator<MAX_SPECTATORS:false}
+function participantCount(excludePeerId){let count=state.approved.size;for(const id of state.pending.keys())if(id!==excludePeerId)count++;return count}
+function capacityAvailable(excludePeerId){return participantCount(excludePeerId)<MAX_PLAYERS}
 function renderConnected(){
- const list=$('connectedPlayers');const entries=Array.from(state.approved.values());const counts=getRoleCounts();$('capacitySummary').textContent='Players: '+counts.player+' / '+MAX_PLAYERS+' · Spectators: '+counts.spectator+' / '+MAX_SPECTATORS+' (pending approvals reserve a slot)';
+ const list=$('connectedPlayers');const entries=Array.from(state.approved.values());$('capacitySummary').textContent='Players: '+participantCount()+' / '+MAX_PLAYERS+' (includes pending approvals)';
  if(!entries.length){list.textContent='No approved participants connected.';return}
- list.replaceChildren();entries.forEach(p=>{const row=document.createElement('div');row.className='item';const name=document.createElement('strong');name.textContent=p.name;const role=document.createElement('span');role.className='pill';role.textContent=p.role==='spectator'?'Spectator':'Player';const status=document.createElement('span');status.className='status '+(p.conn.open?'good':'bad');status.textContent=p.conn.open?'Connected':'Disconnected';row.append(name,document.createTextNode(' '),role,document.createTextNode(' '),status);list.append(row)})
+ list.replaceChildren();entries.forEach(p=>{const row=document.createElement('div');row.className='item';const name=document.createElement('strong');name.textContent=p.name;const status=document.createElement('span');status.className='status '+(p.conn.open?'good':'bad');status.textContent=p.conn.open?'Connected':'Disconnected';row.append(name,document.createTextNode(' '),status);list.append(row)})
 }
 function renderTestQueue(){
  const list=$('testQueue');const entries=Array.from(state.testRequests.values());
@@ -308,15 +305,14 @@ function handleIncoming(conn){
    if(msg.type==='JOIN_REQUEST'){
     const payload=msg.payload||{};const name=typeof payload.displayName==='string'?payload.displayName.trim().slice(0,40):'';
     const attemptId=typeof payload.attemptId==='string'?payload.attemptId:'';
-    const role=payload.role==='spectator'?'spectator':payload.role==='player'?'player':'';
-    if(!name||!role||attemptId.length<8||attemptId.length>100){sendError(conn,'Invalid join request.');return}
+    if(!name||attemptId.length<8||attemptId.length>100){sendError(conn,'Invalid join request.');return}
     if(msg.hostGeneration!==state.hostGeneration||msg.revision>state.revision){sendError(conn,'Join request belongs to an invalid session version.');return}
     if(state.approved.has(conn.peer)){sendError(conn,'This peer is already approved.');return}
     if(state.pending.has(conn.peer)){log('Duplicate join request ignored from '+name);return}
-    if(!roleCapacityAvailable(role)){sendError(conn,role==='player'?'Player capacity is full (15).':'Spectator capacity is full (10).');log('Join request from '+name+' refused: '+role+' capacity is full.');try{conn.close()}catch(_){}return}
+    if(!capacityAvailable()){sendError(conn,'Player capacity is full (25).');log('Join request from '+name+' refused: player capacity is full.');try{conn.close()}catch(_){}return}
     if(state.seenJoinAttemptIds.has(attemptId)){sendError(conn,'Duplicate join attempt. Request a new attempt after reconnecting.');return}
     state.seenJoinAttemptIds.add(attemptId);
-    state.pending.set(conn.peer,{peerId:conn.peer,conn,name,attemptId,role});log('Join request received from '+name+' as '+role+'. GM approval required.');renderJoinQueue();renderConnected();return;
+    state.pending.set(conn.peer,{peerId:conn.peer,conn,name,attemptId});log('Join request received from '+name+' as '+role+'. GM approval required.');renderJoinQueue();renderConnected();return;
    }
    if(!state.approved.has(conn.peer)){log('Ignored '+msg.type+' from a peer that has not been approved.');return}
    const player=state.approved.get(conn.peer);
@@ -328,7 +324,6 @@ function handleIncoming(conn){
    if(msg.type==='PONG'){player.lastPongAt=Date.now();setLast('PONG from '+player.name);log('PONG received from '+player.name+'.');return}
    if(msg.type==='STATE_SNAPSHOT_REQUEST'){send(conn,'STATE_SNAPSHOT',{testOnly:true,revision:state.revision,sessionId:state.sessionId},state.revision);setLast('Snapshot sent to '+player.name);return}
    if(msg.type==='ACTION_REQUEST'){
-    if(player.role==='spectator'){sendError(conn,'Spectators have read-only access and cannot submit action requests.');log('Blocked action request from spectator '+player.name+'.');return}
     const id=typeof msg.payload.requestId==='string'?msg.payload.requestId:'';
     if(!id||id.length>100||state.seenRequestIds.has(id)||state.testRequests.has(id)){log('Ignored duplicate or invalid test request ID.');return}
     if(msg.revision!==state.revision){sendError(conn,'Test request is stale; refresh and retry.');return}
@@ -350,11 +345,11 @@ function sendError(conn,text){try{send(conn,'ERROR',{message:text})}catch(_){}}
 function decideJoin(peerId,decision){
  const item=state.pending.get(peerId);if(!item)return;
  if(item.conn!==state.connections.get(peerId)||!item.conn.open){state.pending.delete(peerId);renderJoinQueue();renderConnected();log('Join decision ignored: connection is no longer active.');return}
- if(decision==='approved'&&!roleCapacityAvailable(item.role,peerId)){state.pending.delete(peerId);renderJoinQueue();renderConnected();sendError(item.conn,item.role==='player'?'Player capacity is full (15).':'Spectator capacity is full (10).');try{item.conn.close()}catch(_){}log('Approval refused: '+item.role+' capacity reached before decision.');return}
+ if(decision==='approved'&&!capacityAvailable(peerId)){state.pending.delete(peerId);renderJoinQueue();renderConnected();sendError(item.conn,'Player capacity is full (25).');try{item.conn.close()}catch(_){}log('Approval refused: player capacity reached before decision.');return}
  state.pending.delete(peerId);
  if(decision==='approved'){
-  state.approved.set(peerId,{name:item.name,role:item.role,conn:item.conn,attemptId:item.attemptId,lastPongAt:Date.now()});
-  try{send(item.conn,'JOIN_ACCEPTED',{displayName:item.name,role:item.role,hostGeneration:state.hostGeneration},state.revision);send(item.conn,'STATE_SNAPSHOT',{testOnly:true,revision:state.revision,sessionId:state.sessionId,role:item.role},state.revision);log('Approved '+item.name+' as '+item.role+'.');}
+  state.approved.set(peerId,{name:item.name,role:'player',conn:item.conn,attemptId:item.attemptId,lastPongAt:Date.now()});
+  try{send(item.conn,'JOIN_ACCEPTED',{displayName:item.name,role:'player',hostGeneration:state.hostGeneration},state.revision);send(item.conn,'STATE_SNAPSHOT',{testOnly:true,revision:state.revision,sessionId:state.sessionId,role:'player'},state.revision);log('Approved '+item.name+' as Player.');}
   catch(error){log('Approval send failed for '+item.name+': '+error.message);state.approved.delete(peerId);try{item.conn.close()}catch(_){}}
  }else{try{send(item.conn,'JOIN_REJECTED',{reason:'The GM declined this join attempt.'})}catch(_){}try{item.conn.close()}catch(_){}log('Rejected '+item.name+'.')}
  renderJoinQueue();renderConnected();
@@ -374,30 +369,30 @@ function decideTest(id,decision){
  }else{item.status='rejected';if(p&&p.conn.open){try{send(p.conn,'ACTION_RESULT',{requestId:id,status:'rejected',revision:state.revision},state.revision)}catch(_){}}log('Rejected test request '+id+'.')}
  renderTestQueue();
 }
-function beginPlayer(roomId,name,role){
+function beginPlayer(roomId,name){
  if(!window.Peer){$('startupMessage').textContent='PeerJS library did not load. Check your internet connection and reload.';return}
  if(!roomId||!name.trim()){ $('startupMessage').textContent='Enter a GM session ID and display name.';return}
  $('joinButton').disabled=true;$('startupMessage').textContent='Connecting to the GM…';
- const peer=new Peer();state.peer=peer;state.sessionId=roomId;state.role=role;
- peer.on('open',()=>{connectToHost(name.trim(),role)});
+ const peer=new Peer();state.peer=peer;state.sessionId=roomId;state.role='player';
+ peer.on('open',()=>{connectToHost(name.trim())});
  peer.on('error',err=>{log('PeerJS error: '+err.type+' — '+err.message);setStatus('Connection error','bad');$('startupMessage').textContent='Connection error: '+err.message;$('joinButton').disabled=false});
  peer.on('disconnected',()=>{setStatus('Signaling disconnected','warn');log('PeerJS signaling disconnected.')});
 }
-function connectToHost(name,role){
+function connectToHost(name){
  if(!state.peer||!state.sessionId)return;
  if(state.playerConnection){try{state.playerConnection.close()}catch(_){}}
- const conn=state.peer.connect(state.sessionId,{reliable:true,serialization:'json',metadata:{displayName:name,role:role}});
+ const conn=state.peer.connect(state.sessionId,{reliable:true,serialization:'json',metadata:{displayName:name}});
  state.playerConnection=conn;
  conn.on('open',()=>{
-  showSession(role);setStatus('Connected — awaiting GM','warn');setPlayerStatus(role==='spectator'?'Spectator request sent — awaiting GM approval':'Player request sent — awaiting GM approval','warn');log('Transport connected to GM. Sending '+role+' join request; waiting for explicit approval.');
+  showSession('player');setStatus('Connected — awaiting GM','warn');setPlayerStatus('Player request sent — awaiting GM approval','warn');log('Transport connected to GM. Sending player join request; waiting for explicit approval.');
   state.joinAttemptId='join-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
-  send(conn,'JOIN_REQUEST',{displayName:name,role:role,attemptId:state.joinAttemptId},0);
+  send(conn,'JOIN_REQUEST',{displayName:name,attemptId:state.joinAttemptId},0);
  });
  conn.on('data',data=>receive(conn,data,msg=>{
   if(msg.type==='JOIN_ACCEPTED'){
    if(msg.payload.hostGeneration!==msg.hostGeneration){log('Rejected inconsistent host generation in join acceptance.');return}
    state.hostGeneration=msg.hostGeneration;state.revision=msg.revision;state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});updateRevision(state.revision);
-   state.playerApproved=true;state.role=msg.payload.role==='spectator'?'spectator':'player';setStatus('Connected','good');setPlayerStatus(state.role==='spectator'?'Approved as spectator — read only':'Approved by GM','good');$('requestResult').textContent=state.role==='spectator'?'Spectator access is read-only.':'You are approved. You may send a harmless test request.';showSession(state.role);log('GM approved the join request as '+state.role+'.');setLast('JOIN_ACCEPTED received');try{send(conn,'STATE_SNAPSHOT_REQUEST',{requestedAt:Date.now()})}catch(_){}return;
+   state.playerApproved=true;state.role='player';setStatus('Connected','good');setPlayerStatus('Approved by GM','good');$('requestResult').textContent='You are approved. You may send a harmless test request.';showSession('player');log('GM approved the join request.');setLast('JOIN_ACCEPTED received');try{send(conn,'STATE_SNAPSHOT_REQUEST',{requestedAt:Date.now()})}catch(_){}return;
   }
   if(msg.type==='JOIN_REJECTED'){state.playerApproved=false;setStatus('Join rejected','bad');setPlayerStatus('The GM rejected this attempt','bad');log('GM rejected the join request.');return}
   if(msg.type==='ERROR'){log('Host error: '+String(msg.payload.message||'Unknown error'));$('startupMessage').textContent=String(msg.payload.message||'Host error');$('joinButton').disabled=false;return}
@@ -415,17 +410,17 @@ function connectToHost(name,role){
  conn.on('error',err=>{log('Data connection error: '+err.message);setStatus('Connection error','bad')});
 }
 $('startHost').addEventListener('click',startHost);
-$('joinButton').addEventListener('click',()=>beginPlayer($('roomInput').value.trim(),$('nameInput').value.trim(),$('roleInput').value==='spectator'?'spectator':'player'));
+$('joinButton').addEventListener('click',()=>beginPlayer($('roomInput').value.trim(),$('nameInput').value.trim()));
 $('sendTestRequest').addEventListener('click',()=>{
- const conn=state.playerConnection;if(state.role==='spectator'){$('requestResult').textContent='Spectators have read-only access.';return}if(!state.playerApproved||!conn||!conn.open){$('requestResult').textContent='Wait for GM approval and an active connection first.';return}
+ const conn=state.playerConnection;if(!state.playerApproved||!conn||!conn.open){$('requestResult').textContent='Wait for GM approval and an active connection first.';return}
  const id='test-'+Date.now().toString(36)+'-'+(++state.requestCounter);
  try{send(conn,'ACTION_REQUEST',{requestId:id,kind:'safe-connectivity-test',createdAt:Date.now()});$('requestResult').textContent='Test request sent. Waiting for GM decision.';log('Sent harmless test request '+id+'.')}catch(error){$('requestResult').textContent=error.message}
 });
 $('reconnectButton').addEventListener('click',()=>{
- const name=$('nameInput').value.trim()||'Player';const role=$('roleInput').value==='spectator'?'spectator':'player';$('reconnectButton').disabled=true;
+ const name=$('nameInput').value.trim()||'Player';$('reconnectButton').disabled=true;
  if(state.peer){try{state.peer.destroy()}catch(_){}}
  state.peer=null;state.playerConnection=null;state.playerApproved=false;
- beginPlayer(state.sessionId||$('roomInput').value.trim(),name,role);
+ beginPlayer(state.sessionId||$('roomInput').value.trim(),name);
 });
 $('copyInvite').addEventListener('click',()=>copyText($('inviteLink').textContent));
 $('copyId').addEventListener('click',()=>copyText(state.sessionId||''));
