@@ -277,3 +277,17 @@
 /* Movement readout sits beneath altitude at the upper-right, clear of selection details. */
 .movement-readout{left:auto;right:14px;top:58px;bottom:auto;max-width:min(300px,calc(100% - 28px));text-align:right}
 @media(max-width:700px){.movement-readout{right:8px;top:46px;left:auto;bottom:auto;max-width:calc(100% - 16px);text-align:right}}
+
+
+/* Token quick controls inside the right-click context menu. */
+.token-context-tools{display:grid;gap:6px;padding:2px 2px 7px}
+.context-menu-heading{padding:5px 6px 2px;color:#9de5a9;font-size:.62rem;font-weight:800;letter-spacing:.09em}
+.context-menu-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 6px;font-size:.78rem;color:var(--muted)}
+.context-menu-row strong{color:var(--text);font-size:.82rem}
+.context-menu-actions{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.context-menu-actions button{min-width:0;text-align:center;padding:7px 5px;font-size:.72rem}
+.context-menu-label{display:grid;gap:4px;padding:2px 6px;color:var(--muted);font-size:.7rem}
+.context-menu-label select{width:100%;padding:7px;border:1px solid var(--line);border-radius:6px;background:#0d1626;color:var(--text);font:inherit;font-size:.75rem}
+.token-context-tools>button{padding:8px 9px;font-size:.74rem}
+.context-menu-divider{height:1px;margin:4px 0;background:var(--line)}
+.object-context-menu [data-token-slot]:disabled,.object-context-menu [data-token-action]:disabled{opacity:.4;cursor:not-allowed}
