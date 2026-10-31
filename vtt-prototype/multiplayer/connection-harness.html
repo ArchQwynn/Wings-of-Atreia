@@ -203,6 +203,8 @@
       <h2 style="margin-top:18px">Connection checks</h2>
       <p class="muted small">Send a harmless test request. The GM can approve or reject it. This does not change any game data.</p>
       <button id="sendTestRequest" class="primary">Send test request to GM</button>
+      <button id="resendExactTestRequest" disabled style="margin-top:8px">Resend exact same request (duplicate diagnostic)</button>
+      <p class="muted small">Use only while the original request is still pending. This resends the identical message ID and request ID.</p>
       <p id="requestResult" class="muted small"></p>
     </div>
     <div id="playerAuthorityDiagnostics" class="panel hidden" style="margin-top:18px">
@@ -233,7 +235,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const F=window.WoAMultiplayerFoundation;
-const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:new Map(),approved:new Map(),testRequests:new Map(),revision:0,hostGeneration:1,authority:F.createAuthority({hostGeneration:1,revision:0}),seenMessageIds:new Set(),seenRequestIds:new Set(),seenJoinAttemptIds:new Set(),joinAttemptId:null,playerConnection:null,playerApproved:false,playerEverApproved:false,playerName:'',playerLastHostPingAt:0,playerReconnectActive:false,playerReconnectTimer:null,playerHeartbeatTimer:null,playerConnectInProgress:false,playerConnectStartedAt:0,requestCounter:0};
+const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:new Map(),approved:new Map(),testRequests:new Map(),revision:0,hostGeneration:1,authority:F.createAuthority({hostGeneration:1,revision:0}),seenMessageIds:new Set(),seenRequestIds:new Set(),seenJoinAttemptIds:new Set(),joinAttemptId:null,playerConnection:null,playerApproved:false,playerEverApproved:false,playerName:'',playerLastHostPingAt:0,playerReconnectActive:false,playerReconnectTimer:null,playerHeartbeatTimer:null,playerConnectInProgress:false,playerConnectStartedAt:0,requestCounter:0,lastTestRequestEnvelope:null};
 const MAX_PLAYERS=25;
 const HEARTBEAT_INTERVAL_MS=5000;
 const HEARTBEAT_TIMEOUT_MS=16000;
@@ -470,7 +472,7 @@ function connectToHost(name,isRetry){
   if(msg.type==='STATE_SNAPSHOT'){if(msg.revision<state.revision){log('Ignored stale snapshot.');return}updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});setLast('STATE_SNAPSHOT received');log('Authoritative test snapshot received at revision '+state.revision+'.');return}
   if(msg.type==='STATE_UPDATE'){if(msg.revision<state.revision){log('Ignored stale state update.');return}updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});setLast('STATE_UPDATE received at revision '+msg.revision);log('Test state update received. Revision '+msg.revision+'.');return}
   if(msg.type==='PONG'){setLast('PONG received');log('Ping round-trip response received.');return}
-  if(msg.type==='ACTION_RESULT'){const status=msg.payload.status||'unknown';if(Number.isSafeInteger(msg.revision)&&msg.revision>state.revision){updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision})}$('requestResult').textContent='GM '+status+' your test request.';setLast('ACTION_RESULT: '+status);log('Test request result: '+status+'.');return}
+  if(msg.type==='ACTION_RESULT'){const status=msg.payload.status||'unknown';$('resendExactTestRequest').disabled=true;if(Number.isSafeInteger(msg.revision)&&msg.revision>state.revision){updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision})}$('requestResult').textContent='GM '+status+' your test request.';setLast('ACTION_RESULT: '+status);log('Test request result: '+status+'.');return}
   log('Received '+msg.type+'.');
  }));
  conn.on('close',()=>{
@@ -486,8 +488,9 @@ $('joinButton').addEventListener('click',()=>beginPlayer($('roomInput').value.tr
 $('sendTestRequest').addEventListener('click',()=>{
  const conn=state.playerConnection;if(!state.playerApproved||!conn||!conn.open){$('requestResult').textContent='Wait for GM approval and an active connection first.';return}
  const id='test-'+Date.now().toString(36)+'-'+(++state.requestCounter);
- try{send(conn,'ACTION_REQUEST',{requestId:id,kind:'safe-connectivity-test',createdAt:Date.now()});$('requestResult').textContent='Test request sent. Waiting for GM decision.';log('Sent harmless test request '+id+'.')}catch(error){$('requestResult').textContent=error.message}
+ try{const envelope=message('ACTION_REQUEST',{requestId:id,kind:'safe-connectivity-test',createdAt:Date.now()});conn.send(envelope);state.lastTestRequestEnvelope=envelope;$('resendExactTestRequest').disabled=false;$('requestResult').textContent='Test request sent. Waiting for GM decision.';log('Sent harmless test request '+id+'.')}catch(error){$('requestResult').textContent=error.message}
 });
+$('resendExactTestRequest').addEventListener('click',()=>{const conn=state.playerConnection;const envelope=state.lastTestRequestEnvelope;if(!state.playerApproved||!conn||!conn.open||!envelope){log('Duplicate diagnostic not sent: send a normal request first and keep it pending.');return}try{conn.send(envelope);log('Resent the exact same ACTION_REQUEST envelope: message ID and request ID are unchanged. GM should reject the duplicate message ID and keep only one queue entry.')}catch(error){log('Could not resend exact request: '+error.message)}});
 $('sendOldGenerationToGM').addEventListener('click',()=>{
  const conn=state.playerConnection;
  if(!state.playerApproved||!conn||!conn.open){log('Old-generation test not sent: wait for GM approval and an active connection.');return}
