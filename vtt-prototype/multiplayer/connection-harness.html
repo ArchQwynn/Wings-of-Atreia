@@ -254,7 +254,7 @@ const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:ne
 const MAX_PLAYERS=25;
 // Synthetic fixture only: this harness has no live tabletop or character permissions.
 const TEST_SCENE_OBJECTS=new Set(['token-lyra','enemy-token']);
-const TEST_PERMISSIONS={ 'player-1': { 'token-lyra': { move:true, interact:true } } };
+const TEST_PERMISSIONS=Object.create(null);
 const HEARTBEAT_INTERVAL_MS=5000;
 const HEARTBEAT_TIMEOUT_MS=16000;
 let heartbeatTimer=null;
@@ -387,7 +387,7 @@ function handleIncoming(conn){
     if(state.connections.get(conn.peer)===conn)state.connections.delete(conn.peer);
     const pending=state.pending.get(conn.peer);if(pending&&pending.conn===conn)state.pending.delete(conn.peer);
     const approved=state.approved.get(conn.peer);
-    if(approved&&approved.conn===conn){state.approved.delete(conn.peer);for(const item of state.testRequests.values()){if(item.peerId===conn.peer&&item.status==='pending')item.status='cancelled';}renderTestQueue();log('Removed disconnected participant '+approved.name+'; rejoining requires GM approval.')}
+    if(approved&&approved.conn===conn){state.approved.delete(conn.peer);delete TEST_PERMISSIONS[approved.actorId];for(const item of state.testRequests.values()){if(item.peerId===conn.peer&&item.status==='pending')item.status='cancelled';}renderTestQueue();log('Removed disconnected participant '+approved.name+'; rejoining requires GM approval.')}
     renderConnected();renderJoinQueue();log('Connection closed: '+conn.peer)
   });
   conn.on('error',err=>log('Data connection error: '+err.message));
@@ -399,7 +399,9 @@ function decideJoin(peerId,decision){
  if(decision==='approved'&&!capacityAvailable(peerId)){state.pending.delete(peerId);renderJoinQueue();renderConnected();sendError(item.conn,'Player capacity is full (25).');try{item.conn.close()}catch(_){}log('Approval refused: player capacity reached before decision.');return}
  state.pending.delete(peerId);
  if(decision==='approved'){
-  state.approved.set(peerId,{name:item.name,role:'player',actorId:'player-1',conn:item.conn,attemptId:item.attemptId,lastPongAt:Date.now()});
+  const actorId='test-actor-'+peerId;
+   TEST_PERMISSIONS[actorId]={ 'token-lyra': { move:true, interact:true } };
+   state.approved.set(peerId,{name:item.name,role:'player',actorId,conn:item.conn,attemptId:item.attemptId,lastPongAt:Date.now()});
   try{send(item.conn,'JOIN_ACCEPTED',{displayName:item.name,role:'player',hostGeneration:state.hostGeneration},state.revision);send(item.conn,'STATE_SNAPSHOT',{testOnly:true,revision:state.revision,sessionId:state.sessionId,role:'player'},state.revision);log('Approved '+item.name+' as Player.');}
   catch(error){log('Approval send failed for '+item.name+': '+error.message);state.approved.delete(peerId);try{item.conn.close()}catch(_){}}
  }else{try{send(item.conn,'JOIN_REJECTED',{reason:'The GM declined this join attempt.'})}catch(_){}try{item.conn.close()}catch(_){}log('Rejected '+item.name+'.')}
