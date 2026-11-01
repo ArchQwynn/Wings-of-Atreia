@@ -211,6 +211,8 @@
       <h2 style="margin-top:22px">Authority diagnostics</h2>
       <p class="muted small">Send a harmless simulated update using an outdated host generation. Approved players should reject it.</p>
       <button id="sendOldGenerationToPlayers" class="danger">Send outdated-generation test update</button>
+      <button id="sendVisibilityTest" class="primary" style="margin-top:8px">Send visibility test snapshot + update</button>
+      <p class="muted small">Sends a separately filtered synthetic snapshot and update to every approved player. Use two players to test Specific Player(s).</p>
     </div>
     <div id="playerTools" class="hidden">
       <h2 style="margin-top:18px">Connection checks</h2>
@@ -221,6 +223,11 @@
       <button id="resendExactTestRequest" disabled style="margin-top:8px">Resend exact same request (duplicate diagnostic)</button>
       <p class="muted small">Use only while the original request is still pending. This resends the identical message ID and request ID.</p>
       <p id="requestResult" class="muted small"></p>
+      <div class="panel" style="margin-top:14px">
+        <h2>Visibility test results</h2>
+        <p id="visibilitySnapshotResult" class="muted small">No visibility snapshot received yet.</p>
+        <p id="visibilityUpdateResult" class="muted small">No visibility update received yet.</p>
+      </div>
     </div>
     <div id="playerAuthorityDiagnostics" class="panel hidden" style="margin-top:18px">
       <h2>Authority diagnostics</h2>
@@ -255,6 +262,26 @@ const MAX_PLAYERS=25;
 // Synthetic fixture only: this harness has no live tabletop or character permissions.
 const TEST_SCENE_OBJECTS=new Set(['token-lyra','enemy-token']);
 const TEST_PERMISSIONS=Object.create(null);
+// Synthetic visibility fixtures. "player" is visible to all approved players;
+// "specific" is visible only to the listed synthetic actor IDs. GM-only and
+// unassigned objects are deliberately excluded from player payloads.
+function createVisibilityTestObjects(firstActorId){
+ return [
+  {id:'player-assigned-token',visibility:'player',label:'Player-assigned token'},
+  {id:'specific-player-token',visibility:'specific',allowedActorIds:firstActorId?[firstActorId]:[],label:'Specific Player(s) token'},
+  {id:'gm-only-token',visibility:'gm-only',label:'GM-only token'},
+  {id:'unassigned-token',visibility:'unassigned',label:'Unassigned token'}
+ ];
+}
+function canPlayerSeeTestObject(object,actorId){
+ if(!object||typeof object!=='object')return false;
+ if(object.visibility==='player')return true;
+ if(object.visibility==='specific')return Array.isArray(object.allowedActorIds)&&object.allowedActorIds.includes(actorId);
+ return false;
+}
+function filterVisibleTestObjects(objects,actorId){
+ return objects.filter(object=>canPlayerSeeTestObject(object,actorId));
+}
 const HEARTBEAT_INTERVAL_MS=5000;
 const HEARTBEAT_TIMEOUT_MS=16000;
 let heartbeatTimer=null;
@@ -288,6 +315,12 @@ function updateRevision(value){if(!Number.isSafeInteger(value)||value<state.revi
 function syncAuthority(){const v=state.authority.getVersion();state.hostGeneration=v.hostGeneration;state.revision=v.revision;$('revisionValue').textContent=String(state.revision)}
 function checkHostMessage(msg){const result=state.authority.checkMessage(msg);if(!result.ok){log('Rejected message by authority guard: '+result.code);return false}return true}
 function setLast(msg){$('lastMessage').textContent=msg}
+function renderVisibilityTestResult(phase,objects){
+ const ids=Array.isArray(objects)?objects.map(object=>String(object.id)):[];
+ const target=phase==='snapshot'?'visibilitySnapshotResult':'visibilityUpdateResult';
+ $(target).textContent=(phase==='snapshot'?'Snapshot':'Update')+' objects received ('+ids.length+'): '+(ids.length?ids.join(', '):'none');
+ log('Visibility '+phase+' received from GM: '+ids.length+' object(s).');
+}
 function startHostHeartbeat(){
  if(heartbeatTimer!==null)clearInterval(heartbeatTimer);
  log('Heartbeat monitor started (5-second interval; 16-second timeout).');
@@ -502,8 +535,8 @@ function connectToHost(name,isRetry){
   if(!checkHostMessage(msg))return;
   if(msg.type==='PING'){state.playerLastHostPingAt=Date.now();try{send(conn,'PONG',{at:Date.now()},msg.revision)}catch(error){log('Could not answer host heartbeat: '+error.message)}return}
   if(msg.type==='STATE_UPDATE'&&msg.revision>state.revision+1){log('Ignored state update with a revision gap.');return}
-  if(msg.type==='STATE_SNAPSHOT'){if(msg.revision<state.revision){log('Ignored stale snapshot.');return}updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});setLast('STATE_SNAPSHOT received');log('Authoritative test snapshot received at revision '+state.revision+'.');return}
-  if(msg.type==='STATE_UPDATE'){if(msg.revision<state.revision){log('Ignored stale state update.');return}updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});setLast('STATE_UPDATE received at revision '+msg.revision);log('Test state update received. Revision '+msg.revision+'.');return}
+  if(msg.type==='STATE_SNAPSHOT'){if(msg.revision<state.revision){log('Ignored stale snapshot.');return}updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});if(msg.payload&&msg.payload.visibilityTest===true)renderVisibilityTestResult('snapshot',msg.payload.objects);setLast('STATE_SNAPSHOT received');log('Authoritative test snapshot received at revision '+state.revision+'.');return}
+  if(msg.type==='STATE_UPDATE'){if(msg.revision<state.revision){log('Ignored stale state update.');return}updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});if(msg.payload&&msg.payload.visibilityTest===true)renderVisibilityTestResult('update',msg.payload.objects);setLast('STATE_UPDATE received at revision '+msg.revision);log('Test state update received. Revision '+msg.revision+'.');return}
   if(msg.type==='PONG'){setLast('PONG received');log('Ping round-trip response received.');return}
   if(msg.type==='ACTION_RESULT'){const status=msg.payload.status||'unknown';$('resendExactTestRequest').disabled=true;if(Number.isSafeInteger(msg.revision)&&msg.revision>state.revision){updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision})}$('requestResult').textContent='GM '+status+' your test request.';setLast('ACTION_RESULT: '+status);log('Test request result: '+status+'.');return}
   log('Received '+msg.type+'.');
@@ -548,6 +581,26 @@ $('sendStaleRevisionToGM').addEventListener('click',()=>{
   log('Sent diagnostic ACTION_REQUEST with stale revision '+staleRevision+' (current '+state.revision+'). GM should reject it.');
  }catch(error){log('Could not send stale-revision diagnostic: '+error.message)}
 });
+function sendVisibilityTest(){
+ if(state.role!=='gm'||state.approved.size===0){log('Visibility test not sent: approve at least one player first.');return}
+ const participants=Array.from(state.approved.values()).filter(player=>player.conn.open);
+ if(!participants.length){log('Visibility test not sent: no approved player connection is open.');return}
+ const fixture=createVisibilityTestObjects(participants[0].actorId);
+ let snapshotCount=0,updateCount=0;
+ for(const player of participants){
+  const visibleObjects=filterVisibleTestObjects(fixture,player.actorId);
+  const hiddenCount=fixture.length-visibleObjects.length;
+  try{
+   send(player.conn,'STATE_SNAPSHOT',{testOnly:true,visibilityTest:true,phase:'snapshot',objects:visibleObjects},state.revision);
+   snapshotCount++;
+   send(player.conn,'STATE_UPDATE',{testOnly:true,visibilityTest:true,phase:'update',objects:visibleObjects},state.revision);
+   updateCount++;
+   log('Visibility payload for '+player.name+': '+visibleObjects.length+' object(s) sent; '+hiddenCount+' restricted object(s) excluded before transmission.');
+  }catch(error){log('Visibility test send failed for '+player.name+': '+error.message)}
+ }
+ log('Visibility test complete: '+snapshotCount+' snapshot(s), '+updateCount+' update(s) sent. The first approved player is the Specific Player(s) recipient.');
+}
+$('sendVisibilityTest').addEventListener('click',sendVisibilityTest);
 $('sendOldGenerationToPlayers').addEventListener('click',()=>{
  if(state.role!=='gm'||state.approved.size===0){log('Old-generation test not sent: no approved players are connected.');return}
  const oldGeneration=Math.max(0,state.hostGeneration-1);
