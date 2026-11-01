@@ -128,6 +128,19 @@
       if (options && options.requireNextRevision === true && message.revision !== revision + 1) return { ok: false, code: 'REVISION_GAP' };
       return { ok: true, version: getVersion() };
     }
+    function authorizeAction(request, context) {
+      const ctx = context && typeof context === 'object' ? context : {};
+      if (!hostActive) return { ok: false, code: 'HOST_INACTIVE', error: 'The authoritative host is not active.' };
+      if (!request || typeof request !== 'object') return { ok: false, code: 'INVALID_REQUEST', error: 'Action request must be an object.' };
+      if (typeof request.actorId !== 'string' || !request.actorId.trim() || typeof request.objectId !== 'string' || !request.objectId.trim() || typeof request.action !== 'string' || !request.action.trim()) return { ok: false, code: 'INVALID_REQUEST', error: 'Actor, target object, and action are required.' };
+      if (request.hostGeneration !== hostGeneration) return { ok: false, code: 'HOST_GENERATION_MISMATCH', error: 'Request belongs to a different host generation.' };
+      if (request.baseRevision !== revision) return { ok: false, code: 'STALE_REQUEST', error: 'The scene changed after this request was created; refresh and review it.' };
+      if (ctx.targetExists !== true) return { ok: false, code: 'TARGET_UNAVAILABLE', error: 'The requested target is unavailable in the current scene.' };
+      const actorPermissions = ctx.permissions && ctx.permissions[request.actorId];
+      const objectPermissions = actorPermissions && actorPermissions[request.objectId];
+      if (!objectPermissions || objectPermissions[request.action] !== true) return { ok: false, code: 'ACTION_NOT_AUTHORIZED', error: 'This actor is not authorized for that action on this object.' };
+      return { ok: true, version: getVersion() };
+    }
     function advanceRevision(expectedGeneration, expectedRevision) {
       if (!hostActive) return { ok: false, code: 'HOST_INACTIVE' };
       if (expectedGeneration !== hostGeneration) return { ok: false, code: 'HOST_GENERATION_MISMATCH' };
@@ -135,7 +148,7 @@
       if (revision >= Number.MAX_SAFE_INTEGER) return { ok: false, code: 'REVISION_EXHAUSTED' };
       revision += 1; return { ok: true, version: getVersion() };
     }
-    return Object.freeze({ getVersion, checkMessage, advanceRevision });
+    return Object.freeze({ getVersion, checkMessage, authorizeAction, advanceRevision });
   }
   root.WoAMultiplayerFoundation = root.WoAMultiplayerFoundation || {};
   Object.assign(root.WoAMultiplayerFoundation, {
@@ -202,7 +215,9 @@
     <div id="playerTools" class="hidden">
       <h2 style="margin-top:18px">Connection checks</h2>
       <p class="muted small">Send a harmless test request. The GM can approve or reject it. This does not change any game data.</p>
-      <button id="sendTestRequest" class="primary">Send test request to GM</button>
+      <button id="sendTestRequest" class="primary">Send authorized move request</button>
+      <button id="sendUnauthorizedAction" class="danger" style="margin-top:8px">Send unauthorized action request</button>
+      <button id="sendMissingTarget" class="danger" style="margin-top:8px">Send request for missing target</button>
       <button id="resendExactTestRequest" disabled style="margin-top:8px">Resend exact same request (duplicate diagnostic)</button>
       <p class="muted small">Use only while the original request is still pending. This resends the identical message ID and request ID.</p>
       <p id="requestResult" class="muted small"></p>
@@ -237,6 +252,9 @@ const $=id=>document.getElementById(id);
 const F=window.WoAMultiplayerFoundation;
 const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:new Map(),approved:new Map(),testRequests:new Map(),revision:0,hostGeneration:1,authority:F.createAuthority({hostGeneration:1,revision:0}),seenMessageIds:new Set(),seenRequestIds:new Set(),seenJoinAttemptIds:new Set(),joinAttemptId:null,playerConnection:null,playerApproved:false,playerEverApproved:false,playerName:'',playerLastHostPingAt:0,playerReconnectActive:false,playerReconnectTimer:null,playerHeartbeatTimer:null,playerConnectInProgress:false,playerConnectStartedAt:0,requestCounter:0,lastTestRequestEnvelope:null};
 const MAX_PLAYERS=25;
+// Synthetic fixture only: this harness has no live tabletop or character permissions.
+const TEST_SCENE_OBJECTS=new Set(['token-lyra','enemy-token']);
+const TEST_PERMISSIONS={ 'player-1': { 'token-lyra': { move:true, interact:true } } };
 const HEARTBEAT_INTERVAL_MS=5000;
 const HEARTBEAT_TIMEOUT_MS=16000;
 let heartbeatTimer=null;
@@ -347,12 +365,22 @@ function handleIncoming(conn){
    if(msg.type==='PONG'){player.lastPongAt=Date.now();setLast('PONG from '+player.name);log('PONG received from '+player.name+'.');return}
    if(msg.type==='STATE_SNAPSHOT_REQUEST'){send(conn,'STATE_SNAPSHOT',{testOnly:true,revision:state.revision,sessionId:state.sessionId},state.revision);setLast('Snapshot sent to '+player.name);return}
    if(msg.type==='ACTION_REQUEST'){
-    const id=typeof msg.payload.requestId==='string'?msg.payload.requestId:'';
-    if(!id||id.length>100||state.seenRequestIds.has(id)||state.testRequests.has(id)){log('Ignored duplicate or invalid test request ID.');return}
-    if(msg.revision!==state.revision){sendError(conn,'Test request is stale; refresh and retry.');return}
-    state.seenRequestIds.add(id);
-    state.testRequests.set(id,{id,peerId:conn.peer,name:player.name,status:'pending',baseRevision:msg.revision,hostGeneration:msg.hostGeneration,request:msg.payload});log('Test request from '+player.name+' is waiting for GM decision.');renderTestQueue();return;
-   }
+     const id=typeof msg.payload.requestId==='string'?msg.payload.requestId:'';
+     if(!id||id.length>100||state.seenRequestIds.has(id)||state.testRequests.has(id)){log('Ignored duplicate or invalid test request ID.');return}
+     if(msg.revision!==state.revision){sendError(conn,'Test request is stale; refresh and retry.');return}
+     // Actor identity is taken from the GM-approved connection, never client-supplied payload.actorId.
+     const actionRequest={actorId:player.actorId,objectId:msg.payload.objectId,action:msg.payload.action,hostGeneration:msg.hostGeneration,baseRevision:msg.revision};
+     const authorization=state.authority.authorizeAction(actionRequest,{targetExists:TEST_SCENE_OBJECTS.has(actionRequest.objectId),permissions:TEST_PERMISSIONS});
+     if(!authorization.ok){
+      log('Rejected ACTION_REQUEST from '+player.name+': '+authorization.code+' — '+authorization.error);
+      sendError(conn,'Action request rejected: '+authorization.error);
+      return;
+     }
+     state.seenRequestIds.add(id);
+     state.testRequests.set(id,{id,peerId:conn.peer,name:player.name,status:'pending',baseRevision:msg.revision,hostGeneration:msg.hostGeneration,request:actionRequest});
+     log('Authorized '+actionRequest.action+' request for '+actionRequest.objectId+' from '+player.name+'; waiting for GM decision.');
+     renderTestQueue();return;
+    }
    log('Received '+msg.type+' from '+player.name+'.');
   }));
   conn.on('close',()=>{
@@ -371,7 +399,7 @@ function decideJoin(peerId,decision){
  if(decision==='approved'&&!capacityAvailable(peerId)){state.pending.delete(peerId);renderJoinQueue();renderConnected();sendError(item.conn,'Player capacity is full (25).');try{item.conn.close()}catch(_){}log('Approval refused: player capacity reached before decision.');return}
  state.pending.delete(peerId);
  if(decision==='approved'){
-  state.approved.set(peerId,{name:item.name,role:'player',conn:item.conn,attemptId:item.attemptId,lastPongAt:Date.now()});
+  state.approved.set(peerId,{name:item.name,role:'player',actorId:'player-1',conn:item.conn,attemptId:item.attemptId,lastPongAt:Date.now()});
   try{send(item.conn,'JOIN_ACCEPTED',{displayName:item.name,role:'player',hostGeneration:state.hostGeneration},state.revision);send(item.conn,'STATE_SNAPSHOT',{testOnly:true,revision:state.revision,sessionId:state.sessionId,role:'player'},state.revision);log('Approved '+item.name+' as Player.');}
   catch(error){log('Approval send failed for '+item.name+': '+error.message);state.approved.delete(peerId);try{item.conn.close()}catch(_){}}
  }else{try{send(item.conn,'JOIN_REJECTED',{reason:'The GM declined this join attempt.'})}catch(_){}try{item.conn.close()}catch(_){}log('Rejected '+item.name+'.')}
@@ -383,6 +411,8 @@ function decideTest(id,decision){
  if(decision==='approved'){
   if(!p||!p.conn.open){item.status='cancelled';renderTestQueue();log('Request cancelled because the player is no longer connected.');return}
   if(item.hostGeneration!==state.hostGeneration||item.baseRevision!==state.revision){item.status='stale';try{send(p.conn,'ACTION_RESULT',{requestId:id,status:'stale',revision:state.revision},state.revision)}catch(_){}renderTestQueue();log('Rejected stale test request '+id+'; no revision change was applied.');return}
+  const authorization=state.authority.authorizeAction(item.request,{targetExists:TEST_SCENE_OBJECTS.has(item.request.objectId),permissions:TEST_PERMISSIONS});
+  if(!authorization.ok){item.status='rejected';try{send(p.conn,'ACTION_RESULT',{requestId:id,status:'rejected',reason:authorization.code,revision:state.revision},state.revision)}catch(_){}renderTestQueue();log('Approval blocked by action authorization: '+authorization.code+'.');return}
   const advanced=state.authority.advanceRevision(state.hostGeneration,state.revision);
   if(!advanced.ok){item.status='rejected';renderTestQueue();log('Authority refused revision advance: '+advanced.code);return}
   syncAuthority();item.status='approved';
@@ -486,11 +516,14 @@ function connectToHost(name,isRetry){
 }
 $('startHost').addEventListener('click',startHost);
 $('joinButton').addEventListener('click',()=>beginPlayer($('roomInput').value.trim(),$('nameInput').value.trim()));
-$('sendTestRequest').addEventListener('click',()=>{
+function sendActionTest(objectId,action,label){
  const conn=state.playerConnection;if(!state.playerApproved||!conn||!conn.open){$('requestResult').textContent='Wait for GM approval and an active connection first.';return}
  const id='test-'+Date.now().toString(36)+'-'+(++state.requestCounter);
- try{const envelope=message('ACTION_REQUEST',{requestId:id,kind:'safe-connectivity-test',createdAt:Date.now()});conn.send(envelope);state.lastTestRequestEnvelope=envelope;$('resendExactTestRequest').disabled=false;$('requestResult').textContent='Test request sent. Waiting for GM decision.';log('Sent harmless test request '+id+'.')}catch(error){$('requestResult').textContent=error.message}
-});
+ try{const envelope=message('ACTION_REQUEST',{requestId:id,actorId:'client-supplied-actor-is-ignored',objectId,action,createdAt:Date.now()});conn.send(envelope);state.lastTestRequestEnvelope=envelope;$('resendExactTestRequest').disabled=false;$('requestResult').textContent=label+' sent. Waiting for GM decision.';log('Sent '+label.toLowerCase()+' '+id+'.')}catch(error){$('requestResult').textContent=error.message}
+}
+$('sendTestRequest').addEventListener('click',()=>sendActionTest('token-lyra','move','Authorized move request'));
+$('sendUnauthorizedAction').addEventListener('click',()=>sendActionTest('token-lyra','delete','Unauthorized delete request'));
+$('sendMissingTarget').addEventListener('click',()=>sendActionTest('missing-token','move','Missing-target request'));
 $('resendExactTestRequest').addEventListener('click',()=>{const conn=state.playerConnection;const envelope=state.lastTestRequestEnvelope;if(!state.playerApproved||!conn||!conn.open||!envelope){log('Duplicate diagnostic not sent: send a normal request first and keep it pending.');return}try{conn.send(envelope);log('Resent the exact same ACTION_REQUEST envelope: message ID and request ID are unchanged. GM should reject the duplicate message ID and keep only one queue entry.')}catch(error){log('Could not resend exact request: '+error.message)}});
 $('sendOldGenerationToGM').addEventListener('click',()=>{
  const conn=state.playerConnection;
