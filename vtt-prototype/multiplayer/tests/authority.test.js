@@ -48,17 +48,44 @@ test('revision updates use compare-and-swap semantics and stop while host is ina
   assert.equal(authority.advanceRevision(1, 6).code, 'HOST_INACTIVE');
 });
 
-test('action permission is scoped to actor, object, and exact action', () => {
+test('authorized actor can perform an explicitly permitted action on its assigned object', () => {
   const authority = foundation.createAuthority({ hostGeneration: 7, revision: 3 });
   const request = { actorId: 'player-1', objectId: 'token-lyra', action: 'move', hostGeneration: 7, baseRevision: 3 };
   const permissions = { 'player-1': { 'token-lyra': { move: true } } };
-
   assert.equal(authority.authorizeAction(request, { targetExists: true, permissions }).ok, true);
-  assert.equal(authority.authorizeAction({ ...request, action: 'delete' }, { targetExists: true, permissions }).code, 'ACTION_NOT_AUTHORIZED');
-  assert.equal(authority.authorizeAction({ ...request, objectId: 'enemy-token' }, { targetExists: true, permissions }).code, 'ACTION_NOT_AUTHORIZED');
+});
+
+test('rejects an action not explicitly permitted for that actor and object', () => {
+  const authority = foundation.createAuthority({ hostGeneration: 7, revision: 3 });
+  const request = { actorId: 'player-1', objectId: 'token-lyra', action: 'delete', hostGeneration: 7, baseRevision: 3 };
+  const permissions = { 'player-1': { 'token-lyra': { move: true } } };
+  assert.equal(authority.authorizeAction(request, { targetExists: true, permissions }).code, 'ACTION_NOT_AUTHORIZED');
+  assert.equal(authority.authorizeAction({ ...request, objectId: 'enemy-token', action: 'move' }, { targetExists: true, permissions }).code, 'ACTION_NOT_AUTHORIZED');
+});
+
+test('rejects an action when its target object no longer exists', () => {
+  const authority = foundation.createAuthority({ hostGeneration: 7, revision: 3 });
+  const request = { actorId: 'player-1', objectId: 'token-lyra', action: 'move', hostGeneration: 7, baseRevision: 3 };
+  const permissions = { 'player-1': { 'token-lyra': { move: true } } };
   assert.equal(authority.authorizeAction(request, { targetExists: false, permissions }).code, 'TARGET_UNAVAILABLE');
+});
+
+test('action authorization rejects stale scene revisions and host generations', () => {
+  const authority = foundation.createAuthority({ hostGeneration: 7, revision: 3 });
+  const request = { actorId: 'player-1', objectId: 'token-lyra', action: 'move', hostGeneration: 7, baseRevision: 3 };
+  const permissions = { 'player-1': { 'token-lyra': { move: true } } };
   assert.equal(authority.authorizeAction({ ...request, baseRevision: 2 }, { targetExists: true, permissions }).code, 'STALE_REQUEST');
   assert.equal(authority.authorizeAction({ ...request, hostGeneration: 6 }, { targetExists: true, permissions }).code, 'HOST_GENERATION_MISMATCH');
+});
+
+test('embedded connection harness inline scripts parse successfully', () => {
+  const fs = require('node:fs');
+  const vm = require('node:vm');
+  const html = fs.readFileSync(require('node:path').join(__dirname, '..', 'connection-harness.html'), 'utf8');
+  const scripts = [...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi)]
+    .map(match => match[1]).filter(source => source.trim());
+  assert.equal(scripts.length, 2, 'expected the embedded protocol and harness scripts');
+  for (const source of scripts) assert.doesNotThrow(() => new vm.Script(source));
 });
 
 test('stale or malformed join attempts cannot bypass explicit approval', () => {
