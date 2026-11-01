@@ -163,7 +163,7 @@ Run the isolated Node.js tests from the repository root:
 node --test vtt-prototype/multiplayer/tests/*.test.js
 ```
 
-The tests cover message envelope validation, message size limits, legal lifecycle transitions, host-generation fencing, stale revision rejection, compare-and-swap revision advancement, exact object/action permission checks, explicit join approval states, and filtering hidden objects before a snapshot is returned. Passing these tests does not establish that multiplayer networking or VTT integration is complete.
+The tests cover message envelope validation, message size limits, legal lifecycle transitions, host-generation fencing, stale revision rejection, compare-and-swap revision advancement, authorized and unauthorized actor/object/action combinations, missing targets, explicit join approval states, filtering hidden objects before a snapshot is returned, and parsing the harness's embedded scripts. Passing these tests does not establish that multiplayer networking or VTT integration is complete.
 
 
 ### 11. Isolated GM-to-Player Connection Harness
@@ -183,7 +183,7 @@ After approval, send a harmless test request from the player browser. Approve or
 **Harness boundaries:**
 
 - This is a transport/handshake test only. It does not import the VTT, load scenes, or synchronize actual characters, tokens, props, or assets.
-- The harness capacity test supports up to 25 approved or pending players, plus the GM. Pending approvals reserve a slot. Every approved participant has the same Player role and can submit the harmless test action request. This validates admission logic only; it does not prove 25 remote WebRTC connections can be sustained.
+- The harness capacity test supports up to 25 approved or pending players, plus the GM. Pending approvals reserve a slot. Every approved participant has the same Player role and receives a unique synthetic actor identity. The test fixture permits that actor to move/interact with one synthetic token; separate buttons submit an unauthorized action and a request for a nonexistent target. This validates the harness's sample authorization path and admission logic only; it does not prove 25 remote WebRTC connections can be sustained or connect permissions to real VTT objects.
 - The GM browser is the temporary session coordinator, but no secure host election or automatic GM recovery exists. Closing the GM tab ends the test session.
 - PeerJS signaling is a public third-party service in this harness. Network availability, browser WebRTC policy, and restrictive firewalls may affect connection success.
 - Display names and peer IDs are not authentication. Do not use this harness for real campaign data or treat its approval UI as production security.
@@ -198,6 +198,8 @@ Harness guard behavior added during the branch audit:
 - Disconnected participants are removed from the active approved list; their pending test requests are cancelled, and reconnecting requires a fresh GM approval.
 - The connection harness now sends host heartbeats every 5 seconds. If a participant does not answer within 16 seconds, the GM marks that participant disconnected, removes them from the active approved list, cancels their pending test requests, and requires fresh GM approval to rejoin. The PeerJS `close` event remains an additional immediate cleanup path.
 - The embedded guard is duplicated from the pure authority helper so the harness remains a single-file test page. Keep both implementations aligned when making future changes.
+- Player `ACTION_REQUEST` messages are now checked against the GM-approved connection's server-assigned synthetic actor ID, the requested synthetic target, and the exact permitted action before they enter the GM queue. Client-supplied actor IDs are ignored. The same authorization is checked again when the GM approves the request.
+- The harness fixture intentionally permits only `move` and `interact` on `token-lyra`; it rejects `delete` on that token and any action targeting an object absent from the synthetic scene. These are harness-only fixtures, not real character or VTT permissions.
 
 Suggested test checklist:
 1. GM starts a session and receives a session ID and invitation link.
@@ -214,4 +216,4 @@ Suggested test checklist:
 12. All join requests are treated as Player requests and the GM approves or rejects each one.
 13. The shared 25-player limit is enforced, including pending approval slots; a 26th player is refused.
 
-Automated test command (run from the repository root): `node --test vtt-prototype/multiplayer/tests/*.test.js`. Static syntax and the existing 18 protocol/lifecycle/authority assertions were checked during this audit, but the native Node test runner and live two-browser WebRTC flow have not yet been run in this environment.
+Automated test command (run from the repository root): `node --test vtt-prototype/multiplayer/tests/*.test.js`. The test suite now contains 22 automated cases, including a syntax check for both embedded harness scripts. Run the command above after updating your local feature branch; the live two-browser authorization scenarios still require manual testing.
