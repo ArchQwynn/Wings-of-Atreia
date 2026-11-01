@@ -163,7 +163,7 @@ Run the isolated Node.js tests from the repository root:
 node --test vtt-prototype/multiplayer/tests/*.test.js
 ```
 
-The tests cover message envelope validation, message size limits, legal lifecycle transitions, host-generation fencing, stale revision rejection, compare-and-swap revision advancement, authorized and unauthorized actor/object/action combinations, missing targets, explicit join approval states, filtering hidden objects before a snapshot is returned, and parsing the harness's embedded scripts. Passing these tests does not establish that multiplayer networking or VTT integration is complete.
+The tests cover message envelope validation, message size limits, legal lifecycle transitions, host-generation fencing, stale revision rejection, compare-and-swap revision advancement, authorized and unauthorized actor/object/action combinations, missing targets, explicit join approval states, Player versus Specific Player(s) visibility filtering with GM-only and unassigned objects excluded, and parsing the harness's embedded scripts. Passing these tests does not establish that multiplayer networking or VTT integration is complete.
 
 
 ### 11. Isolated GM-to-Player Connection Harness
@@ -189,6 +189,14 @@ After approval, send a harmless test request from the player browser. Approve or
 - Display names and peer IDs are not authentication. Do not use this harness for real campaign data or treat its approval UI as production security.
 - The harness has not been integrated with the main VTT. Browser-based two-device testing is still required; adding the file does not itself prove the live connection works.
 
+Visibility test added to the isolated harness:
+
+- The GM can click **Send visibility test snapshot + update** after approving players.
+- The harness creates four synthetic objects: Player-assigned, Specific Player(s), GM Only, and Unassigned.
+- The first approved player is the Specific Player(s) recipient. Each recipient receives a separately filtered snapshot and update. The GM filters the object array before calling the network send function.
+- Player consoles display the IDs received in the snapshot and update. With two players, the first should receive the Player-assigned and Specific Player(s) objects; the second should receive only the Player-assigned object. Neither should receive GM-only or Unassigned objects.
+- This is a synthetic policy test only; it does not yet connect visibility filtering to real VTT token assignment data or production scene serialization.
+
 Harness guard behavior added during the branch audit:
 
 - Approved-peer messages pass the embedded authority guard; messages from a different host generation or older revision are rejected.
@@ -196,6 +204,7 @@ Harness guard behavior added during the branch audit:
 - Revision changes use compare-and-swap semantics; a duplicate approval cannot advance the same revision twice.
 - Duplicate message IDs, test request IDs, and join-attempt IDs are rejected. A reused join-attempt ID remains rejected after the original request is decided or the connection closes.
 - Disconnected participants are removed from the active approved list; their pending test requests are cancelled, and reconnecting requires a fresh GM approval.
+- The connection harness now includes a per-recipient visibility test that filters Player, Specific Player(s), GM Only, and Unassigned synthetic objects before sending both snapshots and updates.
 - The connection harness now sends host heartbeats every 5 seconds. If a participant does not answer within 16 seconds, the GM marks that participant disconnected, removes them from the active approved list, cancels their pending test requests, and requires fresh GM approval to rejoin. The PeerJS `close` event remains an additional immediate cleanup path.
 - The embedded guard is duplicated from the pure authority helper so the harness remains a single-file test page. Keep both implementations aligned when making future changes.
 - Player `ACTION_REQUEST` messages are now checked against the GM-approved connection's server-assigned synthetic actor ID, the requested synthetic target, and the exact permitted action before they enter the GM queue. Client-supplied actor IDs are ignored. The same authorization is checked again when the GM approves the request.
@@ -215,5 +224,6 @@ Suggested test checklist:
 11. A second approved player receives a broadcast update after a synthetic revision advances.
 12. All join requests are treated as Player requests and the GM approves or rejects each one.
 13. The shared 25-player limit is enforced, including pending approval slots; a 26th player is refused.
+14. Approve two test players, send the visibility test, and verify the first receives the Player-assigned and Specific Player(s) objects while the second receives only the Player-assigned object; neither receives GM Only or Unassigned objects.
 
 Automated test command (run from the repository root): `node --test vtt-prototype/multiplayer/tests/*.test.js`. The test suite now contains 22 automated cases, including a syntax check for both embedded harness scripts. Run the command above after updating your local feature branch; the live two-browser authorization scenarios still require manual testing.
