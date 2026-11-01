@@ -102,16 +102,22 @@ test('stale or malformed join attempts cannot bypass explicit approval', () => {
   assert.equal(queue.requestJoin({ attemptId: 'attempt-0003', displayName: '   ' }).code, 'INVALID_JOIN_REQUEST');
 });
 
-test('visibility filtering removes restricted objects before a snapshot is returned', () => {
+test('visibility filtering sends Player and matching Specific Player(s) objects only', () => {
   const objects = [
-    { id: 'visible-token', hidden: false },
-    { id: 'hidden-token', hidden: true },
-    { id: 'visible-prop', hidden: false }
+    { id: 'player-token', assignment: 'player' },
+    { id: 'specific-token', assignment: 'specific', playerIds: ['actor-a'] },
+    { id: 'gm-only-token', assignment: 'gm-only' },
+    { id: 'unassigned-token', assignment: 'unassigned' }
   ];
-  const visible = foundation.filterVisibleObjects(objects, object => !object.hidden);
+  const canSee = (object, actorId) =>
+    object.assignment === 'player' ||
+    (object.assignment === 'specific' && object.playerIds.includes(actorId));
+  const playerA = foundation.filterVisibleObjects(objects, object => canSee(object, 'actor-a'));
+  const playerB = foundation.filterVisibleObjects(objects, object => canSee(object, 'actor-b'));
 
-  assert.deepEqual(visible.map(object => object.id), ['visible-token', 'visible-prop']);
-  assert.equal(objects.length, 3, 'filtering must not mutate the source scene');
+  assert.deepEqual(playerA.map(object => object.id), ['player-token', 'specific-token']);
+  assert.deepEqual(playerB.map(object => object.id), ['player-token']);
+  assert.equal(objects.length, 4, 'filtering must not mutate the source scene');
   assert.throws(() => foundation.filterVisibleObjects(objects, null), /predicate/);
   assert.deepEqual(foundation.filterVisibleObjects(objects, () => { throw new Error('visibility failure'); }), []);
 });
