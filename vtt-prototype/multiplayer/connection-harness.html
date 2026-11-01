@@ -190,7 +190,7 @@
   </section>
 
   <section class="panel hidden" id="sessionPanel">
-    <div class="section-head"><h2 id="roleTitle">Session</h2><span class="status" id="connectionStatus">Starting…</span></div>
+    <div class="section-head"><h2 id="roleTitle">Session</h2><div class="row" style="justify-content:flex-end;flex:0 1 auto"><span class="status warn" id="signalingStatus">Signaling starting…</span><span class="status" id="connectionStatus">Session starting…</span></div></div>
     <p id="sessionHint" class="muted small"></p>
     <div id="inviteArea" class="hidden">
       <label>Reusable test invitation link</label>
@@ -259,7 +259,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const F=window.WoAMultiplayerFoundation;
-const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:new Map(),approved:new Map(),testRequests:new Map(),revision:0,hostGeneration:1,authority:F.createAuthority({hostGeneration:1,revision:0}),seenMessageIds:new Set(),seenRequestIds:new Set(),seenJoinAttemptIds:new Set(),lastJoinAttemptId:null,joinAttemptId:null,playerConnection:null,playerApproved:false,playerEverApproved:false,playerName:'',playerLastHostPingAt:0,playerReconnectActive:false,playerReconnectTimer:null,playerHeartbeatTimer:null,playerConnectInProgress:false,playerConnectStartedAt:0,requestCounter:0,lastTestRequestEnvelope:null};
+const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:new Map(),approved:new Map(),testRequests:new Map(),revision:0,hostGeneration:1,authority:F.createAuthority({hostGeneration:1,revision:0}),seenMessageIds:new Set(),seenRequestIds:new Set(),seenJoinAttemptIds:new Set(),lastJoinAttemptId:null,joinAttemptId:null,playerConnection:null,playerApproved:false,playerEverApproved:false,playerName:'',playerLastHostPingAt:0,playerReconnectActive:false,playerReconnectTimer:null,playerHeartbeatTimer:null,playerConnectInProgress:false,playerConnectStartedAt:0,signalingReconnectTimer:null,signalingConnected:false,requestCounter:0,lastTestRequestEnvelope:null};
 const MAX_PLAYERS=25;
 // Synthetic fixture only: this harness has no live tabletop or character permissions.
 const TEST_SCENE_OBJECTS=new Set(['token-lyra','enemy-token']);
@@ -289,6 +289,25 @@ const HEARTBEAT_TIMEOUT_MS=16000;
 let heartbeatTimer=null;
 function log(message){const el=$('log');const stamp=new Date().toLocaleTimeString();el.textContent+='\n['+stamp+'] '+message;el.scrollTop=el.scrollHeight}
 function setStatus(text,kind){$('connectionStatus').textContent=text;$('connectionStatus').className='status '+(kind||'')}
+function setSignalingStatus(text,kind){$('signalingStatus').textContent=text;$('signalingStatus').className='status '+(kind||'')}
+function stopSignalingReconnect(){if(state.signalingReconnectTimer!==null){clearTimeout(state.signalingReconnectTimer);state.signalingReconnectTimer=null}}
+function handleSignalingDisconnected(peer,label){
+ state.signalingConnected=false;setSignalingStatus('Signaling disconnected','warn');
+ log(label+' PeerJS signaling disconnected. Existing WebRTC data connections may remain active.');
+ if(state.signalingReconnectTimer!==null||!peer||peer.destroyed)return;
+ state.signalingReconnectTimer=setTimeout(()=>{
+  state.signalingReconnectTimer=null;
+  if(state.peer!==peer||peer.destroyed)return;
+  if(!peer.disconnected){log(label+' signaling reconnect skipped: PeerJS is already reconnecting.');return}
+  try{log(label+' attempting PeerJS signaling recovery with the existing peer ID.');peer.reconnect()}
+  catch(error){setSignalingStatus('Signaling recovery failed','bad');log(label+' signaling reconnect failed: '+error.message)}
+ },2000);
+}
+function handleSignalingOpened(peer,label){
+ if(state.peer!==peer)return;
+ state.signalingConnected=true;stopSignalingReconnect();setSignalingStatus('Signaling connected','good');
+ log(label+' PeerJS signaling connection is available.');
+}
 function setPlayerStatus(text,kind){$('playerState').textContent=text;$('playerState').className='status '+(kind||'')}
 function showSession(role){$('startPanel').classList.add('hidden');$('sessionPanel').classList.remove('hidden');state.role=role;$('roleTitle').textContent=role==='gm'?'GM test console':'Player test console';$('sessionHint').textContent=role==='gm'?'You are the session host. Approve every join request below.':'You are connected as a player. This is an isolated test; no actual tabletop is loaded.';$('inviteArea').classList.toggle('hidden',role!=='gm');$('gmArea').classList.toggle('hidden',role!=='gm');$('playerStatus').classList.toggle('hidden',role==='gm');$('playerTools').classList.toggle('hidden',role==='gm');$('playerAuthorityDiagnostics').classList.toggle('hidden',role==='gm');$('testQueuePanel').classList.toggle('hidden',role!=='gm')}
 function message(type,payload,revision=state.revision){return F.createMessage(type,payload,{hostGeneration:state.hostGeneration,revision})}
@@ -355,12 +374,12 @@ async function startHost(){
  if(!window.Peer){$('startupMessage').textContent='PeerJS library did not load. Check your internet connection and reload.';return}
  $('startHost').disabled=true;$('startupMessage').textContent='Opening a PeerJS connection…';
  try{
-  const peer=new Peer();state.peer=peer;
-  peer.on('open',id=>{state.sessionId=id;showSession('gm');setStatus('Hosting','good');$('sessionHint').textContent='GM host is online. Keep this tab open during the test.';makeInvite();startHostHeartbeat();log('GM host ready. Session ID: '+id);});
+  const peer=new Peer();state.peer=peer;let initialOpenHandled=false;
+  peer.on('open',id=>{handleSignalingOpened(peer,'GM');if(initialOpenHandled){if(id!==state.sessionId)log('Warning: GM peer ID changed unexpectedly during signaling recovery.');return}initialOpenHandled=true;state.sessionId=id;showSession('gm');setStatus('Hosting','good');$('sessionHint').textContent='GM host is online. Keep this tab open during the test.';makeInvite();startHostHeartbeat();log('GM host ready. Session ID: '+id);});
   peer.on('connection',conn=>handleIncoming(conn));
-  peer.on('disconnected',()=>{setStatus('Signaling disconnected','warn');log('PeerJS signaling disconnected.');});
-  peer.on('close',()=>{setStatus('Closed','bad');log('Peer connection closed.');});
-  peer.on('error',err=>{log('PeerJS error: '+err.type+' — '+err.message);setStatus('Connection error','bad');$('startupMessage').textContent='PeerJS error: '+err.message;$('startHost').disabled=false;});
+  peer.on('disconnected',()=>handleSignalingDisconnected(peer,'GM'));
+  peer.on('close',()=>{setStatus('Closed','bad');setSignalingStatus('Signaling closed','bad');log('Peer connection closed.');});
+  peer.on('error',err=>{log('PeerJS error: '+err.type+' — '+err.message);if(peer.disconnected)setSignalingStatus('Signaling error','bad');else setStatus('Connection error','bad');$('startupMessage').textContent='PeerJS error: '+err.message;$('startHost').disabled=false;});
  }catch(error){$('startupMessage').textContent=error.message;$('startHost').disabled=false}
 }
 function handleIncoming(conn){
@@ -463,10 +482,10 @@ function beginPlayer(roomId,name){
  if(!window.Peer){$('startupMessage').textContent='PeerJS library did not load. Check your internet connection and reload.';return}
  if(!roomId||!name.trim()){ $('startupMessage').textContent='Enter a GM session ID and display name.';return}
  $('joinButton').disabled=true;$('startupMessage').textContent='Connecting to the GM…';
- const peer=new Peer();state.peer=peer;state.sessionId=roomId;state.role='player';state.playerName=name.trim();
- peer.on('open',()=>{connectToHost(name.trim())});
- peer.on('error',err=>{log('PeerJS error: '+err.type+' — '+err.message);setStatus('Connection error','bad');$('startupMessage').textContent='Connection error: '+err.message;$('joinButton').disabled=false});
- peer.on('disconnected',()=>{setStatus('Signaling disconnected','warn');log('PeerJS signaling disconnected.')});
+ const peer=new Peer();state.peer=peer;state.sessionId=roomId;state.role='player';state.playerName=name.trim();let initialOpenHandled=false;
+ peer.on('open',()=>{handleSignalingOpened(peer,'Player');if(initialOpenHandled){log('Player signaling restored; preserving the existing GM data connection and approval state.');return}initialOpenHandled=true;connectToHost(name.trim())});
+ peer.on('error',err=>{log('PeerJS error: '+err.type+' — '+err.message);if(peer.disconnected)setSignalingStatus('Signaling error','bad');else setStatus('Connection error','bad');$('startupMessage').textContent='Connection error: '+err.message;$('joinButton').disabled=false});
+ peer.on('disconnected',()=>handleSignalingDisconnected(peer,'Player'));
 }
 function stopPlayerMonitoring(){
  if(state.playerHeartbeatTimer!==null){clearInterval(state.playerHeartbeatTimer);state.playerHeartbeatTimer=null;}
