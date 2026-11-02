@@ -373,7 +373,6 @@
       setStatus('Connected · approved by GM', 'connected');
       const notice = $('mp-player-notice');
       if (notice) { notice.hidden = false; notice.textContent = 'You are connected to the GM session. Your token actions are subject to GM approval.'; }
-      try { send(conn, 'STATE_SNAPSHOT_REQUEST', { requestedAt: Date.now() }); } catch (_) {}
       emit('join-accepted', { displayName: state.playerName });
       return;
     }
