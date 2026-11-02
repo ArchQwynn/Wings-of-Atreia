@@ -1,0 +1,31 @@
+name: VTT validation
+
+on:
+  push:
+    branches:
+      - main
+      - feature/vtt-approved-systems-integration
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-vtt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check JavaScript syntax
+        run: |
+          node --check vtt-prototype/app.js
+          node --check vtt-prototype/overlay.js
+          node --check vtt-prototype/multiplayer/protocol.js
+          node --check vtt-prototype/multiplayer/authority.js
+          node --check vtt-prototype/multiplayer/lifecycle.js
+          node --check vtt-prototype/multiplayer/runtime.js
+      - name: Run multiplayer foundation tests
+        run: node --test vtt-prototype/multiplayer/tests/*.test.js
