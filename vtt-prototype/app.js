@@ -955,7 +955,7 @@ function appendGridPath(path, targetX, targetY) {
   let x = Math.round(path[path.length - 1].x), y = Math.round(path[path.length - 1].y);
   const dx = Math.abs(tx - x), dy = Math.abs(ty - y), sx = x < tx ? 1 : -1, sy = y < ty ? 1 : -1;
   let error = dx - dy, steps = 0;
-  while ((x !== tx || y !== ty) && steps < 500) {
+  while ((x !== tx || y !== ty) && steps < 500 && path.length < 500) {
     const twice = 2 * error;
     if (twice > -dy) { error -= dy; x += sx; }
     if (twice < dx) { error += dx; y += sy; }
