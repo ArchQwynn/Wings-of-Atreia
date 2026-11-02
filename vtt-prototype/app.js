@@ -319,7 +319,7 @@ function drawAsset(a){
  }
  // Flat assets are textures laid onto the world ground plane, like the battle map,
  // rather than camera-facing billboards. Subdivide the texture to follow perspective.
- const cos=Math.cos(rotation),sin=Math.sin(rotation),divisions=10,sw=img.naturalWidth,sh=img.naturalHeight,projected=[];
+ const cos=Math.cos(rotation),sin=Math.sin(rotation),divisions=10,sw=img.naturalWidth||img.width,sh=img.naturalHeight||img.height,projected=[];
  for(let j=0;j<=divisions;j++){
   projected[j]=[];
   for(let i=0;i<=divisions;i++){
