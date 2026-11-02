@@ -1036,7 +1036,20 @@ function drawMovementTracking() {
 function drawMovementRoute(path, color) {
   if (!Array.isArray(path) || !path.length || !ctx) return;
   const points = path.map(point => project(point.x, point.y, terrainHeightAt(point.x, point.y)));
-  ctx.save(); ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.save();
+  ctx.fillStyle = color; ctx.globalAlpha = .18;
+  path.forEach(point => {
+    const corners = [
+      project(point.x - .5, point.y - .5, terrainHeightAt(point.x, point.y)),
+      project(point.x + .5, point.y - .5, terrainHeightAt(point.x, point.y)),
+      project(point.x + .5, point.y + .5, terrainHeightAt(point.x, point.y)),
+      project(point.x - .5, point.y + .5, terrainHeightAt(point.x, point.y))
+    ];
+    ctx.beginPath(); ctx.moveTo(corners[0].x, corners[0].y);
+    corners.slice(1).forEach(corner => ctx.lineTo(corner.x, corner.y));
+    ctx.closePath(); ctx.fill();
+  });
+  ctx.globalAlpha = 1; ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
   if (points.length > 1) {
     ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y);
     points.slice(1).forEach(point => ctx.lineTo(point.x, point.y));
