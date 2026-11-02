@@ -448,7 +448,9 @@
       VTT.setIdentity('player', state.playerName);
       setStatus('Connected · approved by GM', 'connected');
       const notice = $('mp-player-notice');
-      if (notice) { notice.hidden = false; notice.textContent = 'You are connected to the GM session. Your token actions are subject to GM approval.'; }
+      const noticeMessage = $('mp-player-message');
+      if (notice) notice.hidden = false;
+      if (noticeMessage) noticeMessage.textContent = 'Connected to the GM session. Your token movements require GM approval.';
       emit('join-accepted', { displayName: state.playerName });
       return;
     }
