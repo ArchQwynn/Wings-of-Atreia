@@ -716,3 +716,113 @@ document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.shiftKey&&e
 
 // Restore the most recent local scene only after all scene controls are registered.
 restoreSceneOnStartup();
+
+
+// Public bridge used by the isolated multiplayer runtime. Shared state is filtered
+// per recipient; camera, selection, measurements, and GM notes remain private.
+let woaMultiplayerStateChanged = null;
+const woaOriginalSaveSceneToBrowser = saveSceneToBrowser;
+saveSceneToBrowser = function () {
+  woaOriginalSaveSceneToBrowser();
+  if (typeof woaMultiplayerStateChanged === 'function') {
+    try { woaMultiplayerStateChanged(); } catch (error) { console.error('Multiplayer state broadcast failed:', error); }
+  }
+};
+
+function woaPlayerCanSeeToken(token, playerName) {
+  if (!token || token.visibility === 'gm' || token.assignment === 'gm' || token.assignment === 'unassigned') return false;
+  if (token.assignment === 'all') return true;
+  return token.assignment === 'specific' && (token.players || []).some(name => String(name).trim().toLowerCase() === String(playerName || '').trim().toLowerCase());
+}
+function woaPlayerCanControlToken(token, playerName) {
+  return !!token && !token.locked && woaPlayerCanSeeToken(token, playerName);
+}
+function woaSnapshotForPlayer(playerName) {
+  const snapshot = sceneSnapshot();
+  const visibleTokenIds = new Set(snapshot.tokens.filter(token => woaPlayerCanSeeToken(token, playerName)).map(token => token.id));
+  const visibleAssetIds = new Set(snapshot.assets.filter(asset => asset.visibility !== 'gm').map(asset => asset.id));
+  snapshot.tokens = snapshot.tokens.filter(token => visibleTokenIds.has(token.id));
+  snapshot.assets = snapshot.assets.filter(asset => visibleAssetIds.has(asset.id));
+  snapshot.gmNotesPins = [];
+  snapshot.attachments = (snapshot.attachments || []).filter(edge => {
+    const endpointVisible = key => {
+      const parts = String(key).split(':');
+      return parts[0] === 'token' ? visibleTokenIds.has(parts.slice(1).join(':')) :
+        parts[0] === 'asset' ? visibleAssetIds.has(parts.slice(1).join(':')) : false;
+    };
+    return endpointVisible(edge.a) && endpointVisible(edge.b);
+  });
+  snapshot.selected = visibleTokenIds.has(snapshot.selected) ? snapshot.selected : (snapshot.tokens[0]?.id || null);
+  snapshot.identity = { role: 'player', playerName: String(playerName || '') };
+  return snapshot;
+}
+function woaApplyRemoteSnapshot(snapshot, playerName) {
+  if (!snapshot || snapshot.format !== 'wings-of-atreia-vtt-scene') throw new Error('Received an invalid shared scene snapshot.');
+  const localCamera = JSON.parse(JSON.stringify(state.camera));
+  const playerIdentity = { role: 'player', playerName: String(playerName || sessionPlayerNameEl.value || '') };
+  const safeSnapshot = { ...snapshot, camera: localCamera, identity: playerIdentity, gmNotesPins: [] };
+  applyScene(safeSnapshot);
+  state.camera = localCamera;
+  sessionRoleEl.value = 'player';
+  sessionPlayerNameEl.value = playerIdentity.playerName;
+  updateIdentityUI();
+  list();
+}
+function woaSharedFingerprint() {
+  const snapshot = sceneSnapshot();
+  delete snapshot.camera;
+  delete snapshot.view2d;
+  delete snapshot.panMode;
+  delete snapshot.identity;
+  delete snapshot.selected;
+  delete snapshot.savedAt;
+  return JSON.stringify(snapshot);
+}
+function woaCanPlayerPerform(playerName, objectId, action) {
+  if (action !== 'move') return false;
+  const token = state.tokens.find(item => item.id === objectId);
+  return woaPlayerCanControlToken(token, playerName);
+}
+function woaApplyMultiplayerAction(request) {
+  if (!request || request.action !== 'move') return { ok: false, error: 'Unsupported player action.' };
+  const token = state.tokens.find(item => item.id === request.objectId);
+  const destination = request.data && request.data.destination;
+  if (!token || token.locked || !destination) return { ok: false, error: 'The requested token or destination is unavailable.' };
+  const x = Number(destination.x), y = Number(destination.y), z = Number(destination.z);
+  if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z) || z < 0 || z > MAX_ALTITUDE || z % ALTITUDE_STEP !== 0) {
+    return { ok: false, error: 'The requested destination is invalid.' };
+  }
+  recordUndo();
+  token.x = snapCell(x);
+  token.y = snapCell(y);
+  token.z = z;
+  delete token._dragX;
+  delete token._dragY;
+  list();
+  select(token.id);
+  saveSceneToBrowser();
+  return { ok: true, tokenId: token.id, x: token.x, y: token.y, z: token.z };
+}
+
+window.WoAVTT = Object.freeze({
+  getRole: () => isGM() ? 'gm' : 'player',
+  getPlayerName: () => sessionPlayerNameEl.value.trim(),
+  setIdentity: (role, playerName) => {
+    sessionRoleEl.value = role === 'gm' ? 'gm' : 'player';
+    if (typeof playerName === 'string') sessionPlayerNameEl.value = playerName;
+    updateIdentityUI();
+  },
+  setSessionLock: locked => {
+    sessionRoleEl.disabled = !!locked;
+    sessionPlayerNameEl.disabled = !!locked;
+  },
+  snapshotForPlayer: woaSnapshotForPlayer,
+  applyRemoteSnapshot: woaApplyRemoteSnapshot,
+  sharedFingerprint: woaSharedFingerprint,
+  canPlayerPerform: woaCanPlayerPerform,
+  targetExists: objectId => state.tokens.some(token => token.id === objectId),
+  applyMultiplayerAction: woaApplyMultiplayerAction,
+  setStateChangedHook: callback => { woaMultiplayerStateChanged = typeof callback === 'function' ? callback : null; },
+  getToken: id => state.tokens.find(token => token.id === id) || null,
+  getFeetPerGrid: () => FEET_PER_GRID
+});
