@@ -152,3 +152,9 @@ test('uses dedicated camera message types, separate from shared tabletop updates
   assert.equal(cameraView.type, 'CAMERA_VIEW_UPDATE');
   assert.equal(tabletopUpdate.type, 'STATE_UPDATE');
 });
+
+
+test('supports explicit cancellation messages for pending actions', () => {
+  const message = foundation.createMessage('ACTION_CANCEL', { requestId: 'request-123456' }, { hostGeneration: 1, revision: 0 });
+  assert.equal(foundation.validateMessage(message).ok, true);
+});
