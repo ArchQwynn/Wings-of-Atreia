@@ -1160,10 +1160,12 @@ document.getElementById('genuine-combat-toggle')?.addEventListener('click', () =
   if (!isGM()) return;
   if (!state.genuineCombat) {
     if (!window.confirm('Activate Genuine Combat? Movement markers and indicators will be tracked until End Round or combat deactivation.')) return;
+    recordUndo();
     state.genuineCombat = true;
     state.movementTracking = {};
     updateGenuineCombatUI(); updateMovementIndicators(); saveSceneToBrowser();
   } else {
+    recordUndo();
     state.genuineCombat = false;
     resetMovementTracking('Genuine Combat was deactivated. Pending movement requests were cancelled.');
     updateGenuineCombatUI(); saveSceneToBrowser();
