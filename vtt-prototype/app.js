@@ -1095,7 +1095,7 @@ function submitPlayerMovementPreview() {
   if (!changed) return;
   try {
     const requestId = window.WoAMultiplayer.requestAction(preview.tokenId, 'move', {
-      path: preview.path.slice(0, 500), destination: { ...preview.destination }
+      path: preview.path.slice(0, 500), origin: { ...preview.start }, destination: { ...preview.destination }
     });
     state.pendingMovementRequestId = requestId;
     state.movementNotice = 'Movement request submitted. Waiting for GM approval.';
