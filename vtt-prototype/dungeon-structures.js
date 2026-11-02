@@ -24,7 +24,7 @@ const allPoints=w=>{
 function segments(w){
  const pts=allPoints(w);return pts.slice(1).map((p,i)=>({a:pts[i],b:p,index:i}));
 }
-function wallBase(w,p){return Math.max(0,num(w.altitude))+bridge.terrainHeightAt(p.x,p.y)}
+function wallBase(w,p){return bridge.terrainHeightAt(p.x,p.y)}
 function projectAt(w,p,z){return bridge.project(p.x,p.y,wallBase(w,p)+z)}
 function nearestWall(x,y){
  let best=null,dist=18;
