@@ -43,8 +43,9 @@ function drawWallSegment(w,s){
  const dx=s.b.x-s.a.x,dy=s.b.y-s.a.y,len=Math.hypot(dx,dy)||1;
  const attached=structures().filter(d=>d.kind==='door'&&d.wallId===w.id&&d.segmentIndex===s.index);
  const cuts=attached.map(d=>{const half=doorWidth(d)/(2*feet*len);return{a:Math.max(0,d.t-half),b:Math.min(1,d.t+half),door:d}}).sort((a,b)=>a.a-b.a);
+ const visibleCuts=gm()?cuts:cuts.filter(c=>!(c.door.type==='secret'&&c.door.secretVisibility!=='revealed'));
  const parts=[];let cursor=0;
- cuts.forEach(c=>{if(c.a>cursor)parts.push([cursor,c.a]);cursor=Math.max(cursor,c.b)});if(cursor<1)parts.push([cursor,1]);
+ visibleCuts.forEach(c=>{if(c.a>cursor)parts.push([cursor,c.a]);cursor=Math.max(cursor,c.b)});if(cursor<1)parts.push([cursor,1]);
  const point=t=>({x:s.a.x+dx*t,y:s.a.y+dy*t});
  const face=(a,b,color,height,altitude)=>{
   const p1=point(a),p2=point(b),base1=projectAt(w,p1,altitude),base2=projectAt(w,p2,altitude),top1=projectAt(w,p1,altitude+height),top2=projectAt(w,p2,altitude+height);
@@ -109,15 +110,20 @@ wallToolButton('dw-door-confirm',()=>{
 wallToolButton('dw-delete',()=>{if(!gm()||!selectedIds.length)return;bridge.recordUndo();const remove=new Set(selectedIds);const removedWalls=structures().filter(w=>remove.has(w.id)&&w.kind!=='door').map(w=>w.id);state.dungeonStructures=structures().filter(x=>!remove.has(x.id)&&!(x.kind==='door'&&removedWalls.includes(x.wallId)));selectIds([]);bridge.saveSceneToBrowser();bridge.render();setStatus('Selected structure removed.')});
 wallToolButton('dw-group',()=>{const walls=selected().filter(x=>x.kind!=='door');if(!gm()||walls.length<2)return;bridge.recordUndo();const group=id('room');walls.forEach(w=>w.groupId=group);setStatus('Grouped '+walls.length+' wall segments.') ;bridge.saveSceneToBrowser()});
 wallToolButton('dw-ungroup',()=>{if(!gm())return;const groups=new Set(selected().map(w=>w.groupId).filter(Boolean));if(!groups.size)return;bridge.recordUndo();structures().forEach(w=>{if(groups.has(w.groupId))w.groupId=null});bridge.saveSceneToBrowser();setStatus('Wall group separated.')});
-wallToolButton('dw-door-type',()=>{const type=$('dw-door-type').value;$('dw-door-width').value=String(type==='double'?10:5)});
+$('dw-door-type').addEventListener('change',()=>{const type=$('dw-door-type').value;$('dw-door-width').value=String(type==='double'?10:5)});
 function setStatus(msg){$('dw-status').textContent=msg;bridge.status(msg)}
 function pointFromEvent(e){const r=canvas.getBoundingClientRect(),g=bridge.screenToGround(e.clientX-r.left,e.clientY-r.top),grid=$('dw-grid-snap').checked;return{x:snap(g.x,grid),y:snap(g.y,grid)}}
 function handlePointerDown(e){
- if(!gm()||e.button!==0||tool==='select'&& !selectedIds.length)return;
+ if(!gm()||e.button!==0)return;
  const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
  if(tool==='select'){
   const hit=nearestWall(x,y);
-  if(hit){const door=structures().find(d=>d.kind==='door'&&d.wallId===hit.wall.id&&d.segmentIndex===hit.segment.index&&Math.abs(d.t-hit.t)<doorWidth(d)/(feet*Math.max(.1,Math.hypot(hit.segment.b.x-hit.segment.a.x,hit.segment.b.y-hit.segment.a.y))));const item=door||hit.wall;selectIds(e.shiftKey?[...selectedIds,item.id]:[item.id]);drag={item,start:pointFromEvent(e),original:JSON.parse(JSON.stringify(item)),moved:false};e.preventDefault();e.stopImmediatePropagation();return}
+  if(hit){
+   const wall=hit.wall,handles=wall.kind==='circle'||wall.kind==='arc'?[wall.center,{x:wall.center.x+wall.radius,y:wall.center.y}]:allPoints(wall);
+   let handleIndex=-1,handleDistance=11;
+   handles.forEach((p,i)=>{const q=projectAt(wall,p,Number(wall.altitude)+Number(wall.height)),d=Math.hypot(x-q.x,y-q.y);if(q.depth>.5&&d<handleDistance){handleDistance=d;handleIndex=i}});
+   if(handleIndex>=0){selectIds(e.shiftKey?[...selectedIds,wall.id]:[wall.id]);drag={item:wall,handleIndex,start:pointFromEvent(e),original:JSON.parse(JSON.stringify(wall)),moved:true};e.preventDefault();e.stopImmediatePropagation();return}
+   const door=structures().find(d=>d.kind==='door'&&d.wallId===hit.wall.id&&d.segmentIndex===hit.segment.index&&Math.abs(d.t-hit.t)<doorWidth(d)/(feet*Math.max(.1,Math.hypot(hit.segment.b.x-hit.segment.a.x,hit.segment.b.y-hit.segment.a.y))));const item=door||hit.wall;selectIds(e.shiftKey?[...selectedIds,item.id]:[item.id]);drag={item,handleIndex:-1,start:pointFromEvent(e),original:JSON.parse(JSON.stringify(item)),moved:false};e.preventDefault();e.stopImmediatePropagation();return}
   if(!e.shiftKey)selectIds([]);
   return;
  }
