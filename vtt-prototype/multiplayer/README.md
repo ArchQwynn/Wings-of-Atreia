@@ -22,7 +22,7 @@ The following information is shared and synchronized for authorized participants
 - **Tokens:** Token placement, position, movement, orientation, and supported gameplay-relevant state changes.
 - **Props and assets:** Placement, position, movement, orientation, and supported state changes for tabletop props and assets.
 - **Accepted scene edits:** Supported changes to shared tabletop objects are validated by the GM and propagated to participants.
-- **Session snapshots:** Joining and reconnecting participants receive the latest authoritative shared scene state, subject to visibility and permission rules.
+- **Session snapshots:** Newly approved participants receive the latest authoritative shared scene state, subject to visibility and permission rules.
 
 A participant's local camera changes must never be interpreted as changes to shared scene state.
 
@@ -31,11 +31,11 @@ A participant's local camera changes must never be interpreted as changes to sha
 - Each participant controls their own camera view independently by default.
 - Camera position, viewing angle, rotation, and zoom are local presentation state and must not modify shared tabletop objects.
 - Shared-state updates must not reset a participant's local camera.
-- Reconnecting participants should have their previous local camera view restored when possible; if it cannot be restored, the client should use a safe default view.
+- A new session starts with each participant's normal local camera defaults; camera state does not need to carry across sessions.
 - Optional GM-controlled **Synchronize Everyone's Camera View** functionality may be considered for a future version; it is not required for the initial player interface.
 - If implemented later, the GM may enable or disable synchronization during a session. While enabled, participants follow the GM's supported camera view and cannot override it. When disabled, participants regain independent control, starting from their current view.
 - Camera synchronization must only affect camera presentation. It must never move tokens, props, assets, or otherwise modify shared tabletop state.
-- Late-joining and reconnecting participants must follow the current setting if the optional feature is implemented.
+- Late-joining participants must follow the current setting if the optional feature is implemented.
 - The GM's synchronization setting is session-level presentation control, not a permanent change to each participant's personal camera preferences.
 
 ### 4. GM Authority and Permissions
@@ -45,7 +45,7 @@ A participant's local camera changes must never be interpreted as changes to sha
 - The GM host validates each request against the relevant object, permissions, and allowed action before accepting it.
 - Accepted changes are assigned an authoritative state revision and broadcast to connected participants.
 - Rejected or cancelled requests must not alter authoritative shared state.
-- Reconnecting clients must not overwrite newer authoritative state with stale local data.
+- Newly joining clients must not overwrite authoritative state with stale local data.
 - Display names are labels, not authentication credentials.
 - Authorization is scoped per object and per action. Visibility or selection does not itself grant permission to edit.
 - Player controls and requests must not expose GM-only controls or restricted data.
@@ -55,7 +55,7 @@ A participant's local camera changes must never be interpreted as changes to sha
 - Hidden tokens, props, assets, and other restricted information must not be disclosed to participants who are not permitted to see them.
 - Hiding an object only through client-side rendering is not a security boundary.
 - The trusted host must enforce permissions and filter snapshots and updates for each recipient where necessary.
-- Reconnection and recovery must preserve the same visibility rules as normal gameplay synchronization.
+- New-session joins must preserve the same visibility rules as normal gameplay synchronization.
 
 ### 6. Player-Side Interface and Permissions
 
@@ -101,7 +101,7 @@ A participant's local camera changes must never be interpreted as changes to sha
 - The host must validate each shared-state mutation; client-side hiding or disabling of controls is not sufficient security.
 - Only the explicitly authorized action may be performed. Other actions on the same object remain unavailable unless separately authorized.
 
-#### Request queue and recovery
+#### Request queue and session restart
 
 - The request queue persists pending requests during the active session and displays their status.
 - A session restart creates a new session; pending requests from the ended session are not replayed or restored.
@@ -176,7 +176,7 @@ python -m http.server 8000
 
 Then open `http://localhost:8000/vtt-prototype/multiplayer/connection-harness.html` in one browser and choose **Start as GM**. Open the same URL in a second browser window (or another device that can reach the test server), enter the GM session ID and a display name, then request to join. The GM must explicitly approve the request. The generated invitation link can also be used when the harness is hosted at a URL reachable by both browsers.
 
-After approval, send a harmless test request from the player browser. Approve or reject it from the GM console and verify the player receives the result. Approved test requests advance a synthetic revision and send a test-only state update. Disconnect/reconnect can be tested by closing the player tab and reopening the invitation; the new join attempt still requires GM approval.
+After approval, send a harmless test request from the player browser. Approve or reject it from the GM console and verify the player receives the result. Approved test requests advance a synthetic revision and send a test-only state update. To test session restart, disconnect the GM's PeerJS signaling connection: the old session must end, the GM starts a new session, and players use the new invitation link. Each player must receive fresh GM approval.
 
 **Harness boundaries:**
 
@@ -201,7 +201,7 @@ Harness guard behavior added during the branch audit:
 - Test requests must match the current host generation and revision when received and again when the GM approves them. A request made stale by another approved request is marked stale instead of advancing state.
 - Revision changes use compare-and-swap semantics; a duplicate approval cannot advance the same revision twice.
 - Duplicate message IDs, test request IDs, and join-attempt IDs are rejected. A reused join-attempt ID remains rejected after the original request is decided or the connection closes.
-- Disconnected participants are removed from the active approved list; their pending test requests are cancelled, and reconnecting requires a fresh GM approval.
+- Disconnected participants are removed from the active approved list; their pending test requests are cancelled. Any new join requires a fresh GM approval.
 - The connection harness now includes a per-recipient visibility test that filters Player, Specific Player(s), GM Only, and Unassigned synthetic objects before sending both snapshots and updates.
 - The connection harness sends host heartbeats every 5 seconds. If a participant does not answer within 16 seconds, the GM marks that participant disconnected, removes them from the active approved list, cancels their pending test requests, and requires a fresh join request and GM approval. The PeerJS `close` event remains an additional immediate cleanup path. Heartbeats detect participant loss; they do not trigger reconnection.
 - The embedded guard is duplicated from the pure authority helper so the harness remains a single-file test page. Keep both implementations aligned when making future changes.
