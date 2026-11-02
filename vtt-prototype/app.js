@@ -752,17 +752,21 @@ function woaSnapshotForPlayer(playerName) {
     };
     return endpointVisible(edge.a) && endpointVisible(edge.b);
   });
-  snapshot.selected = visibleTokenIds.has(snapshot.selected) ? snapshot.selected : (snapshot.tokens[0]?.id || null);
+  snapshot.selected = null;
   snapshot.identity = { role: 'player', playerName: String(playerName || '') };
   return snapshot;
 }
 function woaApplyRemoteSnapshot(snapshot, playerName) {
   if (!snapshot || snapshot.format !== 'wings-of-atreia-vtt-scene') throw new Error('Received an invalid shared scene snapshot.');
   const localCamera = JSON.parse(JSON.stringify(state.camera));
+  const localView2d = state.view2d;
+  const localPanMode = state.panMode;
   const playerIdentity = { role: 'player', playerName: String(playerName || sessionPlayerNameEl.value || '') };
-  const safeSnapshot = { ...snapshot, camera: localCamera, identity: playerIdentity, gmNotesPins: [] };
+  const safeSnapshot = { ...snapshot, camera: localCamera, view2d: localView2d, panMode: localPanMode, selected: null, identity: playerIdentity, gmNotesPins: [] };
   applyScene(safeSnapshot);
   state.camera = localCamera;
+  state.view2d = localView2d;
+  state.panMode = localPanMode;
   sessionRoleEl.value = 'player';
   sessionPlayerNameEl.value = playerIdentity.playerName;
   updateIdentityUI();
