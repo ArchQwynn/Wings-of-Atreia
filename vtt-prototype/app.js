@@ -840,24 +840,46 @@ function woaApplyMultiplayerAction(request) {
   const destination = request.data && request.data.destination;
   const origin = request.data && request.data.origin;
   if (!token || token.locked || !destination) return { ok: false, error: 'The requested token or destination is unavailable.' };
-  if (origin && (snapCell(Number(origin.x)) !== snapCell(token.x) || snapCell(Number(origin.y)) !== snapCell(token.y) || Number(origin.z) !== Number(token.z))) return { ok: false, error: 'The token position changed after this request was submitted.' };
-  if (request.data.path && (!Array.isArray(request.data.path) || request.data.path.length > 500 || request.data.path.some(point => !point || !Number.isFinite(Number(point.x)) || !Number.isFinite(Number(point.y))))) return { ok: false, error: 'The proposed route is invalid.' };
+  if (origin && (!Number.isFinite(Number(origin.x)) || !Number.isFinite(Number(origin.y)) || !Number.isFinite(Number(origin.z)) ||
+      snapCell(Number(origin.x)) !== snapCell(token.x) || snapCell(Number(origin.y)) !== snapCell(token.y) || Number(origin.z) !== Number(token.z))) {
+    return { ok: false, error: 'The token position changed after this request was submitted.' };
+  }
+  if (request.data.path && (!Array.isArray(request.data.path) || request.data.path.length > 500 || request.data.path.some(point => !point || !Number.isFinite(Number(point.x)) || !Number.isFinite(Number(point.y)))) {
+    return { ok: false, error: 'The proposed route is invalid.' };
+  }
   const x = Number(destination.x), y = Number(destination.y), z = Number(destination.z);
   if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z) || z < 0 || z > MAX_ALTITUDE || z % ALTITUDE_STEP !== 0) {
     return { ok: false, error: 'The requested destination is invalid.' };
   }
+  const group = captureGroupPositions('token', token.id);
   const previous = { x: token.x, y: token.y, z: token.z };
+  const dx = snapCell(x) - token.x, dy = snapCell(y) - token.y, requestedDz = z - token.z;
+  const minDz = Math.max(...group.map(position => -position.z));
+  const maxDz = Math.min(...group.map(position => MAX_ALTITUDE - position.z));
+  const dz = Math.max(minDz, Math.min(maxDz, requestedDz));
   recordUndo();
-  token.x = snapCell(x);
-  token.y = snapCell(y);
-  token.z = z;
-  if (state.genuineCombat) recordMovementTracking(token, previous, { x: token.x, y: token.y, z: token.z }, request.data.path);
-  delete token._dragX;
-  delete token._dragY;
+  group.forEach(position => {
+    const object = objectFromKey(position.key);
+    if (!object) return;
+    object.x = snapCell(position.x + dx);
+    object.y = snapCell(position.y + dy);
+    object.z = Math.max(0, Math.min(MAX_ALTITUDE, position.z + dz));
+    delete object._dragX; delete object._dragY;
+  });
+  if (state.genuineCombat) {
+    group.forEach(position => {
+      if (!position.key.startsWith('token:')) return;
+      const movedToken = objectFromKey(position.key);
+      if (!movedToken) return;
+      const offsetX = position.x - previous.x, offsetY = position.y - previous.y;
+      const path = (request.data.path || [{ x: previous.x, y: previous.y }]).map(point => ({ x: Number(point.x) + offsetX, y: Number(point.y) + offsetY }));
+      recordMovementTracking(movedToken, { x: position.x, y: position.y, z: position.z }, { x: movedToken.x, y: movedToken.y, z: movedToken.z }, path);
+    });
+  }
   list();
   select(token.id);
   saveSceneToBrowser();
-  return { ok: true, tokenId: token.id, x: token.x, y: token.y, z: token.z };
+  return { ok: true, tokenId: token.id, x: token.x, y: token.y, z: token.z, altitudeAdjusted: dz !== requestedDz };
 }
 
 window.WoAVTT = Object.freeze({
