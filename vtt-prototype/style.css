@@ -311,3 +311,26 @@
 
 /* GM-only token Status submenu */
 .context-status-note{display:block;padding:3px 6px 6px;color:var(--muted);font-size:.66rem;line-height:1.4}.context-menu-label input[type="number"]{width:100%;padding:7px;border:1px solid var(--line);border-radius:6px;background:#0d1626;color:var(--text);font:inherit;font-size:.75rem}
+
+
+/* PeerJS multiplayer session controls */
+.multiplayer-tools{display:grid;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.multiplayer-tools .eyebrow{margin-bottom:1px}
+.multiplayer-tools .identity-label{margin:2px 0 0}
+.mp-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.mp-actions .danger{border-color:#74404a;background:#301d29;color:#ffc2c2}
+.mp-subpanel{display:grid;gap:7px;padding:9px;border:1px solid var(--line);border-radius:8px;background:#0d1626}
+.mp-list{display:grid;gap:7px}
+.mp-entry{display:grid;gap:6px;padding:8px;border:1px solid var(--line);border-radius:7px;background:#111c2e}
+.mp-entry-title{font-size:.78rem;font-weight:700}
+.mp-entry-detail{font-size:.7rem;color:var(--muted);overflow-wrap:anywhere}
+.mp-entry-actions{display:flex;gap:6px;flex-wrap:wrap}
+.mp-entry-actions button{padding:6px 8px;font-size:.7rem}
+.mp-entry-actions .approve{border-color:#3f7957;background:#173323}
+.mp-entry-actions .reject{border-color:#74404a;background:#301d29;color:#ffc2c2}
+.mp-state-pill{display:inline-flex;width:max-content;padding:2px 6px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:.65rem}
+#mp-status[data-state="connected"]{color:#8fe0b1}
+#mp-status[data-state="pending"]{color:#f4cc78}
+#mp-status[data-state="error"]{color:#ff9b9b}
+.multiplayer-tools input{width:100%;min-width:0;padding:8px;border:1px solid var(--line);border-radius:7px;background:#0d1626;color:var(--text);font:inherit;font-size:.75rem}
+.multiplayer-tools button:disabled{opacity:.45;cursor:not-allowed}
