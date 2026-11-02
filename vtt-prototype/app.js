@@ -130,11 +130,11 @@ function setupObjectContextMenu(){
   const next=Math.max(0,Math.min(MAX_ALTITUDE,Math.round(Number(e.target.value)/ALTITUDE_STEP)*ALTITUDE_STEP));
   if(next===(Number(t.z)||0)&&(!state.playerMovementPreview||state.playerMovementPreview.destination.z===next))return;
   if(window.WoAMultiplayer?.isPlayer()&&window.WoAMultiplayer.isConnected()){setPlayerMovementPreviewAltitude(t,next);const proposed=menu.querySelector('[data-token-altitude]');if(proposed)proposed.textContent=next+' ft proposed';return;}
-  if(!altitudeSlider.dataset.undoRecorded){recordUndo();altitudeSlider.dataset.undoRecorded='1'}
-  setGroupAltitudeTracked('token',t.id,next);list();select(t.id);saveSceneToBrowser();
+  if(!altitudeSlider.dataset.undoRecorded){recordUndo();altitudeSlider.dataset.undoRecorded='1';altitudeSlider._woaStartPositions=captureGroupPositions('token',t.id)}
+  setGroupAltitudeTracked('token',t.id,next,altitudeSlider._woaStartPositions);list();select(t.id);saveSceneToBrowser();
   const readout=menu.querySelector('[data-token-altitude]');if(readout)readout.textContent=t.z+' ft';
  });
- altitudeSlider?.addEventListener('change',()=>{delete altitudeSlider.dataset.undoRecorded});
+ altitudeSlider?.addEventListener('change',()=>{delete altitudeSlider.dataset.undoRecorded;delete altitudeSlider._woaStartPositions});
  menu.querySelector('[data-token-size]')?.addEventListener('change',e=>{
   const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!isGM()||t.locked)return;
   const next=Math.max(1,Math.min(4,Number(e.target.value)||1));if(next===(Number(t.footprint)||1))return;
@@ -535,7 +535,8 @@ function list(){tokenList.innerHTML='';visibleTokens().forEach(t=>{const e=docum
 list();
 setupObjectContextMenu();
 canvas.addEventListener('contextmenu',e=>{if(!isGM())return;const assassin=state.tokens.find(t=>t.id===state.selected);if(!assassin||assassin.className!=='Assassin')return;const rect=canvas.getBoundingClientRect(),target=hit(e.clientX-rect.left,e.clientY-rect.top);if(!target||!normalizeRuneMarks(target.runeMarks).some(m=>m.assassinId===assassin.id))return;e.preventDefault();e.stopImmediatePropagation();removeRuneMark(assassin.id,target.id)},true);
-document.getElementById('token-altitude-slider')?.addEventListener('input',e=>{const t=state.tokens.find(x=>x.id===state.selected);if(!t||!canControlToken(t)||t.locked){updateAltitudeDisplay(t);return}const next=Math.max(0,Math.min(MAX_ALTITUDE,Math.round(Number(e.target.value)/ALTITUDE_STEP)*ALTITUDE_STEP));if(window.WoAMultiplayer?.isPlayer()&&window.WoAMultiplayer.isConnected()){setPlayerMovementPreviewAltitude(t,next);return}if(next===t.z)return;recordUndo();setGroupAltitudeTracked('token',t.id,next);e.target.value=String(t.z);altitudeEl.textContent=`Altitude: ${t.z} ft`;updateAltitudeDisplay(t);const p=tokenWorld(t);selectionEl.textContent=`${t.name}${t.locked?' · 🔒 LOCKED':''} · X ${p.x*FEET_PER_GRID} ft · Y ${p.y*FEET_PER_GRID} ft · Z ${t.z} ft · ${t.footprint||1}×${t.footprint||1} squares · ${assignmentLabel(t)}`;saveSceneToBrowser();});
+document.getElementById('token-altitude-slider')?.addEventListener('input',e=>{const t=state.tokens.find(x=>x.id===state.selected);if(!t||!canControlToken(t)||t.locked){updateAltitudeDisplay(t);return}const next=Math.max(0,Math.min(MAX_ALTITUDE,Math.round(Number(e.target.value)/ALTITUDE_STEP)*ALTITUDE_STEP));if(window.WoAMultiplayer?.isPlayer()&&window.WoAMultiplayer.isConnected()){setPlayerMovementPreviewAltitude(t,next);return}if(next===t.z)return;if(!e.target.dataset.undoRecorded){recordUndo();e.target.dataset.undoRecorded='1';e.target._woaStartPositions=captureGroupPositions('token',t.id)}setGroupAltitudeTracked('token',t.id,next,e.target._woaStartPositions);e.target.value=String(t.z);altitudeEl.textContent=`Altitude: ${t.z} ft`;updateAltitudeDisplay(t);const p=tokenWorld(t);selectionEl.textContent=`${t.name}${t.locked?' · 🔒 LOCKED':''} · X ${p.x*FEET_PER_GRID} ft · Y ${p.y*FEET_PER_GRID} ft · Z ${t.z} ft · ${t.footprint||1}×${t.footprint||1} squares · ${assignmentLabel(t)}`;saveSceneToBrowser();});
+document.getElementById('token-altitude-slider')?.addEventListener('change',e=>{delete e.target.dataset.undoRecorded;delete e.target._woaStartPositions});
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),mid=(a,b)=>({x:(a.x+b.x)/2,y:(a.y+b.y)/2});
 function hit(x,y){let out=null,bd=1e9;const touchPad=window.matchMedia&&window.matchMedia('(pointer:coarse)').matches?14:6;for(const t of visibleTokens()){const s=t._screen;if(s){const d=Math.hypot(x-s.x,y-s.y);if(d<=s.radius+touchPad&&d<bd){bd=d;out=t}}}return out}
 function screenToGround(sx,sy){const{w,h}=size();if(state.view2d)return{x:(sx-w/2-state.camera.panX)/(CELL_PX*state.camera.zoom),y:-(sy-h/2-state.camera.panY)/(CELL_PX*state.camera.zoom)};const b=basis(),f=Math.min(w,h)*.86*state.camera.zoom,nx=(sx-w/2)/f,ny=-(sy-h*.56)/f,dir={x:b.f.x+nx*b.r.x+ny*b.u.x,y:b.f.y+nx*b.r.y+ny*b.u.y,z:b.f.z+nx*b.r.z+ny*b.u.z};if(Math.abs(dir.z)<.001)return{x:0,y:0};const tt=-b.pos.z/dir.z;return{x:b.pos.x+dir.x*tt,y:b.pos.y+dir.y*tt}}
@@ -981,8 +982,8 @@ function recordGroupAltitudeChanges(before) {
     recordMovementTracking(token, { x: position.x, y: position.y, z: position.z }, { x: token.x, y: token.y, z: token.z }, [{ x: position.x, y: position.y }]);
   });
 }
-function setGroupAltitudeTracked(type, id, nextZ) {
-  const before = captureGroupPositions(type, id);
+function setGroupAltitudeTracked(type, id, nextZ, startingPositions) {
+  const before = startingPositions || captureGroupPositions(type, id);
   changeGroupAltitude(type, id, nextZ);
   recordGroupAltitudeChanges(before);
 }
