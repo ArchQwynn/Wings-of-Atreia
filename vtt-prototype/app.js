@@ -792,7 +792,7 @@ function woaApplyRemoteSnapshot(snapshot, playerName) {
   list();
 }
 function woaApplyRemoteMedia(key, dataUrl) {
-  if (typeof key !== 'string' || typeof dataUrl !== 'string' || !/^data:image\/(webp|png|jpeg);base64,/.test(dataUrl) || dataUrl.length > 2500000) return false;
+  if (typeof key !== 'string' || typeof dataUrl !== 'string' || !/^data:image\/(webp|png|jpeg);base64,/.test(dataUrl) || dataUrl.length > 2540000) return false;
   if (key === 'map') { state.mapImage = dataUrl; return true; }
   if (key.startsWith('token:')) {
     const imageMatch = key.match(/^token:(.*):image$/);
