@@ -186,7 +186,9 @@ function replaceStructures(data){
  }).filter(Boolean):[];
 }
 bridge.replace=replaceStructures;
+function updatePermissions(){const section=$('dw-status')?.closest('section');if(section)section.hidden=!gm()}
+bridge.updatePermissions=updatePermissions;
 replaceStructures(structures());
 $('dw-door-confirm').disabled=true;
-setStatus('GM tools ready. Structures are visual only; all movement remains under GM approval.');
+updatePermissions();setStatus('GM tools ready. Structures are visual only; all movement remains under GM approval.');
 })();
