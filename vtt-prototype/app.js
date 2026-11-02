@@ -846,7 +846,7 @@ function woaApplyMultiplayerAction(request) {
       snapCell(Number(origin.x)) !== snapCell(token.x) || snapCell(Number(origin.y)) !== snapCell(token.y) || Number(origin.z) !== Number(token.z))) {
     return { ok: false, error: 'The token position changed after this request was submitted.' };
   }
-  if (request.data.path && (!Array.isArray(request.data.path) || request.data.path.length > 500 || request.data.path.some(point => !point || !Number.isFinite(Number(point.x)) || !Number.isFinite(Number(point.y)))) {
+  if (request.data.path && (!Array.isArray(request.data.path) || request.data.path.length > 500 || request.data.path.some(point => !point || !Number.isFinite(Number(point.x)) || !Number.isFinite(Number(point.y))))) {
     return { ok: false, error: 'The proposed route is invalid.' };
   }
   const x = Number(destination.x), y = Number(destination.y), z = Number(destination.z);
