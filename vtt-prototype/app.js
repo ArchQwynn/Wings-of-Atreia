@@ -1176,3 +1176,25 @@ window.addEventListener('woa:session-ended', () => {
 });
 updateGenuineCombatUI();
 updateMovementIndicators();
+
+
+function redoLastAction() {
+  if (!isGM()) return;
+  if (!redoHistory.length) { if (sceneSaveStatus) sceneSaveStatus.textContent = 'Nothing to redo.'; updateUndoRedoButtons(); return; }
+  const current = captureUndoSnapshot(), next = redoHistory.pop();
+  if (current) { undoHistory.push(current); if (undoHistory.length > MAX_UNDO_ACTIONS) undoHistory.shift(); }
+  try {
+    applyScene(next); saveSceneToBrowser();
+    if (sceneSaveStatus) sceneSaveStatus.textContent = 'Redo complete · ' + redoHistory.length + ' redo action' + (redoHistory.length === 1 ? '' : 's') + ' remaining.';
+  } catch (error) {
+    if (sceneSaveStatus) sceneSaveStatus.textContent = 'Redo failed: ' + (error.message || 'could not restore the next state');
+  }
+  updateUndoRedoButtons();
+}
+function updateUndoRedoButtons() {
+  const undo = document.getElementById('undo-action'), redo = document.getElementById('redo-action');
+  if (undo) undo.disabled = isGM() ? undoHistory.length === 0 : (!state.pendingMovementRequestId && !state.playerMovementPreview);
+  if (redo) redo.disabled = !isGM() || redoHistory.length === 0;
+}
+document.getElementById('undo-action')?.addEventListener('click', undoLastAction);
+document.getElementById('redo-action')?.addEventListener('click', redoLastAction);
