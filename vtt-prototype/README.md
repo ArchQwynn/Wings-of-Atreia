@@ -34,3 +34,17 @@ The next technical milestone is to connect the prototype to a realtime room so t
 The prototype now includes a tactical overlay layer for token auras, line templates, cones, circles/radii, cubes, and directional arrows. Shapes use the existing 5-ft grid and camera projection, can be styled, selected, repositioned, and removed. Auras can optionally follow the currently selected token.
 
 Overlay records are stored separately in browser local storage. They are currently local to that browser/device and are not yet synchronized between players or included in the existing scene JSON export/import. Multiplayer synchronization and unified scene persistence remain future integration work.
+
+
+## Dungeon Walls and Doors (development branch)
+
+The Dungeon Walls and Doors editor is implemented in `dungeon-structures.js` and is available in the GM sidebar under **Dungeon Walls & Doors**.
+
+- Create straight walls by dragging, connected walls by clicking successive points, circles by dragging from the center, and arcs by selecting center/start/end points.
+- Choose grid snapping or free placement; configure each wall's color, height, and altitude in 5-ft increments.
+- Place doors on existing walls, then configure single/double/secret type, width, height, altitude, color, open/closed state, lock state, and secret visibility.
+- Select, move, reshape, group, ungroup, and delete wall structures. Doors remain separately selectable.
+- Structures are included in scene snapshots and multiplayer snapshots.
+- Structures are visual only: they have no collision or movement rules. GM movement approval remains authoritative.
+
+This feature is on the development branch only. Browser-based visual, interaction, scene import/export, Undo/Redo, and multi-client synchronization tests are still required before merging or deployment.
