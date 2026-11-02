@@ -315,7 +315,7 @@ function drawAsset(a){
    ctx.save();ctx.strokeStyle=a.id===state.selectedAsset?'rgba(255,224,138,.98)':'rgba(143,211,255,.95)';ctx.lineWidth=2;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(groundPoint.x,groundPoint.y);ctx.lineTo(elevatedPoint.x,elevatedPoint.y);ctx.stroke();ctx.setLineDash([]);
    ctx.fillStyle='#e6f0fa';ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(altitude+' ft',groundPoint.x,groundPoint.y-7);ctx.restore();
   }
-  const imageBottom=p.y-baseDepth*.45;
+  const imageBottom=p.y;
   ctx.save();ctx.translate(p.x,imageBottom-h/2);ctx.rotate(rotation);ctx.drawImage(img,-w/2,-h/2,w,h);ctx.restore();
   a._screen={x:p.x,y:imageBottom-h/2,width:w,height:h,hitWidth:standW+20,hitHeight:standH+16,rotation:Number(a.rotation)||0};
   return;
