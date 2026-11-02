@@ -395,7 +395,7 @@ function canSeeAsset(a){return isGM()||a.visibility!=='gm'}
 function canSeeToken(t){if(isGM())return true;if(t.visibility==='gm'||t.assignment==='gm')return false;if(t.assignment==='all')return true;if(t.assignment==='specific')return (t.players||[]).some(p=>String(p).trim().toLowerCase()===currentPlayer());return false}
 function canControlToken(t){if(t.locked)return false;if(isGM())return true;if(t.assignment==='all')return true;if(t.assignment==='specific')return (t.players||[]).some(p=>p.trim().toLowerCase()===currentPlayer());return false}
 function visibleTokens(){return state.tokens.filter(canSeeToken)}
-function updateIdentityUI(){const gm=isGM();updateGmNotePinModeUI();updateGenuineCombatUI();if(!gm&&runeMarkModeAssassinId){const source=state.tokens.find(t=>t.id===runeMarkModeAssassinId);runeMarkModeAssassinId=null;if(source)updateClassResourcePanel(source)}playerNameWrap.hidden=gm;permissionStatusEl.textContent=gm?'GM preview: all tokens and management controls are available.':'Player preview: only All Players tokens and tokens specifically assigned to your name are visible. Unassigned and GM-only tokens are hidden.';document.querySelectorAll('[data-action="token-add"],[data-action="token-update"],[data-action="token-delete"],[data-action="token-lock"],[data-action="save-scene"],[data-action="load-scene"],[data-action="export-scene"],[data-action="import-scene"],[data-action="terrain-toggle"],[data-action="asset-add"],[data-action="asset-delete"],[data-action="end-turn"],[data-action="end-round"], [data-action="reset-combat-clock"]').forEach(b=>b.disabled=!gm);assetEditControls?.forEach(el=>el.disabled=!gm);if(!gm&&state.terrainMode){state.terrainMode=false;const terrainButton=document.querySelector('[data-action="terrain-toggle"]');if(terrainButton){terrainButton.textContent="Paint Terrain: Off";terrainButton.classList.remove("active");}}const t=state.tokens.find(x=>x.id===state.selected);if(t&&!canSeeToken(t)){state.selected=visibleTokens()[0]?.id||null;state.movingToken=null;state.moveStart=null}list()}
+function updateIdentityUI(){const gm=isGM();updateGmNotePinModeUI();updateGenuineCombatUI();updateUndoRedoButtons();if(!gm&&runeMarkModeAssassinId){const source=state.tokens.find(t=>t.id===runeMarkModeAssassinId);runeMarkModeAssassinId=null;if(source)updateClassResourcePanel(source)}playerNameWrap.hidden=gm;permissionStatusEl.textContent=gm?'GM preview: all tokens and management controls are available.':'Player preview: only All Players tokens and tokens specifically assigned to your name are visible. Unassigned and GM-only tokens are hidden.';document.querySelectorAll('[data-action="token-add"],[data-action="token-update"],[data-action="token-delete"],[data-action="token-lock"],[data-action="save-scene"],[data-action="load-scene"],[data-action="export-scene"],[data-action="import-scene"],[data-action="terrain-toggle"],[data-action="asset-add"],[data-action="asset-delete"],[data-action="end-turn"],[data-action="end-round"], [data-action="reset-combat-clock"]').forEach(b=>b.disabled=!gm);assetEditControls?.forEach(el=>el.disabled=!gm);if(!gm&&state.terrainMode){state.terrainMode=false;const terrainButton=document.querySelector('[data-action="terrain-toggle"]');if(terrainButton){terrainButton.textContent="Paint Terrain: Off";terrainButton.classList.remove("active");}}const t=state.tokens.find(x=>x.id===state.selected);if(t&&!canSeeToken(t)){state.selected=visibleTokens()[0]?.id||null;state.movingToken=null;state.moveStart=null}list()}
 sessionRoleEl.onchange=updateIdentityUI;sessionPlayerNameEl.oninput=updateIdentityUI;
 let runeMarkModeAssassinId=null;
 function assignmentLabel(t){if(t.assignment==='specific')return t.players?.length?`Players: ${t.players.join(", ")}`:'Specific players';if(t.assignment==='gm')return 'GM Only';if(t.assignment==='unassigned')return 'Unassigned';return 'All Players'}
@@ -1100,6 +1100,7 @@ function submitPlayerMovementPreview() {
       path: preview.path.slice(0, 500), origin: { ...preview.start }, destination: { ...preview.destination }
     });
     state.pendingMovementRequestId = requestId;
+    updateUndoRedoButtons();
     state.movementNotice = 'Movement request submitted. Waiting for GM approval.';
     state.playerMovementPreview = null;
     const token = state.tokens.find(item => item.id === preview.tokenId);
@@ -1123,6 +1124,7 @@ function withdrawPlayerMovementRequest() {
   const withdrawn = window.WoAMultiplayer.withdrawAction(state.pendingMovementRequestId);
   if (!withdrawn) return;
   state.pendingMovementRequestId = null;
+  updateUndoRedoButtons();
   state.movementNotice = 'Movement request withdrawn. You can plot a new route.';
   updatePlayerMovementControls();
 }
@@ -1164,6 +1166,7 @@ window.addEventListener('woa:action-result', event => {
   const result = event.detail || {};
   if (result.requestId !== state.pendingMovementRequestId) return;
   state.pendingMovementRequestId = null;
+  updateUndoRedoButtons();
   state.movementNotice = result.status === 'approved' ? 'Movement approved and synchronized.' :
     result.status === 'cancelled' ? 'Movement request cancelled by the GM.' :
     'Movement not approved: ' + (result.reason || result.status || 'rejected') + '. You may submit a new route.';
@@ -1172,7 +1175,7 @@ window.addEventListener('woa:action-result', event => {
 window.addEventListener('woa:join-accepted', () => { state.movementNotice = ''; updatePlayerMovementControls(); });
 window.addEventListener('woa:session-ended', () => {
   state.playerMovementPreview = null; state.pendingMovementRequestId = null; state.movementNotice = '';
-  updatePlayerMovementControls();
+  updatePlayerMovementControls(); updateUndoRedoButtons();
 });
 updateGenuineCombatUI();
 updateMovementIndicators();
