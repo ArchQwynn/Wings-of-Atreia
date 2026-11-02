@@ -111,10 +111,10 @@
   }
   function describeAction(item) {
     const data = item.data || {};
-    const destination = data.destination;
+    const origin = data.origin, destination = data.destination;
     const path = Array.isArray(data.path) ? data.path.length + ' route points' : '2D route submitted';
-    const altitude = destination && Number.isFinite(Number(destination.z)) ? ' · altitude ' + destination.z + ' ft' : '';
-    const coords = destination ? ' · destination (' + destination.x + ', ' + destination.y + ')' : '';
+    const altitude = destination && Number.isFinite(Number(destination.z)) ? ' · altitude ' + (origin && Number.isFinite(Number(origin.z)) ? origin.z + ' ft → ' : '') + destination.z + ' ft' : '';
+    const coords = destination ? ' · ' + (origin ? 'from (' + origin.x + ', ' + origin.y + ') to ' : 'destination ') + '(' + destination.x + ', ' + destination.y + ')' : '';
     return item.playerName + ' · ' + item.action + ' · ' + path + coords + altitude;
   }
   function renderActions() {
