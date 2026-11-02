@@ -30,7 +30,7 @@ function nearestWall(x,y){
  let best=null,dist=18;
  for(const w of structures().filter(o=>o.kind!=='door')){
   for(const s of segments(w)){
-   const a=projectAt(w,s.a,0),b=projectAt(w,s.b,0);if(a.depth<=.5||b.depth<=.5)continue;
+   const a=projectAt(w,s.a,Number(w.altitude)||0),b=projectAt(w,s.b,Number(w.altitude)||0);if(a.depth<=.5||b.depth<=.5)continue;
    const dx=b.x-a.x,dy=b.y-a.y,l=dx*dx+dy*dy||1,t=Math.max(0,Math.min(1,((x-a.x)*dx+(y-a.y)*dy)/l));
    const d=Math.hypot(x-(a.x+t*dx),y-(a.y+t*dy));
    if(d<dist){dist=d;best={wall:w,segment:s,t,point:{x:s.a.x+(s.b.x-s.a.x)*t,y:s.a.y+(s.b.y-s.a.y)*t}}}
@@ -121,6 +121,13 @@ function handlePointerDown(e){
  if(!gm()||e.button!==0)return;
  const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
  if(tool==='select'){
+  const selectedWall=selected().find(w=>w.kind!=='door');
+  if(selectedWall){
+   const handles=selectedWall.kind==='circle'||selectedWall.kind==='arc'?[selectedWall.center,{x:selectedWall.center.x+selectedWall.radius,y:selectedWall.center.y}]:allPoints(selectedWall);
+   let best=-1,bestDistance=11;
+   handles.forEach((p,i)=>{const q=projectAt(selectedWall,p,Number(selectedWall.altitude)+Number(selectedWall.height)),d=Math.hypot(x-q.x,y-q.y);if(q.depth>.5&&d<bestDistance){best=i;bestDistance=d}});
+   if(best>=0){drag={item:selectedWall,handleIndex:best,start:pointFromEvent(e),original:JSON.parse(JSON.stringify(selectedWall)),moved:true};canvas.setPointerCapture?.(e.pointerId);e.preventDefault();e.stopImmediatePropagation();return}
+  }
   const hit=nearestWall(x,y);
   if(hit){
    const wall=hit.wall,handles=wall.kind==='circle'||wall.kind==='arc'?[wall.center,{x:wall.center.x+wall.radius,y:wall.center.y}]:allPoints(wall);
