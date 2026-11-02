@@ -7,7 +7,7 @@ This branch integrates the isolated PeerJS foundation with the current VTT entry
 - `protocol.js`: versioned message envelopes and a 64 KiB message ceiling.
 - `authority.js`: host-generation/revision fencing, action authorization helpers, join approval queue, and visibility filtering.
 - `lifecycle.js`: explicit connection lifecycle transitions.
-- `runtime.js`: PeerJS host/player sessions, GM join approval, 25-player admission cap, filtered player snapshots, host-authoritative revisions, action requests, GM approval/rejection, request withdrawal, and heartbeats.
+- `runtime.js`: PeerJS host/player sessions, GM join approval, 25-player admission cap, filtered player snapshots, host-authoritative revisions, action requests, GM approval/rejection, request withdrawal, heartbeats, and chunked image transfer (up to 1.8 MiB per image; each transport message remains below 64 KiB).
 - `connection-harness.html`: standalone transport/handshake diagnostic harness.
 - `../player-mockup.html`: player-interface reference mockup.
 - `MULTIPLAYER_REQUIREMENTS.md`: full multiplayer requirements and acceptance criteria.
@@ -30,7 +30,7 @@ The VTT entry point loads the pure foundation modules before `app.js`, then load
 
 The transport and shared-state bridge are now wired into the VTT. The current action gateway supports token movement requests; the Combat Movement Tracker's private route preview, altitude review display, and round-based movement indicators are still pending. Walls/doors and the in-VTT Help guide are also separate approved features awaiting implementation.
 
-Media transfer, a trusted host-election service, secure identity authentication, and demonstrated 25-remote-peer load capacity are not provided by this initial integration.
+A trusted host-election service and secure identity authentication are not provided. The 25-remote-peer capacity remains a design target until staged load testing demonstrates it.
 
 ## Local tests
 
