@@ -334,3 +334,14 @@
 #mp-status[data-state="error"]{color:#ff9b9b}
 .multiplayer-tools input{width:100%;min-width:0;padding:8px;border:1px solid var(--line);border-radius:7px;background:#0d1626;color:var(--text);font:inherit;font-size:.75rem}
 .multiplayer-tools button:disabled{opacity:.45;cursor:not-allowed}
+
+
+/* Combat movement tracking */
+.movement-indicators{position:absolute;top:58px;right:14px;z-index:8;display:grid;gap:6px;width:min(290px,calc(100% - 28px));max-height:42%;overflow:auto;pointer-events:none}
+.movement-indicator{padding:8px 10px;border:1px solid #8fd3ff88;border-radius:8px;background:rgba(5,8,15,.88);backdrop-filter:blur(5px);font-size:.7rem;line-height:1.4;box-shadow:0 4px 14px #0005}
+.movement-indicator strong{display:block;color:var(--accent);font-size:.75rem;margin-bottom:3px}
+.movement-indicator span{display:block;color:var(--text)}
+.movement-indicator .movement-muted{color:var(--muted)}
+.mp-player-notice{display:grid;gap:7px}
+.mp-player-notice .note{margin:0}
+#genuine-combat-toggle.active{border-color:#d49d52;background:#3a2b18;color:#ffe0a6}
