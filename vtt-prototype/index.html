@@ -110,10 +110,12 @@
           <button data-action="end-round" class="turn-control" aria-label="End Round">End Round</button>
         </div>
         <div class="turn-counter-row"><div class="turn-counter" id="turn-counter">Round 1 · Turn 0</div><button data-action="reset-combat-clock" class="turn-reset" aria-label="Reset combat counter" title="Reset Round and Turn counters">Reset</button></div>
+        <div class="turn-control-row"><button data-action="genuine-combat-toggle" id="genuine-combat-toggle" class="turn-control wide" aria-pressed="false">Genuine Combat: Off</button></div>
       </div>
       <div class="hud bottom-left" id="selection">Select a standee</div>
       <div class="hud movement-readout" id="movement-readout">Horizontal movement: — · Adjust altitude separately</div>
       <div class="altitude" id="altitude">Altitude: —</div>
+      <div class="movement-indicators" id="movement-indicators" aria-live="polite" hidden></div>
       <div id="gm-note-hover" class="gm-note-hover" hidden></div>
       <div id="gm-note-popup" class="gm-note-popup" hidden>
         <div class="gm-note-popup-heading"><strong>GM Map Note</strong><button type="button" id="gm-note-close" aria-label="Collapse note">×</button></div>
@@ -168,7 +170,14 @@
             <strong>Player Action Requests</strong>
             <div id="mp-requests" class="mp-list"></div>
           </div>
-          <p class="note" id="mp-player-notice" hidden></p>
+          <div class="mp-player-notice" id="mp-player-notice" hidden>
+            <p class="note" id="mp-player-message"></p>
+            <div class="mp-actions">
+              <button type="button" id="mp-submit-move" disabled>Submit Movement</button>
+              <button type="button" id="mp-cancel-move" class="danger" hidden>Cancel Preview</button>
+              <button type="button" id="mp-withdraw-move" class="danger" hidden>Withdraw Request</button>
+            </div>
+          </div>
         </div>
       </section>
 
