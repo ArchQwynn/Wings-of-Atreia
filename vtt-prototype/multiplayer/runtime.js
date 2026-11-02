@@ -327,14 +327,26 @@
     const requestId = String(payload.requestId || '');
     const objectId = String(payload.objectId || '');
     const action = String(payload.action || '');
+    const rawData = payload.data && typeof payload.data === 'object' ? payload.data : {};
     if (!requestId || state.seenRequestIds.has(requestId) || !objectId || !action) return;
+    if (action === 'move') {
+      const origin = rawData.origin, destination = rawData.destination, path = rawData.path;
+      const finitePoint = point => point && Number.isFinite(Number(point.x)) && Number.isFinite(Number(point.y));
+      if (!finitePoint(origin) || !finitePoint(destination) || !Number.isFinite(Number(origin.z)) || !Number.isFinite(Number(destination.z)) ||
+          !Array.isArray(path) || path.length < 1 || path.length > 500 || path.some(point => !finitePoint(point)) ||
+          Math.round(Number(path[0].x)) !== Math.round(Number(origin.x)) || Math.round(Number(path[0].y)) !== Math.round(Number(origin.y)) ||
+          Math.round(Number(path[path.length - 1].x)) !== Math.round(Number(destination.x)) || Math.round(Number(path[path.length - 1].y)) !== Math.round(Number(destination.y))) {
+        try { send(conn, 'ACTION_RESULT', { requestId, status: 'rejected', revision: state.revision, reason: 'The submitted movement route is invalid.' }); } catch (_) {}
+        return;
+      }
+    }
     if (message.hostGeneration !== state.hostGeneration || message.revision !== state.revision) {
       try { send(conn, 'ACTION_RESULT', { requestId, status: 'stale', revision: state.revision, reason: 'The scene changed. Please refresh and submit again.' }); } catch (_) {}
       return;
     }
     const request = {
       id: requestId, peerId: conn.peer, actorId: player.actorId, playerName: player.name,
-      objectId, action, data: payload.data && typeof payload.data === 'object' ? payload.data : {},
+      objectId, action, data: rawData,
       hostGeneration: message.hostGeneration, baseRevision: message.revision, status: 'pending'
     };
     const authorization = state.authority.authorizeAction(request, requestContext(request, player));
