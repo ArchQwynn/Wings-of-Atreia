@@ -135,6 +135,41 @@
           <input id="session-player-name" type="text" value="Clark" placeholder="Enter player name">
         </label>
         <p class="note" id="permission-status">GM view: all tokens and controls available.</p>
+
+        <div class="multiplayer-tools" id="multiplayer-tools">
+          <div class="eyebrow">MULTIPLAYER SESSION</div>
+          <p class="note" id="mp-status" role="status">Offline local session. Host a session or join a GM invitation.</p>
+          <div class="mp-actions">
+            <button type="button" id="mp-host">Host Session</button>
+            <button type="button" id="mp-end" class="danger" disabled>End Session</button>
+          </div>
+          <label class="identity-label" for="mp-player-name">Player display name
+            <input id="mp-player-name" type="text" maxlength="40" value="Player" autocomplete="nickname">
+          </label>
+          <label class="identity-label" for="mp-room-id">GM session ID or invitation link
+            <input id="mp-room-id" type="text" placeholder="Paste the GM invitation link or session ID" autocomplete="off">
+          </label>
+          <button type="button" id="mp-join">Join GM Session</button>
+          <div id="mp-invite-wrap" hidden>
+            <label class="identity-label" for="mp-invite-link">Player invitation link
+              <input id="mp-invite-link" type="text" readonly>
+            </label>
+            <button type="button" id="mp-copy-invite">Copy Invitation Link</button>
+          </div>
+          <div class="mp-subpanel" id="mp-join-queue-wrap" hidden>
+            <strong>Join Requests</strong>
+            <div id="mp-join-queue" class="mp-list"></div>
+          </div>
+          <div class="mp-subpanel" id="mp-players-wrap" hidden>
+            <strong>Connected Players</strong>
+            <div id="mp-players" class="mp-list"></div>
+          </div>
+          <div class="mp-subpanel" id="mp-requests-wrap" hidden>
+            <strong>Player Action Requests</strong>
+            <div id="mp-requests" class="mp-list"></div>
+          </div>
+          <p class="note" id="mp-player-notice" hidden></p>
+        </div>
       </section>
 
       <section>
