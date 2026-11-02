@@ -156,7 +156,7 @@ function applyWallProps(){
  if(w.kind==='door'){w.type=$('dw-door-type').value;w.width=round5($('dw-door-width').value);w.state=$('dw-door-state').value;w.locked=$('dw-door-lock').checked;w.secretVisibility=$('dw-secret-visibility').value;}
  });bridge.saveSceneToBrowser();bridge.render();
 }
-['dw-color','dw-height','dw-altitude','dw-door-width','dw-door-height','dw-door-altitude','dw-door-state','dw-door-lock','dw-secret-visibility'].forEach(id=>$(id)?.addEventListener('change',applyWallProps));
+['dw-color','dw-height','dw-altitude','dw-door-width','dw-door-height','dw-door-altitude','dw-door-state','dw-door-lock','dw-secret-visibility','dw-door-type'].forEach(id=>$(id)?.addEventListener('change',applyWallProps));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){draft=null;polyPoints=[];arcPoints=[];pendingDoor=null;drag=null;bridge.render();setStatus('Drawing cancelled.')}});
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='g'&&gm()){e.preventDefault();$('dw-group').click()}});
 function normalize(){
@@ -166,7 +166,17 @@ function normalize(){
   if(w.kind==='door'){w.width=round5(w.width||5);w.height=round5(w.height||10);w.type=['single','double','secret'].includes(w.type)?w.type:'single';w.state=w.state==='open'?'open':'closed';w.secretVisibility=['hidden','disguised','revealed'].includes(w.secretVisibility)?w.secretVisibility:'hidden';w.locked=!!w.locked}
  });
 }
-normalize();
+function replaceStructures(data){
+ state.dungeonStructures=Array.isArray(data)?data.slice(0,2000).filter(w=>w&&typeof w==='object'&&typeof w.id==='string').map(w=>{
+  const base={...w,height:round5(w.height||10),altitude:round5(w.altitude||0),color:/^#[0-9a-f]{6}$/i.test(w.color||'')?w.color:'#333333'};
+  if(base.kind==='door')return{...base,kind:'door',wallId:String(w.wallId||''),segmentIndex:Math.max(0,Math.floor(num(w.segmentIndex))),t:Math.max(0,Math.min(1,num(w.t))),type:['single','double','secret'].includes(w.type)?w.type:'single',width:round5(w.width||5),height:round5(w.height||10),state:w.state==='open'?'open':'closed',locked:!!w.locked,secretVisibility:['hidden','disguised','revealed'].includes(w.secretVisibility)?w.secretVisibility:'hidden'};
+  if(w.kind==='circle'||w.kind==='arc')return{...base,kind:w.kind,center:{x:num(w.center?.x),y:num(w.center?.y)},radius:Math.max(.1,num(w.radius,1)),startAngle:num(w.startAngle),endAngle:num(w.endAngle,Math.PI*2),groupId:w.groupId||null};
+  if(w.kind==='polyline'&&Array.isArray(w.points)&&w.points.length>=2)return{...base,kind:'polyline',points:w.points.slice(0,500).map(p=>({x:num(p.x),y:num(p.y)})),groupId:w.groupId||null};
+  return null;
+ }).filter(Boolean):[];
+}
+bridge.replace=replaceStructures;
+replaceStructures(structures());
 $('dw-door-confirm').disabled=true;
 setStatus('GM tools ready. Structures are visual only; all movement remains under GM approval.');
 })();
