@@ -795,12 +795,13 @@ function woaApplyRemoteMedia(key, dataUrl) {
   if (typeof key !== 'string' || typeof dataUrl !== 'string' || !/^data:image\/(webp|png|jpeg);base64,/.test(dataUrl) || dataUrl.length > 2500000) return false;
   if (key === 'map') { state.mapImage = dataUrl; return true; }
   if (key.startsWith('token:')) {
-    const token = state.tokens.find(item => item.id === key.slice(6, key.lastIndexOf(':')));
+    const imageMatch = key.match(/^token:(.*):image$/);
+    const slotMatch = key.match(/^token:(.*):slot:(\d+)$/);
+    const id = imageMatch ? imageMatch[1] : slotMatch ? slotMatch[1] : null;
+    const token = state.tokens.find(item => item.id === id);
     if (!token) return false;
-    const suffix = key.slice(key.lastIndexOf(':') + 1);
-    if (suffix === 'image') { token.image = dataUrl; tokenImageCache.delete(token.id); return true; }
-    const match = key.match(/^token:(.*):slot:(\d+)$/);
-    if (match) { const index = Number(match[2]); token.imageSlots = Array.isArray(token.imageSlots) ? token.imageSlots : []; token.imageSlots[index] = dataUrl; tokenImageCache.delete(token.id); return true; }
+    if (imageMatch) { token.image = dataUrl; tokenImageCache.delete(token.id); return true; }
+    if (slotMatch) { const index = Number(slotMatch[2]); token.imageSlots = Array.isArray(token.imageSlots) ? token.imageSlots : []; token.imageSlots[index] = dataUrl; tokenImageCache.delete(token.id); return true; }
   }
   if (key.startsWith('asset:')) {
     const match = key.match(/^asset:(.*):(image|slot:(\d+))$/);
