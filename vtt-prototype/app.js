@@ -876,3 +876,300 @@ window.WoAVTT = Object.freeze({
   getToken: id => state.tokens.find(token => token.id === id) || null,
   getFeetPerGrid: () => FEET_PER_GRID
 });
+
+
+function updateGenuineCombatUI() {
+  const button = document.getElementById('genuine-combat-toggle');
+  if (!button) return;
+  button.textContent = state.genuineCombat ? 'Genuine Combat: On' : 'Genuine Combat: Off';
+  button.setAttribute('aria-pressed', String(!!state.genuineCombat));
+  button.classList.toggle('active', !!state.genuineCombat);
+  button.disabled = !isGM();
+}
+function updateMovementIndicators() {
+  const container = document.getElementById('movement-indicators');
+  if (!container) return;
+  container.replaceChildren();
+  const records = Object.values(state.movementTracking || {}).filter(record => {
+    const token = state.tokens.find(item => item.id === record.tokenId);
+    return token && canSeeToken(token);
+  });
+  if (!state.genuineCombat || !records.length) { container.hidden = true; return; }
+  container.hidden = false;
+  records.forEach(record => {
+    const token = state.tokens.find(item => item.id === record.tokenId);
+    if (!token) return;
+    const card = document.createElement('div'); card.className = 'movement-indicator';
+    const title = document.createElement('strong'); title.textContent = token.name || 'Token';
+    const previous = document.createElement('span');
+    previous.textContent = 'Previous: X ' + record.previousX + ', Y ' + record.previousY + ' · Altitude ' + record.previousAltitude + ' ft';
+    const movement = document.createElement('span');
+    const parts = [];
+    if (record.straightGrids) parts.push(record.straightGrids + ' grid' + (record.straightGrids === 1 ? '' : 's'));
+    if (record.diagonalGrids) parts.push(record.diagonalGrids + ' grid diagonal movement' + (record.diagonalGrids === 1 ? '' : 's'));
+    movement.textContent = parts.length ? 'Movement: ' + parts.join(' + ') : 'Movement: no horizontal grids';
+    card.append(title, previous, movement);
+    if (record.previousAltitude !== record.currentAltitude) {
+      const altitude = document.createElement('span'); altitude.textContent = 'Altitude: ' + record.previousAltitude + ' ft → ' + record.currentAltitude + ' ft'; card.append(altitude);
+    }
+    container.append(card);
+  });
+  if (!container.childElementCount) container.hidden = true;
+}
+function appendGridPath(path, targetX, targetY) {
+  if (!Array.isArray(path)) return;
+  const tx = Math.round(Number(targetX)), ty = Math.round(Number(targetY));
+  if (!Number.isFinite(tx) || !Number.isFinite(ty)) return;
+  if (!path.length) { path.push({ x: tx, y: ty }); return; }
+  let x = Math.round(path[path.length - 1].x), y = Math.round(path[path.length - 1].y);
+  const dx = Math.abs(tx - x), dy = Math.abs(ty - y), sx = x < tx ? 1 : -1, sy = y < ty ? 1 : -1;
+  let error = dx - dy, steps = 0;
+  while ((x !== tx || y !== ty) && steps < 500) {
+    const twice = 2 * error;
+    if (twice > -dy) { error -= dy; x += sx; }
+    if (twice < dx) { error += dx; y += sy; }
+    path.push({ x, y }); steps++;
+  }
+}
+function normalizeMovementPath(path, previous, current) {
+  const normalized = [{ x: Math.round(previous.x), y: Math.round(previous.y) }];
+  if (Array.isArray(path)) {
+    path.slice(1, 500).forEach(point => {
+      if (point && Number.isFinite(Number(point.x)) && Number.isFinite(Number(point.y))) appendGridPath(normalized, point.x, point.y);
+    });
+  }
+  appendGridPath(normalized, current.x, current.y);
+  return normalized.slice(0, 501);
+}
+function countMovementSteps(path) {
+  let straightGrids = 0, diagonalGrids = 0;
+  for (let i = 1; i < path.length; i++) {
+    const dx = Math.abs(path[i].x - path[i - 1].x), dy = Math.abs(path[i].y - path[i - 1].y);
+    if (dx && dy) diagonalGrids += Math.min(dx, dy);
+    if (dx) straightGrids += Math.max(0, dx - dy);
+    if (dy) straightGrids += Math.max(0, dy - dx);
+  }
+  return { straightGrids, diagonalGrids };
+}
+function recordMovementTracking(token, previous, current, path) {
+  if (!state.genuineCombat || !token || !previous || !current) return;
+  const route = normalizeMovementPath(path, previous, current);
+  const counts = countMovementSteps(route);
+  state.movementTracking = state.movementTracking || {};
+  state.movementTracking[token.id] = {
+    tokenId: token.id,
+    previousX: Math.round(previous.x), previousY: Math.round(previous.y),
+    previousAltitude: Math.max(0, Math.min(MAX_ALTITUDE, Math.round((Number(previous.z) || 0) / ALTITUDE_STEP) * ALTITUDE_STEP)),
+    currentX: Math.round(current.x), currentY: Math.round(current.y),
+    currentAltitude: Math.max(0, Math.min(MAX_ALTITUDE, Math.round((Number(current.z) || 0) / ALTITUDE_STEP) * ALTITUDE_STEP)),
+    straightGrids: counts.straightGrids, diagonalGrids: counts.diagonalGrids
+  };
+  updateMovementIndicators();
+}
+function recordGroupAltitudeChanges(before) {
+  if (!state.genuineCombat || !Array.isArray(before)) return;
+  before.forEach(position => {
+    if (!position.key.startsWith('token:')) return;
+    const token = objectFromKey(position.key);
+    if (!token || Number(token.z) === Number(position.z)) return;
+    recordMovementTracking(token, { x: position.x, y: position.y, z: position.z }, { x: token.x, y: token.y, z: token.z }, [{ x: position.x, y: position.y }]);
+  });
+}
+function setGroupAltitudeTracked(type, id, nextZ) {
+  const before = captureGroupPositions(type, id);
+  changeGroupAltitude(type, id, nextZ);
+  recordGroupAltitudeChanges(before);
+}
+function resetMovementTracking(reason) {
+  state.movementTracking = {};
+  state.gmMovementRequests = [];
+  state.playerMovementPreview = null;
+  if (window.WoAMultiplayer?.isHost()) window.WoAMultiplayer.cancelPendingActions(reason || 'Movement tracking was reset.');
+  updateMovementIndicators();
+  updatePlayerMovementControls();
+}
+function drawMovementTracking() {
+  if (!state.genuineCombat || !ctx) return;
+  Object.values(state.movementTracking || {}).forEach(record => {
+    const token = state.tokens.find(item => item.id === record.tokenId);
+    if (!token || !canSeeToken(token)) return;
+    const p = project(record.previousX, record.previousY, terrainHeightAt(record.previousX, record.previousY));
+    ctx.save();
+    ctx.strokeStyle = '#8fd3ff'; ctx.fillStyle = 'rgba(143,211,255,.12)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 13, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(p.x - 17, p.y); ctx.lineTo(p.x + 17, p.y); ctx.moveTo(p.x, p.y - 17); ctx.lineTo(p.x, p.y + 17); ctx.stroke();
+    ctx.font = '10px system-ui'; ctx.fillStyle = '#d8f1ff'; ctx.fillText('PREVIOUS', p.x + 17, p.y - 10);
+    ctx.restore();
+  });
+}
+function drawMovementRoute(path, color) {
+  if (!Array.isArray(path) || !path.length || !ctx) return;
+  const points = path.map(point => project(point.x, point.y, terrainHeightAt(point.x, point.y)));
+  ctx.save(); ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  if (points.length > 1) {
+    ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y);
+    points.slice(1).forEach(point => ctx.lineTo(point.x, point.y));
+    ctx.stroke();
+    const a = points[points.length - 2], b = points[points.length - 1], angle = Math.atan2(b.y - a.y, b.x - a.x);
+    ctx.beginPath(); ctx.moveTo(b.x, b.y);
+    ctx.lineTo(b.x - 13 * Math.cos(angle - .45), b.y - 13 * Math.sin(angle - .45));
+    ctx.lineTo(b.x - 13 * Math.cos(angle + .45), b.y - 13 * Math.sin(angle + .45));
+    ctx.closePath(); ctx.fill();
+  }
+  points.forEach((point, index) => { ctx.beginPath(); ctx.arc(point.x, point.y, index === points.length - 1 ? 6 : 3, 0, Math.PI * 2); ctx.fill(); });
+  ctx.restore();
+}
+function drawMovementRoutes() {
+  if (state.playerMovementPreview) drawMovementRoute(state.playerMovementPreview.path, '#f4cc78');
+  if (isGM()) (state.gmMovementRequests || []).forEach(request => {
+    if (request.action === 'move' && request.data && Array.isArray(request.data.path)) drawMovementRoute(request.data.path, '#8fd3ff');
+  });
+}
+function updatePlayerMovementControls() {
+  const notice = document.getElementById('mp-player-notice');
+  const message = document.getElementById('mp-player-message');
+  const submit = document.getElementById('mp-submit-move');
+  const cancel = document.getElementById('mp-cancel-move');
+  const withdraw = document.getElementById('mp-withdraw-move');
+  if (!notice || !message || !window.WoAMultiplayer?.isPlayer()) return;
+  if (notice.hidden) return;
+  const preview = state.playerMovementPreview;
+  const pending = !!state.pendingMovementRequestId;
+  if (preview) {
+    const token = state.tokens.find(item => item.id === preview.tokenId);
+    const counts = countMovementSteps(preview.path);
+    message.textContent = (token?.name || 'Token') + ' · ' + counts.straightGrids + ' straight grids + ' + counts.diagonalGrids + ' diagonal grids · Altitude ' + preview.start.z + ' ft → ' + preview.destination.z + ' ft. Review the route, then submit it to the GM.';
+    if (submit) { submit.hidden = false; submit.disabled = preview.destination.x === preview.start.x && preview.destination.y === preview.start.y && preview.destination.z === preview.start.z; }
+    if (cancel) cancel.hidden = false;
+    if (withdraw) withdraw.hidden = true;
+  } else if (pending) {
+    message.textContent = state.movementNotice || 'Movement request submitted. Waiting for GM approval.';
+    if (submit) submit.hidden = true;
+    if (cancel) cancel.hidden = true;
+    if (withdraw) withdraw.hidden = false;
+  } else {
+    message.textContent = state.movementNotice || 'Select an assigned token and drag it to preview a route. You can also adjust altitude before submitting.';
+    if (submit) { submit.hidden = true; submit.disabled = true; }
+    if (cancel) cancel.hidden = true;
+    if (withdraw) withdraw.hidden = true;
+  }
+}
+function beginPlayerMovementPreview(token, pointerId, screenX, screenY) {
+  const g = screenToGround(screenX, screenY), world = tokenWorld(token), previous = state.playerMovementPreview;
+  const proposedAltitude = previous && previous.tokenId === token.id ? previous.destination.z : token.z;
+  state.playerMovementPreview = {
+    tokenId: token.id, pointerId,
+    start: { x: token.x, y: token.y, z: token.z },
+    path: [{ x: snapCell(token.x), y: snapCell(token.y) }],
+    destination: { x: snapCell(token.x), y: snapCell(token.y), z: proposedAltitude },
+    offset: { x: world.x - g.x, y: world.y - g.y }
+  };
+  state.drag = null; state.movingToken = null; state.moveStart = null;
+  updatePlayerMovementControls();
+}
+function setPlayerMovementPreviewAltitude(token, nextAltitude) {
+  if (!token) return;
+  if (!state.playerMovementPreview || state.playerMovementPreview.tokenId !== token.id) {
+    state.playerMovementPreview = {
+      tokenId: token.id, pointerId: null,
+      start: { x: token.x, y: token.y, z: token.z },
+      path: [{ x: snapCell(token.x), y: snapCell(token.y) }],
+      destination: { x: snapCell(token.x), y: snapCell(token.y), z: token.z },
+      offset: { x: 0, y: 0 }
+    };
+  }
+  state.playerMovementPreview.destination.z = nextAltitude;
+  const slider = document.getElementById('token-altitude-slider');
+  if (slider) slider.value = String(nextAltitude);
+  const contextSlider = document.querySelector('[data-token-altitude-slider]');
+  if (contextSlider) contextSlider.value = String(nextAltitude);
+  const value = document.getElementById('altitude-value');
+  if (value) value.textContent = nextAltitude + ' ft proposed';
+  updatePlayerMovementControls();
+}
+function submitPlayerMovementPreview() {
+  const preview = state.playerMovementPreview;
+  if (!preview || !window.WoAMultiplayer?.isPlayer()) return;
+  const changed = preview.destination.x !== preview.start.x || preview.destination.y !== preview.start.y || preview.destination.z !== preview.start.z;
+  if (!changed) return;
+  try {
+    const requestId = window.WoAMultiplayer.requestAction(preview.tokenId, 'move', {
+      path: preview.path.slice(0, 500), destination: { ...preview.destination }
+    });
+    state.pendingMovementRequestId = requestId;
+    state.movementNotice = 'Movement request submitted. Waiting for GM approval.';
+    state.playerMovementPreview = null;
+    const token = state.tokens.find(item => item.id === preview.tokenId);
+    if (token) updateAltitudeDisplay(token);
+    updatePlayerMovementControls();
+  } catch (error) {
+    state.movementNotice = error.message || 'Could not submit movement.';
+    updatePlayerMovementControls();
+  }
+}
+function cancelPlayerMovementPreview() {
+  const preview = state.playerMovementPreview;
+  state.playerMovementPreview = null;
+  const token = preview && state.tokens.find(item => item.id === preview.tokenId) || state.tokens.find(item => item.id === state.selected);
+  if (token) updateAltitudeDisplay(token);
+  state.movementNotice = 'Movement preview cancelled.';
+  updatePlayerMovementControls();
+}
+function withdrawPlayerMovementRequest() {
+  if (!state.pendingMovementRequestId || !window.WoAMultiplayer?.isPlayer()) return;
+  const withdrawn = window.WoAMultiplayer.withdrawAction(state.pendingMovementRequestId);
+  if (!withdrawn) return;
+  state.pendingMovementRequestId = null;
+  state.movementNotice = 'Movement request withdrawn. You can plot a new route.';
+  updatePlayerMovementControls();
+}
+document.getElementById('genuine-combat-toggle')?.addEventListener('click', () => {
+  if (!isGM()) return;
+  if (!state.genuineCombat) {
+    if (!window.confirm('Activate Genuine Combat? Movement markers and indicators will be tracked until End Round or combat deactivation.')) return;
+    state.genuineCombat = true;
+    state.movementTracking = {};
+    updateGenuineCombatUI(); updateMovementIndicators(); saveSceneToBrowser();
+  } else {
+    state.genuineCombat = false;
+    resetMovementTracking('Genuine Combat was deactivated. Pending movement requests were cancelled.');
+    updateGenuineCombatUI(); saveSceneToBrowser();
+  }
+});
+document.getElementById('mp-submit-move')?.addEventListener('click', submitPlayerMovementPreview);
+document.getElementById('mp-cancel-move')?.addEventListener('click', cancelPlayerMovementPreview);
+document.getElementById('mp-withdraw-move')?.addEventListener('click', withdrawPlayerMovementRequest);
+window.addEventListener('woa:action-request', event => {
+  const request = event.detail && event.detail.request;
+  if (!isGM() || !request || request.action !== 'move') return;
+  state.gmMovementRequests = state.gmMovementRequests.filter(item => item.id !== request.id);
+  state.gmMovementRequests.push(request); render();
+});
+window.addEventListener('woa:action-cancelled', event => {
+  const id = event.detail && event.detail.requestId;
+  state.gmMovementRequests = state.gmMovementRequests.filter(item => item.id !== id); render();
+});
+window.addEventListener('woa:action-approved', event => {
+  const id = event.detail && event.detail.requestId;
+  state.gmMovementRequests = state.gmMovementRequests.filter(item => item.id !== id); render();
+});
+window.addEventListener('woa:action-rejected', event => {
+  const id = event.detail && event.detail.requestId;
+  state.gmMovementRequests = state.gmMovementRequests.filter(item => item.id !== id); render();
+});
+window.addEventListener('woa:action-result', event => {
+  const result = event.detail || {};
+  if (result.requestId !== state.pendingMovementRequestId) return;
+  state.pendingMovementRequestId = null;
+  state.movementNotice = result.status === 'approved' ? 'Movement approved and synchronized.' :
+    result.status === 'cancelled' ? 'Movement request cancelled by the GM.' :
+    'Movement not approved: ' + (result.reason || result.status || 'rejected') + '. You may submit a new route.';
+  updatePlayerMovementControls();
+});
+window.addEventListener('woa:join-accepted', () => { state.movementNotice = ''; updatePlayerMovementControls(); });
+window.addEventListener('woa:session-ended', () => {
+  state.playerMovementPreview = null; state.pendingMovementRequestId = null; state.movementNotice = '';
+  updatePlayerMovementControls();
+});
+updateGenuineCombatUI();
+updateMovementIndicators();
