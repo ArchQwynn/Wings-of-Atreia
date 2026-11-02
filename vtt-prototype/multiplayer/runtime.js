@@ -14,7 +14,7 @@
     seenMessageIds: new Set(), seenJoinAttemptIds: new Set(), seenRequestIds: new Set(),
     heartbeatTimer: null, playerConnection: null, playerApproved: false,
     playerName: '', signalingConnected: false, suppressLocalBroadcast: false,
-    lastFingerprint: ''
+    lastFingerprint: '', mediaTransfers: new Map(), mediaCacheByPeer: new Map()
   };
 
   function makeId(prefix) {
@@ -164,6 +164,7 @@
     const player = state.approved.get(peerId);
     if (!player) return;
     state.approved.delete(peerId);
+    state.mediaCacheByPeer.delete(peerId);
     for (const [id, request] of state.pendingActions) {
       if (request.peerId === peerId) state.pendingActions.delete(id);
     }
@@ -171,9 +172,83 @@
     renderAll();
     emit('participant-left', { name: player.name, reason });
   }
+  const MEDIA_PLACEHOLDER = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+nm1sAAAAASUVORK5CYII=';
+  const MEDIA_CHUNK_CHARS = 42000;
+  const MAX_MEDIA_BASE64_CHARS = 2400000;
+  function mediaHash(value) {
+    let hash = 2166136261;
+    for (let i = 0; i < value.length; i++) { hash ^= value.charCodeAt(i); hash = Math.imul(hash, 16777619); }
+    return (hash >>> 0).toString(16);
+  }
+  function prepareSceneForTransport(scene, peerId) {
+    const copy = JSON.parse(JSON.stringify(scene));
+    let cache = state.mediaCacheByPeer.get(peerId);
+    if (!cache) { cache = new Map(); state.mediaCacheByPeer.set(peerId, cache); }
+    const media = [];
+    function extract(key, value, setter) {
+      if (typeof value !== 'string' || !/^data:image\/(webp|png|jpeg);base64,/.test(value)) return;
+      const base64 = value.slice(value.indexOf(',') + 1);
+      if (base64.length > MAX_MEDIA_BASE64_CHARS) throw new Error('An image exceeds the 1.8 MiB multiplayer media limit.');
+      const hash = mediaHash(value);
+      if (cache.get(key) !== hash) { media.push({ key, value, hash }); cache.set(key, hash); }
+      setter(MEDIA_PLACEHOLDER);
+    }
+    if (copy.map) extract('map', copy.map.image, value => { copy.map.image = value; });
+    (copy.tokens || []).forEach(token => {
+      extract('token:' + token.id + ':image', token.image, value => { token.image = value; });
+      if (Array.isArray(token.imageSlots)) token.imageSlots.forEach((value, index) => extract('token:' + token.id + ':slot:' + index, value, next => { token.imageSlots[index] = next; }));
+    });
+    (copy.assets || []).forEach(asset => {
+      extract('asset:' + asset.id + ':image', asset.image, value => { asset.image = value; });
+      if (Array.isArray(asset.imageSlots)) asset.imageSlots.forEach((value, index) => extract('asset:' + asset.id + ':slot:' + index, value, next => { asset.imageSlots[index] = next; }));
+    });
+    return { scene: copy, media };
+  }
+  function sendMediaChunks(conn, media) {
+    for (const item of media) {
+      const match = item.value.match(/^data:(image\/(?:webp|png|jpeg));base64,/);
+      if (!match) continue;
+      const base64 = item.value.slice(item.value.indexOf(',') + 1);
+      const total = Math.ceil(base64.length / MEDIA_CHUNK_CHARS);
+      if (!total || total > 64) throw new Error('Image transfer exceeds the supported chunk count.');
+      const transferId = makeId('media');
+      for (let index = 0; index < total; index++) {
+        send(conn, 'MEDIA_CHUNK', {
+          transferId, key: item.key, hash: item.hash, index, total,
+          mimeType: match[1], data: base64.slice(index * MEDIA_CHUNK_CHARS, (index + 1) * MEDIA_CHUNK_CHARS)
+        });
+      }
+    }
+  }
   function sendSnapshot(conn, playerName, type) {
-    const scene = VTT.snapshotForPlayer(playerName);
-    send(conn, type || 'STATE_SNAPSHOT', { scene: scene, displayName: playerName });
+    const prepared = prepareSceneForTransport(VTT.snapshotForPlayer(playerName), conn.peer);
+    send(conn, type || 'STATE_SNAPSHOT', { scene: prepared.scene, displayName: playerName });
+    sendMediaChunks(conn, prepared.media);
+  }
+  function receiveMediaChunk(payload) {
+    const p = payload || {};
+    if (typeof p.transferId !== 'string' || typeof p.key !== 'string' || typeof p.hash !== 'string' ||
+        !Number.isInteger(p.index) || !Number.isInteger(p.total) || p.total < 1 || p.total > 64 ||
+        p.index < 0 || p.index >= p.total || !['image/png', 'image/jpeg', 'image/webp'].includes(p.mimeType) ||
+        typeof p.data !== 'string' || p.data.length > MEDIA_CHUNK_CHARS) return;
+    let transfer = state.mediaTransfers.get(p.transferId);
+    if (!transfer) {
+      if (state.mediaTransfers.size >= 32) return;
+      transfer = { key: p.key, hash: p.hash, mimeType: p.mimeType, total: p.total, chunks: new Array(p.total), received: 0 };
+      state.mediaTransfers.set(p.transferId, transfer);
+    }
+    if (transfer.key !== p.key || transfer.hash !== p.hash || transfer.mimeType !== p.mimeType || transfer.total !== p.total) {
+      state.mediaTransfers.delete(p.transferId); return;
+    }
+    if (transfer.chunks[p.index] === undefined) { transfer.chunks[p.index] = p.data; transfer.received++; }
+    if (transfer.received !== transfer.total) return;
+    const base64 = transfer.chunks.join('');
+    state.mediaTransfers.delete(p.transferId);
+    if (base64.length > MAX_MEDIA_BASE64_CHARS) return;
+    const dataUrl = 'data:' + transfer.mimeType + ';base64,' + base64;
+    if (mediaHash(dataUrl) !== transfer.hash) return;
+    VTT.applyRemoteMedia(transfer.key, dataUrl);
+    emit('media-received', { key: transfer.key });
   }
   function decideJoin(peerId, approved) {
     const item = state.pendingJoins.get(peerId);
@@ -397,6 +472,7 @@
       } catch (error) { setStatus('Could not apply GM scene update: ' + error.message, 'error'); }
       return;
     }
+    if (message.type === 'MEDIA_CHUNK') { receiveMediaChunk(message.payload); return; }
     if (message.type === 'ACTION_RESULT') {
       const id = String(message.payload.requestId || '');
       state.playerPendingActions.delete(id);
@@ -413,7 +489,7 @@
     if (state.role !== 'player') return;
     const oldPeer = state.peer;
     state.role = null; state.playerApproved = false; state.playerConnection = null;
-    state.peer = null; state.sessionId = null; state.playerPendingActions.clear();
+    state.peer = null; state.sessionId = null; state.playerPendingActions.clear(); state.mediaTransfers.clear();
     try { oldPeer && oldPeer.destroy(); } catch (_) {}
     VTT.setSessionLock(false);
     const notice = $('mp-player-notice'); if (notice) notice.hidden = true;
@@ -427,8 +503,11 @@
     state.lastFingerprint = VTT.sharedFingerprint();
     for (const player of state.approved.values()) {
       if (!player.conn.open) continue;
-      try { send(player.conn, 'STATE_UPDATE', { scene: VTT.snapshotForPlayer(player.name) }); }
-      catch (error) { console.warn('Could not synchronize player state:', error); }
+      try {
+        const prepared = prepareSceneForTransport(VTT.snapshotForPlayer(player.name), player.conn.peer);
+        send(player.conn, 'STATE_UPDATE', { scene: prepared.scene });
+        sendMediaChunks(player.conn, prepared.media);
+      } catch (error) { console.warn('Could not synchronize player state:', error); }
     }
     emit('scene-broadcast', { revision: state.revision });
     return true;
@@ -510,7 +589,7 @@
     try { state.peer && state.peer.destroy(); } catch (_) {}
     state.role = null; state.peer = null; state.sessionId = null; state.authority = null;
     state.connections.clear(); state.pendingJoins.clear(); state.approved.clear(); state.pendingActions.clear();
-    state.playerPendingActions.clear(); state.playerConnection = null; state.playerApproved = false;
+    state.playerPendingActions.clear(); state.mediaTransfers.clear(); state.mediaCacheByPeer.clear(); state.playerConnection = null; state.playerApproved = false;
     state.signalingConnected = false; state.revision = 0; state.lastFingerprint = '';
     VTT.setSessionLock(false);
     setControls('idle');
