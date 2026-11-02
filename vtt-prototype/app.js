@@ -756,8 +756,27 @@ function woaSnapshotForPlayer(playerName) {
   snapshot.identity = { role: 'player', playerName: String(playerName || '') };
   return snapshot;
 }
+const WOA_MEDIA_PLACEHOLDER = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+nm1sAAAAASUVORK5CYII=';
+function woaPreserveExistingMedia(snapshot) {
+  if (snapshot.map && snapshot.map.image === WOA_MEDIA_PLACEHOLDER && state.mapImage) snapshot.map.image = state.mapImage;
+  const existingTokens = new Map(state.tokens.map(token => [token.id, token]));
+  (snapshot.tokens || []).forEach(token => {
+    const old = existingTokens.get(token.id);
+    if (!old) return;
+    if (token.image === WOA_MEDIA_PLACEHOLDER && old.image) token.image = old.image;
+    if (Array.isArray(token.imageSlots)) token.imageSlots = token.imageSlots.map((value, index) => value === WOA_MEDIA_PLACEHOLDER && old.imageSlots?.[index] ? old.imageSlots[index] : value);
+  });
+  const existingAssets = new Map(state.assets.map(asset => [asset.id, asset]));
+  (snapshot.assets || []).forEach(asset => {
+    const old = existingAssets.get(asset.id);
+    if (!old) return;
+    if (asset.image === WOA_MEDIA_PLACEHOLDER && old.image) asset.image = old.image;
+    if (Array.isArray(asset.imageSlots)) asset.imageSlots = asset.imageSlots.map((value, index) => value === WOA_MEDIA_PLACEHOLDER && old.imageSlots?.[index] ? old.imageSlots[index] : value);
+  });
+}
 function woaApplyRemoteSnapshot(snapshot, playerName) {
   if (!snapshot || snapshot.format !== 'wings-of-atreia-vtt-scene') throw new Error('Received an invalid shared scene snapshot.');
+  woaPreserveExistingMedia(snapshot);
   const localCamera = JSON.parse(JSON.stringify(state.camera));
   const localView2d = state.view2d;
   const localPanMode = state.panMode;
@@ -771,6 +790,29 @@ function woaApplyRemoteSnapshot(snapshot, playerName) {
   sessionPlayerNameEl.value = playerIdentity.playerName;
   updateIdentityUI();
   list();
+}
+function woaApplyRemoteMedia(key, dataUrl) {
+  if (typeof key !== 'string' || typeof dataUrl !== 'string' || !/^data:image\/(webp|png|jpeg);base64,/.test(dataUrl) || dataUrl.length > 2500000) return false;
+  if (key === 'map') { state.mapImage = dataUrl; return true; }
+  if (key.startsWith('token:')) {
+    const token = state.tokens.find(item => item.id === key.slice(6, key.lastIndexOf(':')));
+    if (!token) return false;
+    const suffix = key.slice(key.lastIndexOf(':') + 1);
+    if (suffix === 'image') { token.image = dataUrl; tokenImageCache.delete(token.id); return true; }
+    const match = key.match(/^token:(.*):slot:(\d+)$/);
+    if (match) { const index = Number(match[2]); token.imageSlots = Array.isArray(token.imageSlots) ? token.imageSlots : []; token.imageSlots[index] = dataUrl; tokenImageCache.delete(token.id); return true; }
+  }
+  if (key.startsWith('asset:')) {
+    const match = key.match(/^asset:(.*):(image|slot:(\d+))$/);
+    if (!match) return false;
+    const asset = state.assets.find(item => item.id === match[1]);
+    if (!asset) return false;
+    if (match[2] === 'image') asset.image = dataUrl;
+    else { const index = Number(match[3]); asset.imageSlots = Array.isArray(asset.imageSlots) ? asset.imageSlots : []; asset.imageSlots[index] = dataUrl; }
+    assetImageCache.delete(asset.id);
+    return true;
+  }
+  return false;
 }
 function woaSharedFingerprint() {
   const snapshot = sceneSnapshot();
@@ -822,6 +864,7 @@ window.WoAVTT = Object.freeze({
   },
   snapshotForPlayer: woaSnapshotForPlayer,
   applyRemoteSnapshot: woaApplyRemoteSnapshot,
+  applyRemoteMedia: woaApplyRemoteMedia,
   sharedFingerprint: woaSharedFingerprint,
   canPlayerPerform: woaCanPlayerPerform,
   targetExists: objectId => state.tokens.some(token => token.id === objectId),
