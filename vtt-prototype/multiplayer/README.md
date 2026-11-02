@@ -103,21 +103,19 @@ A participant's local camera changes must never be interpreted as changes to sha
 
 #### Request queue and recovery
 
-- The request queue persists pending requests and displays their status.
-- After reconnecting, the client reconciles request statuses with authoritative host state rather than blindly replaying requests.
+- The request queue persists pending requests during the active session and displays their status.
+- A session restart creates a new session; pending requests from the ended session are not replayed or restored.
 - The interface must distinguish pending, approved, rejected, cancelled, unavailable, and disconnected states where applicable.
 - A request cannot be cancelled once its decision is being applied; the authoritative result resolves any race between cancellation and approval.
 
 ### 7. Connection and Recovery Requirements
 
-- The session should detect lost connections and attempt reconnection automatically.
-- The system must track host generations and authoritative state revisions to reject stale messages and outdated hosts.
-- If the GM disconnects, the system should attempt the planned recovery process and restore a consistent session state where technically possible.
-- Recovery must not allow two hosts to independently write authoritative state at the same time.
-- PeerJS signaling reconnection alone is insufficient; gameplay data connections must also be re-established and synchronized.
-- The exact recovery mechanism and any required external coordination service must be implemented and tested before automatic GM recovery is considered complete.
-- Local camera state should be restored when possible.
-- Reconnecting clients must reconcile pending requests and authoritative shared state; stale requests must not be silently replayed.
+- Automatic signaling recovery and automatic session restoration are intentionally not implemented.
+- If the GM's PeerJS signaling connection or the active session connection is lost, the current session ends. The GM starts a new session, which generates a new session ID and invitation link.
+- Players use the new invitation link and submit fresh join requests; the GM approves every player again.
+- No `peer.reconnect()` calls, automatic retry loops, automatic host recovery, or automatic session restoration are permitted.
+- Host-generation and authoritative revision guards remain in place to reject stale messages within an active session; they are not a recovery or host-election mechanism.
+- Local camera state is not required to survive a session restart; players simply rejoin the new session.
 
 ### 8. Compatibility and Safety
 
@@ -142,8 +140,8 @@ The player interface and multiplayer implementation are ready for broader testin
 8. Character details remain in the separate Character Sheet/Manager; exact compact panel fields are deferred.
 9. Each participant can independently change their camera view without affecting anyone else's view or shared tabletop state. Optional GM camera synchronization is a future feature, not an initial requirement.
 10. Unauthorized actions and hidden information are correctly rejected or filtered before delivery.
-11. Disconnections trigger reconnection and state resynchronization without accepting stale updates or blindly replaying requests.
-12. The intended GM-disconnection recovery behavior is tested, including prevention of conflicting authoritative hosts.
+11. A signaling or session connection loss ends the current session without automatic recovery; the GM can start a new session and players can rejoin through its new invitation link, subject to fresh GM approval.
+12. No automatic host recovery, peer reconnection, or stale request replay occurs.
 13. The existing VTT remains functional when multiplayer is unused.
 14. The feature is reviewed and approved before merging into `main` or deploying.
 
@@ -205,7 +203,7 @@ Harness guard behavior added during the branch audit:
 - Duplicate message IDs, test request IDs, and join-attempt IDs are rejected. A reused join-attempt ID remains rejected after the original request is decided or the connection closes.
 - Disconnected participants are removed from the active approved list; their pending test requests are cancelled, and reconnecting requires a fresh GM approval.
 - The connection harness now includes a per-recipient visibility test that filters Player, Specific Player(s), GM Only, and Unassigned synthetic objects before sending both snapshots and updates.
-- The connection harness now sends host heartbeats every 5 seconds. If a participant does not answer within 16 seconds, the GM marks that participant disconnected, removes them from the active approved list, cancels their pending test requests, and requires fresh GM approval to rejoin. The PeerJS `close` event remains an additional immediate cleanup path.
+- The connection harness sends host heartbeats every 5 seconds. If a participant does not answer within 16 seconds, the GM marks that participant disconnected, removes them from the active approved list, cancels their pending test requests, and requires a fresh join request and GM approval. The PeerJS `close` event remains an additional immediate cleanup path. Heartbeats detect participant loss; they do not trigger reconnection.
 - The embedded guard is duplicated from the pure authority helper so the harness remains a single-file test page. Keep both implementations aligned when making future changes.
 - Player `ACTION_REQUEST` messages are now checked against the GM-approved connection's server-assigned synthetic actor ID, the requested synthetic target, and the exact permitted action before they enter the GM queue. Client-supplied actor IDs are ignored. The same authorization is checked again when the GM approves the request.
 - The harness fixture intentionally permits only `move` and `interact` on `token-lyra`; it rejects `delete` on that token and any action targeting an object absent from the synthetic scene. These are harness-only fixtures, not real character or VTT permissions.
@@ -219,7 +217,7 @@ Suggested test checklist:
 6. Approval increments the synthetic revision and the player receives the result/update.
 7. Two requests created at the same revision are tested: after one is approved, the other must be marked stale.
 8. Player disconnects; the GM participant list removes the player either on the PeerJS close event or after the heartbeat timeout (up to approximately 16 seconds), and pending requests are cancelled.
-9. Rejoining requires a new attempt ID and fresh GM approval; replaying an old attempt ID is rejected.
+9. A session restart requires the GM to create a new session and share its new invitation link. Players join that session and receive fresh GM approval; automatic recovery and retry are not performed.
 10. Unapproved peers, duplicate messages/requests, old host generations, and stale revisions are rejected.
 11. A second approved player receives a broadcast update after a synthetic revision advances.
 12. All join requests are treated as Player requests and the GM approves or rejects each one.
