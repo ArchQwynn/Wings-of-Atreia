@@ -64,7 +64,7 @@
   const width = () => clamp($("overlay-width").value,5,100)/FEET_PER_GRID;
   const opacity = () => clamp($("overlay-opacity").value,8,75)/100;
   const snap = p => $("overlay-snap").checked ? {x:Math.round(p.x),y:Math.round(p.y)} : p;
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(shapes));}catch{status.textContent="Overlay storage is full; export your scene and remove unused overlays."}}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(shapes));}catch{status.textContent="Overlay storage is full; export your scene and remove unused overlays."}window.WoAVTT?.notifyStateChanged?.()}
   function worldAt(clientX,clientY){
     const r=canvas.getBoundingClientRect(),sx=clientX-r.left,sy=clientY-r.top,{w,h}=size();
     if(state.view2d)return {x:(sx-w/2-state.camera.panX)/(CELL_PX*state.camera.zoom),y:-(sy-h/2-state.camera.panY)/(CELL_PX*state.camera.zoom)};
@@ -218,6 +218,19 @@
   }
   function render(){if(!ctx||!active())return;ctx.save();for(const s of shapes){try{currentOpacity=Number.isFinite(Number(s.opacity))?Number(s.opacity):opacity();drawShape(s)}catch{}}if(drawing){try{currentOpacity=Number.isFinite(Number(drawing.opacity))?Number(drawing.opacity):opacity();drawShape(drawing)}catch{}}try{drawMeasurement()}catch{}ctx.restore();}
   // Called by the main scene renderer after terrain but before props/assets and tokens.
+  window.WoATacticalOverlays=Object.freeze({
+    snapshot:()=>shapes.map(shape=>({...shape})),
+    replace:items=>{
+      shapes.length=0;
+      const allowed=new Set(["aura","line","arrow","cone","circle","cube"]);
+      if(Array.isArray(items))items.slice(0,500).forEach(shape=>{
+        if(!shape||typeof shape!=="object"||!allowed.has(shape.kind)||typeof shape.id!=="string"||
+           !Number.isFinite(Number(shape.x))||!Number.isFinite(Number(shape.y)))return;
+        shapes.push({...shape,x:Number(shape.x),y:Number(shape.y)});
+      });
+      selected=null;save();render();
+    }
+  });
   window.drawTacticalOverlays=render;
   function refreshToolButtons(){
     ui.querySelectorAll("[data-overlay-tool]").forEach(b=>{
