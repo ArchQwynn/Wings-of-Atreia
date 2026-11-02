@@ -78,6 +78,15 @@ test('action authorization rejects stale scene revisions and host generations', 
   assert.equal(authority.authorizeAction({ ...request, hostGeneration: 6 }, { targetExists: true, permissions }).code, 'HOST_GENERATION_MISMATCH');
 });
 
+test('embedded connection harness inline scripts parse successfully', () => {
+  const fs = require('node:fs');
+  const vm = require('node:vm');
+  const html = fs.readFileSync(require('node:path').join(__dirname, '..', 'connection-harness.html'), 'utf8');
+  const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
+    .map(match => match[1]).filter(source => source.trim());
+  assert.equal(scripts.length, 2, 'expected the embedded protocol and harness scripts');
+  for (const source of scripts) assert.doesNotThrow(() => new vm.Script(source));
+});
 
 test('stale or malformed join attempts cannot bypass explicit approval', () => {
   const queue = foundation.createJoinApprovalQueue();
