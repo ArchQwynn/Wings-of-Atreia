@@ -28,7 +28,7 @@ The VTT entry point loads the pure foundation modules before `app.js`, then load
 
 ## Current implementation boundary
 
-The transport and shared-state bridge are now wired into the VTT. The current action gateway supports token movement requests; the Combat Movement Tracker's private route preview, altitude review display, and round-based movement indicators are still pending. Walls/doors and the in-VTT Help guide are also separate approved features awaiting implementation.
+The transport and filtered shared-state bridge are wired into the VTT. The Combat Movement Tracker is now implemented on this branch at the code level: private player 2D route previews, explicit submission/withdrawal, GM route review and approval/rejection, altitude values without a 3D trajectory, Genuine Combat tracking, previous-position markers, per-token indicators, End Round/deactivation cleanup, and Undo/Redo integration. This implementation still requires browser-based multiplayer and regression testing. Dungeon Walls/Doors and the in-VTT Help guide remain approved features awaiting implementation.
 
 A trusted host-election service and secure identity authentication are not provided. The 25-remote-peer capacity remains a design target until staged load testing demonstrates it.
 
