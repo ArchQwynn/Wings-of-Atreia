@@ -92,6 +92,7 @@ function loadProperties(w){
  if(isDoor){$('dw-door-type').value=w.type;$('dw-door-width').value=String(w.width||5);$('dw-door-state').value=w.state||'closed';$('dw-door-lock').checked=!!w.locked;$('dw-secret-visibility').value=w.secretVisibility||'hidden';$('dw-door-height').value=String(w.height||10);$('dw-door-altitude').value=String(w.altitude||0)}
 }
 function addWall(kind,props){
+ bridge.recordUndo();
  const w={id:id('wall'),kind,...props,color:/^#[0-9a-f]{6}$/i.test(props.color||'')?props.color:'#333333',height:round5(props.height),altitude:round5(props.altitude),groupId:null};delete w.pointsPreview;structures().push(w);selectIds([w.id]);bridge.saveSceneToBrowser();bridge.status('Wall created.');bridge.render();
 }
 function finishPolyline(){if(polyPoints.length>=2)addWall('polyline',{points:polyPoints.map(p=>({...p})),color:$('dw-color').value,height:$('dw-height').value,altitude:$('dw-altitude').value});polyPoints=[];draft=null;bridge.render()}
