@@ -98,16 +98,16 @@ function addWall(kind,props){
 function finishPolyline(){if(polyPoints.length>=2)addWall('polyline',{points:polyPoints.map(p=>({...p})),color:$('dw-color').value,height:$('dw-height').value,altitude:$('dw-altitude').value});polyPoints=[];draft=null;bridge.render()}
 function wallToolButton(name,fn){$(name)?.addEventListener('click',fn)}
 wallToolButton('dw-select',()=>{tool='select';polyPoints=[];draft=null;setStatus('Select walls, doors, or edit handles.')});
-wallToolButton('dw-line',()=>{tool='line';setStatus('Drag from the wall start point to its endpoint.')});
-wallToolButton('dw-polyline',()=>{tool='polyline';polyPoints=[];setStatus('Click successive wall corners; double-click to finish.')});
-wallToolButton('dw-circle',()=>{tool='circle';setStatus('Drag from the circle center to set its radius.')});
-wallToolButton('dw-arc',()=>{tool='arc';arcPoints=[];setStatus('Click arc center, start point, then end point.')});
-wallToolButton('dw-door',()=>{tool='door';pendingDoor=null;setStatus('Click an existing wall to preview a door position.')});
+wallToolButton('dw-line',()=>{tool='line';$('dw-wall-properties').hidden=false;$('dw-door-properties').hidden=true;setStatus('Drag from the wall start point to its endpoint.')});
+wallToolButton('dw-polyline',()=>{tool='polyline';$('dw-wall-properties').hidden=false;$('dw-door-properties').hidden=true;polyPoints=[];setStatus('Click successive wall corners; double-click to finish.')});
+wallToolButton('dw-circle',()=>{tool='circle';$('dw-wall-properties').hidden=false;$('dw-door-properties').hidden=true;setStatus('Drag from the circle center to set its radius.')});
+wallToolButton('dw-arc',()=>{tool='arc';$('dw-wall-properties').hidden=false;$('dw-door-properties').hidden=true;arcPoints=[];setStatus('Click arc center, start point, then end point.')});
+wallToolButton('dw-door',()=>{tool='door';$('dw-wall-properties').hidden=true;$('dw-door-properties').hidden=false;pendingDoor=null;$('dw-door-confirm').disabled=true;setStatus('Click an existing wall to preview a door position.')});
 wallToolButton('dw-finish',finishPolyline);
 wallToolButton('dw-door-confirm',()=>{
  if(!pendingDoor||!gm())return;const {wall,segment,t}=pendingDoor,type=$('dw-door-type').value,width=round5($('dw-door-width').value||(type==='double'?10:5));
  const door={id:id('door'),kind:'door',wallId:wall.id,segmentIndex:segment.index,t,type,width,height:round5($('dw-door-height').value||10),altitude:round5($('dw-door-altitude').value),color:$('dw-color').value,state:$('dw-door-state').value,locked:$('dw-door-lock').checked,secretVisibility:$('dw-secret-visibility').value};
- bridge.recordUndo();structures().push(door);pendingDoor=null;selectIds([door.id]);bridge.saveSceneToBrowser();bridge.status('Door placed in wall.');bridge.render();
+ bridge.recordUndo();structures().push(door);pendingDoor=null;$('dw-door-confirm').disabled=true;selectIds([door.id]);bridge.saveSceneToBrowser();bridge.status('Door placed in wall.');bridge.render();
 });
 wallToolButton('dw-delete',()=>{if(!gm()||!selectedIds.length)return;bridge.recordUndo();const remove=new Set(selectedIds),groups=new Set(selected().filter(w=>w.kind!=='door').map(w=>w.groupId).filter(Boolean));
  const removedWalls=structures().filter(w=>w.kind!=='door'&&(remove.has(w.id)||(w.groupId&&groups.has(w.groupId)))).map(w=>w.id);
@@ -167,7 +167,7 @@ function applyWallProps(){
  });bridge.saveSceneToBrowser();bridge.render();
 }
 ['dw-color','dw-height','dw-altitude','dw-door-width','dw-door-height','dw-door-altitude','dw-door-state','dw-door-lock','dw-secret-visibility','dw-door-type'].forEach(id=>$(id)?.addEventListener('change',applyWallProps));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){draft=null;polyPoints=[];arcPoints=[];pendingDoor=null;drag=null;bridge.render();setStatus('Drawing cancelled.')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){draft=null;polyPoints=[];arcPoints=[];pendingDoor=null;$('dw-door-confirm').disabled=true;drag=null;bridge.render();setStatus('Drawing cancelled.')}});
 document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='g'&&gm()){e.preventDefault();$('dw-group').click()}});
 function normalize(){
  state.dungeonStructures=structures().filter(w=>w&&typeof w==='object'&&typeof w.id==='string').slice(0,2000);
