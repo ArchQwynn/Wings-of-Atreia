@@ -412,8 +412,10 @@
   }
   function resetPlayerSession() {
     if (state.role !== 'player') return;
+    const oldPeer = state.peer;
     state.role = null; state.playerApproved = false; state.playerConnection = null;
     state.peer = null; state.sessionId = null; state.playerPendingActions.clear();
+    try { oldPeer && oldPeer.destroy(); } catch (_) {}
     VTT.setSessionLock(false);
     const notice = $('mp-player-notice'); if (notice) notice.hidden = true;
     setControls('idle');
