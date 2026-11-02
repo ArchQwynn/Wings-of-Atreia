@@ -72,6 +72,7 @@ function drawDoor(d,w,center,edge){
  ctx.restore();
 }
 function draw(){
+ if(pendingDoor){const w=pendingDoor.wall,seg=pendingDoor.segment,p={x:seg.a.x+(seg.b.x-seg.a.x)*pendingDoor.t,y:seg.a.y+(seg.b.y-seg.a.y)*pendingDoor.t},q=projectAt(w,p,Number(w.altitude));if(q.depth>.5){ctx.save();ctx.strokeStyle='#ffe08a';ctx.lineWidth=4;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(q.x-12,q.y);ctx.lineTo(q.x+12,q.y);ctx.stroke();ctx.restore()}}
  structures().filter(x=>x.kind!=='door').forEach(w=>segments(w).forEach(s=>drawWallSegment(w,s)));
  if(gm())selected().filter(x=>x.kind!=='door').forEach(w=>drawHandles(w));
 }
