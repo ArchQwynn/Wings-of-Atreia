@@ -200,7 +200,7 @@
     <div id="playerStatus" class="hidden">
       <p id="playerState" class="status warn">Waiting to request access</p>
       <p class="muted small">You will not receive test state until the GM approves your request.</p>
-      <button id="reconnectButton">Reconnect</button>
+      <button id="reconnectButton">Return to join screen</button>
     </div>
     <div id="gmArea" class="hidden">
       <h2 style="margin-top:18px">Join requests <span class="pill" id="pendingCount">0 pending</span></h2>
@@ -259,7 +259,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const F=window.WoAMultiplayerFoundation;
-const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:new Map(),approved:new Map(),testRequests:new Map(),revision:0,hostGeneration:1,authority:F.createAuthority({hostGeneration:1,revision:0}),seenMessageIds:new Set(),seenRequestIds:new Set(),seenJoinAttemptIds:new Set(),lastJoinAttemptId:null,joinAttemptId:null,playerConnection:null,playerApproved:false,playerEverApproved:false,playerName:'',playerLastHostPingAt:0,playerReconnectActive:false,playerReconnectTimer:null,playerHeartbeatTimer:null,playerConnectInProgress:false,playerConnectStartedAt:0,signalingReconnectTimer:null,signalingConnected:false,requestCounter:0,lastTestRequestEnvelope:null};
+const state={role:null,peer:null,sessionId:null,connections:new Map(),pending:new Map(),approved:new Map(),testRequests:new Map(),revision:0,hostGeneration:1,authority:F.createAuthority({hostGeneration:1,revision:0}),seenMessageIds:new Set(),seenRequestIds:new Set(),seenJoinAttemptIds:new Set(),lastJoinAttemptId:null,joinAttemptId:null,playerConnection:null,playerApproved:false,playerName:'',signalingConnected:false,requestCounter:0,lastTestRequestEnvelope:null};
 const MAX_PLAYERS=25;
 // Synthetic fixture only: this harness has no live tabletop or character permissions.
 const TEST_SCENE_OBJECTS=new Set(['token-lyra','enemy-token']);
@@ -290,23 +290,16 @@ let heartbeatTimer=null;
 function log(message){const el=$('log');const stamp=new Date().toLocaleTimeString();el.textContent+='\n['+stamp+'] '+message;el.scrollTop=el.scrollHeight}
 function setStatus(text,kind){$('connectionStatus').textContent=text;$('connectionStatus').className='status '+(kind||'')}
 function setSignalingStatus(text,kind){$('signalingStatus').textContent=text;$('signalingStatus').className='status '+(kind||'')}
-function stopSignalingReconnect(){if(state.signalingReconnectTimer!==null){clearTimeout(state.signalingReconnectTimer);state.signalingReconnectTimer=null}}
 function handleSignalingDisconnected(peer,label){
- state.signalingConnected=false;setSignalingStatus('Signaling disconnected','warn');
- log(label+' PeerJS signaling disconnected. Existing WebRTC data connections may remain active.');
- if(state.signalingReconnectTimer!==null||!peer||peer.destroyed)return;
- state.signalingReconnectTimer=setTimeout(()=>{
-  state.signalingReconnectTimer=null;
-  if(state.peer!==peer||peer.destroyed)return;
-  if(!peer.disconnected){log(label+' signaling reconnect skipped: PeerJS is already reconnecting.');return}
-  try{log(label+' attempting PeerJS signaling recovery with the existing peer ID.');peer.reconnect()}
-  catch(error){setSignalingStatus('Signaling recovery failed','bad');log(label+' signaling reconnect failed: '+error.message)}
- },2000);
-}
-function handleSignalingOpened(peer,label){
- if(state.peer!==peer)return;
- state.signalingConnected=true;stopSignalingReconnect();setSignalingStatus('Signaling connected','good');
- log(label+' PeerJS signaling connection is available.');
+ state.signalingConnected=false;setSignalingStatus('Signaling disconnected','bad');setStatus('Session ended — restart required','bad');
+ log(label+' PeerJS signaling connection was lost. Automatic recovery is disabled; this session has ended. The GM must start a new session and share a new invitation link.');
+ if(heartbeatTimer!==null){clearInterval(heartbeatTimer);heartbeatTimer=null;}
+ for(const conn of state.connections.values()){try{conn.close()}catch(_){}}
+ if(state.playerConnection){try{state.playerConnection.close()}catch(_){}}
+ state.connections.clear();state.pending.clear();state.approved.clear();
+ for(const item of state.testRequests.values())if(item.status==='pending')item.status='cancelled';
+ renderJoinQueue();renderConnected();renderTestQueue();
+ if(peer&&!peer.destroyed){try{peer.destroy()}catch(_){}}
 }
 function setPlayerStatus(text,kind){$('playerState').textContent=text;$('playerState').className='status '+(kind||'')}
 function showSession(role){$('startPanel').classList.add('hidden');$('sessionPanel').classList.remove('hidden');state.role=role;$('roleTitle').textContent=role==='gm'?'GM test console':'Player test console';$('sessionHint').textContent=role==='gm'?'You are the session host. Approve every join request below.':'You are connected as a player. This is an isolated test; no actual tabletop is loaded.';$('inviteArea').classList.toggle('hidden',role!=='gm');$('gmArea').classList.toggle('hidden',role!=='gm');$('playerStatus').classList.toggle('hidden',role==='gm');$('playerTools').classList.toggle('hidden',role==='gm');$('playerAuthorityDiagnostics').classList.toggle('hidden',role==='gm');$('testQueuePanel').classList.toggle('hidden',role!=='gm')}
@@ -375,7 +368,7 @@ async function startHost(){
  $('startHost').disabled=true;$('startupMessage').textContent='Opening a PeerJS connection…';
  try{
   const peer=new Peer();state.peer=peer;let initialOpenHandled=false;
-  peer.on('open',id=>{handleSignalingOpened(peer,'GM');if(initialOpenHandled){if(id!==state.sessionId)log('Warning: GM peer ID changed unexpectedly during signaling recovery.');return}initialOpenHandled=true;state.sessionId=id;showSession('gm');setStatus('Hosting','good');$('sessionHint').textContent='GM host is online. Keep this tab open during the test.';makeInvite();startHostHeartbeat();log('GM host ready. Session ID: '+id);});
+  peer.on('open',id=>{if(initialOpenHandled)return;initialOpenHandled=true;state.signalingConnected=true;setSignalingStatus('Signaling connected','good');state.sessionId=id;showSession('gm');setStatus('Hosting','good');$('sessionHint').textContent='GM host is online. Keep this tab open during the test.';makeInvite();startHostHeartbeat();log('GM host ready. Session ID: '+id);});
   peer.on('connection',conn=>handleIncoming(conn));
   peer.on('disconnected',()=>handleSignalingDisconnected(peer,'GM'));
   peer.on('close',()=>{setStatus('Closed','bad');setSignalingStatus('Signaling closed','bad');log('Peer connection closed.');});
@@ -483,62 +476,19 @@ function beginPlayer(roomId,name){
  if(!roomId||!name.trim()){ $('startupMessage').textContent='Enter a GM session ID and display name.';return}
  $('joinButton').disabled=true;$('startupMessage').textContent='Connecting to the GM…';
  const peer=new Peer();state.peer=peer;state.sessionId=roomId;state.role='player';state.playerName=name.trim();let initialOpenHandled=false;
- peer.on('open',()=>{handleSignalingOpened(peer,'Player');if(initialOpenHandled){log('Player signaling restored; preserving the existing GM data connection and approval state.');return}initialOpenHandled=true;connectToHost(name.trim())});
+ peer.on('open',()=>{if(initialOpenHandled)return;initialOpenHandled=true;state.signalingConnected=true;setSignalingStatus('Signaling connected','good');connectToHost(name.trim())});
  peer.on('error',err=>{log('PeerJS error: '+err.type+' — '+err.message);if(peer.disconnected)setSignalingStatus('Signaling error','bad');else setStatus('Connection error','bad');$('startupMessage').textContent='Connection error: '+err.message;$('joinButton').disabled=false});
  peer.on('disconnected',()=>handleSignalingDisconnected(peer,'Player'));
 }
-function stopPlayerMonitoring(){
- if(state.playerHeartbeatTimer!==null){clearInterval(state.playerHeartbeatTimer);state.playerHeartbeatTimer=null;}
- if(state.playerReconnectTimer!==null){clearInterval(state.playerReconnectTimer);state.playerReconnectTimer=null;}
- state.playerReconnectActive=false;state.playerConnectInProgress=false;
-}
-function startPlayerHeartbeat(){
- if(state.playerHeartbeatTimer!==null)clearInterval(state.playerHeartbeatTimer);
- state.playerLastHostPingAt=Date.now();
- state.playerHeartbeatTimer=setInterval(()=>{
-  if(!state.playerApproved)return;
-  const now=Date.now();
-  const elapsed=state.playerLastHostPingAt?now-state.playerLastHostPingAt:0;
-  if(!state.playerConnection||!state.playerConnection.open){
-   log('Player heartbeat check: approved='+state.playerApproved+', connectionOpen='+(!!(state.playerConnection&&state.playerConnection.open))+'. Treating missing/closed data connection as GM loss.');
-   handlePlayerConnectionLost('GM data connection is no longer open.');
-   return;
-  }
-  log('Player heartbeat check: data connection open; last GM PING '+Math.round(elapsed/1000)+' seconds ago.');
-  if(elapsed>HEARTBEAT_TIMEOUT_MS){
-   log('No GM heartbeat received within 16 seconds. Starting automatic reconnection.');
-   handlePlayerConnectionLost('GM heartbeat timed out.');
-  }
- },HEARTBEAT_INTERVAL_MS);
-}
-function handlePlayerConnectionLost(reason){
- if(!state.playerEverApproved||!state.peer||!state.sessionId||state.playerReconnectActive)return;
- state.playerApproved=false;
- if(state.playerHeartbeatTimer!==null){clearInterval(state.playerHeartbeatTimer);state.playerHeartbeatTimer=null;}
- state.playerReconnectActive=true;state.playerConnectInProgress=false;
- if(state.playerConnection){const lost=state.playerConnection;state.playerConnection=null;try{lost.close()}catch(_){}}
- setStatus('Reconnecting…','warn');setPlayerStatus('Reconnecting to the original GM session…','warn');
- log(reason+' Player will automatically retry the original GM session.');
- if(state.playerReconnectTimer===null){
-  state.playerReconnectTimer=setInterval(()=>{
-   if(!state.playerReconnectActive)return;
-   if(state.playerConnectInProgress){if(Date.now()-state.playerConnectStartedAt<8000)return;state.playerConnectInProgress=false;log('Connection attempt timed out; retrying the original GM session.');}
-   if(state.playerConnection&&state.playerConnection.open)return;
-   if(state.playerConnection){try{state.playerConnection.close()}catch(_){} state.playerConnection=null;}
-   connectToHost(state.playerName,true);
-  },5000);
- }
-}
-function connectToHost(name,isRetry){
+function connectToHost(name){
  if(!state.peer||!state.sessionId)return;
  if(state.playerConnection&&state.playerConnection.open)return;
  if(state.playerConnection){try{state.playerConnection.close()}catch(_){} state.playerConnection=null;}
- state.playerConnectInProgress=true;state.playerConnectStartedAt=Date.now();
+
  const conn=state.peer.connect(state.sessionId,{reliable:true,serialization:'json',metadata:{displayName:name}});
  state.playerConnection=conn;
  conn.on('open',()=>{
-  state.playerConnectInProgress=false;
-  showSession('player');setStatus('Connected — awaiting GM','warn');setPlayerStatus(state.playerEverApproved?'Reconnected — awaiting GM approval':'Player request sent — awaiting GM approval','warn');log('Transport connected to GM. Sending player join request; waiting for explicit approval.');
+  showSession('player');setStatus('Connected — awaiting GM','warn');setPlayerStatus('Player request sent — awaiting GM approval','warn');log('Transport connected to GM. Sending player join request; waiting for explicit approval.');
   const replayAttempt=new URLSearchParams(location.search).get('attempt');
   state.joinAttemptId=replayAttempt||('join-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10));
   send(conn,'JOIN_REQUEST',{displayName:name,attemptId:state.joinAttemptId},0);
@@ -548,15 +498,13 @@ function connectToHost(name,isRetry){
   if(msg.type==='JOIN_ACCEPTED'){
    if(msg.payload.hostGeneration!==msg.hostGeneration){log('Rejected inconsistent host generation in join acceptance.');return}
    state.hostGeneration=msg.hostGeneration;state.revision=msg.revision;state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});updateRevision(state.revision);
-   state.playerApproved=true;state.playerEverApproved=true;state.playerReconnectActive=false;state.playerConnectInProgress=false;
-   if(state.playerReconnectTimer!==null){clearInterval(state.playerReconnectTimer);state.playerReconnectTimer=null;}
-   startPlayerHeartbeat();state.role='player';setStatus('Connected','good');setPlayerStatus('Approved by GM','good');$('requestResult').textContent='You are approved. You may send a harmless test request.';showSession('player');log('GM approved the join request.');setLast('JOIN_ACCEPTED received');try{send(conn,'STATE_SNAPSHOT_REQUEST',{requestedAt:Date.now()})}catch(_){}return;
+   state.playerApproved=true;state.role='player';setStatus('Connected','good');setPlayerStatus('Approved by GM','good');$('requestResult').textContent='You are approved. You may send a harmless test request.';showSession('player');log('GM approved the join request.');setLast('JOIN_ACCEPTED received');try{send(conn,'STATE_SNAPSHOT_REQUEST',{requestedAt:Date.now()})}catch(_){}return;
   }
-  if(msg.type==='JOIN_REJECTED'){state.playerApproved=false;state.playerReconnectActive=false;state.playerConnectInProgress=false;if(state.playerReconnectTimer!==null){clearInterval(state.playerReconnectTimer);state.playerReconnectTimer=null;}setStatus('Join rejected','bad');setPlayerStatus('The GM rejected this attempt','bad');log('GM rejected the join request. Automatic reconnection stopped because the GM rejected the request.');return}
+  if(msg.type==='JOIN_REJECTED'){state.playerApproved=false;setStatus('Join rejected','bad');setPlayerStatus('The GM rejected this attempt','bad');log('GM rejected the join request.');return}
   if(msg.type==='ERROR'){const hostMessage=String(msg.payload.message||'Unknown error');log('Host error: '+hostMessage);$('startupMessage').textContent=hostMessage;$('joinButton').disabled=false;return}
   if(!state.playerApproved){log('Ignored '+msg.type+' before GM approval.');return}
   if(!checkHostMessage(msg))return;
-  if(msg.type==='PING'){state.playerLastHostPingAt=Date.now();try{send(conn,'PONG',{at:Date.now()},msg.revision)}catch(error){log('Could not answer host heartbeat: '+error.message)}return}
+  if(msg.type==='PING'){try{send(conn,'PONG',{at:Date.now()},msg.revision)}catch(error){log('Could not answer host heartbeat: '+error.message)}return}
   if(msg.type==='STATE_UPDATE'&&msg.revision>state.revision+1){log('Ignored state update with a revision gap.');return}
   if(msg.type==='STATE_SNAPSHOT'){if(msg.revision<state.revision){log('Ignored stale snapshot.');return}updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});if(msg.payload&&msg.payload.visibilityTest===true)renderVisibilityTestResult('snapshot',msg.payload.objects);setLast('STATE_SNAPSHOT received');log('Authoritative test snapshot received at revision '+state.revision+'.');return}
   if(msg.type==='STATE_UPDATE'){if(msg.revision<state.revision){log('Ignored stale state update.');return}updateRevision(msg.revision);state.authority=F.createAuthority({hostGeneration:state.hostGeneration,revision:state.revision});if(msg.payload&&msg.payload.visibilityTest===true)renderVisibilityTestResult('update',msg.payload.objects);setLast('STATE_UPDATE received at revision '+msg.revision);log('Test state update received. Revision '+msg.revision+'.');return}
@@ -566,11 +514,10 @@ function connectToHost(name,isRetry){
  }));
  conn.on('close',()=>{
   if(state.playerConnection===conn)state.playerConnection=null;
-  state.playerConnectInProgress=false;
-  if(state.playerEverApproved){handlePlayerConnectionLost('GM data connection closed.');}
-  else{setStatus('Disconnected','bad');setPlayerStatus('Disconnected — reconnect to try again','bad');log('GM data connection closed before approval.');$('reconnectButton').disabled=false;}
+   if(state.playerApproved){state.playerApproved=false;setStatus('Session ended — restart required','bad');setPlayerStatus('Session ended — ask the GM for a new invitation link','bad');log('GM data connection closed. Automatic reconnection is disabled; rejoin only after the GM starts a new session and shares a new link.');$('reconnectButton').disabled=false;}
+   else{setStatus('Disconnected','bad');setPlayerStatus('Disconnected — ask the GM for a new invitation link','bad');log('GM data connection closed before approval.');$('reconnectButton').disabled=false;}
  });
- conn.on('error',err=>{state.playerConnectInProgress=false;log('Data connection error: '+err.message);if(state.playerEverApproved)handlePlayerConnectionLost('Player connection error.');else setStatus('Connection error','bad')});
+ conn.on('error',err=>{log('Data connection error: '+err.message);state.playerApproved=false;setStatus('Connection lost — restart required','bad');setPlayerStatus('Connection lost — ask the GM for a new invitation link','bad');$('reconnectButton').disabled=false;});
 }
 $('startHost').addEventListener('click',startHost);
 $('joinButton').addEventListener('click',()=>beginPlayer($('roomInput').value.trim(),$('nameInput').value.trim()));
@@ -637,12 +584,7 @@ $('sendOldGenerationToPlayers').addEventListener('click',()=>{
  }
  log('Sent outdated-generation STATE_UPDATE to '+sent+' approved player(s), using generation '+oldGeneration+' (current '+state.hostGeneration+'). Each player should reject it.');
 });
-$('reconnectButton').addEventListener('click',()=>{
- const name=$('nameInput').value.trim()||state.playerName||'Player';$('reconnectButton').disabled=true;
- stopPlayerMonitoring();if(state.peer){try{state.peer.destroy()}catch(_){}}
- state.peer=null;state.playerConnection=null;state.playerApproved=false;state.playerEverApproved=false;
- beginPlayer(state.sessionId||$('roomInput').value.trim(),name);
-});
+$('reconnectButton').addEventListener('click',()=>{location.href=location.pathname});
 $('copyInvite').addEventListener('click',()=>copyText($('inviteLink').textContent));
 $('copyId').addEventListener('click',()=>copyText(state.sessionId||''));
 $('copyReplayJoinLink').addEventListener('click',()=>{
