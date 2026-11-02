@@ -401,7 +401,7 @@ function drawToken(t){
  ctx.restore();
  const markSource=state.tokens.find(x=>x.id===runeMarkModeAssassinId),markEntry=normalizeRuneMarks(t.runeMarks).find(m=>m.assassinId===runeMarkModeAssassinId),markEligible=!!markSource&&t.id!==markSource.id&&(markEntry?markEntry.count<3:runeMarksForAssassin(markSource.id).length<3);
  ctx.lineWidth=markEligible?5:tokenSelected?4:2;ctx.strokeStyle=markEligible?'#ffd166':(/^#[0-9a-f]{6}$/i.test(t.borderColor||'')?t.borderColor:'#0b1320');
- ctx.beginPath();if(flat)ctx.rect(-r,-r,r*2,r*2);else ctx.arc(0,0,r,0,Math.PI*2);ctx.stroke();
+ ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.stroke();
  ctx.fillStyle='#fff';ctx.font=`700 ${Math.max(8,Math.min(12,r*.3))}px system-ui`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='rgba(0,0,0,.9)';ctx.shadowBlur=3;ctx.fillText(`${t.z} ft`,0,flat?r*.72:r*.52);ctx.restore();
  t._screen={x:p.x,y:screenY,radius:r,halfSize:null};
 }
