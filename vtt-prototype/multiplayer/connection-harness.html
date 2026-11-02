@@ -200,7 +200,7 @@
     <div id="playerStatus" class="hidden">
       <p id="playerState" class="status warn">Waiting to request access</p>
       <p class="muted small">You will not receive test state until the GM approves your request.</p>
-      <button id="reconnectButton">Return to join screen</button>
+      <button id="returnToJoinScreenButton">Return to join screen</button>
     </div>
     <div id="gmArea" class="hidden">
       <h2 style="margin-top:18px">Join requests <span class="pill" id="pendingCount">0 pending</span></h2>
@@ -514,10 +514,10 @@ function connectToHost(name){
  }));
  conn.on('close',()=>{
   if(state.playerConnection===conn)state.playerConnection=null;
-   if(state.playerApproved){state.playerApproved=false;setStatus('Session ended — restart required','bad');setPlayerStatus('Session ended — ask the GM for a new invitation link','bad');log('GM data connection closed. Automatic reconnection is disabled; rejoin only after the GM starts a new session and shares a new link.');$('reconnectButton').disabled=false;}
-   else{setStatus('Disconnected','bad');setPlayerStatus('Disconnected — ask the GM for a new invitation link','bad');log('GM data connection closed before approval.');$('reconnectButton').disabled=false;}
+   if(state.playerApproved){state.playerApproved=false;setStatus('Session ended — restart required','bad');setPlayerStatus('Session ended — ask the GM for a new invitation link','bad');log('GM data connection closed. Automatic reconnection is disabled; rejoin only after the GM starts a new session and shares a new link.');$('returnToJoinScreenButton').disabled=false;}
+   else{setStatus('Disconnected','bad');setPlayerStatus('Disconnected — ask the GM for a new invitation link','bad');log('GM data connection closed before approval.');$('returnToJoinScreenButton').disabled=false;}
  });
- conn.on('error',err=>{log('Data connection error: '+err.message);state.playerApproved=false;setStatus('Connection lost — restart required','bad');setPlayerStatus('Connection lost — ask the GM for a new invitation link','bad');$('reconnectButton').disabled=false;});
+ conn.on('error',err=>{log('Data connection error: '+err.message);state.playerApproved=false;setStatus('Connection lost — restart required','bad');setPlayerStatus('Connection lost — ask the GM for a new invitation link','bad');$('returnToJoinScreenButton').disabled=false;});
 }
 $('startHost').addEventListener('click',startHost);
 $('joinButton').addEventListener('click',()=>beginPlayer($('roomInput').value.trim(),$('nameInput').value.trim()));
@@ -584,7 +584,7 @@ $('sendOldGenerationToPlayers').addEventListener('click',()=>{
  }
  log('Sent outdated-generation STATE_UPDATE to '+sent+' approved player(s), using generation '+oldGeneration+' (current '+state.hostGeneration+'). Each player should reject it.');
 });
-$('reconnectButton').addEventListener('click',()=>{location.href=location.pathname});
+$('returnToJoinScreenButton').addEventListener('click',()=>{location.href=location.pathname});
 $('copyInvite').addEventListener('click',()=>copyText($('inviteLink').textContent));
 $('copyId').addEventListener('click',()=>copyText(state.sessionId||''));
 $('copyReplayJoinLink').addEventListener('click',()=>{
