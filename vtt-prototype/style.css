@@ -345,3 +345,7 @@
 .mp-player-notice{display:grid;gap:7px}
 .mp-player-notice .note{margin:0}
 #genuine-combat-toggle.active{border-color:#d49d52;background:#3a2b18;color:#ffe0a6}
+
+
+/* Dungeon walls and doors editor */
+.dungeon-editor{display:grid;gap:8px}.dw-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.dungeon-editor label{display:grid;gap:4px;font-size:.7rem;color:var(--muted)}.dungeon-editor input:not([type=checkbox]),.dungeon-editor select{width:100%;min-width:0;padding:7px;border:1px solid var(--line);border-radius:7px;background:#0d1626;color:var(--text);font:inherit}.dungeon-editor input[type=color]{height:38px;padding:3px}.dungeon-editor input[type=checkbox]{margin-right:6px}.dungeon-editor button{padding:8px;font-size:.72rem}.dungeon-editor .danger{border-color:#74404a;background:#301d29;color:#ffc2c2}.dungeon-editor [hidden]{display:none!important}
