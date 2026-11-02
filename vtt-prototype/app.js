@@ -299,18 +299,18 @@ function ground(t){
  if(alt>0){ctx.save();ctx.strokeStyle=selected?'rgba(255,255,255,.9)':'rgba(143,211,255,.7)';ctx.setLineDash([5,5]);ctx.beginPath();line(g,p);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#e6f0fa';ctx.font='700 9px system-ui';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(`${alt} ft`,g.x,g.y-8);ctx.restore()}
 }
 function drawAsset(a){
- const terrainZ=terrainHeightAt(a.x,a.y),altitude=Math.max(0,Math.min(MAX_ALTITUDE,Number(a.z)||0));
- const groundPoint=project(a.x,a.y,terrainZ),elevatedPoint=project(a.x,a.y,terrainZ+altitude);
- const standee=!state.view2d&&a.displayStyle!=='flat',p=standee?elevatedPoint:groundPoint;
+ const width=Math.max(1,Number(a.width)||1),depth=Math.max(1,Number(a.depth)||1),centerX=a.x+(width-1)/2,centerY=a.y+(depth-1)/2,terrainZ=terrainHeightAt(centerX,centerY),altitude=Math.max(0,Math.min(MAX_ALTITUDE,Number(a.z)||0));
+ const groundPoint=project(centerX,centerY,terrainZ),elevatedPoint=project(centerX,centerY,terrainZ+altitude);
+ const standee=state.view2d||a.displayStyle!=='flat',p=standee?elevatedPoint:groundPoint;
  if(!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR||groundPoint.depth<=NEAR)return;
  const img=getAssetImage(a.image);if(!img||!img.complete||!img.naturalWidth)return;
- const width=Math.max(1,Number(a.width)||1),depth=Math.max(1,Number(a.depth)||1),scale=state.view2d?CELL_PX*state.camera.zoom:Math.max(4,groundPoint.scale*CELL_PX),rotation=(Number(a.rotation)||0)*Math.PI/180;
+ const scale=state.view2d?CELL_PX*state.camera.zoom:Math.max(4,groundPoint.scale*CELL_PX),rotation=(Number(a.rotation)||0)*Math.PI/180;
  const pixelMode=a.sizeMode==='pixel',w=pixelMode?Math.max(16,Math.min(1200,Number(a.imageWidthPx)||180)):width*scale,h=pixelMode?Math.max(16,Math.min(1200,Number(a.imageHeightPx)||180)):depth*scale;
  const standW=Math.max(width*scale,w)+20,standH=Math.max(depth*scale,h)+16;
  if(standee){
   // Draw a visible stand base on the battlefield surface, then anchor the upright
   // image by its bottom edge so it rises from the base instead of extending below it.
-  drawGroundFootprint(a.x,a.y,width,depth,rotation,(state.selectedAssetIds||[]).includes(a.id)||a.id===state.selectedAsset,'rgba(3,7,13,.88)');
+  if(!state.view2d)drawGroundFootprint(centerX,centerY,width,depth,rotation,(state.selectedAssetIds||[]).includes(a.id)||a.id===state.selectedAsset,'rgba(3,7,13,.88)');
   if(altitude>0){
    ctx.save();ctx.strokeStyle=a.id===state.selectedAsset?'rgba(255,224,138,.98)':'rgba(143,211,255,.95)';ctx.lineWidth=2;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(groundPoint.x,groundPoint.y);ctx.lineTo(elevatedPoint.x,elevatedPoint.y);ctx.stroke();ctx.setLineDash([]);
    ctx.fillStyle='#e6f0fa';ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(altitude+' ft',groundPoint.x,groundPoint.y-7);ctx.restore();
@@ -327,7 +327,7 @@ function drawAsset(a){
   projected[j]=[];
   for(let i=0;i<=divisions;i++){
    const lx=(i/divisions-.5)*width,ly=(.5-j/divisions)*depth;
-   const wx=a.x+lx*cos-ly*sin,wy=a.y+lx*sin+ly*cos,wz=terrainHeightAt(wx,wy);
+   const wx=centerX+lx*cos-ly*sin,wy=centerY+lx*sin+ly*cos,wz=terrainHeightAt(wx,wy);
    projected[j][i]=project(wx,wy,wz);
   }
  }
@@ -391,11 +391,11 @@ function drawToken(t){
  ground(t);
  const flat=state.view2d,screenY=flat?p.y:p.y-r,tokenSelected=(state.selectedTokenIds||[]).includes(t.id)||t.id===state.selected;
  ctx.save();ctx.translate(p.x,screenY);ctx.shadowColor='rgba(0,0,0,.7)';ctx.shadowBlur=6;
- ctx.beginPath();if(flat)ctx.rect(-r,-r,r*2,r*2);else ctx.arc(0,0,r,0,Math.PI*2);ctx.fillStyle=t.color||'#7aa7ff';ctx.fill();ctx.shadowBlur=0;
- ctx.save();ctx.beginPath();if(flat)ctx.rect(-Math.max(1,r-1),-Math.max(1,r-1),Math.max(2,(r-1)*2),Math.max(2,(r-1)*2));else ctx.arc(0,0,Math.max(1,r-2),0,Math.PI*2);ctx.clip();
+ ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fillStyle=t.color||'#7aa7ff';ctx.fill();ctx.shadowBlur=0;
+ ctx.save();ctx.beginPath();ctx.arc(0,0,Math.max(1,r-2),0,Math.PI*2);ctx.clip();
  const tokenImage=t.image?getTokenImage(t.image):null;
  if(tokenImage?.complete&&tokenImage.naturalWidth>0){
-  const side=Math.max(tokenImage.naturalWidth,tokenImage.naturalHeight),zoom=Math.max(1,Math.min(10,Number(t.imageZoom)||1)),drawSide=(r-(flat?1:2))*2*zoom,dx=(Number(t.imageX)||0)*(r-(flat?1:2))*2*zoom,dy=(Number(t.imageY)||0)*(r-(flat?1:2))*2*zoom;
+  const side=Math.max(tokenImage.naturalWidth,tokenImage.naturalHeight),zoom=Math.max(1,Math.min(10,Number(t.imageZoom)||1)),drawSide=(r-2)*2*zoom,dx=(Number(t.imageX)||0)*(r-2)*2*zoom,dy=(Number(t.imageY)||0)*(r-2)*2*zoom;
   ctx.drawImage(tokenImage,-drawSide/2+dx,-drawSide/2+dy,drawSide*tokenImage.naturalWidth/side,drawSide*tokenImage.naturalHeight/side);
  }else{ctx.fillStyle='#08111d';ctx.font=`800 ${Math.max(12,r*.72)}px system-ui`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(t.glyph||'•',0,-2)}
  ctx.restore();
@@ -403,7 +403,7 @@ function drawToken(t){
  ctx.lineWidth=markEligible?5:tokenSelected?4:2;ctx.strokeStyle=markEligible?'#ffd166':(/^#[0-9a-f]{6}$/i.test(t.borderColor||'')?t.borderColor:'#0b1320');
  ctx.beginPath();if(flat)ctx.rect(-r,-r,r*2,r*2);else ctx.arc(0,0,r,0,Math.PI*2);ctx.stroke();
  ctx.fillStyle='#fff';ctx.font=`700 ${Math.max(8,Math.min(12,r*.3))}px system-ui`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='rgba(0,0,0,.9)';ctx.shadowBlur=3;ctx.fillText(`${t.z} ft`,0,flat?r*.72:r*.52);ctx.restore();
- t._screen={x:p.x,y:screenY,radius:r,halfSize:flat?r:null};
+ t._screen={x:p.x,y:screenY,radius:r,halfSize:null};
 }
 function getTokenImage(src){if(!src)return null;let img=tokenImageCache.get(src);if(!img){img=new Image();img.onload=()=>{};img.src=src;tokenImageCache.set(src,img)}return img}
 function applyImageFraming(){const zoomValue=document.getElementById('token-image-zoom-value');if(zoomValue&&tokenImageZoomEl)zoomValue.textContent=Number(tokenImageZoomEl.value).toFixed(2)+'×';const t=state.tokens.find(x=>x.id===state.selected);if(!t||!t.image||t.locked||!isGM())return;t.imageZoom=Math.max(1,Math.min(10,Number(tokenImageZoomEl?.value)||1));t.imageX=Math.max(-.8,Math.min(.8,Number(tokenImageXEl?.value)||0));t.imageY=Math.max(-.8,Math.min(.8,Number(tokenImageYEl?.value)||0));if(tokenImageStatusEl)tokenImageStatusEl.textContent='Image framing updated.';saveSceneToBrowser()}
