@@ -108,7 +108,9 @@ wallToolButton('dw-door-confirm',()=>{
  const door={id:id('door'),kind:'door',wallId:wall.id,segmentIndex:segment.index,t,type,width,height:round5($('dw-door-height').value||10),altitude:round5($('dw-door-altitude').value),color:$('dw-color').value,state:$('dw-door-state').value,locked:$('dw-door-lock').checked,secretVisibility:$('dw-secret-visibility').value};
  bridge.recordUndo();structures().push(door);pendingDoor=null;selectIds([door.id]);bridge.saveSceneToBrowser();bridge.status('Door placed in wall.');bridge.render();
 });
-wallToolButton('dw-delete',()=>{if(!gm()||!selectedIds.length)return;bridge.recordUndo();const remove=new Set(selectedIds);const removedWalls=structures().filter(w=>remove.has(w.id)&&w.kind!=='door').map(w=>w.id);state.dungeonStructures=structures().filter(x=>!remove.has(x.id)&&!(x.kind==='door'&&removedWalls.includes(x.wallId)));selectIds([]);bridge.saveSceneToBrowser();bridge.render();setStatus('Selected structure removed.')});
+wallToolButton('dw-delete',()=>{if(!gm()||!selectedIds.length)return;bridge.recordUndo();const remove=new Set(selectedIds),groups=new Set(selected().filter(w=>w.kind!=='door').map(w=>w.groupId).filter(Boolean));
+ const removedWalls=structures().filter(w=>w.kind!=='door'&&(remove.has(w.id)||(w.groupId&&groups.has(w.groupId)))).map(w=>w.id);
+ state.dungeonStructures=structures().filter(x=>!remove.has(x.id)&&!(x.kind!=='door'&&groups.has(x.groupId))&&!(x.kind==='door'&&removedWalls.includes(x.wallId)));selectIds([]);bridge.saveSceneToBrowser();bridge.render();setStatus('Selected structure removed.')});
 wallToolButton('dw-group',()=>{const walls=selected().filter(x=>x.kind!=='door');if(!gm()||walls.length<2)return;bridge.recordUndo();const group=id('room');walls.forEach(w=>w.groupId=group);setStatus('Grouped '+walls.length+' wall segments.') ;bridge.saveSceneToBrowser()});
 wallToolButton('dw-ungroup',()=>{if(!gm())return;const groups=new Set(selected().map(w=>w.groupId).filter(Boolean));if(!groups.size)return;bridge.recordUndo();structures().forEach(w=>{if(groups.has(w.groupId))w.groupId=null});bridge.saveSceneToBrowser();setStatus('Wall group separated.')});
 $('dw-door-type').addEventListener('change',()=>{const type=$('dw-door-type').value;$('dw-door-width').value=String(type==='double'?10:5)});
@@ -123,7 +125,7 @@ function handlePointerDown(e){
    const wall=hit.wall,handles=wall.kind==='circle'||wall.kind==='arc'?[wall.center,{x:wall.center.x+wall.radius,y:wall.center.y}]:allPoints(wall);
    let handleIndex=-1,handleDistance=11;
    handles.forEach((p,i)=>{const q=projectAt(wall,p,Number(wall.altitude)+Number(wall.height)),d=Math.hypot(x-q.x,y-q.y);if(q.depth>.5&&d<handleDistance){handleDistance=d;handleIndex=i}});
-   if(handleIndex>=0){selectIds(e.shiftKey?[...selectedIds,wall.id]:[wall.id]);drag={item:wall,handleIndex,start:pointFromEvent(e),original:JSON.parse(JSON.stringify(wall)),moved:true};e.preventDefault();e.stopImmediatePropagation();return}
+   if(handleIndex>=0){selectIds(e.shiftKey?[...selectedIds,wall.id]:[wall.id]);drag={item:wall,handleIndex,start:pointFromEvent(e),original:JSON.parse(JSON.stringify(wall)),moved:true};canvas.setPointerCapture?.(e.pointerId);e.preventDefault();e.stopImmediatePropagation();return}
    const door=structures().find(d=>d.kind==='door'&&d.wallId===hit.wall.id&&d.segmentIndex===hit.segment.index&&Math.abs(d.t-hit.t)<doorWidth(d)/(feet*Math.max(.1,Math.hypot(hit.segment.b.x-hit.segment.a.x,hit.segment.b.y-hit.segment.a.y))));const item=door||hit.wall;selectIds(e.shiftKey?[...selectedIds,item.id]:[item.id]);drag={item,handleIndex:-1,start:pointFromEvent(e),original:JSON.parse(JSON.stringify(item)),moved:false};e.preventDefault();e.stopImmediatePropagation();return}
   if(!e.shiftKey)selectIds([]);
   return;
@@ -131,7 +133,7 @@ function handlePointerDown(e){
  if(tool==='door'){const hit=nearestWall(x,y);if(!hit){setStatus('Doors must be placed on an existing wall.');return}pendingDoor=hit;$('dw-door-confirm').disabled=false;setStatus('Door position previewed. Confirm placement to create the opening.');e.preventDefault();e.stopImmediatePropagation();return}
  if(tool==='polyline'){const p=pointFromEvent(e);if(e.detail>=2){finishPolyline();}else{polyPoints.push(p);draft={points:polyPoints,color:$('dw-color').value}}e.preventDefault();e.stopImmediatePropagation();return}
  if(tool==='arc'){arcPoints.push(pointFromEvent(e));if(arcPoints.length===3){const [center,start,end]=arcPoints,radius=Math.hypot(start.x-center.x,start.y-center.y),startAngle=Math.atan2(start.y-center.y,start.x-center.x),endAngle=Math.atan2(end.y-center.y,end.x-center.x);let sweep=endAngle-startAngle;if(sweep<=0)sweep+=Math.PI*2;addWall('arc',{center,radius,startAngle,endAngle:startAngle+sweep,color:$('dw-color').value,height:$('dw-height').value,altitude:$('dw-altitude').value});arcPoints=[];draft=null}e.preventDefault();e.stopImmediatePropagation();return}
- const p=pointFromEvent(e);drag={tool,start:p,current:p,moved:false};draft={points:[p,p],color:$('dw-color').value};e.preventDefault();e.stopImmediatePropagation();
+ const p=pointFromEvent(e);drag={tool,start:p,current:p,moved:false};canvas.setPointerCapture?.(e.pointerId);draft={points:[p,p],color:$('dw-color').value};e.preventDefault();e.stopImmediatePropagation();
 }
 function handlePointerMove(e){
  if(!drag||!gm())return;const p=pointFromEvent(e);drag.current=p;drag.moved=true;
