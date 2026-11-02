@@ -22,6 +22,7 @@ jobs:
       - name: Check JavaScript syntax
         run: |
           node --check vtt-prototype/app.js
+          node --check vtt-prototype/dungeon-structures.js
           node --check vtt-prototype/overlay.js
           node --check vtt-prototype/multiplayer/protocol.js
           node --check vtt-prototype/multiplayer/authority.js
