@@ -837,7 +837,10 @@ function woaApplyMultiplayerAction(request) {
   if (!request || request.action !== 'move') return { ok: false, error: 'Unsupported player action.' };
   const token = state.tokens.find(item => item.id === request.objectId);
   const destination = request.data && request.data.destination;
+  const origin = request.data && request.data.origin;
   if (!token || token.locked || !destination) return { ok: false, error: 'The requested token or destination is unavailable.' };
+  if (origin && (snapCell(Number(origin.x)) !== snapCell(token.x) || snapCell(Number(origin.y)) !== snapCell(token.y) || Number(origin.z) !== Number(token.z))) return { ok: false, error: 'The token position changed after this request was submitted.' };
+  if (request.data.path && (!Array.isArray(request.data.path) || request.data.path.length > 500 || request.data.path.some(point => !point || !Number.isFinite(Number(point.x)) || !Number.isFinite(Number(point.y))))) return { ok: false, error: 'The proposed route is invalid.' };
   const x = Number(destination.x), y = Number(destination.y), z = Number(destination.z);
   if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z) || z < 0 || z > MAX_ALTITUDE || z % ALTITUDE_STEP !== 0) {
     return { ok: false, error: 'The requested destination is invalid.' };
