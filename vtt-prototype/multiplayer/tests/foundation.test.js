@@ -158,3 +158,8 @@ test('supports explicit cancellation messages for pending actions', () => {
   const message = foundation.createMessage('ACTION_CANCEL', { requestId: 'request-123456' }, { hostGeneration: 1, revision: 0 });
   assert.equal(foundation.validateMessage(message).ok, true);
 });
+
+test('supports bounded media chunk envelopes', () => {
+  const message = foundation.createMessage('MEDIA_CHUNK', { transferId: 'media-12345678', key: 'map', index: 0, total: 1, mimeType: 'image/png', data: 'AAAA' }, { hostGeneration: 1, revision: 0 });
+  assert.equal(foundation.validateMessage(message).ok, true);
+});
