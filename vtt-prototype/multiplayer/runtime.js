@@ -174,7 +174,7 @@
   }
   const MEDIA_PLACEHOLDER = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+nm1sAAAAASUVORK5CYII=';
   const MEDIA_CHUNK_CHARS = 42000;
-  const MAX_MEDIA_BASE64_CHARS = 2400000;
+  const MAX_MEDIA_BASE64_CHARS = 2520000;
   function mediaHash(value) {
     let hash = 2166136261;
     for (let i = 0; i < value.length; i++) { hash ^= value.charCodeAt(i); hash = Math.imul(hash, 16777619); }
