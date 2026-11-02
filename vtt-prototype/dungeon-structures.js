@@ -186,7 +186,7 @@ function replaceStructures(data){
  }).filter(Boolean):[];
 }
 bridge.replace=replaceStructures;
-function updatePermissions(){const section=$('dw-status')?.closest('section');if(section)section.hidden=!gm()}
+function updatePermissions(){const section=document.querySelector('[data-panel-title="Dungeon Walls & Doors"]')||$('dw-status')?.closest('section');if(section)section.hidden=!gm()}
 bridge.updatePermissions=updatePermissions;
 replaceStructures(structures());
 $('dw-door-confirm').disabled=true;
