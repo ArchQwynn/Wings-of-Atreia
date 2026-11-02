@@ -19,6 +19,7 @@ The VTT entry point loads the pure foundation modules before `app.js`, then load
 - The GM browser is authoritative for accepted shared gameplay state.
 - Every join request requires GM approval.
 - The shared capacity is 25 players; pending join approvals reserve capacity.
+- Tokens, assets, terrain, map configuration, tactical overlays, combat state, and movement tracking are synchronized. Measurement interactions and camera/selection state remain participant-local.
 - Display names and PeerJS IDs are labels/routing identifiers, not authentication credentials.
 - Player snapshots are filtered before transmission. GM-only and unassigned tokens, GM-only assets, GM notes/pins, and local camera/selection state are not sent to players.
 - Player-originated actions are requests. The GM revalidates target existence, permissions, host generation, and scene revision before applying an approved action.
