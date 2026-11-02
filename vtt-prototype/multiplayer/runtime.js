@@ -223,7 +223,8 @@
   function sendSnapshot(conn, playerName, type) {
     const prepared = prepareSceneForTransport(VTT.snapshotForPlayer(playerName), conn.peer);
     send(conn, type || 'STATE_SNAPSHOT', { scene: prepared.scene, displayName: playerName });
-    sendMediaChunks(conn, prepared.media);
+    try { sendMediaChunks(conn, prepared.media); }
+    catch (error) { const cache = state.mediaCacheByPeer.get(conn.peer); prepared.media.forEach(item => cache && cache.delete(item.key)); throw error; }
   }
   function receiveMediaChunk(payload) {
     const p = payload || {};
@@ -506,7 +507,8 @@
       try {
         const prepared = prepareSceneForTransport(VTT.snapshotForPlayer(player.name), player.conn.peer);
         send(player.conn, 'STATE_UPDATE', { scene: prepared.scene });
-        sendMediaChunks(player.conn, prepared.media);
+        try { sendMediaChunks(player.conn, prepared.media); }
+        catch (error) { const cache = state.mediaCacheByPeer.get(player.conn.peer); prepared.media.forEach(item => cache && cache.delete(item.key)); throw error; }
       } catch (error) { console.warn('Could not synchronize player state:', error); }
     }
     emit('scene-broadcast', { revision: state.revision });
