@@ -28,6 +28,13 @@
           <label class="context-menu-label">Class
             <select data-token-class aria-label="Character class"><option value="">No class assigned</option><option>Gladiator</option><option>Templar</option><option>Assassin</option><option>Ranger</option><option>Sorcerer</option><option>Spiritmaster</option><option>Cleric</option><option>Chanter</option><option>Aethertech</option><option>Gunslinger</option><option>Songweaver</option></select>
           </label>
+          <div class="context-submenu" data-token-resource-submenu>
+            <button type="button" class="context-submenu-trigger" data-submenu-trigger="class-resource">Class Resources <span>›</span></button>
+            <div class="context-submenu-panel" data-submenu-panel="class-resource">
+              <div class="context-menu-heading">CLASS RESOURCES</div>
+              <div class="class-resource-fields" data-token-resource-fields>No class assigned.</div>
+            </div>
+          </div>
           <div class="context-menu-heading">TOKEN ACCESS</div>
           <label class="context-menu-label">Who can access this token?
             <select data-token-assignment aria-label="Token access"><option value="gm">GM Only</option><option value="all">All Players</option><option value="unassigned">Unassigned</option><option value="specific">Specific Player(s)</option></select>
