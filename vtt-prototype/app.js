@@ -317,7 +317,7 @@ function drawWall(w){
   ctx.save();ctx.filter='brightness(.82)';drawWallPoly(endCap,c,sel);ctx.restore();
   ctx.save();ctx.filter='brightness(1.18)';drawWallPoly(top,c,sel);ctx.restore();
  }
- if(sel&&isGM()&&!w.locked){const q=wallPoints(w);for(const p of [q.a,q.b]){ctx.beginPath();ctx.arc(p.x,p.y,6,0,Math.PI*2);ctx.fillStyle='#ffe08a';ctx.fill();ctx.strokeStyle='#202b37';ctx.stroke()}}
+ if(sel&&isGM()&&!w.locked&&!w._depthSegment){const q=wallPoints(w);for(const p of [q.a,q.b]){ctx.beginPath();ctx.arc(p.x,p.y,6,0,Math.PI*2);ctx.fillStyle='#ffe08a';ctx.fill();ctx.strokeStyle='#202b37';ctx.stroke()}}
 }
 function drawWallDraft(){
  if(!state.wallDraft)return;
@@ -522,7 +522,17 @@ function drawMovementRuler(){if(!state.movingToken||!state.moveStart)return;cons
 function drawSelectionBox(){const b=state.selectionBox;if(!b)return;const x=Math.min(b.x,b.x2),y=Math.min(b.y,b.y2),w=Math.abs(b.x2-b.x),h=Math.abs(b.y2-b.y);ctx.save();ctx.fillStyle=b.type==='token'?'rgba(83,174,255,.16)':'rgba(255,194,92,.16)';ctx.strokeStyle=b.type==='token'?'rgba(105,190,255,.98)':'rgba(255,205,112,.98)';ctx.lineWidth=1.5;ctx.setLineDash([6,4]);ctx.fillRect(x,y,w,h);ctx.strokeRect(x,y,w,h);ctx.restore()}
 function completeBoxSelection(){const b=state.selectionBox;if(!b)return;const x1=Math.min(b.x,b.x2),x2=Math.max(b.x,b.x2),y1=Math.min(b.y,b.y2),y2=Math.max(b.y,b.y2);if(b.type==='token'){const ids=visibleTokens().filter(t=>{const p=t._screen;return p&&p.x>=x1&&p.x<=x2&&p.y>=y1&&p.y<=y2}).map(t=>t.id);state.selectedTokenIds=ids;state.selectedAssetIds=[];state.selectedAsset=null;state.selected=ids[0]||null;if(ids.length){select(ids[0]);state.selectedTokenIds=ids;[...tokenList.children].forEach(el=>el.classList.toggle('selected',ids.includes(el.dataset.id)))}else{state.selected=null;updateClassResourcePanel(null);selectionEl.hidden=true;selectionEl.textContent='';altitudeEl.textContent='Altitude: —';[...tokenList.children].forEach(el=>el.classList.remove('selected'))}if(sceneSaveStatus)sceneSaveStatus.textContent=ids.length+' token'+(ids.length===1?'':'s')+' selected.'}else{const ids=state.assets.filter(canSeeAsset).filter(a=>{const p=a._screen;if(!p)return false;const hw=(p.hitWidth||p.width||0)/2,hh=(p.hitHeight||p.height||0)/2;return p.x+hw>=x1&&p.x-hw<=x2&&p.y+hh>=y1&&p.y-hh<=y2}).map(a=>a.id);state.selectedAssetIds=ids;state.selectedTokenIds=[];state.selected=null;updateClassResourcePanel(null);state.selectedAsset=ids[0]||null;if(ids.length)syncAssetEditor(state.assets.find(o=>o.id===ids[0]));if(sceneSaveStatus)sceneSaveStatus.textContent=ids.length+' prop/asset'+(ids.length===1?'':'s')+' selected.'}state.selectionBox=null}
 function render(){const{w,h}=size();updateSelectionInfo();updateConditionsPanel(state.tokens.find(t=>t.id===state.selected));ctx.clearRect(0,0,w,h);ctx.fillStyle='#101927';ctx.fillRect(0,0,w,h);drawMapImage();grid();drawTerrain();drawAllGroundFootprints();state.assets.filter(canSeeAsset).filter(a=>a.displayStyle==='flat').forEach(drawAsset);if(typeof window.drawTacticalOverlays==='function')window.drawTacticalOverlays();const depthItems=[
- ...(state.walls||[]).map(w=>({type:'wall',item:w,depth:wallDepth(w)})),
+ ...(state.walls||[]).flatMap(w=>{
+ const length=Math.hypot(w.x2-w.x1,w.y2-w.y1),segmentCount=Math.max(1,Math.ceil(length/Math.max(1,FEET_PER_GRID/4)));
+ return Array.from({length:segmentCount},(_,i)=>{
+  const t0=i/segmentCount,t1=(i+1)/segmentCount,segment={...w,
+   x1:w.x1+(w.x2-w.x1)*t0,y1:w.y1+(w.y2-w.y1)*t0,
+   x2:w.x1+(w.x2-w.x1)*t1,y2:w.y1+(w.y2-w.y1)*t1,
+   _depthSegment:true
+  };
+  return{type:'wall',item:segment,depth:wallDepth(segment)};
+ });
+}),
  ...state.assets.filter(canSeeAsset).filter(a=>a.displayStyle!=='flat').map(a=>{const x=a.x+(Math.max(1,Number(a.width)||1)-1)/2,y=a.y+(Math.max(1,Number(a.depth)||1)-1)/2,z=terrainHeightAt(x,y)+Math.max(0,Math.min(MAX_ALTITUDE,Number(a.z)||0));return{type:'asset',item:a,depth:project(x,y,z).depth}}),
  ...visibleTokens().map(t=>({type:'token',item:t,depth:tokenProject(t).depth}))
 ].filter(entry=>Number.isFinite(entry.depth)).sort((a,b)=>b.depth-a.depth);
