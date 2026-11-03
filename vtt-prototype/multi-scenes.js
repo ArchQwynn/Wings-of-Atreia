@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  if(new URLSearchParams(location.search).get('mode')==='player')return;
   const DB_NAME='woa-vtt-scenes-db', DB_STORE='collections', DB_KEY='main';
   const LEGACY_KEY='woa-vtt-scene-v1';
   const COLLECTION_FORMAT='wings-of-atreia-vtt-scene-collection';
