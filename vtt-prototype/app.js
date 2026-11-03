@@ -125,7 +125,7 @@ function setupObjectContextMenu(){
  });
  menu.addEventListener('click',e=>{
   const trigger=e.target.closest('[data-submenu-trigger]');
-  if(trigger){const row=trigger.closest('.context-submenu');if(row){const open=row.classList.contains('is-open');menu.querySelectorAll('.context-submenu.is-open').forEach(el=>el.classList.remove('is-open'));if(!open)row.classList.add('is-open')}return}
+  if(trigger){const row=trigger.closest('.context-submenu');if(row){const open=row.classList.contains('is-open');Array.from(row.parentElement?.children||[]).filter(el=>el.classList?.contains('context-submenu')).forEach(el=>el.classList.remove('is-open'));if(!open)row.classList.add('is-open')}return}
 
   const conditionApply=e.target.closest('[data-token-condition-apply]'),conditionRemove=e.target.closest('[data-token-condition-remove]');
   if(conditionApply||conditionRemove){
