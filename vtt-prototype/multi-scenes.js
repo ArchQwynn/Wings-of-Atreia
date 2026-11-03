@@ -12,7 +12,7 @@
   let collection=null, db=null, ready=false, saveQueue=Promise.resolve();
   const clone=value=>JSON.parse(JSON.stringify(value));
   const makeId=()=> 'scene-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);
-  const persistentFields=['name','glyph','color','borderColor','visibility','assignment','players','image','imageZoom','imageX','imageY','imageSlots','status','conditions','className','classResource','runeMarks'];
+  const persistentFields=['name','glyph','color','borderColor','visibility','assignment','players','image','imageZoom','imageX','imageY','imageSlots','status','conditions','className','classResource','runeMarks','playerInfo'];
   const defaultCharacterFields=t=>{
     const out={};for(const k of persistentFields)if(t[k]!==undefined)out[k]=clone(t[k]);
     return out;
