@@ -854,7 +854,7 @@ function applyScene(data){
   const scene=validateScene(data);
   state.tokens=scene.tokens;state.combatRound=scene.combatTracker.round;state.combatTurn=scene.combatTracker.turn;updateTurnCounter();state.attachments=scene.attachments||[];state.gmNotesPins=scene.gmNotesPins||[];state.openGmNotePinId=null;state.gmNotesPinMode=false;closeGmNotePopup();updateGmNotePinModeUI();state.terrain=scene.terrain;state.mapImage=scene.map?.image||null;state.mapWidth=scene.map?.width||24;state.mapHeight=scene.map?.height||24;state.mapX=scene.map?.x||0;state.mapY=scene.map?.y||0;state.mapOpacity=scene.map?.opacity??.78;state.assets=scene.assets||[];state.walls=scene.walls||[];state.selectedWall=null;syncWallEditor(null);state.selectedAsset=null;state.movingAsset=null;state.camera=scene.camera;state.selected=scene.selected;state.view2d=scene.view2d;state.panMode=scene.panMode;
   state.wallPlacement=false;state.wallDraft=null;state.movingWall=null;state.wallMoveStart=null;state.wallMoveUndoSnapshot=null;document.querySelectorAll('[data-action="wall-placement"]').forEach(b=>{b.textContent='Place Wall';b.classList.remove('active')});state.drag=null;state.pointers.clear();state.pinchDistance=null;state.lastPinchMid=null;state.movingToken=null;state.moveStart=null;state.moveDistance=0;
-  if(scene.identity.role==='player'||scene.identity.role==='gm')sessionRoleEl.value=scene.identity.role;
+  if(!playerScreenMode&&(scene.identity.role==='player'||scene.identity.role==='gm'))sessionRoleEl.value=scene.identity.role;else if(playerScreenMode)sessionRoleEl.value='player';
   if(typeof scene.identity.playerName==='string')sessionPlayerNameEl.value=scene.identity.playerName;
   document.querySelectorAll('[data-action="toggle-pan"]').forEach(b=>{b.textContent=state.panMode?'Pan: On':'Pan: Off';b.setAttribute('aria-pressed',String(state.panMode));b.classList.toggle('active',state.panMode)});
   document.querySelectorAll('[data-action="2d"]').forEach(b=>{b.textContent='2D / 3D';b.setAttribute('aria-pressed',String(state.view2d));b.title=state.view2d?'Switch to 3D View':'Switch to 2D Fallback'});
@@ -924,4 +924,4 @@ document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.shiftKey&&e
 
 // Restore the most recent local scene only after all scene controls are registered.
 if(playerScreenMode){sessionRoleEl.value='player';sessionPlayerNameEl.value='';document.body.classList.add('player-screen-mode');playerScreenChannel=new BroadcastChannel('woa-vtt-player-screen');playerScreenChannel.onmessage=e=>receivePlayerScene(e.data);}else{playerScreenChannel=new BroadcastChannel('woa-vtt-player-screen');document.getElementById('open-player-screen')?.addEventListener('click',()=>{const url=new URL(location.href);url.searchParams.set('mode','player');window.open(url.toString(),'woa-player-screen','popup,width=1280,height=800');});}
-restoreSceneOnStartup();
+if(!playerScreenMode)restoreSceneOnStartup();
