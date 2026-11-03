@@ -29,7 +29,7 @@ let pendingAttachmentAction=null;
 function hideObjectContextMenu(){const menu=document.getElementById('object-context-menu');if(menu)menu.hidden=true}
 function setAttachmentMode(action,key){pendingAttachmentAction={action,key};hideObjectContextMenu();const obj=objectFromKey(key);if(sceneSaveStatus)sceneSaveStatus.textContent=(action==='attach'?'Attach '+(obj?.name||'object')+': click another object.':'Detach '+(obj?.name||'object')+': click an object directly attached to it.')+' Press Escape to cancel.'}
 function applyPendingAttachment(targetKey){const pending=pendingAttachmentAction;if(!pending)return true;pendingAttachmentAction=null;if(targetKey===pending.key){if(sceneSaveStatus)sceneSaveStatus.textContent='Choose a different object.';return true}const exists=objectFromKey(targetKey),source=objectFromKey(pending.key);if(!exists||!source)return true;const same=e=>(e.a===pending.key&&e.b===targetKey)||(e.a===targetKey&&e.b===pending.key);if(pending.action==='attach'){if(state.attachments.some(same)){if(sceneSaveStatus)sceneSaveStatus.textContent='Those objects are already attached.';return true}recordUndo();state.attachments.push({a:pending.key,b:targetKey});if(sceneSaveStatus)sceneSaveStatus.textContent='Attached '+objectLabel(pending.key)+' to '+objectLabel(targetKey)+'.'}else{if(!state.attachments.some(same)){if(sceneSaveStatus)sceneSaveStatus.textContent='Those objects are not directly attached.';return true}recordUndo();state.attachments=state.attachments.filter(e=>!same(e));if(sceneSaveStatus)sceneSaveStatus.textContent='Detached '+objectLabel(pending.key)+' from '+objectLabel(targetKey)+'.'}saveSceneToBrowser();return true}
-function refreshTokenClassResourceControls(token){
+function refreshTokenClassResourceControls(token,menu){
  const wrap=menu.querySelector('[data-token-resource-submenu]'),body=menu.querySelector('[data-token-resource-fields]');
  if(!wrap||!body)return;
  const cls=CLASS_RESOURCE_DEFS[token.className]?token.className:'';
@@ -73,7 +73,7 @@ function setupObjectContextMenu(){
   const readout=menu.querySelector('[data-token-altitude]');if(readout)readout.textContent=(Number(t.z)||0)+' ft';
   const classSelect=menu.querySelector('[data-token-class]'),accessSelect=menu.querySelector('[data-token-assignment]'),playersInput=menu.querySelector('[data-token-players]'),playersWrap=menu.querySelector('[data-token-players-wrap]');
   if(classSelect){classSelect.value=CLASS_RESOURCE_DEFS[t.className]?t.className:'';classSelect.disabled=!isGM()||!!t.locked}
-  refreshTokenClassResourceControls(t);
+  refreshTokenClassResourceControls(t,menu);
   if(accessSelect){accessSelect.value=t.visibility==='gm'||t.assignment==='gm'?'gm':['specific','all','unassigned'].includes(t.assignment)?t.assignment:'all';accessSelect.disabled=!isGM()||!!t.locked}
   if(playersInput)playersInput.value=(t.players||[]).join(', ');
   if(playersWrap)playersWrap.hidden=accessSelect?.value!=='specific';
