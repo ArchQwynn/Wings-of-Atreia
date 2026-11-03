@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
   <title>Wings of Atreia VTT — Prototype</title>
-  <link rel="stylesheet" href="style.css?v=20261031-14">
+  <link rel="stylesheet" href="style.css?v=20261103-player-screen-1">
 </head>
 <body>
   <div id="object-context-menu" class="object-context-menu" role="menu" hidden>
@@ -73,6 +73,13 @@
     <div class="context-submenu">
       <button type="button" class="context-submenu-trigger" data-submenu-trigger="status">Status <span>›</span></button>
       <div class="context-submenu-panel" data-submenu-panel="status">
+        <div class="context-menu-heading">PLAYER SCREEN INFORMATION</div>
+        <label class="context-menu-label"><span><input type="checkbox" data-player-info="name" checked> Show token name</span></label>
+        <label class="context-menu-label"><span><input type="checkbox" data-player-info="hp"> Show HP / Temp HP</span></label>
+        <label class="context-menu-label"><span><input type="checkbox" data-player-info="ac"> Show Armor Class</span></label>
+        <label class="context-menu-label"><span><input type="checkbox" data-player-info="conditions"> Show Conditions</span></label>
+        <label class="context-menu-label"><span><input type="checkbox" data-player-info="classResource"> Show Class Resources</span></label>
+        <label class="context-menu-label"><span><input type="checkbox" data-player-info="altitude"> Show Altitude</span></label>
         <div class="context-menu-heading">TOKEN STATUS · GM EDITING</div>
         <label class="context-menu-label">HP (current)<input type="number" min="0" max="9999" step="1" data-token-hp-current></label>
         <label class="context-menu-label">HP (maximum)<input type="number" min="0" max="9999" step="1" data-token-hp-maximum></label>
@@ -104,6 +111,7 @@
       </div>
       <div class="camera-pad" aria-label="Camera controls">
         <div class="camera-label">CAMERA</div>
+        <button type="button" id="open-player-screen" class="player-screen-open">Open Player Screen</button>
         <button data-action="toggle-pan" class="wide" aria-pressed="false">Pan: Off</button>
         <button data-action="pitch-up" aria-label="Look up">▲</button>
         <div>
@@ -119,6 +127,7 @@
         <div class="turn-counter-row"><div class="turn-counter" id="turn-counter">Round 1 · Turn 0</div><button data-action="reset-combat-clock" class="turn-reset" aria-label="Reset combat counter" title="Reset Round and Turn counters">Reset</button></div>
       </div>
       <div class="hud bottom-left" id="selection">Select a standee</div>
+      <div id="player-token-info" class="player-token-info" hidden aria-live="polite"></div>
       <div class="hud movement-readout" id="movement-readout">Horizontal movement: — · Adjust altitude separately</div>
       <div class="altitude" id="altitude">Altitude: —</div>
       <div id="gm-note-hover" class="gm-note-hover" hidden></div>
@@ -440,7 +449,7 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept<br><strong>Clark Michael Zafra</strong></footer>
-  <script src="app.js?v=20261103-class-resources-menu-fix"></script>
+  <script src="app.js?v=20261103-player-screen-1"></script>
   <script src="multi-scenes.js?v=20261103-multi-scenes-1"></script>
   <script src="overlay.js?v=20261028-12"></script>
 
