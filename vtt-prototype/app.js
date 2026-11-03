@@ -296,32 +296,52 @@ function drawWallPoly(points,color,selected){
  ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ctx.lineTo(points[i].x,points[i].y);ctx.closePath();
  ctx.fillStyle=color;ctx.fill();ctx.strokeStyle=selected?'#ffe08a':'#202b37';ctx.lineWidth=selected?2.5:1.2;ctx.stroke();
 }
-function drawWalls(){
- for(const w of state.walls||[]){
-  const dx=w.x2-w.x1,dy=w.y2-w.y1,len=Math.hypot(dx,dy);if(len<.02)continue;
-  const half=Math.max(1,Number(w.thickness)||1)/10,nx=-dy/len*half,ny=dx/len*half;
-  const z1=terrainHeightAt(w.x1,w.y1)+(Number(w.altitude)||0),z2=terrainHeightAt(w.x2,w.y2)+(Number(w.altitude)||0),h=Math.max(5,Number(w.height)||10),c=w.color||'#788695',sel=w.id===state.selectedWall;
+function wallDepth(w){
+ const x=(w.x1+w.x2)/2,y=(w.y1+w.y2)/2,z=terrainHeightAt(x,y)+(Number(w.altitude)||0)+Math.max(5,Number(w.height)||10)/2;
+ return project(x,y,z).depth;
+}
+function drawWall(w){
+ const dx=w.x2-w.x1,dy=w.y2-w.y1,len=Math.hypot(dx,dy);if(len<.02)return;
+ const half=Math.max(1,Number(w.thickness)||1)/10,nx=-dy/len*half,ny=dx/len*half;
+ const z1=terrainHeightAt(w.x1,w.y1)+(Number(w.altitude)||0),z2=terrainHeightAt(w.x2,w.y2)+(Number(w.altitude)||0),h=Math.max(5,Number(w.height)||10),c=w.color||'#788695',sel=w.id===state.selectedWall;
+ if(state.view2d){
+  const footprint=[project(w.x1+nx,w.y1+ny,0),project(w.x2+nx,w.y2+ny,0),project(w.x2-nx,w.y2-ny,0),project(w.x1-nx,w.y1-ny,0)];
+  drawWallPoly(footprint,c,sel);
+ }else{
+  const p1=[project(w.x1+nx,w.y1+ny,z1),project(w.x2+nx,w.y2+ny,z2),project(w.x2+nx,w.y2+ny,z2+h),project(w.x1+nx,w.y1+ny,z1+h)];
+  const p2=[project(w.x2-nx,w.y2-ny,z2),project(w.x1-nx,w.y1-ny,z1),project(w.x1-nx,w.y1-ny,z1+h),project(w.x2-nx,w.y2-ny,z2+h)];
+  const startCap=[p1[0],p2[1],p2[2],p1[3]],endCap=[p1[1],p2[0],p2[3],p1[2]],top=[p1[3],p1[2],p2[3],p2[2]];
+  ctx.save();ctx.filter='brightness(.76)';drawWallPoly(p2,c,sel);ctx.restore();
+  drawWallPoly(p1,c,sel);
+  ctx.save();ctx.filter='brightness(.62)';drawWallPoly(startCap,c,sel);ctx.restore();
+  ctx.save();ctx.filter='brightness(.82)';drawWallPoly(endCap,c,sel);ctx.restore();
+  ctx.save();ctx.filter='brightness(1.18)';drawWallPoly(top,c,sel);ctx.restore();
+ }
+ if(sel&&isGM()&&!w.locked){const q=wallPoints(w);for(const p of [q.a,q.b]){ctx.beginPath();ctx.arc(p.x,p.y,6,0,Math.PI*2);ctx.fillStyle='#ffe08a';ctx.fill();ctx.strokeStyle='#202b37';ctx.stroke()}}
+}
+function drawWallDraft(){
+ if(!state.wallDraft)return;
+ const a=project(state.wallDraft.x1,state.wallDraft.y1,0),b=project(state.wallDraft.x2,state.wallDraft.y2,0);
+ ctx.save();ctx.setLineDash([7,5]);ctx.strokeStyle='#ffe08a';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.restore();
+}
+function pointInWallPoly(x,y,points){
+ if(points.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR))return false;
+ ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ctx.lineTo(points[i].x,points[i].y);ctx.closePath();return ctx.isPointInPath(x,y);
+}
+function hitWall(x,y){
+ for(let i=(state.walls||[]).length-1;i>=0;i--){
+  const w=state.walls[i],dx=w.x2-w.x1,dy=w.y2-w.y1,len=Math.hypot(dx,dy);if(len<.02)continue;
+  const half=Math.max(1,Number(w.thickness)||1)/10,nx=-dy/len*half,ny=dx/len*half,z1=terrainHeightAt(w.x1,w.y1)+(Number(w.altitude)||0),z2=terrainHeightAt(w.x2,w.y2)+(Number(w.altitude)||0),h=Math.max(5,Number(w.height)||10);
   if(state.view2d){
    const footprint=[project(w.x1+nx,w.y1+ny,0),project(w.x2+nx,w.y2+ny,0),project(w.x2-nx,w.y2-ny,0),project(w.x1-nx,w.y1-ny,0)];
-   drawWallPoly(footprint,c,sel);
+   if(pointInWallPoly(x,y,footprint))return w;
   }else{
    const p1=[project(w.x1+nx,w.y1+ny,z1),project(w.x2+nx,w.y2+ny,z2),project(w.x2+nx,w.y2+ny,z2+h),project(w.x1+nx,w.y1+ny,z1+h)];
    const p2=[project(w.x2-nx,w.y2-ny,z2),project(w.x1-nx,w.y1-ny,z1),project(w.x1-nx,w.y1-ny,z1+h),project(w.x2-nx,w.y2-ny,z2+h)];
    const startCap=[p1[0],p2[1],p2[2],p1[3]],endCap=[p1[1],p2[0],p2[3],p1[2]],top=[p1[3],p1[2],p2[3],p2[2]];
-   ctx.save();ctx.filter='brightness(.76)';drawWallPoly(p2,c,sel);ctx.restore();
-   drawWallPoly(p1,c,sel);
-   ctx.save();ctx.filter='brightness(.62)';drawWallPoly(startCap,c,sel);ctx.restore();
-   ctx.save();ctx.filter='brightness(.82)';drawWallPoly(endCap,c,sel);ctx.restore();
-   ctx.save();ctx.filter='brightness(1.18)';drawWallPoly(top,c,sel);ctx.restore();
+   if(pointInWallPoly(x,y,p1)||pointInWallPoly(x,y,p2)||pointInWallPoly(x,y,startCap)||pointInWallPoly(x,y,endCap)||pointInWallPoly(x,y,top))return w;
+   const q=wallPoints(w);if(Math.min(Math.hypot(x-q.a.x,y-q.a.y),Math.hypot(x-q.b.x,y-q.b.y),Math.hypot(x-q.at.x,y-q.at.y),Math.hypot(x-q.bt.x,y-q.bt.y))<10)return w;
   }
-  if(sel&&isGM()&&!w.locked){const q=wallPoints(w);for(const p of [q.a,q.b]){ctx.beginPath();ctx.arc(p.x,p.y,6,0,Math.PI*2);ctx.fillStyle='#ffe08a';ctx.fill();ctx.strokeStyle='#202b37';ctx.stroke()}}
- }
- if(state.wallDraft){const a=project(state.wallDraft.x1,state.wallDraft.y1,0),b=project(state.wallDraft.x2,state.wallDraft.y2,0);ctx.save();ctx.setLineDash([7,5]);ctx.strokeStyle='#ffe08a';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.restore()}
-}
-function hitWall(x,y){
- for(let i=(state.walls||[]).length-1;i>=0;i--){const w=state.walls[i],p=wallPoints(w);
-  if(state.view2d){const a=project(w.x1,w.y1,0),b=project(w.x2,w.y2,0),dx=b.x-a.x,dy=b.y-a.y,t=Math.max(0,Math.min(1,((x-a.x)*dx+(y-a.y)*dy)/(dx*dx+dy*dy||1)));if(Math.hypot(x-a.x-t*dx,y-a.y-t*dy)<Math.max(9,(Number(w.thickness)||5)/5*CELL_PX*state.camera.zoom/2+5))return w}
-  else{const dx=w.x2-w.x1,dy=w.y2-w.y1,len=Math.hypot(dx,dy)||1,nx=-dy/len*Math.max(1,Number(w.thickness)||1)/10,ny=dx/len*Math.max(5,Number(w.thickness)||5)/10,z1=terrainHeightAt(w.x1,w.y1)+(Number(w.altitude)||0),z2=terrainHeightAt(w.x2,w.y2)+(Number(w.altitude)||0),h=Math.max(5,Number(w.height)||10),q=[project(w.x1+nx,w.y1+ny,z1),project(w.x2+nx,w.y2+ny,z2),project(w.x2+nx,w.y2+ny,z2+h),project(w.x1+nx,w.y1+ny,z1+h)];ctx.beginPath();ctx.moveTo(q[0].x,q[0].y);q.slice(1).forEach(v=>ctx.lineTo(v.x,v.y));ctx.closePath();if(ctx.isPointInPath(x,y)||Math.min(Math.hypot(x-p.a.x,y-p.a.y),Math.hypot(x-p.b.x,y-p.b.y),Math.hypot(x-p.at.x,y-p.at.y),Math.hypot(x-p.bt.x,y-p.bt.y))<10)return w}
  }
  return null;
 }
@@ -487,11 +507,12 @@ function resetCamera(){state.camera={yaw:-.65,elevation:.68,distance:60,zoom:1,t
 function drawMovementRuler(){if(!state.movingToken||!state.moveStart)return;const t=state.movingToken,f=Math.max(1,t.footprint||1),sx=state.moveStart.x,sy=state.moveStart.y,ex=snapCell(t._dragX??t.x),ey=snapCell(t._dragY??t.y);const start={...t,x:sx,y:sy},end={...t,x:ex,y:ey};const a=tokenProject(start),b=tokenProject(end);if(!Number.isFinite(a.x)||!Number.isFinite(b.x)||a.depth<=NEAR||b.depth<=NEAR)return;const squares=Math.max(Math.abs(ex-sx),Math.abs(ey-sy)),feet=squares*FEET_PER_GRID;ctx.save();ctx.strokeStyle='rgba(255,235,120,.95)';ctx.fillStyle='rgba(255,235,120,.95)';ctx.lineWidth=3;ctx.setLineDash([8,6]);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.setLineDash([]);ctx.beginPath();ctx.arc(b.x,b.y,Math.max(6,tokenRadius(t)*.28),0,Math.PI*2);ctx.fill();const mx=(a.x+b.x)/2,my=(a.y+b.y)/2-12;ctx.font='700 13px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';const label=`${feet} ft · ${squares} square${squares===1?'':'s'}`;const tw=ctx.measureText(label).width+16;ctx.fillStyle='rgba(5,8,15,.9)';ctx.beginPath();ctx.roundRect(mx-tw/2,my-12,tw,24,7);ctx.fill();ctx.fillStyle='#fff';ctx.fillText(label,mx,my);ctx.restore()}
 function drawSelectionBox(){const b=state.selectionBox;if(!b)return;const x=Math.min(b.x,b.x2),y=Math.min(b.y,b.y2),w=Math.abs(b.x2-b.x),h=Math.abs(b.y2-b.y);ctx.save();ctx.fillStyle=b.type==='token'?'rgba(83,174,255,.16)':'rgba(255,194,92,.16)';ctx.strokeStyle=b.type==='token'?'rgba(105,190,255,.98)':'rgba(255,205,112,.98)';ctx.lineWidth=1.5;ctx.setLineDash([6,4]);ctx.fillRect(x,y,w,h);ctx.strokeRect(x,y,w,h);ctx.restore()}
 function completeBoxSelection(){const b=state.selectionBox;if(!b)return;const x1=Math.min(b.x,b.x2),x2=Math.max(b.x,b.x2),y1=Math.min(b.y,b.y2),y2=Math.max(b.y,b.y2);if(b.type==='token'){const ids=visibleTokens().filter(t=>{const p=t._screen;return p&&p.x>=x1&&p.x<=x2&&p.y>=y1&&p.y<=y2}).map(t=>t.id);state.selectedTokenIds=ids;state.selectedAssetIds=[];state.selectedAsset=null;state.selected=ids[0]||null;if(ids.length){select(ids[0]);state.selectedTokenIds=ids;[...tokenList.children].forEach(el=>el.classList.toggle('selected',ids.includes(el.dataset.id)))}else{state.selected=null;updateClassResourcePanel(null);selectionEl.hidden=true;selectionEl.textContent='';altitudeEl.textContent='Altitude: —';[...tokenList.children].forEach(el=>el.classList.remove('selected'))}if(sceneSaveStatus)sceneSaveStatus.textContent=ids.length+' token'+(ids.length===1?'':'s')+' selected.'}else{const ids=state.assets.filter(canSeeAsset).filter(a=>{const p=a._screen;if(!p)return false;const hw=(p.hitWidth||p.width||0)/2,hh=(p.hitHeight||p.height||0)/2;return p.x+hw>=x1&&p.x-hw<=x2&&p.y+hh>=y1&&p.y-hh<=y2}).map(a=>a.id);state.selectedAssetIds=ids;state.selectedTokenIds=[];state.selected=null;updateClassResourcePanel(null);state.selectedAsset=ids[0]||null;if(ids.length)syncAssetEditor(state.assets.find(o=>o.id===ids[0]));if(sceneSaveStatus)sceneSaveStatus.textContent=ids.length+' prop/asset'+(ids.length===1?'':'s')+' selected.'}state.selectionBox=null}
-function render(){const{w,h}=size();updateSelectionInfo();updateConditionsPanel(state.tokens.find(t=>t.id===state.selected));ctx.clearRect(0,0,w,h);ctx.fillStyle='#101927';ctx.fillRect(0,0,w,h);drawMapImage();grid();drawTerrain();drawAllGroundFootprints();drawWalls();state.assets.filter(canSeeAsset).filter(a=>a.displayStyle==='flat').forEach(drawAsset);if(typeof window.drawTacticalOverlays==='function')window.drawTacticalOverlays();const depthItems=[
+function render(){const{w,h}=size();updateSelectionInfo();updateConditionsPanel(state.tokens.find(t=>t.id===state.selected));ctx.clearRect(0,0,w,h);ctx.fillStyle='#101927';ctx.fillRect(0,0,w,h);drawMapImage();grid();drawTerrain();drawAllGroundFootprints();state.assets.filter(canSeeAsset).filter(a=>a.displayStyle==='flat').forEach(drawAsset);if(typeof window.drawTacticalOverlays==='function')window.drawTacticalOverlays();const depthItems=[
+ ...(state.walls||[]).map(w=>({type:'wall',item:w,depth:wallDepth(w)})),
  ...state.assets.filter(canSeeAsset).filter(a=>a.displayStyle!=='flat').map(a=>{const x=a.x+(Math.max(1,Number(a.width)||1)-1)/2,y=a.y+(Math.max(1,Number(a.depth)||1)-1)/2,z=terrainHeightAt(x,y)+Math.max(0,Math.min(MAX_ALTITUDE,Number(a.z)||0));return{type:'asset',item:a,depth:project(x,y,z).depth}}),
  ...visibleTokens().map(t=>({type:'token',item:t,depth:tokenProject(t).depth}))
 ].filter(entry=>Number.isFinite(entry.depth)).sort((a,b)=>b.depth-a.depth);
-depthItems.forEach(entry=>entry.type==='asset'?drawAsset(entry.item):drawToken(entry.item));drawMovementRuler();drawGmNotesPins();drawSelectionBox();const hud=document.getElementById('camera-readout');if(hud)hud.textContent=`${state.view2d?'2D':'3D'} · Each grid = ${FEET_PER_GRID} ft · zoom ${state.camera.zoom.toFixed(2)}×`;const altitudeHud=document.getElementById('altitude'),selectedToken=state.tokens.find(t=>t.id===state.selected);if(altitudeHud){if(selectedToken&&canSeeToken(selectedToken)){const wp=tokenWorld(selectedToken),terrain=Math.round(terrainHeightAt(wp.x,wp.y)*10)/10,above=Math.round(Number(selectedToken.z)||0),overall=Math.round((terrain+above)*10)/10;altitudeHud.textContent=`Overall altitude: ${overall} ft · Terrain: ${terrain} ft · Above terrain: ${above} ft`}else altitudeHud.textContent='Altitude: —'}if(movementEl){if(state.movingToken)movementEl.textContent=`Horizontal movement: ${state.moveDistance} ft · ${Math.ceil(state.moveDistance/FEET_PER_GRID)} square${Math.ceil(state.moveDistance/FEET_PER_GRID)===1?'':'s'}`;else if(state.moveDistance)movementEl.textContent=`Last horizontal movement: ${state.moveDistance} ft · ${Math.ceil(state.moveDistance/FEET_PER_GRID)} square${Math.ceil(state.moveDistance/FEET_PER_GRID)===1?'':'s'}`;else movementEl.textContent='Horizontal movement: — · Adjust altitude separately'}requestAnimationFrame(render)}requestAnimationFrame(render);
+depthItems.forEach(entry=>entry.type==='wall'?drawWall(entry.item):entry.type==='asset'?drawAsset(entry.item):drawToken(entry.item));drawWallDraft();drawMovementRuler();drawGmNotesPins();drawSelectionBox();const hud=document.getElementById('camera-readout');if(hud)hud.textContent=`${state.view2d?'2D':'3D'} · Each grid = ${FEET_PER_GRID} ft · zoom ${state.camera.zoom.toFixed(2)}×`;const altitudeHud=document.getElementById('altitude'),selectedToken=state.tokens.find(t=>t.id===state.selected);if(altitudeHud){if(selectedToken&&canSeeToken(selectedToken)){const wp=tokenWorld(selectedToken),terrain=Math.round(terrainHeightAt(wp.x,wp.y)*10)/10,above=Math.round(Number(selectedToken.z)||0),overall=Math.round((terrain+above)*10)/10;altitudeHud.textContent=`Overall altitude: ${overall} ft · Terrain: ${terrain} ft · Above terrain: ${above} ft`}else altitudeHud.textContent='Altitude: —'}if(movementEl){if(state.movingToken)movementEl.textContent=`Horizontal movement: ${state.moveDistance} ft · ${Math.ceil(state.moveDistance/FEET_PER_GRID)} square${Math.ceil(state.moveDistance/FEET_PER_GRID)===1?'':'s'}`;else if(state.moveDistance)movementEl.textContent=`Last horizontal movement: ${state.moveDistance} ft · ${Math.ceil(state.moveDistance/FEET_PER_GRID)} square${Math.ceil(state.moveDistance/FEET_PER_GRID)===1?'':'s'}`;else movementEl.textContent='Horizontal movement: — · Adjust altitude separately'}requestAnimationFrame(render)}requestAnimationFrame(render);
 function isGM(){return sessionRoleEl.value==='gm'}
 function currentPlayer(){return sessionPlayerNameEl.value.trim().toLowerCase()}
 function canSeeAsset(a){return isGM()||a.visibility!=='gm'}
