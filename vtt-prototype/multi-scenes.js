@@ -148,6 +148,7 @@
     const source=activeScene(),sourceData=clone(source.data);
     const moved=sourceData.tokens.find(t=>t.id===tokenId);if(!moved)return;
     sourceData.tokens=sourceData.tokens.filter(t=>t.id!==tokenId);
+    sourceData.attachments=(sourceData.attachments||[]).filter(edge=>edge.a!=='token:'+tokenId&&edge.b!=='token:'+tokenId);
     sourceData.selected=sourceData.tokens.some(t=>t.id===sourceData.selected)?sourceData.selected:(sourceData.tokens[0]?.id||null);
     source.data=sourceData;source.updatedAt=new Date().toISOString();
     const target=clone(destination.data);
