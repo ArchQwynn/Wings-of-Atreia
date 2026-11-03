@@ -708,6 +708,7 @@ function sceneSnapshot(){
   return {format:'wings-of-atreia-vtt-scene',version:1,savedAt:new Date().toISOString(),
     combatTracker:{round:Math.max(1,Number(state.combatRound)||1),turn:Math.max(0,Number(state.combatTurn)||0)},
     terrain:state.terrain,
+    walls:(state.walls||[]).map(w=>({id:String(w.id),name:String(w.name||"Wall"),x1:Number(w.x1)||0,y1:Number(w.y1)||0,x2:Number(w.x2)||0,y2:Number(w.y2)||0,altitude:Math.max(0,Math.min(MAX_ALTITUDE,Number(w.altitude)||0)),height:Math.max(5,Math.min(120,Number(w.height)||10)),thickness:Math.max(5,Math.min(30,Number(w.thickness)||5)),color:/^#[0-9a-f]{6}$/i.test(w.color||"")?w.color:"#788695",placement:w.placement==="free"?"free":"grid",locked:!!w.locked})),
     map:state.mapImage?{image:state.mapImage,width:Math.max(1,Math.min(200,Number(state.mapWidth)||24)),height:Math.max(1,Math.min(200,Number(state.mapHeight)||24)),x:Number(state.mapX)||0,y:Number(state.mapY)||0,opacity:Math.max(.05,Math.min(1,Number(state.mapOpacity)||.78))}:null,
     attachments:state.attachments.map(e=>({a:String(e.a),b:String(e.b)})),
     gmNotesPins:(state.gmNotesPins||[]).map(p=>({id:String(p.id),x:Number(p.x)||0,y:Number(p.y)||0,note:String(p.note||'').slice(0,5000)})),
