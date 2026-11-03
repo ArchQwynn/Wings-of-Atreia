@@ -529,7 +529,8 @@ function render(){const{w,h}=size();updateSelectionInfo();updateConditionsPanel(
  if(state.view2d)return[{type:'wall',item:w,depth:wallDepth(w)}];
  const length=Math.hypot(w.x2-w.x1,w.y2-w.y1),segmentCount=Math.max(1,Math.ceil(length/Math.max(1,FEET_PER_GRID/4)));
  return Array.from({length:segmentCount},(_,i)=>{
-  const t0=i/segmentCount,t1=(i+1)/segmentCount,segment={...w,
+  const overlap=Math.min(.025/Math.max(length,.001),.12/segmentCount);
+  const t0=Math.max(0,i/segmentCount-overlap),t1=Math.min(1,(i+1)/segmentCount+overlap),segment={...w,
    x1:w.x1+(w.x2-w.x1)*t0,y1:w.y1+(w.y2-w.y1)*t0,
    x2:w.x1+(w.x2-w.x1)*t1,y2:w.y1+(w.y2-w.y1)*t1,
    _depthSegment:true,_depthSegmentIndex:i,_depthSegmentCount:segmentCount
