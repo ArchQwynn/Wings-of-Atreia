@@ -227,8 +227,8 @@ function setupObjectContextMenu(){
 function basis(){const c=state.camera,cp=Math.cos(c.elevation),sp=Math.sin(c.elevation),sy=Math.sin(c.yaw),cy=Math.cos(c.yaw);const f={x:sy*cp,y:cy*cp,z:-sp},r={x:cy,y:-sy,z:0},u={x:r.y*f.z,y:-r.x*f.z,z:r.x*f.y-r.y*f.x},pos={x:c.targetX-f.x*c.distance,y:c.targetY-f.y*c.distance,z:c.targetZ/5-f.z*c.distance};return{pos,f,r,u}}
 function project(x,y,z){const{w,h}=size();if(state.view2d)return{x:w/2+x*CELL_PX*state.camera.zoom+state.camera.panX,y:h/2-y*CELL_PX*state.camera.zoom+state.camera.panY,depth:1,scale:state.camera.zoom};const b=basis(),q={x:x-b.pos.x,y:y-b.pos.y,z:z/5-b.pos.z},cx=q.x*b.r.x+q.y*b.r.y+q.z*b.r.z,cy=q.x*b.u.x+q.y*b.u.y+q.z*b.u.z,depth=q.x*b.f.x+q.y*b.f.y+q.z*b.f.z,focal=Math.min(w,h)*.86*state.camera.zoom,s=focal/Math.max(NEAR,depth);return{x:w/2+cx*s,y:h*.56-cy*s,depth,scale:s/CELL_PX}}
 function terrainHeightAt(x,y){const gx=snapCell(x),gy=snapCell(y),tile=state.terrain[gx+','+gy];if(!tile)return 0;const high=Math.max(0,Number(tile.height)||0);if(tile.type!=='ramp')return high;const low=Math.max(0,Math.min(high,Number(tile.startHeight)||0)),fx=x-gx,fy=y-gy;switch(tile.direction||'north'){case'east':return low+(high-low)*(fx+.5);case'west':return low+(high-low)*(.5-fx);case'south':return low+(high-low)*(.5-fy);default:return low+(high-low)*(fy+.5)}}
-function tokenProject(t){const p=tokenWorld(t),terrainZ=terrainHeightAt(p.x,p.y),altitude=Math.max(0,Math.min(MAX_ALTITUDE,Number(t.z)||0));return project(p.x,p.y,terrainZ+altitude)}
-function groundProject(t){const p=tokenWorld(t);return project(p.x,p.y,terrainHeightAt(p.x,p.y))}
+function tokenProject(t){const p=tokenWorld(t),x=state.view2d?p.x+.5:p.x,terrainZ=terrainHeightAt(p.x,p.y),altitude=Math.max(0,Math.min(MAX_ALTITUDE,Number(t.z)||0));return project(x,p.y,terrainZ+altitude)}
+function groundProject(t){const p=tokenWorld(t),x=state.view2d?p.x+.5:p.x;return project(x,p.y,terrainHeightAt(p.x,p.y))}
 function tokenRadius(t){const f=Math.max(1,t.footprint||1),p=groundProject(t);if(state.view2d)return Math.max(4,CELL_PX*state.camera.zoom*f*.5);if(!Number.isFinite(p.scale)||p.scale<=0)return 8;return Math.max(5,p.scale*CELL_PX*f*.5)}
 function tokenHeightRadius(t){const p=groundProject(t),scale=state.view2d?CELL_PX*state.camera.zoom:Math.max(4,(Number(p.scale)||1)*CELL_PX),legacyHeight=Math.max(1,Number(t.footprint)||1)*CELL_PX;return Math.max(8,(Math.max(16,Math.min(2000,Number(t.heightPx)||legacyHeight))/CELL_PX)*scale*.5)}
 const line=(a,b)=>{ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y)};
@@ -450,7 +450,7 @@ function ground(t){
  if(alt>0){ctx.save();ctx.strokeStyle=selected?'rgba(255,255,255,.9)':'rgba(143,211,255,.7)';ctx.setLineDash([5,5]);ctx.beginPath();line(g,p);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#e6f0fa';ctx.font='700 9px system-ui';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(`${alt} ft`,g.x,g.y-8);ctx.restore()}
 }
 function drawAsset(a){
- const width=Math.max(1,Number(a.width)||1),depth=Math.max(1,Number(a.depth)||1),centerX=a.x+(width-1)/2,centerY=a.y+(depth-1)/2,terrainZ=terrainHeightAt(centerX,centerY),altitude=Math.max(0,Math.min(MAX_ALTITUDE,Number(a.z)||0));
+ const width=Math.max(1,Number(a.width)||1),depth=Math.max(1,Number(a.depth)||1),centerX=a.x+(width-1)/2+(state.view2d?.5:0),centerY=a.y+(depth-1)/2,terrainZ=terrainHeightAt(centerX-(state.view2d?.5:0),centerY),altitude=Math.max(0,Math.min(MAX_ALTITUDE,Number(a.z)||0));
  const groundPoint=project(centerX,centerY,terrainZ),elevatedPoint=project(centerX,centerY,terrainZ+altitude);
  const standee=state.view2d||a.displayStyle!=='flat',p=standee?elevatedPoint:groundPoint;
  if(!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR||groundPoint.depth<=NEAR)return;
@@ -478,7 +478,7 @@ function drawAsset(a){
   projected[j]=[];
   for(let i=0;i<=divisions;i++){
    const lx=(i/divisions-.5)*width,ly=(.5-j/divisions)*depth;
-   const wx=centerX+lx*cos-ly*sin,wy=centerY+lx*sin+ly*cos,wz=terrainHeightAt(wx,wy);
+   const wx=centerX+lx*cos-ly*sin,wy=centerY+lx*sin+ly*cos,wz=terrainHeightAt(wx-(state.view2d?.5:0),wy);
    projected[j][i]=project(wx,wy,wz);
   }
  }
