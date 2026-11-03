@@ -364,9 +364,9 @@ function hitWall(x,y){
 }
 function syncWallEditor(w){
  const el=id=>document.getElementById(id),lock=el('wall-lock'),update=el('wall-update'),del=el('wall-delete'),status=el('wall-status');
- if(!w){if(lock){lock.textContent='Lock Wall';lock.disabled=true}if(update)update.disabled=true;if(del)del.disabled=true;['wall-name','wall-snap-mode','wall-altitude','wall-height','wall-thickness','wall-color'].forEach(id=>{if(el(id))el(id).disabled=!isGM()});if(status)status.textContent=state.wallPlacement?'Drag on the battlefield to draw a wall.':'Select a wall to edit it.';return}
+ if(!w){if(lock){lock.textContent='Lock Wall';lock.disabled=true}if(update)update.disabled=true;if(del)del.disabled=true;['wall-name','wall-placement-mode','wall-snap-mode','wall-altitude','wall-height','wall-thickness','wall-color'].forEach(id=>{if(el(id))el(id).disabled=!isGM()});if(status)status.textContent=state.wallPlacement?'Drag on the battlefield to draw a wall.':'Select a wall to edit it.';return}
  el('wall-name').value=w.name||'Wall';el('wall-placement-mode').value=w.placement==='free'?'free':'grid';el('wall-snap-mode').value=w.snapMode==='corner'?'corner':'center';el('wall-altitude').value=String(w.altitude||0);el('wall-height').value=String(w.height||10);el('wall-thickness').value=String(w.thickness||1);el('wall-color').value=w.color||'#788695';
- ['wall-name','wall-altitude','wall-height','wall-thickness','wall-color'].forEach(id=>{el(id).disabled=!!w.locked||!isGM()});
+ ['wall-name','wall-placement-mode','wall-snap-mode','wall-altitude','wall-height','wall-thickness','wall-color'].forEach(id=>{el(id).disabled=!!w.locked||!isGM()});
  lock.textContent=w.locked?'Unlock Wall':'Lock Wall';lock.disabled=!isGM();update.disabled=!isGM()||!!w.locked;del.disabled=!isGM();
  status.textContent=(w.name||'Wall')+(w.locked?' · LOCKED. Unlock before editing.':' selected. Drag an endpoint to reshape it or the wall body to move it.');
 }
