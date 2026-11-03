@@ -138,9 +138,9 @@
       if(status)status.textContent='Scene collection imported successfully.';
     }).catch(error=>{if(status)status.textContent='Collection import failed: '+(error.message||'invalid file')});
   }
-  function transferToken(){
+  function transferToken(tokenIdOverride=null,destinationIdOverride=null){
     if(!isGM())return;
-    const tokenId=tokenSelect?.value, destinationId=destinationSelect?.value;
+    const tokenId=tokenIdOverride||tokenSelect?.value, destinationId=destinationIdOverride||destinationSelect?.value;
     const token=state.tokens.find(t=>t.id===tokenId),destination=collection.scenes.find(s=>s.id===destinationId);
     if(!token||!destination||destination.id===collection.activeSceneId)return;
     if(!confirm('Transfer "'+(token.name||'token')+'" to "'+destination.name+'"? The token will be removed from this scene.'))return;
@@ -213,7 +213,21 @@
     if(status)status.textContent='Deleted "'+scene.name+'".';
   });
   activeSelect?.addEventListener('change',()=>{if(ready&&isGM())switchScene(activeSelect.value)});
-  $('scene-transfer')?.addEventListener('click',transferToken);
+  $('scene-transfer')?.addEventListener('click',()=>transferToken());
+  const objectMenu=$('object-context-menu');
+  objectMenu?.addEventListener('click',event=>{
+    const button=event.target.closest('[data-token-action="transfer-scene"]');if(!button||!isGM()||!ready)return;
+    const token=state.tokens.find(t=>t.id===objectMenu.dataset.objectKey?.slice('token:'.length));
+    if(!token)return;
+    const choices=collection.scenes.filter(scene=>scene.id!==collection.activeSceneId);
+    if(!choices.length){if(status)status.textContent='Create another scene before transferring a token.';return}
+    const promptText=choices.map((scene,index)=>(index+1)+'. '+scene.name).join('\n');
+    const answer=prompt('Transfer '+(token.name||'token')+' to which scene?\n'+promptText,'1');
+    if(answer===null)return;
+    const index=Number(answer)-1;if(!Number.isInteger(index)||index<0||index>=choices.length){if(status)status.textContent='Invalid destination scene selection.';return}
+    transferToken(token.id,choices[index].id);
+  });
+
   $('scene-export-collection')?.addEventListener('click',()=>{if(isGM()&&ready)exportCollection()});
   $('scene-import-collection')?.addEventListener('click',()=>{if(isGM())collectionFile?.click()});
   collectionFile?.addEventListener('change',()=>{const file=collectionFile.files?.[0];if(file)importCollection(file);collectionFile.value=''});
