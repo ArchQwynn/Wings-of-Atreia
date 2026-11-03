@@ -301,12 +301,18 @@ function drawWalls(){
   const dx=w.x2-w.x1,dy=w.y2-w.y1,len=Math.hypot(dx,dy);if(len<.02)continue;
   const half=Math.max(5,Number(w.thickness)||5)/10,nx=-dy/len*half,ny=dx/len*half;
   const z1=terrainHeightAt(w.x1,w.y1)+(Number(w.altitude)||0),z2=terrainHeightAt(w.x2,w.y2)+(Number(w.altitude)||0),h=Math.max(5,Number(w.height)||10),c=w.color||'#788695',sel=w.id===state.selectedWall;
-  if(state.view2d){const a=project(w.x1,w.y1,0),b=project(w.x2,w.y2,0);ctx.save();ctx.lineWidth=Math.max(3,(Number(w.thickness)||5)/5*CELL_PX*state.camera.zoom);ctx.lineCap='butt';ctx.strokeStyle=c;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();if(sel){ctx.strokeStyle='#ffe08a';ctx.lineWidth+=3;ctx.stroke()}ctx.restore()}
-  else{
+  if(state.view2d){
+   const footprint=[project(w.x1+nx,w.y1+ny,0),project(w.x2+nx,w.y2+ny,0),project(w.x2-nx,w.y2-ny,0),project(w.x1-nx,w.y1-ny,0)];
+   drawWallPoly(footprint,c,sel);
+  }else{
    const p1=[project(w.x1+nx,w.y1+ny,z1),project(w.x2+nx,w.y2+ny,z2),project(w.x2+nx,w.y2+ny,z2+h),project(w.x1+nx,w.y1+ny,z1+h)];
    const p2=[project(w.x2-nx,w.y2-ny,z2),project(w.x1-nx,w.y1-ny,z1),project(w.x1-nx,w.y1-ny,z1+h),project(w.x2-nx,w.y2-ny,z2+h)];
-   drawWallPoly(p1,c,sel);ctx.save();ctx.filter='brightness(.68)';drawWallPoly(p2,c,sel);ctx.restore();
-   const top=[p1[3],p1[2],p2[3],p2[2]];ctx.save();ctx.filter='brightness(1.2)';drawWallPoly(top,c,sel);ctx.restore();
+   const startCap=[p1[0],p2[1],p2[2],p1[3]],endCap=[p1[1],p2[0],p2[3],p1[2]],top=[p1[3],p1[2],p2[3],p2[2]];
+   ctx.save();ctx.filter='brightness(.76)';drawWallPoly(p2,c,sel);ctx.restore();
+   drawWallPoly(p1,c,sel);
+   ctx.save();ctx.filter='brightness(.62)';drawWallPoly(startCap,c,sel);ctx.restore();
+   ctx.save();ctx.filter='brightness(.82)';drawWallPoly(endCap,c,sel);ctx.restore();
+   ctx.save();ctx.filter='brightness(1.18)';drawWallPoly(top,c,sel);ctx.restore();
   }
   if(sel&&isGM()&&!w.locked){const q=wallPoints(w);for(const p of [q.a,q.b]){ctx.beginPath();ctx.arc(p.x,p.y,6,0,Math.PI*2);ctx.fillStyle='#ffe08a';ctx.fill();ctx.strokeStyle='#202b37';ctx.stroke()}}
  }
