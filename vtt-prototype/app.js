@@ -62,8 +62,9 @@ function refreshTokenClassResourceControls(token,menu){
 function setupObjectContextMenu(){
  const menu=document.getElementById('object-context-menu');if(!menu)return;
  const tokenTools=menu.querySelector('[data-token-tools]');
+ const resourceMenu=menu.querySelector('[data-token-resource-submenu]');
  const refreshTokenMenu=t=>{
-  if(!tokenTools)return;tokenTools.hidden=!t;if(!t)return;
+  if(!tokenTools)return;tokenTools.hidden=!t;if(resourceMenu&&!t)resourceMenu.hidden=true;if(!t)return;
   const nameInput=menu.querySelector('[data-token-name]'),borderColor=menu.querySelector('[data-token-border-color]');if(nameInput){nameInput.value=t.name||'';nameInput.disabled=!isGM()||!!t.locked}if(borderColor){borderColor.value=/^#[0-9a-f]{6}$/i.test(t.borderColor||'')?t.borderColor:'#0b1320';borderColor.disabled=!isGM()||!!t.locked}
   const value=menu.querySelector('[data-token-size]');if(value)value.value=String(Math.max(1,Math.min(8,Number(t.footprint)||1)));
   menu.querySelectorAll('[data-token-slot]').forEach(button=>{const slot=Number(button.dataset.tokenSlot),saved=!!t.imageSlots?.[slot];button.disabled=!saved||!!t.locked;button.textContent='Use Image '+(slot+1)+(saved?'':' · Empty')});
