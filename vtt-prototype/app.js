@@ -102,7 +102,7 @@ function setupObjectContextMenu(){
   recordUndo();t.borderColor=color;saveSceneToBrowser();render();
  });
  menu.querySelector('[data-token-name]')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();menu.querySelector('[data-token-name-apply]')?.click()}});
- menu.addEventListener('pointerover',e=>{const row=e.target.closest('.context-submenu');if(!row||e.pointerType==='touch')return;menu.querySelectorAll('.context-submenu.is-open').forEach(el=>{if(el!==row)el.classList.remove('is-open')});row.classList.add('is-open')});
+ menu.addEventListener('pointerover',e=>{const row=e.target.closest('.context-submenu');if(!row||e.pointerType==='touch')return;menu.querySelectorAll('.context-submenu.is-open').forEach(el=>{if(el!==row&&!el.contains(row)&&!row.contains(el))el.classList.remove('is-open')});row.classList.add('is-open')});
  menu.addEventListener('pointerleave',()=>menu.querySelectorAll('.context-submenu.is-open').forEach(el=>el.classList.remove('is-open')));
  menu.addEventListener('change',e=>{
   const input=e.target.closest('[data-token-resource-input]');if(!input)return;
