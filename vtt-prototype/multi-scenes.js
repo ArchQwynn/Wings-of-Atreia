@@ -240,7 +240,11 @@
   document.addEventListener('woa-token-list-updated',renderSceneControls);
   const oldList=list;
   list=function(){oldList();if(ready)renderSceneControls()};
+  const oldSelect=select;
+  select=function(id){oldSelect(id);if(ready&&tokenSelect&&id)tokenSelect.value=id};
   const oldUpdateIdentityUI=updateIdentityUI;
   updateIdentityUI=function(){oldUpdateIdentityUI();if(ready)renderSceneControls()};
+  sessionRoleEl.addEventListener('change',()=>{if(ready)renderSceneControls()});
+  sessionPlayerNameEl.addEventListener('input',()=>{if(ready)renderSceneControls()});
   initialize();
 })();
