@@ -216,16 +216,12 @@
   $('scene-export-collection')?.addEventListener('click',()=>{if(isGM()&&ready)exportCollection()});
   $('scene-import-collection')?.addEventListener('click',()=>{if(isGM())collectionFile?.click()});
   collectionFile?.addEventListener('change',()=>{const file=collectionFile.files?.[0];if(file)importCollection(file);collectionFile.value=''});
-  document.querySelector('[data-action="save-scene"]')?.addEventListener('click',()=>saveActiveScene(true));
-  document.querySelector('[data-action="load-scene"]')?.addEventListener('click',()=>{if(ready){const scene=activeScene();applyScene(scene.data);if(status)status.textContent='Reloaded "'+scene.name+'".'}});
-  document.querySelector('[data-action="export-scene"]')?.addEventListener('click',()=>{if(ready){const blob=new Blob([JSON.stringify(sceneSnapshot(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=(activeScene()?.name||'scene').replace(/[^a-z0-9-_]+/gi,'-')+'.json';a.click();URL.revokeObjectURL(url)}});
-  const oldImport=$('scene-import-file');
-  oldImport?.addEventListener('change',async()=>{
-    const file=oldImport.files?.[0];if(!file||!ready)return;
-    try{if(file.size>25_000_000)throw new Error('Scene file is too large (maximum 25 MB).');const data=validateScene(JSON.parse(await file.text()));saveActiveScene(false);const scene=activeScene();scene.data=data;refreshSharedCharacters(data);applyScene(data);persist();if(status)status.textContent='Imported scene into "'+scene.name+'".'}
-    catch(error){if(status)status.textContent='Scene import failed: '+(error.message||'invalid file')}
-    finally{oldImport.value=''}
-  });
+  const saveButton=document.querySelector('[data-action="save-scene"]');
+  const loadButton=document.querySelector('[data-action="load-scene"]');
+  const exportButton=document.querySelector('[data-action="export-scene"]');
+  if(saveButton)saveButton.onclick=()=>saveActiveScene(true);
+  if(loadButton)loadButton.onclick=()=>{if(ready){const scene=activeScene();applyScene(scene.data);if(status)status.textContent='Reloaded "'+scene.name+'".'}};
+  if(exportButton)exportButton.onclick=()=>{if(ready){const blob=new Blob([JSON.stringify(sceneSnapshot(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=(activeScene()?.name||'scene').replace(/[^a-z0-9-_]+/gi,'-')+'.json';document.body.append(a);a.click();a.remove();URL.revokeObjectURL(url)}};
   document.addEventListener('woa-token-list-updated',renderSceneControls);
   const oldList=list;
   list=function(){oldList();if(ready)renderSceneControls()};
