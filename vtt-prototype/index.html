@@ -28,13 +28,6 @@
           <label class="context-menu-label">Class
             <select data-token-class aria-label="Character class"><option value="">No class assigned</option><option>Gladiator</option><option>Templar</option><option>Assassin</option><option>Ranger</option><option>Sorcerer</option><option>Spiritmaster</option><option>Cleric</option><option>Chanter</option><option>Aethertech</option><option>Gunslinger</option><option>Songweaver</option></select>
           </label>
-          <div class="context-submenu" data-token-resource-submenu>
-            <button type="button" class="context-submenu-trigger" data-submenu-trigger="class-resource">Class Resources <span>›</span></button>
-            <div class="context-submenu-panel" data-submenu-panel="class-resource">
-              <div class="context-menu-heading">CLASS RESOURCES</div>
-              <div class="class-resource-fields" data-token-resource-fields>No class assigned.</div>
-            </div>
-          </div>
           <div class="context-menu-heading">TOKEN ACCESS</div>
           <label class="context-menu-label">Who can access this token?
             <select data-token-assignment aria-label="Token access"><option value="gm">GM Only</option><option value="all">All Players</option><option value="unassigned">Unassigned</option><option value="specific">Specific Player(s)</option></select>
@@ -53,6 +46,13 @@
           <div class="context-menu-heading">SAVED IMAGES</div>
           <div class="context-menu-actions"><button type="button" data-token-slot="0">Use Image 1</button><button type="button" data-token-slot="1">Use Image 2</button><button type="button" data-token-slot="2">Use Image 3</button></div>
         </div>
+      </div>
+    </div>
+    <div class="context-submenu" data-token-resource-submenu hidden>
+      <button type="button" class="context-submenu-trigger" data-submenu-trigger="class-resource">Class Resources <span>›</span></button>
+      <div class="context-submenu-panel" data-submenu-panel="class-resource">
+        <div class="context-menu-heading">CLASS RESOURCES</div>
+        <div class="class-resource-fields" data-token-resource-fields>No class assigned.</div>
       </div>
     </div>
     <div class="context-submenu">
@@ -82,7 +82,6 @@
         <small class="context-status-note">The GM edits these values. Players can view them only on tokens assigned to them; unassigned-token values remain GM-only.</small>
       </div>
     </div>
-    <div class="context-submenu context-submenu-disabled" data-future-submenu="resources"><button type="button" class="context-submenu-trigger" disabled>Resources <span>›</span></button></div>
     <div class="context-menu-divider"></div>
     <button type="button" data-object-action="rename" role="menuitem">Rename</button>
     <button type="button" data-object-action="attach" role="menuitem">Attach to…</button>
@@ -441,7 +440,7 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept<br><strong>Clark Michael Zafra</strong></footer>
-  <script src="app.js?v=20261103-nested-hover-fix"></script>
+  <script src="app.js?v=20261103-class-resources-menu-fix"></script>
   <script src="multi-scenes.js?v=20261103-multi-scenes-1"></script>
   <script src="overlay.js?v=20261028-12"></script>
 
