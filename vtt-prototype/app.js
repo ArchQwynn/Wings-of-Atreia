@@ -29,6 +29,36 @@ let pendingAttachmentAction=null;
 function hideObjectContextMenu(){const menu=document.getElementById('object-context-menu');if(menu)menu.hidden=true}
 function setAttachmentMode(action,key){pendingAttachmentAction={action,key};hideObjectContextMenu();const obj=objectFromKey(key);if(sceneSaveStatus)sceneSaveStatus.textContent=(action==='attach'?'Attach '+(obj?.name||'object')+': click another object.':'Detach '+(obj?.name||'object')+': click an object directly attached to it.')+' Press Escape to cancel.'}
 function applyPendingAttachment(targetKey){const pending=pendingAttachmentAction;if(!pending)return true;pendingAttachmentAction=null;if(targetKey===pending.key){if(sceneSaveStatus)sceneSaveStatus.textContent='Choose a different object.';return true}const exists=objectFromKey(targetKey),source=objectFromKey(pending.key);if(!exists||!source)return true;const same=e=>(e.a===pending.key&&e.b===targetKey)||(e.a===targetKey&&e.b===pending.key);if(pending.action==='attach'){if(state.attachments.some(same)){if(sceneSaveStatus)sceneSaveStatus.textContent='Those objects are already attached.';return true}recordUndo();state.attachments.push({a:pending.key,b:targetKey});if(sceneSaveStatus)sceneSaveStatus.textContent='Attached '+objectLabel(pending.key)+' to '+objectLabel(targetKey)+'.'}else{if(!state.attachments.some(same)){if(sceneSaveStatus)sceneSaveStatus.textContent='Those objects are not directly attached.';return true}recordUndo();state.attachments=state.attachments.filter(e=>!same(e));if(sceneSaveStatus)sceneSaveStatus.textContent='Detached '+objectLabel(pending.key)+' from '+objectLabel(targetKey)+'.'}saveSceneToBrowser();return true}
+function refreshTokenClassResourceControls(token,menu){
+ const wrap=menu.querySelector('[data-token-resource-submenu]'),body=menu.querySelector('[data-token-resource-fields]');
+ if(!wrap||!body)return;
+ const cls=CLASS_RESOURCE_DEFS[token.className]?token.className:'';
+ wrap.hidden=!cls;
+ body.replaceChildren();
+ if(!cls){body.textContent='No class assigned.';return}
+ if(cls==='Assassin'){
+  const targets=runeMarksForAssassin(token.id),summary=document.createElement('strong');
+  summary.textContent='Targets Marked: '+targets.length+' / 3';body.appendChild(summary);
+  const toggle=document.createElement('button');toggle.type='button';toggle.className='rune-mark-toggle';
+  toggle.textContent=runeMarkModeAssassinId===token.id?'Cancel Mark Target':'＋ Mark Target';
+  toggle.disabled=!isGM()||!!token.locked;toggle.setAttribute('aria-pressed',String(runeMarkModeAssassinId===token.id));
+  toggle.addEventListener('click',()=>{if(!isGM()||token.locked)return;runeMarkModeAssassinId=runeMarkModeAssassinId===token.id?null:token.id;refreshTokenMenu(token);updateClassResourcePanel(token);if(sceneSaveStatus)sceneSaveStatus.textContent=runeMarkModeAssassinId?'Mark Target mode: click an enemy token. Press Escape to cancel.':'Mark Target mode cancelled.'});
+  body.appendChild(toggle);
+  const note=document.createElement('small');note.textContent='Mark up to 3 targets, with up to 3 marks on each. Click a target on the map while Mark Target mode is active.';body.appendChild(note);
+  return;
+ }
+ const values=normalizeClassResource(cls,token.classResource);
+ CLASS_RESOURCE_DEFS[cls].forEach(resource=>{
+  const value=values[resource],row=document.createElement('div');row.className='class-resource-row';
+  const title=document.createElement('strong');title.textContent=resource;
+  const numbers=document.createElement('div');numbers.className='class-resource-values';
+  const current=document.createElement('input');current.type='number';current.min='0';current.max='9999';current.step='1';current.value=String(value.current);current.disabled=!isGM()||!!token.locked;current.dataset.tokenResourceInput='current';current.dataset.tokenResourceName=resource;current.setAttribute('aria-label',resource+' current');
+  const slash=document.createElement('span');slash.textContent='/';
+  const maximum=document.createElement('input');maximum.type='number';maximum.min='0';maximum.max='9999';maximum.step='1';maximum.value=String(value.maximum);maximum.disabled=!isGM()||!!token.locked;maximum.dataset.tokenResourceInput='maximum';maximum.dataset.tokenResourceName=resource;maximum.setAttribute('aria-label',resource+' maximum');
+  numbers.append(current,slash,maximum);row.append(title,numbers);body.appendChild(row);
+ });
+ if(!isGM()){const note=document.createElement('small');note.textContent='View only · The GM manages resource values.';body.appendChild(note)}
+}
 function setupObjectContextMenu(){
  const menu=document.getElementById('object-context-menu');if(!menu)return;
  const tokenTools=menu.querySelector('[data-token-tools]');
@@ -43,6 +73,7 @@ function setupObjectContextMenu(){
   const readout=menu.querySelector('[data-token-altitude]');if(readout)readout.textContent=(Number(t.z)||0)+' ft';
   const classSelect=menu.querySelector('[data-token-class]'),accessSelect=menu.querySelector('[data-token-assignment]'),playersInput=menu.querySelector('[data-token-players]'),playersWrap=menu.querySelector('[data-token-players-wrap]');
   if(classSelect){classSelect.value=CLASS_RESOURCE_DEFS[t.className]?t.className:'';classSelect.disabled=!isGM()||!!t.locked}
+  refreshTokenClassResourceControls(t,menu);
   if(accessSelect){accessSelect.value=t.visibility==='gm'||t.assignment==='gm'?'gm':['specific','all','unassigned'].includes(t.assignment)?t.assignment:'all';accessSelect.disabled=!isGM()||!!t.locked}
   if(playersInput)playersInput.value=(t.players||[]).join(', ');
   if(playersWrap)playersWrap.hidden=accessSelect?.value!=='specific';
@@ -73,6 +104,15 @@ function setupObjectContextMenu(){
  menu.querySelector('[data-token-name]')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();menu.querySelector('[data-token-name-apply]')?.click()}});
  menu.addEventListener('pointerover',e=>{const row=e.target.closest('.context-submenu');if(!row||e.pointerType==='touch')return;menu.querySelectorAll('.context-submenu.is-open').forEach(el=>{if(el!==row)el.classList.remove('is-open')});row.classList.add('is-open')});
  menu.addEventListener('pointerleave',()=>menu.querySelectorAll('.context-submenu.is-open').forEach(el=>el.classList.remove('is-open')));
+ menu.addEventListener('change',e=>{
+  const input=e.target.closest('[data-token-resource-input]');if(!input)return;
+  const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!isGM()||t.locked)return;
+  const resource=input.dataset.tokenResourceName,kind=input.dataset.tokenResourceInput;
+  if(!(CLASS_RESOURCE_DEFS[t.className]||[]).includes(resource))return;
+  const row=input.closest('.class-resource-row'),current=row?.querySelector('[data-token-resource-input="current"]'),maximum=row?.querySelector('[data-token-resource-input="maximum"]');
+  if(!current||!maximum)return;
+  saveClassResourceValue(t,resource,current,maximum);
+ });
  menu.addEventListener('change',e=>{
   if(!e.target.matches('[data-token-hp-current],[data-token-hp-maximum],[data-token-temp-hp],[data-token-ac],[data-token-life-status]'))return;
   const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!isGM()||t.locked)return;
@@ -772,7 +812,7 @@ function sceneSnapshot(){
     attachments:state.attachments.map(e=>({a:String(e.a),b:String(e.b)})),
     gmNotesPins:(state.gmNotesPins||[]).map(p=>({id:String(p.id),x:Number(p.x)||0,y:Number(p.y)||0,note:String(p.note||'').slice(0,5000)})),
     assets:state.assets.map(a=>({id:String(a.id),name:String(a.name||'Prop'),locked:!!a.locked,image:typeof a.image==='string'&&/^data:image\/(webp|png|jpeg);base64,/.test(a.image)&&a.image.length<=900000?a.image:'',imageSlots:Array.isArray(a.imageSlots)?a.imageSlots.slice(0,3):[],x:Number(a.x)||0,y:Number(a.y)||0,z:Math.max(0,Math.min(MAX_ALTITUDE,Number(a.z)||0)),width:Math.max(1,Math.min(12,Number(a.width)||1)),depth:Math.max(1,Math.min(12,Number(a.depth)||1)),sizeMode:a.sizeMode==='pixel'?'pixel':'grid',displayStyle:a.displayStyle==='flat'?'flat':'standee',visibility:a.visibility==='gm'?'gm':'players',imageWidthPx:Math.max(16,Math.min(1200,Number(a.imageWidthPx)||180)),imageHeightPx:Math.max(16,Math.min(1200,Number(a.imageHeightPx)||180)),heightPx:Math.max(16,Math.min(2000,Number(a.heightPx)||240)),rotation:Number(a.rotation)||0})).filter(a=>a.image),
-    tokens:state.tokens.map(t=>({id:String(t.id),name:String(t.name||'Token'),visibility:t.visibility==='gm'?'gm':'players',x:Number.isFinite(t._dragX)?t._dragX:Number(t.x)||0,y:Number.isFinite(t._dragY)?t._dragY:Number(t.y)||0,z:Math.max(0,Math.min(MAX_ALTITUDE,Number(t.z)||0)),glyph:String(t.glyph||'•'),color:/^#[0-9a-f]{6}$/i.test(t.color||'')?t.color:'#65d6a1',footprint:Math.max(1,Math.min(8,Math.round(Number(t.footprint)||1))),heightPx:Math.max(16,Math.min(2000,Number(t.heightPx)||Math.max(16,(Number(t.footprint)||1)*CELL_PX))),assignment:['gm','specific','all','unassigned'].includes(t.assignment)?t.assignment:'all',players:Array.isArray(t.players)?t.players.map(String):[],...(typeof t.image==='string'&&/^data:image\/(webp|png|jpeg);base64,/.test(t.image)&&t.image.length<=900000?{image:t.image}:{}),...(t.image?{imageZoom:Math.max(1,Math.min(10,Number(t.imageZoom)||1)),imageX:Math.max(-.8,Math.min(.8,Number(t.imageX)||0)),imageY:Math.max(-.8,Math.min(.8,Number(t.imageY)||0))}:{}),imageSlots:Array.isArray(t.imageSlots)?t.imageSlots.slice(0,3):[],locked:!!t.locked,conditions:normalizeTokenConditions(t.conditions),className:CLASS_RESOURCE_DEFS[t.className]?t.className:'',classResource:normalizeClassResource(t.className,t.classResource),runeMarks:normalizeRuneMarks(t.runeMarks)})),
+    tokens:state.tokens.map(t=>({id:String(t.id),name:String(t.name||'Token'),visibility:t.visibility==='gm'?'gm':'players',x:Number.isFinite(t._dragX)?t._dragX:Number(t.x)||0,y:Number.isFinite(t._dragY)?t._dragY:Number(t.y)||0,z:Math.max(0,Math.min(MAX_ALTITUDE,Number(t.z)||0)),glyph:String(t.glyph||'•'),color:/^#[0-9a-f]{6}$/i.test(t.color||'')?t.color:'#65d6a1',footprint:Math.max(1,Math.min(8,Math.round(Number(t.footprint)||1))),heightPx:Math.max(16,Math.min(2000,Number(t.heightPx)||Math.max(16,(Number(t.footprint)||1)*CELL_PX))),assignment:['gm','specific','all','unassigned'].includes(t.assignment)?t.assignment:'all',players:Array.isArray(t.players)?t.players.map(String):[],...(typeof t.image==='string'&&/^data:image\/(webp|png|jpeg);base64,/.test(t.image)&&t.image.length<=900000?{image:t.image}:{}),...(t.image?{imageZoom:Math.max(1,Math.min(10,Number(t.imageZoom)||1)),imageX:Math.max(-.8,Math.min(.8,Number(t.imageX)||0)),imageY:Math.max(-.8,Math.min(.8,Number(t.imageY)||0))}:{}),imageSlots:Array.isArray(t.imageSlots)?t.imageSlots.slice(0,3):[],locked:!!t.locked,conditions:normalizeTokenConditions(t.conditions),className:CLASS_RESOURCE_DEFS[t.className]?t.className:'',classResource:normalizeClassResource(t.className,t.classResource),runeMarks:normalizeRuneMarks(t.runeMarks),status:(()=>{const v=t.status&&typeof t.status==='object'?t.status:{};return{hpCurrent:Math.max(0,Math.min(9999,Math.floor(Number(v.hpCurrent)||0))),hpMaximum:Math.max(0,Math.min(9999,Math.floor(Number(v.hpMaximum)||0))),tempHp:Math.max(0,Math.min(9999,Math.floor(Number(v.tempHp)||0))),ac:Math.max(0,Math.min(999,Math.floor(Number.isFinite(Number(v.ac))?Number(v.ac):10))),lifeStatus:['Alive','Unconscious','Dead'].includes(v.lifeStatus)?v.lifeStatus:'Alive'}})()})),
     selected:state.selected,camera:{yaw:state.camera.yaw,elevation:state.camera.elevation,distance:state.camera.distance,zoom:state.camera.zoom,targetX:state.camera.targetX,targetY:state.camera.targetY,targetZ:state.camera.targetZ,panX:state.camera.panX,panY:state.camera.panY},
     view2d:state.view2d,panMode:state.panMode,identity:{role:sessionRoleEl.value,playerName:sessionPlayerNameEl.value}
   };
@@ -786,7 +826,7 @@ function validateScene(data){
     const num=(v,d=0)=>Number.isFinite(Number(v))?Number(v):d;
     const assignment=['gm','specific','all','unassigned'].includes(t.assignment)?t.assignment:'all';
     const visibility=t.visibility==='gm'?'gm':'players';
-    return{id,name:String(t.name||'Token').slice(0,120),imageSlots:Array.isArray(t.imageSlots)?t.imageSlots.slice(0,3).filter(v=>typeof v==='string'&&/^data:image\/(webp|png|jpeg);base64,/.test(v)&&v.length<=900000):[],x:num(t.x),y:num(t.y),z:Math.max(0,Math.min(MAX_ALTITUDE,num(t.z))),glyph:String(t.glyph||'•').slice(0,2),color:/^#[0-9a-f]{6}$/i.test(t.color||'')?t.color:'#65d6a1',footprint:Math.max(1,Math.min(8,Math.round(num(t.footprint,1)))),heightPx:Math.max(16,Math.min(2000,num(t.heightPx,Math.max(16,num(t.footprint,1)*CELL_PX)))),visibility,assignment,players:Array.isArray(t.players)?t.players.map(p=>String(p).slice(0,80)).slice(0,50):[],...(typeof t.image==='string'&&/^data:image\/(webp|png|jpeg);base64,/.test(t.image)&&t.image.length<=900000?{image:t.image}:{}),...(typeof t.image==='string'&&/^data:image\/(webp|png|jpeg);base64,/.test(t.image)?{imageZoom:Math.max(1,Math.min(10,num(t.imageZoom,1))),imageX:Math.max(-.8,Math.min(.8,num(t.imageX,0))),imageY:Math.max(-.8,Math.min(.8,num(t.imageY,0)))}:{}),locked:!!t.locked,conditions:normalizeTokenConditions(t.conditions),className:CLASS_RESOURCE_DEFS[t.className]?t.className:'',classResource:normalizeClassResource(t.className,t.classResource),runeMarks:normalizeRuneMarks(t.runeMarks)};
+    return{id,name:String(t.name||'Token').slice(0,120),imageSlots:Array.isArray(t.imageSlots)?t.imageSlots.slice(0,3).filter(v=>typeof v==='string'&&/^data:image\/(webp|png|jpeg);base64,/.test(v)&&v.length<=900000):[],x:num(t.x),y:num(t.y),z:Math.max(0,Math.min(MAX_ALTITUDE,num(t.z))),glyph:String(t.glyph||'•').slice(0,2),color:/^#[0-9a-f]{6}$/i.test(t.color||'')?t.color:'#65d6a1',footprint:Math.max(1,Math.min(8,Math.round(num(t.footprint,1)))),heightPx:Math.max(16,Math.min(2000,num(t.heightPx,Math.max(16,num(t.footprint,1)*CELL_PX)))),visibility,assignment,players:Array.isArray(t.players)?t.players.map(p=>String(p).slice(0,80)).slice(0,50):[],...(typeof t.image==='string'&&/^data:image\/(webp|png|jpeg);base64,/.test(t.image)&&t.image.length<=900000?{image:t.image}:{}),...(typeof t.image==='string'&&/^data:image\/(webp|png|jpeg);base64,/.test(t.image)?{imageZoom:Math.max(1,Math.min(10,num(t.imageZoom,1))),imageX:Math.max(-.8,Math.min(.8,num(t.imageX,0))),imageY:Math.max(-.8,Math.min(.8,num(t.imageY,0)))}:{}),locked:!!t.locked,conditions:normalizeTokenConditions(t.conditions),className:CLASS_RESOURCE_DEFS[t.className]?t.className:'',classResource:normalizeClassResource(t.className,t.classResource),runeMarks:normalizeRuneMarks(t.runeMarks),status:(()=>{const v=t.status&&typeof t.status==='object'?t.status:{};return{hpCurrent:Math.max(0,Math.min(9999,Math.floor(num(v.hpCurrent)))),hpMaximum:Math.max(0,Math.min(9999,Math.floor(num(v.hpMaximum)))),tempHp:Math.max(0,Math.min(9999,Math.floor(num(v.tempHp)))),ac:Math.max(0,Math.min(999,Math.floor(num(v.ac,10)))),lifeStatus:['Alive','Unconscious','Dead'].includes(v.lifeStatus)?v.lifeStatus:'Alive'}})()};
   });
   const assassinIds=new Set(tokens.filter(t=>t.className==='Assassin').map(t=>t.id));tokens.forEach(t=>{t.runeMarks=normalizeRuneMarks(t.runeMarks).filter(m=>assassinIds.has(m.assassinId)&&m.assassinId!==t.id)});
   const c=data.camera&&typeof data.camera==='object'?data.camera:{};

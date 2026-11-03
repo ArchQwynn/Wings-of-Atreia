@@ -23,10 +23,18 @@
       <div class="context-submenu-panel" data-submenu-panel="quick">
         <div class="token-context-tools" data-token-tools>
           <div class="context-menu-heading">TOKEN QUICK CONTROLS</div>
+          <button type="button" data-token-action="transfer-scene">Transfer to Scene…</button>
           <div class="context-menu-heading">CHARACTER CLASS</div>
           <label class="context-menu-label">Class
             <select data-token-class aria-label="Character class"><option value="">No class assigned</option><option>Gladiator</option><option>Templar</option><option>Assassin</option><option>Ranger</option><option>Sorcerer</option><option>Spiritmaster</option><option>Cleric</option><option>Chanter</option><option>Aethertech</option><option>Gunslinger</option><option>Songweaver</option></select>
           </label>
+          <div class="context-submenu" data-token-resource-submenu>
+            <button type="button" class="context-submenu-trigger" data-submenu-trigger="class-resource">Class Resources <span>›</span></button>
+            <div class="context-submenu-panel" data-submenu-panel="class-resource">
+              <div class="context-menu-heading">CLASS RESOURCES</div>
+              <div class="class-resource-fields" data-token-resource-fields>No class assigned.</div>
+            </div>
+          </div>
           <div class="context-menu-heading">TOKEN ACCESS</div>
           <label class="context-menu-label">Who can access this token?
             <select data-token-assignment aria-label="Token access"><option value="gm">GM Only</option><option value="all">All Players</option><option value="unassigned">Unassigned</option><option value="specific">Specific Player(s)</option></select>
@@ -370,15 +378,37 @@
       </section>
 
       <section>
-        <div class="eyebrow">BATTLEFIELD SAVE / LOAD</div>
-        <div class="control-grid">
+        <div class="eyebrow">SCENE MANAGER</div>
+        <div class="token-editor">
+          <label>Active Scene<select id="scene-active-select" aria-label="Active scene"></select></label>
+          <div class="editor-row">
+            <button type="button" id="scene-new">New Scene</button>
+            <button type="button" id="scene-duplicate">Duplicate</button>
+          </div>
+          <div class="editor-row">
+            <button type="button" id="scene-rename">Rename</button>
+            <button type="button" id="scene-delete">Delete</button>
+          </div>
+          <div class="eyebrow">TRANSFER TOKEN</div>
+          <label>Token<select id="scene-transfer-token" aria-label="Token to transfer"></select></label>
+          <label>Destination Scene<select id="scene-transfer-destination" aria-label="Destination scene"></select></label>
+          <button type="button" id="scene-transfer" class="wide">Transfer Token to Scene</button>
+          <div class="eyebrow">SCENE COLLECTION BACKUP</div>
+          <div class="editor-row">
+            <button type="button" id="scene-export-collection">Export Collection</button>
+            <button type="button" id="scene-import-collection">Import Collection</button>
+          </div>
+          <input id="scene-collection-file" type="file" accept="application/json,.json" hidden>
+          <p class="note">Scenes and character records are stored on this device. Switching scenes saves the current battlefield automatically. Export the collection regularly as a backup.</p>
+        </div>
+        <div class="control-grid" style="margin-top:10px">
           <button data-action="save-scene">Save Scene</button>
-          <button data-action="load-scene">Load Saved</button>
-          <button data-action="export-scene">Export JSON</button>
-          <button data-action="import-scene">Import JSON</button>
+          <button data-action="load-scene">Reload Scene</button>
+          <button data-action="export-scene">Export Scene JSON</button>
+          <button data-action="import-scene">Import Scene JSON</button>
         </div>
         <input id="scene-import-file" type="file" accept="application/json,.json" hidden>
-        <p class="note" id="scene-save-status">Scene saves are stored in this browser on this device. Use Export JSON to move a scene elsewhere.</p>
+        <p class="note" id="scene-save-status" aria-live="polite">Initializing scene storage…</p>
       </section>
 
       <section>
@@ -411,7 +441,8 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept<br><strong>Clark Michael Zafra</strong></footer>
-  <script src="app.js?v=20261103-terrain-occlusion"></script>
+  <script src="app.js?v=20261103-class-resource-quick-controls"></script>
+  <script src="multi-scenes.js?v=20261103-multi-scenes-1"></script>
   <script src="overlay.js?v=20261028-12"></script>
 
   <script id="woa-panel-organization">
@@ -455,7 +486,7 @@
         { title: 'Class Resource', headings: ['CLASS RESOURCE'] },
         { title: 'Battlefield Editor', headings: ['TERRAIN EDITOR · GM', 'BATTLEFIELD MAP · GM', 'WALL EDITOR · GM'] },
         { title: 'GM Notes & Pins', headings: ['GM NOTES & PINS · GM'] },
-        { title: 'Scene Management', headings: ['BATTLEFIELD SAVE / LOAD', 'TEST STATUS'] }
+        { title: 'Scene Management', headings: ['SCENE MANAGER', 'TEST STATUS'] }
       ];
 
       for (const group of groups) {
