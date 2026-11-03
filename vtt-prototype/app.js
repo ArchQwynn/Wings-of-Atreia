@@ -325,25 +325,39 @@ function drawWallDraft(){
  ctx.save();ctx.setLineDash([7,5]);ctx.strokeStyle='#ffe08a';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.restore();
 }
 function pointInWallPoly(x,y,points){
- if(points.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR))return false;
- ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ctx.lineTo(points[i].x,points[i].y);ctx.closePath();return ctx.isPointInPath(x,y);
+ if(!points||points.length<3||points.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)))return false;
+ let inside=false;
+ for(let i=0,j=points.length-1;i<points.length;j=i++){
+  const xi=points[i].x,yi=points[i].y,xj=points[j].x,yj=points[j].y;
+  const crosses=((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi);
+  if(crosses)inside=!inside;
+ }
+ return inside;
+}
+function distanceToWallSegment(px,py,a,b){
+ const dx=b.x-a.x,dy=b.y-a.y,l2=dx*dx+dy*dy;
+ if(l2<.001)return Math.hypot(px-a.x,py-a.y);
+ const t=Math.max(0,Math.min(1,((px-a.x)*dx+(py-a.y)*dy)/l2));
+ return Math.hypot(px-(a.x+t*dx),py-(a.y+t*dy));
 }
 function hitWall(x,y){
- for(let i=(state.walls||[]).length-1;i>=0;i--){
-  const w=state.walls[i],dx=w.x2-w.x1,dy=w.y2-w.y1,len=Math.hypot(dx,dy);if(len<.02)continue;
-  const half=Math.max(1,Number(w.thickness)||1)/10,nx=-dy/len*half,ny=dx/len*half,z1=terrainHeightAt(w.x1,w.y1)+(Number(w.altitude)||0),z2=terrainHeightAt(w.x2,w.y2)+(Number(w.altitude)||0),h=Math.max(5,Number(w.height)||10);
+ let found=null,bestDepth=Infinity;
+ for(const w of state.walls||[]){
+  const dx=w.x2-w.x1,dy=w.y2-w.y1,len=Math.hypot(dx,dy);if(len<.02)continue;
+  const half=Math.max(1,Number(w.thickness)||1)/10,nx=-dy/len*half,ny=dx/len*half;
+  const z1=terrainHeightAt(w.x1,w.y1)+(Number(w.altitude)||0),z2=terrainHeightAt(w.x2,w.y2)+(Number(w.altitude)||0),h=Math.max(5,Number(w.height)||10);
+  const base1=project(w.x1+nx,w.y1+ny,z1),base2=project(w.x2+nx,w.y2+ny,z2),base3=project(w.x2-nx,w.y2-ny,z2),base4=project(w.x1-nx,w.y1-ny,z1);
+  let polygons=[];
   if(state.view2d){
-   const footprint=[project(w.x1+nx,w.y1+ny,0),project(w.x2+nx,w.y2+ny,0),project(w.x2-nx,w.y2-ny,0),project(w.x1-nx,w.y1-ny,0)];
-   if(pointInWallPoly(x,y,footprint))return w;
+   polygons=[[project(w.x1+nx,w.y1+ny,0),project(w.x2+nx,w.y2+ny,0),project(w.x2-nx,w.y2-ny,0),project(w.x1-nx,w.y1-ny,0)]];
   }else{
-   const p1=[project(w.x1+nx,w.y1+ny,z1),project(w.x2+nx,w.y2+ny,z2),project(w.x2+nx,w.y2+ny,z2+h),project(w.x1+nx,w.y1+ny,z1+h)];
-   const p2=[project(w.x2-nx,w.y2-ny,z2),project(w.x1-nx,w.y1-ny,z1),project(w.x1-nx,w.y1-ny,z1+h),project(w.x2-nx,w.y2-ny,z2+h)];
-   const startCap=[p1[0],p2[1],p2[2],p1[3]],endCap=[p1[1],p2[0],p2[3],p1[2]],top=[p1[3],p1[2],p2[3],p2[2]];
-   if(pointInWallPoly(x,y,p1)||pointInWallPoly(x,y,p2)||pointInWallPoly(x,y,startCap)||pointInWallPoly(x,y,endCap)||pointInWallPoly(x,y,top))return w;
-   const q=wallPoints(w);if(Math.min(Math.hypot(x-q.a.x,y-q.a.y),Math.hypot(x-q.b.x,y-q.b.y),Math.hypot(x-q.at.x,y-q.at.y),Math.hypot(x-q.bt.x,y-q.bt.y))<10)return w;
+   const top1=project(w.x1+nx,w.y1+ny,z1+h),top2=project(w.x2+nx,w.y2+ny,z2+h),top3=project(w.x2-nx,w.y2-ny,z2+h),top4=project(w.x1-nx,w.y1-ny,z1+h);
+   polygons=[[base1,base2,top2,top1],[base3,base4,top4,top3],[base1,base4,top4,top1],[base2,base3,top3,top2],[top1,top2,top3,top4]];
   }
+  const hit=polygons.some(poly=>pointInWallPoly(x,y,poly))||polygons.some(poly=>poly.some((p,i)=>distanceToWallSegment(x,y,p,poly[(i+1)%poly.length])<9));
+  if(hit){const depth=wallDepth(w);if(depth<bestDepth){bestDepth=depth;found=w}}
  }
- return null;
+ return found;
 }
 function syncWallEditor(w){
  const el=id=>document.getElementById(id),lock=el('wall-lock'),update=el('wall-update'),del=el('wall-delete'),status=el('wall-status');
