@@ -527,8 +527,9 @@
           }
           wrapper.append(tokenPanel);
 
-          // Keep Props & Assets beside Token Management inside Tokens & Standees.
+          // Keep Props & Assets and Object Groups inside Tokens & Standees.
           moveSectionInto(sectionFor('PROPS & ASSETS · GM'), wrapper, 'Props & Assets');
+          moveSectionInto(sectionFor('OBJECT GROUPS · GM'), wrapper, 'Object Groups');
         } else {
           for (const heading of group.headings) {
             moveSectionInto(sectionFor(heading), wrapper, heading.replace(/\s*·\s*GM$/i, '').replace(/\s*\/\s*GM PREVIEW$/i, '').replace(/^LOCAL PLAYER$/i, 'Local Player'));
