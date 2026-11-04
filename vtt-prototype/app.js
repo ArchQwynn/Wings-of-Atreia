@@ -435,7 +435,7 @@ function drawAllGroundFootprints(){
   if(state.view2d)return;
   state.assets.filter(canSeeAsset).filter(a=>a.displayStyle!=='flat').forEach(a=>{
    const width=Math.max(1,Number(a.width)||1),depth=Math.max(1,Number(a.depth)||1),centerX=a.x+(width-1)/2,centerY=a.y+(depth-1)/2;
-   drawGroundFootprint(centerX,centerY,width,depth,(Number(a.rotation)||0)*Math.PI/180,(state.selectedAssetIds||[]).includes(a.id)||a.id===state.selectedAsset,'rgba(3,7,13,.88)');
+   drawGroundFootprint(centerX,centerY,width,depth,(Number(a.rotation)||0)*Math.PI/180,(state.selectedAssetIds||[]).includes(a.id)||a.id===state.selectedAsset,'rgba(3,7,13,.35)');
   });
   visibleTokens().forEach(t=>{
    const world=tokenWorld(t),f=Math.max(1,Number(t.footprint)||1),selected=t.id===state.selected||(state.selectedTokenIds||[]).includes(t.id);
