@@ -439,7 +439,7 @@ function drawAllGroundFootprints(){
   });
   visibleTokens().forEach(t=>{
    const world=tokenWorld(t),f=Math.max(1,Number(t.footprint)||1),selected=t.id===state.selected||(state.selectedTokenIds||[]).includes(t.id);
-   drawGroundFootprint(world.x,world.y,f,f,0,selected,'rgba(3,7,13,.88)');
+   drawGroundFootprint(world.x,world.y,f,f,0,selected,'rgba(3,7,13,.35)');
   });
  }
 function ground(t){
