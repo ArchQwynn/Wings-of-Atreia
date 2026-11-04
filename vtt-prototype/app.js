@@ -540,7 +540,7 @@ function drawToken(t){
  const p=tokenProject(t);if(!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR)return;
  const r=tokenRadius(t),hr=tokenHeightRadius(t);if(!Number.isFinite(r)||r<=0)return;
  ground(t);
- const flat=state.view2d,screenY=p.y-hr,tokenSelected=(state.selectedTokenIds||[]).includes(t.id)||t.id===state.selected;
+ const flat=state.view2d,screenY=flat?p.y:p.y-hr,tokenSelected=(state.selectedTokenIds||[]).includes(t.id)||t.id===state.selected;
  ctx.save();ctx.translate(p.x,screenY);ctx.shadowColor='rgba(0,0,0,.7)';ctx.shadowBlur=6;
  ctx.beginPath();ctx.ellipse(0,0,r,hr,0,0,Math.PI*2);ctx.fillStyle=t.color||'#7aa7ff';ctx.fill();ctx.shadowBlur=0;
  ctx.save();ctx.beginPath();ctx.ellipse(0,0,Math.max(1,r-2),Math.max(1,hr-2),0,0,Math.PI*2);ctx.clip();
