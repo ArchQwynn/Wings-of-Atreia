@@ -469,7 +469,14 @@ function drawAsset(a){
   }
   const imageBottom=p.y,imageCenterY=state.view2d?p.y:imageBottom-h/2;
   ctx.save();ctx.translate(p.x,imageCenterY);ctx.rotate(rotation);ctx.drawImage(img,-w/2,-h/2,w,h);ctx.restore();
-  a._screen={x:p.x,y:imageCenterY,width:w,height:h,hitWidth:standW+20,hitHeight:standH+16,rotation:Number(a.rotation)||0};
+  // Standee artwork is visual only for pointer selection. Its ground footprint
+  // is the sole clickable area, allowing clicks through transparent artwork.
+  const footprintCorners=[[-width/2,-depth/2],[width/2,-depth/2],[width/2,depth/2],[-width/2,depth/2]];
+  const hitPolygon=footprintCorners.map(([lx,ly])=>{
+   const wx=centerX+lx*Math.cos(rotation)-ly*Math.sin(rotation),wy=centerY+lx*Math.sin(rotation)+ly*Math.cos(rotation);
+   return project(wx,wy,terrainHeightAt(wx,wy));
+  }).filter(q=>Number.isFinite(q.x)&&Number.isFinite(q.y)&&q.depth>NEAR).map(q=>({x:q.x,y:q.y}));
+  a._screen={x:p.x,y:imageCenterY,width:w,height:h,hitPolygon,standeeHit:true,rotation:Number(a.rotation)||0};
   return;
  }
  // Flat assets are textures laid onto the world ground plane, like the battle map,
@@ -536,7 +543,7 @@ function updateSelectedAssetFromEditor(){
  if(assetStatusEl)assetStatusEl.textContent='Updated placed asset: '+a.name+'.';
  saveSceneToBrowser();
 }
-function hitAsset(x,y){let found=null,best=Infinity;for(const a of state.assets.filter(canSeeAsset)){const s=a._screen;if(!s)continue;const dx=x-s.x,dy=y-s.y,ang=-(s.rotation||0)*Math.PI/180,rx=dx*Math.cos(ang)-dy*Math.sin(ang),ry=dx*Math.sin(ang)+dy*Math.cos(ang);if(Math.abs(rx)<=(s.hitWidth||s.width)/2+8&&Math.abs(ry)<=(s.hitHeight||s.height)/2+8){const d=Math.hypot(dx,dy);if(d<best){best=d;found=a}}}return found}
+function hitAsset(x,y){let found=null,best=Infinity;for(const a of state.assets.filter(canSeeAsset)){const s=a._screen;if(!s)continue;let inside=false;if(s.standeeHit&&Array.isArray(s.hitPolygon)&&s.hitPolygon.length===4){let crossing=false;for(let i=0,j=s.hitPolygon.length-1;i<s.hitPolygon.length;j=i++){const pi=s.hitPolygon[i],pj=s.hitPolygon[j];if(((pi.y>y)!==(pj.y>y))&&(x<(pj.x-pi.x)*(y-pi.y)/(pj.y-pi.y)+pi.x))crossing=!crossing}inside=crossing}else{const dx=x-s.x,dy=y-s.y,ang=-(s.rotation||0)*Math.PI/180,rx=dx*Math.cos(ang)-dy*Math.sin(ang),ry=dx*Math.sin(ang)+dy*Math.cos(ang);inside=Math.abs(rx)<=(s.hitWidth||s.width)/2+8&&Math.abs(ry)<=(s.hitHeight||s.height)/2+8}if(inside){const d=Math.hypot(x-s.x,y-s.y);if(d<best){best=d;found=a}}}return found}
 function drawToken(t){
  const p=tokenProject(t);if(!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR)return;
  const r=tokenRadius(t),hr=tokenHeightRadius(t);if(!Number.isFinite(r)||r<=0)return;
