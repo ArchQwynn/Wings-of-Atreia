@@ -578,7 +578,7 @@ function completeBoxSelection(){const b=state.selectionBox;if(!b)return;const x1
 function updateSceneObjectBrowser(force=false){
  const host=document.getElementById('scene-object-list'),count=document.getElementById('scene-object-count'),search=document.getElementById('scene-object-search'),filter=document.getElementById('scene-object-filter');
  if(!host||!count)return;
- const browser=host.closest('section');if(browser)browser.hidden=playerScreenMode||!isGM();
+ const browser=host.closest('details')||host.closest('section');if(browser)browser.hidden=playerScreenMode||!isGM();
  if(playerScreenMode||!isGM())return;
  const query=(search?.value||'').trim().toLocaleLowerCase(),kind=filter?.value||'all';
  const objects=[...state.tokens.map(o=>({type:'token',obj:o,name:o.name||'Unnamed Token',id:o.id})),...state.assets.map(o=>({type:'asset',obj:o,name:o.name||'Unnamed Asset',id:o.id}))];
@@ -595,7 +595,7 @@ function updateSceneObjectBrowser(force=false){
    const selected=entry.type==='token'?((state.selectedTokenIds||[state.selected]).includes(o.id)):((state.selectedAssetIds||[]).includes(o.id)||state.selectedAsset===o.id);
    if(selected)button.classList.add('selected');
    const title=document.createElement('span');title.className='scene-object-name';title.textContent=entry.name;
-   const meta=document.createElement('small'),flags=[];if(o.locked)flags.push('Locked');if(o.visibility==='gm'||(entry.type==='token'&&(o.assignment==='gm'||o.assignment==='unassigned')))flags.push('GM only');meta.textContent=flags.join(' · ')||(entry.type==='token'?'Token':'Asset');
+   const meta=document.createElement('small'),flags=[];if(o.locked)flags.push('Locked');if(o.hidden)flags.push('Hidden');if(o.visibility==='gm'||(entry.type==='token'&&o.assignment==='gm'))flags.push('GM only');else if(entry.type==='token'&&o.assignment==='unassigned')flags.push('Unassigned');meta.textContent=flags.join(' · ')||(entry.type==='token'?'Token':'Asset');
    button.append(title,meta);button.addEventListener('click',()=>locateSceneObject(entry.type,entry.id));host.append(button);
   }
  }
