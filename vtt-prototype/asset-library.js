@@ -31,6 +31,7 @@
   let apiBase = localStorage.getItem(API_URL_KEY) || '';
   let token = localStorage.getItem(TOKEN_KEY) || '';
   let usedBytes = 0;
+  const previewCache = new Map();
 
   const clone = value => JSON.parse(JSON.stringify(value));
   const makeId = () => 'library-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
@@ -184,6 +185,19 @@
     return apiRequest('/items');
   }
 
+  async function loadPreview(id, image, placeholder) {
+    if (!previewCache.has(id)) {
+      previewCache.set(id, apiRequest('/items/' + encodeURIComponent(id) + '/preview')
+        .then(result => result.preview || '')
+        .catch(() => ''));
+    }
+    const preview = await previewCache.get(id);
+    if (preview && image.isConnected) {
+      image.src = preview;
+      placeholder.replaceChildren(image);
+    }
+  }
+
   function render() {
     if (!host || !count) return;
     const query = (search?.value || '').trim().toLocaleLowerCase();
@@ -213,6 +227,10 @@
       const glyph = document.createElement('span');
       glyph.textContent = item.kind === 'token' ? '●' : '◇';
       thumb.append(glyph);
+      const previewImage = document.createElement('img');
+      previewImage.alt = '';
+      previewImage.loading = 'lazy';
+      loadPreview(item.id, previewImage, thumb);
 
       const details = document.createElement('div');
       details.className = 'asset-library-details';
@@ -324,6 +342,7 @@
     localStorage.removeItem(TOKEN_KEY);
     items = [];
     usedBytes = 0;
+    previewCache.clear();
     refresh();
   }
 
@@ -387,6 +406,7 @@
     try {
       await apiRequest('/items/' + encodeURIComponent(id), { method: 'DELETE' });
       await removeLocalItem(id).catch(() => {});
+      previewCache.delete(id);
       await refresh();
       setStatus('Deleted "' + (item.name || 'library item') + '" from the shared Asset Library. Existing scene objects were not affected.');
     } catch (error) {
