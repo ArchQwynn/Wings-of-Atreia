@@ -189,7 +189,7 @@
     try {
       items = await readAll();
       render();
-      if (status && !status.textContent) setStatus('Library ready. Items are stored locally on this device.');
+      setStatus('Library ready. Items are stored locally on this device.');
     } catch (error) {
       setStatus(error.message || 'Could not load the Asset Library.', true);
       if (host) {
