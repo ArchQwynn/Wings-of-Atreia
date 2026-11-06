@@ -426,7 +426,7 @@ function updateWallFromEditor(){const w=state.walls.find(v=>v.id===state.selecte
 function drawGroundFootprint(x,y,width,depth,rotation,selected,fillStyle){
  const angle=Number(rotation)||0,cos=Math.cos(angle),sin=Math.sin(angle);
  const local=[[-width/2,-depth/2],[width/2,-depth/2],[width/2,depth/2],[-width/2,depth/2]];
- const points=local.map(([lx,ly])=>{const wx=x+lx*cos-ly*sin,wy=y+lx*sin+ly*cos,insideX=wx+(x-wx)*.001,insideY=wy+(y-wy)*.001;return project(wx,wy,terrainHeightAt(insideX,insideY))});
+ const surfaceZ=terrainHeightAt(x,y),points=local.map(([lx,ly])=>{const wx=x+lx*cos-ly*sin,wy=y+lx*sin+ly*cos;return project(wx,wy,surfaceZ)});
  if(points.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR))return;
  ctx.save();ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ctx.lineTo(points[i].x,points[i].y);ctx.closePath();
  ctx.fillStyle=fillStyle||'rgba(3,7,13,.82)';ctx.strokeStyle=selected?'rgba(255,255,255,.95)':'rgba(143,211,255,.78)';ctx.lineWidth=selected?2.5:1.5;ctx.fill();ctx.stroke();ctx.restore();
