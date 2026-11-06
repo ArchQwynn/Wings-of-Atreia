@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "woa-asset-library-api",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-06",
+  "workers_dev": true,
+  "vars": {
+    "ALLOWED_ORIGIN": "https://archqwynn.github.io"
+  },
+  "r2_buckets": [
+    {
+      "binding": "ASSET_LIBRARY",
+      "bucket_name": "woa-asset-library"
+    }
+  ]
+}
