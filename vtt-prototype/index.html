@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
   <title>Wings of Atreia VTT — Prototype</title>
-  <link rel="stylesheet" href="style.css?v=20261106-asset-library-storage-1">
+  <link rel="stylesheet" href="style.css?v=20261106-cloud-r2-1">
 </head>
 <body>
   <div id="object-context-menu" class="object-context-menu" role="menu" hidden>
@@ -390,7 +390,21 @@
       <section>
         <div class="eyebrow">ASSET LIBRARY · GM</div>
         <div id="asset-library-panel" class="asset-library-tools">
-          <p class="note">Save reusable token and prop templates here. Library items are independent of individual scenes and are stored locally on this device in this first stage.</p>
+          <p class="note">Save reusable token and prop templates to the shared online library. The same library is available to the GM across devices.</p>
+          <div class="asset-library-cloud">
+            <label>Cloudflare Worker URL
+              <input id="asset-library-api-url" type="url" placeholder="https://your-worker.your-subdomain.workers.dev" autocomplete="url">
+            </label>
+            <label>GM Asset Library access key
+              <input id="asset-library-access-key" type="password" placeholder="Enter your Cloudflare secret" autocomplete="current-password">
+            </label>
+            <div class="asset-library-cloud-actions">
+              <button type="button" id="asset-library-connect">Connect Cloud Library</button>
+              <button type="button" id="asset-library-logout" class="danger" hidden>Disconnect</button>
+              <button type="button" id="asset-library-import-local" hidden>Import Local Backup</button>
+            </div>
+            <small>Use the same Worker URL and access key on each GM device. The access key is not saved in the browser.</small>
+          </div>
           <button type="button" id="asset-library-save-selected" class="wide">Save Selected Object to Library</button>
           <div class="asset-library-toolbar">
             <input id="asset-library-search" type="search" placeholder="Search library…" aria-label="Search Asset Library">
@@ -403,13 +417,13 @@
           <div id="asset-library-count" class="asset-library-count" aria-live="polite">Loading library…</div>
           <div class="asset-library-storage">
             <div id="asset-library-storage-text" class="asset-library-storage-text" aria-live="polite">Calculating storage…</div>
-            <div id="asset-library-storage-meter" class="asset-library-storage-meter" role="progressbar" aria-label="Asset Library storage compared with estimated website storage quota" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div id="asset-library-storage-meter" class="asset-library-storage-meter" role="progressbar" aria-label="Shared Asset Library storage out of the 5 GB limit" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
               <span id="asset-library-storage-fill" class="asset-library-storage-fill"></span>
             </div>
-            <small>Asset Library usage is estimated from saved items. Total quota is the browser's estimate for this website and may be shared with other site data.</small>
+            <small>Shared Cloudflare R2 storage. The VTT enforces a 5 GB total library limit.</small>
           </div>
           <div id="asset-library-list" class="asset-library-list">
-            <p class="note">Loading local Asset Library…</p>
+            <p class="note">Connect to the Cloud Asset Library to load shared items.</p>
           </div>
           <p id="asset-library-status" class="note" aria-live="polite">Initializing local library storage…</p>
         </div>
@@ -498,7 +512,7 @@
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept<br><strong>Clark Michael Zafra</strong></footer>
   <script src="app.js?v=20261106-universal-placement-1"></script>
   <script src="multi-scenes.js?v=20261103-multi-scenes-1"></script>
-  <script src="asset-library.js?v=20261106-asset-library-storage-1"></script>
+  <script src="asset-library.js?v=20261106-cloud-r2-1"></script>
   <script src="overlay.js?v=20261028-12"></script>
 
   <script id="woa-panel-organization">
