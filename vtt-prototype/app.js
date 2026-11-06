@@ -290,8 +290,14 @@ function drawTerrain(){
   // wall to the actual exposed height difference; no transparent canvas fills.
   if(!state.view2d&&t.height>0){
    const neighbors=[[t.x,t.y-1],[t.x+1,t.y],[t.x,t.y+1],[t.x-1,t.y]];
+   const cameraBasis=basis(),cameraX=-cameraBasis.f.x,cameraY=-cameraBasis.f.y;
    for(let i=0;i<4;i++){
-    const j=(i+1)%4,n=tileMap.get(neighbors[i][0]+','+neighbors[i][1]);let lowA=0,lowB=0;
+    const j=(i+1)%4,edgeX=c[j][0]-c[i][0],edgeY=c[j][1]-c[i][1],outwardX=edgeY,outwardY=-edgeX;
+    // Only draw terrain walls facing the camera. Back-facing walls are hidden
+    // by the solid terrain volume and can otherwise incorrectly cover top faces
+    // when perspective-projected face depths overlap.
+    if(outwardX*cameraX+outwardY*cameraY<=.0001)continue;
+    const n=tileMap.get(neighbors[i][0]+','+neighbors[i][1]);let lowA=0,lowB=0;
     if(n){const nh=cornerHeights(n),nc=corners(n),findHeight=pt=>{for(let k=0;k<4;k++)if(Math.abs(nc[k][0]-pt[0])<.001&&Math.abs(nc[k][1]-pt[1])<.001)return nh[k];return n.height};const neighborA=findHeight(c[i]),neighborB=findHeight(c[j]);
      // Resolve the shared edge as one height profile. Where this tile is lower
      // than its neighbor, it contributes no wall; where it is higher, its wall
