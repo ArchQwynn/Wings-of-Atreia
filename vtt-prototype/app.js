@@ -431,7 +431,7 @@ function updateWallFromEditor(){const w=state.walls.find(v=>v.id===state.selecte
 function drawGroundFootprint(x,y,width,depth,rotation,selected,fillStyle){
  const angle=Number(rotation)||0,cos=Math.cos(angle),sin=Math.sin(angle);
  const local=[[-width/2,-depth/2],[width/2,-depth/2],[width/2,depth/2],[-width/2,depth/2]];
- const points=local.map(([lx,ly])=>{const wx=x+lx*cos-ly*sin,wy=y+lx*sin+ly*cos;return project(wx,wy,terrainHeightAt(wx,wy))});
+ const baseZ=terrainHeightAt(x,y);const points=local.map(([lx,ly])=>{const wx=x+lx*cos-ly*sin,wy=y+lx*sin+ly*cos;return project(wx,wy,baseZ)});
  if(points.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR))return;
  ctx.save();ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ctx.lineTo(points[i].x,points[i].y);ctx.closePath();
  ctx.fillStyle=fillStyle||'rgba(3,7,13,.82)';ctx.strokeStyle=selected?'rgba(255,255,255,.95)':'rgba(143,211,255,.78)';ctx.lineWidth=selected?2.5:1.5;ctx.fill();ctx.stroke();ctx.restore();
@@ -479,7 +479,7 @@ function drawAsset(a){
   const footprintCorners=[[-width/2,-depth/2],[width/2,-depth/2],[width/2,depth/2],[-width/2,depth/2]];
   const hitPolygon=footprintCorners.map(([lx,ly])=>{
    const wx=centerX+lx*Math.cos(rotation)-ly*Math.sin(rotation),wy=centerY+lx*Math.sin(rotation)+ly*Math.cos(rotation);
-   return project(wx,wy,terrainHeightAt(wx,wy));
+   return project(wx,wy,terrainZ);
   }).filter(q=>Number.isFinite(q.x)&&Number.isFinite(q.y)&&q.depth>NEAR).map(q=>({x:q.x,y:q.y}));
   a._screen={x:p.x,y:imageCenterY,width:w,height:h,hitPolygon,standeeHit:true,rotation:Number(a.rotation)||0};
   return;
