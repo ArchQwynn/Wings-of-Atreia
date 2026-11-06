@@ -24,6 +24,7 @@
   const accessKeyInput = $('asset-library-access-key');
   const connectButton = $('asset-library-connect');
   const logoutButton = $('asset-library-logout');
+  const refreshButton = $('asset-library-refresh');
   const importButton = $('asset-library-import-local');
   let dbPromise = null;
   let items = [];
@@ -254,6 +255,7 @@
       if (storageMeter) storageMeter.setAttribute('aria-valuenow', '0');
       if (saveButton) saveButton.disabled = true;
       if (logoutButton) logoutButton.hidden = !token;
+      if (refreshButton) refreshButton.hidden = true;
       if (connectButton) connectButton.hidden = false;
       try {
         const local = await readLocalAll();
@@ -275,8 +277,9 @@
       render();
       if (connectButton) connectButton.hidden = true;
       if (logoutButton) logoutButton.hidden = false;
+      if (refreshButton) refreshButton.hidden = false;
       const local = await readLocalAll().catch(() => []);
-      if (importButton) importButton.hidden = !(items.length === 0 && local.length > 0);
+      if (importButton) importButton.hidden = !local.length;
       setStatus('Cloud Asset Library connected. Changes are shared across devices.');
     } catch (error) {
       items = [];
@@ -284,6 +287,7 @@
       if (storageText) storageText.textContent = 'Cloud storage usage is unavailable until the connection is restored.';
       if (connectButton) connectButton.hidden = false;
       if (logoutButton) logoutButton.hidden = !token;
+      if (refreshButton) refreshButton.hidden = true;
       setStatus(error.message || 'Could not load the shared Asset Library.', true);
     }
   }
@@ -428,6 +432,7 @@
 
   connectButton?.addEventListener('click', connect);
   logoutButton?.addEventListener('click', logout);
+  refreshButton?.addEventListener('click', refresh);
   importButton?.addEventListener('click', importLocalLibrary);
   saveButton?.addEventListener('click', saveSelectedToLibrary);
   search?.addEventListener('input', render);
