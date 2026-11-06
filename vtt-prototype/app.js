@@ -639,7 +639,22 @@ function render(){const{w,h}=size();if(!playerScreenMode&&isGM()&&playerScreenCh
 }),
  ...state.assets.filter(canSeeAsset).filter(a=>a.displayStyle!=='flat').map(a=>{const x=a.x+(Math.max(1,Number(a.width)||1)-1)/2,y=a.y+(Math.max(1,Number(a.depth)||1)-1)/2,z=terrainHeightAt(x,y)+Math.max(0,Math.min(MAX_ALTITUDE,Number(a.z)||0));return{type:'asset',item:a,depth:project(x,y,z).depth}}),
  ...visibleTokens().map(t=>({type:'token',item:t,depth:tokenProject(t).depth}))
-].filter(entry=>Number.isFinite(entry.depth)).sort((a,b)=>b.depth-a.depth);
+].filter(entry=>Number.isFinite(entry.depth)).sort((a,b)=>{
+ // Keep the supporting terrain top face behind an object standing on that tile.
+ // Triangle-centroid depth can otherwise put part of the supporting surface
+ // in front of the prop, making it appear buried inside the raised terrain.
+ const supportTile=entry=>{
+  if(entry.type==='terrain'&&entry.item.kind==='top')return{x:entry.item.tile.x,y:entry.item.tile.y};
+  if(entry.type==='footprint')return{x:snapCell(entry.item.x),y:snapCell(entry.item.y)};
+  if(entry.type==='asset')return{x:snapCell(entry.item.x+(Math.max(1,Number(entry.item.width)||1)-1)/2),y:snapCell(entry.item.y+(Math.max(1,Number(entry.item.depth)||1)-1)/2)};
+  if(entry.type==='token'){const p=tokenWorld(entry.item);return{x:snapCell(p.x),y:snapCell(p.y)}}
+  return null;
+ };
+ const at=supportTile(a),bt=supportTile(b);
+ if(a.type==='terrain'&&a.item.kind==='top'&&bt&&at.x===bt.x&&at.y===bt.y)return -1;
+ if(b.type==='terrain'&&b.item.kind==='top'&&at&&at.x===bt.x&&at.y===bt.y)return 1;
+ return b.depth-a.depth;
+});
 depthItems.forEach(entry=>entry.type==='terrain'?drawTerrainTriangle(entry.item):entry.type==='wall'?drawWall(entry.item):entry.type==='asset'?drawAsset(entry.item):entry.type==='token'?drawToken(entry.item):drawGroundFootprint(entry.item.x,entry.item.y,entry.item.width,entry.item.depth,entry.item.rotation,entry.item.selected,'rgba(3,7,13,.35)'));
 if(state.pendingPlacement){ctx.save();ctx.globalAlpha=.62;if(state.pendingPlacement.kind==='token')drawToken(state.pendingPlacement.object);else drawAsset(state.pendingPlacement.object);ctx.restore()}
 drawWallDraft();drawMovementRuler();drawMovementIndicator();drawGmPing();drawGmNotesPins();drawSelectionBox();const hud=document.getElementById('camera-readout');if(hud)hud.textContent=`${state.view2d?'2D':'3D'} · Each grid = ${FEET_PER_GRID} ft · zoom ${state.camera.zoom.toFixed(2)}×`;const altitudeHud=document.getElementById('altitude'),selectedToken=state.tokens.find(t=>t.id===state.selected);if(altitudeHud){if(selectedToken&&canSeeToken(selectedToken)){const wp=tokenWorld(selectedToken),terrain=Math.round(terrainHeightAt(wp.x,wp.y)*10)/10,above=Math.round(Number(selectedToken.z)||0),overall=Math.round((terrain+above)*10)/10;altitudeHud.textContent=`Overall altitude: ${overall} ft · Terrain: ${terrain} ft · Above terrain: ${above} ft`}else altitudeHud.textContent='Altitude: —'}if(movementEl){if(state.movingToken)movementEl.textContent=`Horizontal movement: ${state.moveDistance} ft · ${Math.ceil(state.moveDistance/FEET_PER_GRID)} square${Math.ceil(state.moveDistance/FEET_PER_GRID)===1?'':'s'}`;else if(state.moveDistance)movementEl.textContent=`Last horizontal movement: ${state.moveDistance} ft · ${Math.ceil(state.moveDistance/FEET_PER_GRID)} square${Math.ceil(state.moveDistance/FEET_PER_GRID)===1?'':'s'}`;else movementEl.textContent='Horizontal movement: — · Adjust altitude separately'}requestAnimationFrame(render)}requestAnimationFrame(render);
