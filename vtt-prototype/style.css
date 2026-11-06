@@ -340,3 +340,11 @@ body.player-screen-mode{overflow:hidden;background:#080d16}body.player-screen-mo
 .asset-library-actions button{padding:6px 8px;font-size:.7rem}
 #asset-library-status[data-state="error"]{color:#ff9b9b}
 @media(max-width:520px){.asset-library-toolbar{grid-template-columns:1fr}.asset-library-entry{grid-template-columns:48px minmax(0,1fr)}.asset-library-thumb{width:48px;height:48px}}
+
+
+/* Asset Library storage usage meter */
+.asset-library-storage{display:grid;gap:5px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:rgba(8,15,27,.55)}
+.asset-library-storage-text{font-size:.7rem;color:var(--text);line-height:1.4}
+.asset-library-storage-meter{height:9px;overflow:hidden;border:1px solid rgba(143,211,255,.2);border-radius:999px;background:#080f1b}
+.asset-library-storage-fill{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#6bbf91,#8fd3ff);transition:width .2s ease}
+.asset-library-storage small{font-size:.64rem;line-height:1.4;color:var(--muted)}

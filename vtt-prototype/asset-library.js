@@ -11,6 +11,9 @@
   const host = $('asset-library-list');
   const count = $('asset-library-count');
   const status = $('asset-library-status');
+  const storageText = $('asset-library-storage-text');
+  const storageFill = $('asset-library-storage-fill');
+  const storageMeter = $('asset-library-storage-meter');
   const search = $('asset-library-search');
   const filter = $('asset-library-filter');
   const saveButton = $('asset-library-save-selected');
@@ -118,6 +121,51 @@
     status.dataset.state = isError ? 'error' : 'normal';
   }
 
+  function formatBytes(bytes) {
+    if (!Number.isFinite(bytes) || bytes < 0) return '—';
+    if (bytes < 1024) return Math.round(bytes) + ' B';
+    const units = ['KB', 'MB', 'GB', 'TB'];
+    let value = bytes / 1024;
+    let unit = units[0];
+    for (let i = 1; i < units.length && value >= 1024; i++) {
+      value /= 1024;
+      unit = units[i];
+    }
+    return value.toFixed(value >= 100 ? 0 : value >= 10 ? 1 : 2) + ' ' + unit;
+  }
+
+  async function updateStorageMeter() {
+    if (!storageText || !storageFill || !storageMeter) return;
+    const serialized = JSON.stringify(items);
+    const libraryBytes = typeof TextEncoder !== 'undefined'
+      ? new TextEncoder().encode(serialized).length
+      : serialized.length * 2;
+
+    try {
+      const estimate = navigator.storage && typeof navigator.storage.estimate === 'function'
+        ? await navigator.storage.estimate()
+        : null;
+      const quota = Number(estimate?.quota);
+      if (Number.isFinite(quota) && quota > 0) {
+        const percent = Math.min(100, (libraryBytes / quota) * 100);
+        storageText.textContent = formatBytes(libraryBytes) + ' used by Asset Library · ' + formatBytes(quota) + ' estimated site quota';
+        storageFill.style.width = percent.toFixed(2) + '%';
+        storageMeter.setAttribute('aria-valuenow', String(Math.round(percent)));
+        storageMeter.setAttribute('aria-valuetext', formatBytes(libraryBytes) + ' used out of ' + formatBytes(quota) + ' estimated site quota');
+      } else {
+        storageText.textContent = formatBytes(libraryBytes) + ' used by Asset Library · total quota unavailable in this browser';
+        storageFill.style.width = '0%';
+        storageMeter.setAttribute('aria-valuenow', '0');
+        storageMeter.setAttribute('aria-valuetext', formatBytes(libraryBytes) + ' used; total quota unavailable');
+      }
+    } catch (error) {
+      storageText.textContent = formatBytes(libraryBytes) + ' used by Asset Library · total quota unavailable';
+      storageFill.style.width = '0%';
+      storageMeter.setAttribute('aria-valuenow', '0');
+      storageMeter.setAttribute('aria-valuetext', formatBytes(libraryBytes) + ' used; total quota unavailable');
+    }
+  }
+
   function render() {
     if (!host || !count) return;
     const query = (search?.value || '').trim().toLocaleLowerCase();
@@ -189,6 +237,7 @@
     try {
       items = await readAll();
       render();
+      await updateStorageMeter();
       setStatus('Library ready. Items are stored locally on this device.');
     } catch (error) {
       setStatus(error.message || 'Could not load the Asset Library.', true);
