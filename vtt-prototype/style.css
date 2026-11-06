@@ -361,3 +361,6 @@ body.player-screen-mode{overflow:hidden;background:#080d16}body.player-screen-mo
 
 /* GM attention ping */
 .camera-pad [data-action="gm-ping-toggle"]{width:132px;height:34px;padding:0 8px;font-size:11px;line-height:1.2;white-space:nowrap;border-color:#268aa5;background:#123344;color:#b8f1ff;font-weight:800}.camera-pad [data-action="gm-ping-toggle"].active{border-color:#74e5ff;background:#15536a;box-shadow:0 0 0 2px rgba(91,218,255,.22),0 0 18px rgba(91,218,255,.28)}body.player-screen-mode [data-action="gm-ping-toggle"]{display:none!important}
+
+/* Remove directional camera arrows; retain Pan and 2D / 3D controls. */
+.camera-pad [data-action="pitch-up"],.camera-pad [data-action="yaw-left"],.camera-pad [data-action="yaw-right"],.camera-pad [data-action="pitch-down"]{display:none!important}
