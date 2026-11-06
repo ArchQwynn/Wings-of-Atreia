@@ -1019,6 +1019,20 @@ function pasteClipboardObject(){
  saveSceneToBrowser();
 }
 document.addEventListener('keydown',e=>{
+ if(e.key!=='Delete'||e.ctrlKey||e.metaKey||e.altKey||e.shiftKey)return;
+ const target=e.target,typing=target&&(/INPUT|TEXTAREA|SELECT/.test(target.tagName)||target.isContentEditable);
+ if(typing||!isGM()||state.pendingPlacement)return;
+ if(state.selectedAsset&&state.assets.some(a=>a.id===state.selectedAsset)){
+  const button=document.querySelector('[data-action="asset-delete"]');
+  if(button&&!button.disabled){e.preventDefault();button.click()}
+  return;
+ }
+ if(state.selected&&state.tokens.some(t=>t.id===state.selected)){
+  const button=document.querySelector('[data-action="token-delete"]');
+  if(button&&!button.disabled){e.preventDefault();button.click()}
+ }
+});
+document.addEventListener('keydown',e=>{
  const mod=e.ctrlKey||e.metaKey;if(!mod||e.altKey)return;
  const key=e.key.toLowerCase(),target=e.target,typing=target&&(/INPUT|TEXTAREA|SELECT/.test(target.tagName)||target.isContentEditable);
  if(key==='z'&&!e.shiftKey){if(!isGM()||typing)return;e.preventDefault();undoLastAction();return}
