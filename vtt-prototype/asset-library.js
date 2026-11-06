@@ -236,36 +236,15 @@
     const item = items.find(entry => entry.id === id);
     if (!item || !item.payload || !['token', 'asset'].includes(item.kind)) return;
     try {
-      const copy = clone(item.payload);
-      copy.id = (item.kind === 'token' ? 'token-library-' : 'asset-library-') + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
-      copy.x = 0;
-      copy.y = 0;
-      copy.z = 0;
-      copy.locked = false;
-      copy.hidden = false;
-
-      if (item.kind === 'token') {
-        state.tokens.push(copy);
-        state.selectedAsset = null;
-        state.selectedAssetIds = [];
-        select(copy.id);
-        list();
-      } else {
-        state.assets.push(copy);
-        state.selected = null;
-        state.selectedTokenIds = [];
-        state.selectedAsset = copy.id;
-        state.selectedAssetIds = [copy.id];
-        updateClassResourcePanel(null);
-        syncAssetEditor(copy);
-        refreshAttachmentControls();
+      if (typeof window.beginVttAssetPlacement !== 'function') {
+        throw new Error('Placement mode is unavailable. Reload the VTT and try again.');
       }
-
-      render();
-      saveSceneToBrowser();
-      setStatus('Added "' + (item.name || 'library item') + '" to the active scene at the map origin. Drag it into position.');
+      if (!window.beginVttAssetPlacement(item.kind, item.payload, item.name)) {
+        throw new Error('Could not start placement mode for this library item.');
+      }
+      setStatus('Placing "' + (item.name || 'library item') + '". Move your cursor over the map and left-click to confirm. Press Esc or right-click to cancel.');
     } catch (error) {
-      setStatus(error.message || 'Could not add this item to the scene.', true);
+      setStatus(error.message || 'Could not start placement mode.', true);
     }
   }
 
