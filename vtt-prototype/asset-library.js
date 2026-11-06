@@ -259,7 +259,7 @@
       if (connectButton) connectButton.hidden = false;
       try {
         const local = await readLocalAll();
-        if (importButton) importButton.hidden = !local.length;
+        if (importButton) importButton.hidden = true;
         setStatus(local.length
           ? 'Not connected. ' + local.length + ' item(s) remain in this browser as a local backup and can be imported after connecting.'
           : 'Enter the Cloudflare Worker URL and GM access key to connect.');
