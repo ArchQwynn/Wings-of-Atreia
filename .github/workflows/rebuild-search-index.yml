@@ -32,9 +32,16 @@ jobs:
       - name: Rebuild search index
         run: python scripts/build_search_index.py
 
-      - name: Refresh PWA cache version when the index changes
-        shell: python
+      - name: Refresh PWA cache version only when the index changes
+        if: success()
+        shell: bash
         run: |
+          if git diff --quiet -- assets/js/search-index.json; then
+            echo "Search index is unchanged; keeping the existing PWA cache version."
+            exit 0
+          fi
+
+          python - <<'PY'
           from pathlib import Path
           from datetime import datetime, timezone
           import re
@@ -47,6 +54,7 @@ jobs:
           if n1 != 1 or n2 != 1:
               raise SystemExit("Could not locate PWA cache version constants in sw.js")
           sw.write_text(text, encoding="utf-8")
+          PY
 
       - name: Commit generated search index and PWA cache version
         run: |
