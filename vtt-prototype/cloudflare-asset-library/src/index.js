@@ -1,4 +1,4 @@
-const STORAGE_LIMIT_BYTES = 5 * 1024 * 1024 * 1024;
+const STORAGE_LIMIT_BYTES = 5_000_000_000;
 const MAX_ITEM_BYTES = 8 * 1024 * 1024;
 const TOKEN_LIFETIME_SECONDS = 30 * 24 * 60 * 60;
 const ITEM_PREFIX = "items/";
@@ -81,7 +81,10 @@ async function isAuthorized(request, env) {
 }
 
 async function passwordMatches(candidate, env) {
-  if (typeof candidate !== "string" || !env.ASSET_LIBRARY_ACCESS_KEY) return false;
+  if (!env.ASSET_LIBRARY_ACCESS_KEY || env.ASSET_LIBRARY_ACCESS_KEY.length < 24) {
+    throw new Error("Set the ASSET_LIBRARY_ACCESS_KEY secret to a random key of at least 24 characters.");
+  }
+  if (typeof candidate !== "string") return false;
   const [candidateHash, secretHash] = await Promise.all([
     crypto.subtle.digest("SHA-256", encoder.encode(candidate)),
     crypto.subtle.digest("SHA-256", encoder.encode(env.ASSET_LIBRARY_ACCESS_KEY))
