@@ -7,7 +7,7 @@
   const DB_VERSION = 1;
   const STORE_NAME = 'items';
   const FORMAT = 'wings-of-atreia-vtt-asset-library-item';
-  const STORAGE_LIMIT_BYTES = 5 * 1024 * 1024 * 1024;
+  const STORAGE_LIMIT_BYTES = 5_000_000_000;
   const API_URL_KEY = 'woa-vtt-asset-library-api-url';
   const TOKEN_KEY = 'woa-vtt-asset-library-gm-token';
   const $ = id => document.getElementById(id);
@@ -126,10 +126,10 @@
     if (!Number.isFinite(bytes) || bytes < 0) return '—';
     if (bytes < 1024) return Math.round(bytes) + ' B';
     const units = ['KB', 'MB', 'GB', 'TB'];
-    let value = bytes / 1024;
+    let value = bytes / 1000;
     let unit = units[0];
     for (let i = 1; i < units.length && value >= 1024; i++) {
-      value /= 1024;
+      value /= 1000;
       unit = units[i];
     }
     return value.toFixed(value >= 100 ? 0 : value >= 10 ? 1 : 2) + ' ' + unit;
