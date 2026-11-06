@@ -158,15 +158,27 @@ async function handleApi(request, env, url) {
     return json({ ...result, limitBytes: STORAGE_LIMIT_BYTES });
   }
 
-  const match = url.pathname.match(/^\/api\/items\/([^/]+)$/);
+  const match = url.pathname.match(/^\/api\/items\/([^/]+)(\/preview)?$/);
   if (!match) return json({ error: "API route not found." }, 404);
   const id = decodeURIComponent(match[1]);
+  const wantsPreview = !!match[2];
   if (!validId(id)) return json({ error: "Invalid Asset Library item ID." }, 400);
   const key = ITEM_PREFIX + id;
 
   if (request.method === "GET") {
     const object = await env.ASSET_LIBRARY.get(key);
     if (!object) return json({ error: "This library item no longer exists." }, 404);
+    if (wantsPreview) {
+      let item;
+      try { item = JSON.parse(await object.text()); } catch { return json({ error: "This library item is damaged." }, 500); }
+      const payload = item?.payload || {};
+      const preview = typeof payload.image === "string" && payload.image.startsWith("data:image/")
+        ? payload.image
+        : Array.isArray(payload.imageSlots)
+          ? payload.imageSlots.find(value => typeof value === "string" && value.startsWith("data:image/")) || ""
+          : "";
+      return json({ preview });
+    }
     return new Response(object.body, {
       headers: {
         "content-type": "application/json; charset=utf-8",
