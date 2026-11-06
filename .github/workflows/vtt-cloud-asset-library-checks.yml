@@ -1,0 +1,31 @@
+name: VTT Cloud Asset Library Checks
+
+on:
+  push:
+    branches:
+      - main
+      - feature/cloudflare-r2-asset-library
+    paths:
+      - "vtt-prototype/asset-library.js"
+      - "vtt-prototype/cloudflare-asset-library/**"
+      - "vtt-prototype/index.html"
+  pull_request:
+    paths:
+      - "vtt-prototype/asset-library.js"
+      - "vtt-prototype/cloudflare-asset-library/**"
+      - "vtt-prototype/index.html"
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check browser Asset Library script
+        run: node --check vtt-prototype/asset-library.js
+      - name: Check Cloudflare Worker
+        run: node --check vtt-prototype/cloudflare-asset-library/src/index.js
+      - name: Validate Wrangler configuration
+        run: node -e "JSON.parse(require('node:fs').readFileSync('vtt-prototype/cloudflare-asset-library/wrangler.jsonc', 'utf8'))"
