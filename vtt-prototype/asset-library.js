@@ -192,7 +192,7 @@
         .catch(() => ''));
     }
     const preview = await previewCache.get(id);
-    if (preview && image.isConnected) {
+    if (preview && placeholder.isConnected) {
       image.src = preview;
       placeholder.replaceChildren(image);
     }
