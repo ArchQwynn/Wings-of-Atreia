@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0b1020">
   <title>Wings of Atreia VTT — Prototype</title>
-  <link rel="stylesheet" href="style.css?v=20261105-scene-object-browser">
+  <link rel="stylesheet" href="style.css?v=20261106-asset-library-1">
 </head>
 <body>
   <div id="object-context-menu" class="object-context-menu" role="menu" hidden>
@@ -388,6 +388,27 @@
 
 
       <section>
+        <div class="eyebrow">ASSET LIBRARY · GM</div>
+        <div id="asset-library-panel" class="asset-library-tools">
+          <p class="note">Save reusable token and prop templates here. Library items are independent of individual scenes and are stored locally on this device in this first stage.</p>
+          <button type="button" id="asset-library-save-selected" class="wide">Save Selected Object to Library</button>
+          <div class="asset-library-toolbar">
+            <input id="asset-library-search" type="search" placeholder="Search library…" aria-label="Search Asset Library">
+            <select id="asset-library-filter" aria-label="Filter Asset Library">
+              <option value="all">All items</option>
+              <option value="token">Tokens</option>
+              <option value="asset">Props &amp; Assets</option>
+            </select>
+          </div>
+          <div id="asset-library-count" class="asset-library-count" aria-live="polite">Loading library…</div>
+          <div id="asset-library-list" class="asset-library-list">
+            <p class="note">Loading local Asset Library…</p>
+          </div>
+          <p id="asset-library-status" class="note" aria-live="polite">Initializing local library storage…</p>
+        </div>
+      </section>
+
+      <section>
         <div class="eyebrow">SCENE OBJECTS · GM</div>
         <div class="scene-object-browser">
           <input id="scene-object-search" type="search" placeholder="Search scene objects…" aria-label="Search scene objects">
@@ -470,6 +491,7 @@
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept<br><strong>Clark Michael Zafra</strong></footer>
   <script src="app.js?v=20261105-scene-object-browser"></script>
   <script src="multi-scenes.js?v=20261103-multi-scenes-1"></script>
+  <script src="asset-library.js?v=20261106-asset-library-1"></script>
   <script src="overlay.js?v=20261028-12"></script>
 
   <script id="woa-panel-organization">
@@ -501,6 +523,7 @@
         const eyebrow = section.querySelector(':scope > .eyebrow');
         if (eyebrow) eyebrow.remove();
         const nested = makeDetails(title, 'panel-subgroup');
+        if (section.id) nested.id = section.id;
         while (section.firstChild) nested.append(section.firstChild);
         section.remove();
         parent.append(nested);
@@ -542,6 +565,7 @@
 
           // Keep Props & Assets and Object Groups inside Tokens & Standees.
           moveSectionInto(sectionFor('PROPS & ASSETS · GM'), wrapper, 'Props & Assets');
+          moveSectionInto(sectionFor('ASSET LIBRARY · GM'), wrapper, 'Asset Library');
           moveSectionInto(sectionFor('SCENE OBJECTS · GM'), wrapper, 'Scene Object List');
           moveSectionInto(sectionFor('OBJECT GROUPS · GM'), wrapper, 'Object Groups');
         } else {
