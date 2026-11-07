@@ -275,7 +275,7 @@ function drawMapImage(){
  if(!state.mapImage)return;
  const img=getMapImage(state.mapImage);if(!img||!img.complete||!img.naturalWidth)return;
  const mw=Math.max(1,Math.min(200,Number(state.mapWidth)||24)),mh=Math.max(1,Math.min(200,Number(state.mapHeight)||24)),cx=Number(state.mapX)||0,cy=Number(state.mapY)||0;
- const sw=img.naturalWidth,sh=img.naturalHeight,alpha=Math.max(.05,Math.min(1,Number(state.mapOpacity)||.78));
+ const sw=img.naturalWidth,sh=img.naturalHeight,cropX=0,cropY=0,cropW=sw,cropH=sh,alpha=Math.max(.05,Math.min(1,Number(state.mapOpacity)||.78));
  // Subdivide the map into small projected quads. This approximates perspective
  // projection much more closely than stretching the whole image across two
  // large affine triangles, which can look like it wobbles while orbiting.
