@@ -364,3 +364,8 @@ body.player-screen-mode{overflow:hidden;background:#080d16}body.player-screen-mo
 
 /* Remove directional camera arrows; retain 2D / 3D controls. */
 .camera-pad [data-action="pitch-up"],.camera-pad [data-action="yaw-left"],.camera-pad [data-action="yaw-right"],.camera-pad [data-action="pitch-down"]{display:none!important}
+
+
+/* Keep the three tabletop controls inside narrow sidebar panels. */
+.panel .control-grid{grid-template-columns:repeat(2,minmax(0,1fr));width:100%;min-width:0;box-sizing:border-box}
+.panel .control-grid button{min-width:0;width:100%;white-space:normal}
