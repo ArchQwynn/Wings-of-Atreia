@@ -506,7 +506,7 @@ function drawAsset(a){
    ctx.save();ctx.strokeStyle=a.id===state.selectedAsset?'rgba(255,224,138,.98)':'rgba(143,211,255,.95)';ctx.lineWidth=2;ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(groundPoint.x,groundPoint.y);ctx.lineTo(elevatedPoint.x,elevatedPoint.y);ctx.stroke();ctx.setLineDash([]);
    ctx.fillStyle='#e6f0fa';ctx.font='700 10px system-ui';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(altitude+' ft',groundPoint.x,groundPoint.y-7);ctx.restore();
   }
-  const imageZoom=Math.max(1,Math.min(10,Number(a.imageZoom)||1)),imageX=Math.max(-.8,Math.min(.8,Number(a.imageX)||0)),imageY=Math.max(-.8,Math.min(.8,Number(a.imageY)||0)),drawW=w*imageZoom,drawH=h*imageZoom,imageBottom=p.y,imageCenterY=(state.view2d?p.y:imageBottom-h/2)+imageY*h*imageZoom;
+  const imageZoom=Math.max(1,Math.min(10,Number(a.imageZoom)||1)),imageX=Math.max(-.8,Math.min(.8,Number(a.imageX)||0)),imageY=Math.max(-.8,Math.min(.8,Number(a.imageY)||0)),drawW=w*imageZoom,drawH=h*imageZoom,imageBottom=p.y,imageCenterY=(state.view2d?p.y:imageBottom-drawH/2)+imageY*h*imageZoom;
   ctx.save();ctx.translate(p.x+imageX*w*imageZoom,imageCenterY);ctx.rotate(rotation);ctx.drawImage(img,-drawW/2,-drawH/2,drawW,drawH);ctx.restore();
   // Standee artwork is visual only for pointer selection. Its ground footprint
   // is the sole clickable area, allowing clicks through transparent artwork.
