@@ -16,7 +16,6 @@
   ui.innerHTML = `
     <summary>Tactical Overlays</summary>
     <div class="overlay-content">
-    <div class="overlay-visibility-row"><span>Overlay Visibility</span><button type="button" id="overlay-visibility-toggle" aria-pressed="false">Players + GM</button></div>
     <div class="overlay-tool-grid">${tools.map(([v,l])=>`<button type="button" data-overlay-tool="${v}" aria-pressed="false">${l}</button>`).join("")}</div>
     <div class="overlay-form-grid">
       <label>Distance Mode<select id="overlay-measure-mode"><option value="2d" selected>2D · Horizontal</option><option value="3d">3D · Horizontal + Vertical</option></select></label>
@@ -24,6 +23,7 @@
       <label>Width (ft)<input id="overlay-width" type="number" min="5" max="100" step="5" value="10"></label>
       <label>Cone angle<select id="overlay-angle"><option value="30">30°</option><option value="45">45°</option><option value="60" selected>60°</option><option value="90">90°</option><option value="120">120°</option></select></label>
       <label>Color<input id="overlay-color" type="color" value="#55c8ff"></label>
+      <label>Selected Overlay Visibility<select id="overlay-visibility" disabled><option value="gm">GM Only</option><option value="players">Players + GM</option></select></label>
       <label>Opacity <span id="overlay-opacity-value">28%</span><input id="overlay-opacity" type="range" min="8" max="75" value="28"></label>
       <label class="overlay-check"><input id="overlay-snap" type="checkbox" checked> Snap to 5-ft grid</label>
       <label class="overlay-check"><input id="overlay-attach" type="checkbox"> Attach aura to selected token</label>
@@ -39,9 +39,6 @@
     .overlay-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
     .overlay-tool-grid button{font-size:.72rem;padding:8px 6px}
     .overlay-tool-grid button[aria-pressed="true"]{border-color:#8fd3ff;background:#21415a;box-shadow:inset 0 0 0 1px #8fd3ff}
-    .overlay-visibility-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.72rem;color:#9aa8bd}
-    .overlay-visibility-row button{font-size:.72rem;padding:7px 10px;white-space:nowrap}
-    .overlay-visibility-row button[aria-pressed="true"]{border-color:#f0c36a;background:#49391c;color:#ffe4a3}
     .overlay-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .overlay-form-grid label{display:grid;gap:4px;font-size:.7rem;color:#9aa8bd}
     .overlay-form-grid input:not([type=checkbox]):not([type=range]),.overlay-form-grid select{width:100%;min-width:0;padding:7px;border:1px solid #263247;border-radius:7px;background:#0d1626;color:#eef3ff}
@@ -59,39 +56,24 @@
   else panel?.appendChild(ui);
   const $ = id => ui.querySelector("#"+id);
   const status = $("overlay-status");
-  const visibilityButton = $("overlay-visibility-toggle");
+  const selectedVisibility = $("overlay-visibility");
   const shapes = [];
   const syncChannel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel(SYNC_CHANNEL) : null;
-  let remoteVisibility = null;
   try { const saved = JSON.parse(localStorage.getItem(KEY)||"[]"); if (Array.isArray(saved)) shapes.push(...saved.filter(s=>s&&typeof s==="object")); } catch {}
   let tool = "select", overlaySelectEnabled = false, overlayPointerSelecting = false, selected = null, drawing = null, dragging = null, measurement = null, currentOpacity = opacityFallback();
   function opacityFallback(){return 0.28;}
   const active = () => (typeof state !== "undefined" && state);
   const gm = () => !active() || !sessionRoleEl || sessionRoleEl.value === "gm";
-  const gmOnly = () => {
-    if(!gm()&&remoteVisibility!==null)return remoteVisibility==="gm";
-    try { return localStorage.getItem(VISIBILITY_KEY) === "gm"; } catch { return false; }
-  };
-  function refreshVisibilityControl(){
-    if(!visibilityButton)return;
-    visibilityButton.textContent=gmOnly()?"GM Only":"Players + GM";
-    visibilityButton.setAttribute("aria-pressed",String(gmOnly()));
-    const playerScreen=!!document.body.classList.contains("player-screen-mode");
-    visibilityButton.hidden=playerScreen;
-    visibilityButton.disabled=!playerScreen&&!gm();
-    visibilityButton.title=playerScreen?"Visibility is controlled by the GM.":gm()?"Change who can see tactical overlays.":"Switch View as to Game Master to change overlay visibility.";
-  }
-  function setVisibility(value){
-    if(!gm())return;
-    try{localStorage.setItem(VISIBILITY_KEY,value?"gm":"players");}catch{status.textContent="Could not save tactical overlay visibility."}
-    refreshVisibilityControl();
-    status.textContent=value?"Tactical overlays are now visible to the GM only.":"Tactical overlays are now visible to players and the GM.";
-    publishToPlayerScreen();
+  function refreshSelectedVisibility(){
+    const shape=shapes.find(item=>item.id===selected);
+    selectedVisibility.value=shape?.visibility==="players"?"players":"gm";
+    selectedVisibility.disabled=!gm()||!shape;
+    selectedVisibility.title=shape?"Set visibility for this selected overlay.":"Select an overlay to change its visibility.";
   }
   function publishToPlayerScreen(){
     if(!syncChannel||!gm()||document.body.classList.contains("player-screen-mode"))return;
-    const visibility=gmOnly()?"gm":"players";
-    syncChannel.postMessage({type:"overlay-state",visibility,shapes:visibility==="gm"?[]:shapes});
+    const playerShapes=shapes.filter(shape=>shape.visibility==="players");
+    syncChannel.postMessage({type:"overlay-state",shapes:playerShapes});
   }
   const clamp = (v,min,max) => Math.max(min,Math.min(max,Number(v)||min));
   const range = () => clamp($("overlay-range").value,5,300)/FEET_PER_GRID;
@@ -102,6 +84,7 @@
     try{localStorage.setItem(KEY,JSON.stringify(shapes));}
     catch{status.textContent="Overlay storage is full; export your scene and remove unused overlays."}
     publishToPlayerScreen();
+    refreshSelectedVisibility();
   }
   function worldAt(clientX,clientY){
     const r=canvas.getBoundingClientRect(),sx=clientX-r.left,sy=clientY-r.top,{w,h}=size();
@@ -254,7 +237,7 @@
     for(const p of [a,b]){ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();}
     ctx.font="700 13px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";const tw=ctx.measureText(label).width+16;ctx.fillStyle="rgba(5,8,15,.92)";ctx.beginPath();ctx.roundRect(midX-tw/2,midY-12,tw,24,7);ctx.fill();ctx.fillStyle="#fff";ctx.fillText(label,midX,midY);ctx.restore();
   }
-  function render(){if(!ctx||!active()||(!gm()&&gmOnly()))return;ctx.save();for(const s of shapes){try{currentOpacity=Number.isFinite(Number(s.opacity))?Number(s.opacity):opacity();drawShape(s)}catch{}}if(drawing){try{currentOpacity=Number.isFinite(Number(drawing.opacity))?Number(drawing.opacity):opacity();drawShape(drawing)}catch{}}try{drawMeasurement()}catch{}ctx.restore();}
+  function render(){if(!ctx||!active())return;ctx.save();for(const s of shapes){try{currentOpacity=Number.isFinite(Number(s.opacity))?Number(s.opacity):opacity();drawShape(s)}catch{}}if(drawing){try{currentOpacity=Number.isFinite(Number(drawing.opacity))?Number(drawing.opacity):opacity();drawShape(drawing)}catch{}}try{drawMeasurement()}catch{}ctx.restore();}
   // Called by the main scene renderer after terrain but before props/assets and tokens.
   window.drawTacticalOverlays=render;
   function refreshToolButtons(){
@@ -280,10 +263,16 @@
     status.textContent=t==="aura"?"Choose or select a token, then left-click the map once to place its aura.":"Drag on the map to set the shape's direction and size.";
   }
   ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.overlayTool)));
-  visibilityButton?.addEventListener("click",()=>setVisibility(!gmOnly()));
-  sessionRoleEl?.addEventListener("change",refreshVisibilityControl);
+  selectedVisibility.addEventListener("change",()=>{
+    if(!gm())return;
+    const shape=shapes.find(item=>item.id===selected);
+    if(!shape)return;
+    shape.visibility=selectedVisibility.value==="players"?"players":"gm";
+    save();
+    status.textContent=shape.visibility==="players"?"Selected overlay is visible to players and the GM.":"Selected overlay is visible to the GM only.";
+  });
+  sessionRoleEl?.addEventListener("change",refreshSelectedVisibility);
   window.addEventListener("storage",e=>{
-    if(e.key===VISIBILITY_KEY)refreshVisibilityControl();
     if(e.key===KEY&&!gm()){
       try{const saved=JSON.parse(e.newValue||"[]");if(Array.isArray(saved)){shapes.splice(0,shapes.length,...saved.filter(x=>x&&typeof x==="object"));}}
       catch{}
@@ -293,8 +282,7 @@
     syncChannel.onmessage=e=>{
       const message=e.data;
       if(!message||message.type!=="overlay-state"||gm())return;
-      remoteVisibility=message.visibility==="gm"?"gm":"players";
-      const incoming=remoteVisibility==="gm"?[]:Array.isArray(message.shapes)?message.shapes:[];
+      const incoming=Array.isArray(message.shapes)?message.shapes:[];
       shapes.splice(0,shapes.length,...incoming.filter(x=>x&&typeof x==="object"));
     };
     if(!gm())syncChannel.postMessage({type:"overlay-request"});
@@ -303,12 +291,12 @@
       if(message?.type==="overlay-request")publishToPlayerScreen();
     };
   }
-  refreshVisibilityControl();
+  refreshSelectedVisibility();
   if(gm())publishToPlayerScreen();
   refreshToolButtons();
   status.textContent="Select Overlay is OFF. Tokens and props can be clicked normally.";
   $("overlay-opacity").addEventListener("input",()=>{$("overlay-opacity-value").textContent=$("overlay-opacity").value+"%";const s=shapes.find(s=>s.id===selected);if(s){s.opacity=opacity();save();}});
-  $("overlay-delete").addEventListener("click",()=>{const i=shapes.findIndex(s=>s.id===selected);if(i>=0){shapes.splice(i,1);selected=null;save();}});
+  $("overlay-delete").addEventListener("click",()=>{const i=shapes.findIndex(s=>s.id===selected);if(i>=0){shapes.splice(i,1);selected=null;save();refreshSelectedVisibility();}});
   $("overlay-clear").addEventListener("click",()=>{if(!gm())return;if(confirm("Delete every tactical overlay?")){shapes.length=0;selected=null;save();}});
   canvas.addEventListener("pointerdown",e=>{
     // Measurement is available to everyone; editing tactical overlays remains GM-only.
@@ -338,6 +326,7 @@
       // Test in reverse paint order so the visually topmost overlay is selected first.
       for(let i=shapes.length-1;i>=0;i--){if(hitTestShape(shapes[i],p)){best=shapes[i];break;}}
       selected=best?.id||null;
+      refreshSelectedVisibility();
       if(best){
         overlayPointerSelecting=true;
         e.preventDefault();e.stopImmediatePropagation();
@@ -351,7 +340,7 @@
     e.preventDefault();e.stopImmediatePropagation();
     const p=snap(worldAt(e.clientX,e.clientY)),token=state.tokens.find(t=>t.id===state.selected);
     if(tool==="aura"){
-      const s={id:crypto.randomUUID?.()||String(Date.now()+Math.random()),kind:"aura",x:p.x,y:p.y,range:range(),width:width(),color:$("overlay-color").value,opacity:opacity(),tokenId:$("overlay-attach").checked&&token?token.id:null};
+      const s={id:crypto.randomUUID?.()||String(Date.now()+Math.random()),kind:"aura",x:p.x,y:p.y,range:range(),width:width(),color:$("overlay-color").value,opacity:opacity(),visibility:"gm",tokenId:$("overlay-attach").checked&&token?token.id:null};
       shapes.push(s);selected=s.id;save();choose("select");return;
     }
     drawing={id:"preview",kind:tool,x:p.x,y:p.y,endX:p.x,endY:p.y,range:range(),width:width(),angle:Number($("overlay-angle").value),color:$("overlay-color").value,opacity:opacity()};
@@ -369,6 +358,7 @@
     if(overlayPointerSelecting){e.preventDefault();e.stopImmediatePropagation();overlayPointerSelecting=false;setOverlaySelection(false,"Overlay selected. Select Overlay is now OFF; tokens and props can be clicked normally.");return;}
     if(!drawing)return;e.preventDefault();e.stopImmediatePropagation();
     drawing.id=crypto.randomUUID?.()||String(Date.now()+Math.random());
+    drawing.visibility="gm";
     if(["line","arrow","cone"].includes(drawing.kind)&&Math.hypot(drawing.endX-drawing.x,drawing.endY-drawing.y)<.1)drawing.endX=drawing.x+drawing.range;
     if(drawing.kind==="circle"||drawing.kind==="cube")drawing.range=Math.max(1,Math.hypot(drawing.endX-drawing.x,drawing.endY-drawing.y));
     shapes.push(drawing);selected=drawing.id;drawing=null;save();choose("select");
