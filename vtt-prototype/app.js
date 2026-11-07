@@ -1026,11 +1026,58 @@ function selectedObjectKeys(){return [...(state.selectedTokenIds||[]).map(id=>ob
 function createObjectGroup(){if(!isGM())return;const input=document.getElementById('object-group-name'),name=input?.value.trim().slice(0,80),members=selectedObjectKeys();if(!name){sceneSaveStatus.textContent='Enter a group name.';return}if(!members.length){sceneSaveStatus.textContent='Select objects first. Ctrl+drag selects tokens, Shift+drag assets, Ctrl+Shift+drag both.';return}if(state.objectGroups.some(g=>g.name.toLowerCase()===name.toLowerCase())){sceneSaveStatus.textContent='A group with that name already exists.';return}recordUndo();const g={id:'group-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7),name,members,hidden:false};state.objectGroups.push(g);input.value='';refreshObjectGroupControls();document.getElementById('object-group-select').value=g.id;refreshObjectGroupControls();saveSceneToBrowser();sceneSaveStatus.textContent='Created group "'+name+'" with '+members.length+' object(s).'}
 function setObjectGroupVisibility(hidden){if(!isGM())return;const id=document.getElementById('object-group-select')?.value,g=state.objectGroups.find(x=>x.id===id);if(!g){sceneSaveStatus.textContent='Choose a group first.';return}recordUndo();g.hidden=hidden;g.members.forEach(k=>{const o=objectFromKey(k);if(o)o.hidden=hidden});state.selectedTokenIds=[];state.selectedAssetIds=[];state.selected=null;state.selectedAsset=null;selectionEl.hidden=true;selectionEl.textContent='';refreshObjectGroupControls();list();render();saveSceneToBrowser();sceneSaveStatus.textContent=(hidden?'Hid ':'Displayed ')+g.name+' ('+g.members.length+' objects).'}
 function deleteObjectGroup(){if(!isGM())return;const sel=document.getElementById('object-group-select'),g=state.objectGroups.find(x=>x.id===sel?.value);if(!g)return;recordUndo();state.objectGroups=state.objectGroups.filter(x=>x.id!==g.id);refreshObjectGroupControls();saveSceneToBrowser();sceneSaveStatus.textContent='Deleted group "'+g.name+'". Its objects were not deleted.'}
-function saveSceneToBrowser(){
-  try{localStorage.setItem(SCENE_STORAGE_KEY,JSON.stringify(sceneSnapshot()));sceneSaveStatus.textContent='Scene saved in this browser on this device.'}
-  catch(e){sceneSaveStatus.textContent='Could not save locally. Browser storage may be unavailable or full.'}
+const SCENE_MAP_DB_NAME='woa-vtt-local-assets';
+const SCENE_MAP_STORE='scene-media';
+let sceneSaveQueue=Promise.resolve();
+function openSceneMapDb(){
+ return new Promise((resolve,reject)=>{
+  if(!('indexedDB' in window)){reject(new Error('IndexedDB is unavailable'));return}
+  const request=indexedDB.open(SCENE_MAP_DB_NAME,1);
+  request.onupgradeneeded=()=>{const db=request.result;if(!db.objectStoreNames.contains(SCENE_MAP_STORE))db.createObjectStore(SCENE_MAP_STORE)};
+  request.onsuccess=()=>resolve(request.result);
+  request.onerror=()=>reject(request.error||new Error('Could not open local media storage'));
+ });
 }
-function restoreSceneOnStartup(){try{const raw=localStorage.getItem(SCENE_STORAGE_KEY);if(!raw)return;applyScene(JSON.parse(raw));sceneSaveStatus.textContent='Restored your last scene from this browser.'}catch(e){sceneSaveStatus.textContent='Saved scene could not be restored: '+(e.message||'invalid scene data')}}
+async function storeSceneMapImage(image){
+ const db=await openSceneMapDb();
+ try{await new Promise((resolve,reject)=>{const tx=db.transaction(SCENE_MAP_STORE,'readwrite'),store=tx.objectStore(SCENE_MAP_STORE);if(image)store.put(image,'battlefield-map');else store.delete('battlefield-map');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||new Error('Could not save battlefield map'));tx.onabort=()=>reject(tx.error||new Error('Battlefield map save was aborted'))})}
+ finally{db.close()}
+}
+async function readSceneMapImage(){
+ const db=await openSceneMapDb();
+ try{return await new Promise((resolve,reject)=>{const tx=db.transaction(SCENE_MAP_STORE,'readonly'),request=tx.objectStore(SCENE_MAP_STORE).get('battlefield-map');request.onsuccess=()=>resolve(typeof request.result==='string'?request.result:null);request.onerror=()=>reject(request.error||new Error('Could not read battlefield map'))})}
+ finally{db.close()}
+}
+function saveSceneToBrowser(){
+ const snapshot=sceneSnapshot(),mapImage=snapshot.map?.image||null;
+ if(snapshot.map)snapshot.map.image='';
+ sceneSaveQueue=sceneSaveQueue.then(async()=>{
+  try{
+   await storeSceneMapImage(mapImage);
+   localStorage.setItem(SCENE_STORAGE_KEY,JSON.stringify(snapshot));
+   sceneSaveStatus.textContent='Scene saved in this browser on this device.';
+  }catch(e){
+   // Fall back to the previous single-record format if IndexedDB is unavailable.
+   try{const fallback=sceneSnapshot();localStorage.setItem(SCENE_STORAGE_KEY,JSON.stringify(fallback));sceneSaveStatus.textContent='Scene saved in this browser. (Using standard browser storage.)'}
+   catch(storageError){sceneSaveStatus.textContent='Could not save locally. Browser storage may be unavailable or full.'}
+  }
+ });
+ return sceneSaveQueue;
+}
+async function restoreSceneOnStartup(){
+ try{
+  const raw=localStorage.getItem(SCENE_STORAGE_KEY);if(!raw)return;
+  const saved=JSON.parse(raw);
+  if(saved.map&&typeof saved.map.image==='string'&&saved.map.image.length){
+   // Migrate older scenes that stored the full map in localStorage.
+   await storeSceneMapImage(saved.map.image);
+  }else if(saved.map){
+   try{saved.map.image=await readSceneMapImage()}catch(error){saved.map.image=null}
+  }
+  applyScene(saved);
+  sceneSaveStatus.textContent=state.mapImage?'Restored your last scene and battlefield map from this browser.':'Restored your last scene from this browser.';
+ }catch(e){sceneSaveStatus.textContent='Saved scene could not be restored: '+(e.message||'invalid scene data')}
+}
 document.getElementById("object-group-create")?.addEventListener("click",createObjectGroup);
 document.getElementById("object-group-hide")?.addEventListener("click",()=>setObjectGroupVisibility(true));
 document.getElementById("object-group-show")?.addEventListener("click",()=>setObjectGroupVisibility(false));
