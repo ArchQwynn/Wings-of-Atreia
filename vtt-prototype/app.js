@@ -27,7 +27,19 @@ function refreshAttachmentControls(){const a=document.getElementById('attachment
 function applyGroupPositionDelta(startPositions,dx,dy){for(const p of startPositions){const obj=objectFromKey(p.key);if(!obj||obj.locked)continue;if(p.key.startsWith('token:')){obj._dragX=p.x+dx;obj._dragY=p.y+dy}else{obj.x=p.x+dx;obj.y=p.y+dy}}}
 function changeGroupAltitude(type,id,nextZ){const anchor=objectFromKey(objectKey(type,id));if(!anchor||anchor.locked)return;const group=captureGroupPositions(type,id),old=Number(anchor.z)||0;let dz=Number(nextZ)-old;const minDz=Math.max(...group.map(p=>-p.z)),maxDz=Math.min(...group.map(p=>MAX_ALTITUDE-p.z));dz=Math.max(minDz,Math.min(maxDz,dz));group.forEach(p=>{const obj=objectFromKey(p.key);if(obj&&!obj.locked)obj.z=Math.max(0,Math.min(MAX_ALTITUDE,p.z+dz))})}
 let pendingAttachmentAction=null;
-function hideObjectContextMenu(){const menu=document.getElementById('object-context-menu');if(menu)menu.hidden=true}
+function positionContextSubmenu(row){
+ const panel=row?.querySelector('.context-submenu-panel');if(!panel)return;
+ if(window.matchMedia?.('(hover:none),(pointer:coarse)').matches){panel.style.position='';panel.style.left='';panel.style.right='';panel.style.top='';return}
+ panel.style.position='fixed';panel.style.right='auto';panel.style.left='0px';panel.style.top='0px';
+ const anchor=row.querySelector('.context-submenu-trigger')?.getBoundingClientRect();if(!anchor)return;
+ const margin=8,vv=window.visualViewport,vw=vv?.width||window.innerWidth,vh=vv?.height||window.innerHeight,ox=vv?.offsetLeft||0,oy=vv?.offsetTop||0;
+ const width=Math.min(258,Math.max(180,vw-margin*2));panel.style.width=width+'px';panel.style.maxHeight=Math.max(120,Math.min(vh-margin*2,520))+'px';
+ const measured=panel.getBoundingClientRect(),height=Math.min(measured.height,vh-margin*2),rightSpace=ox+vw-anchor.right,leftSpace=anchor.left-ox;
+ const x=(rightSpace>=width+margin||rightSpace>=leftSpace)?anchor.right-2:anchor.left-width+2;
+ const y=Math.max(oy+margin,Math.min(oy+vh-height-margin,anchor.top-5));
+ panel.style.left=Math.max(ox+margin,Math.min(ox+vw-width-margin,x))+'px';panel.style.top=y+'px';
+}
+function hideObjectContextMenu(){const menu=document.getElementById('object-context-menu');if(menu){menu.hidden=true;menu.querySelectorAll('.context-submenu-panel').forEach(panel=>{panel.style.left='';panel.style.top='';panel.style.right='';panel.style.position=''})}}
 function setAttachmentMode(action,key){pendingAttachmentAction={action,key};hideObjectContextMenu();const obj=objectFromKey(key);if(sceneSaveStatus)sceneSaveStatus.textContent=(action==='attach'?'Attach '+(obj?.name||'object')+': click another object.':'Detach '+(obj?.name||'object')+': click an object directly attached to it.')+' Press Escape to cancel.'}
 function applyPendingAttachment(targetKey){const pending=pendingAttachmentAction;if(!pending)return true;pendingAttachmentAction=null;if(targetKey===pending.key){if(sceneSaveStatus)sceneSaveStatus.textContent='Choose a different object.';return true}const exists=objectFromKey(targetKey),source=objectFromKey(pending.key);if(!exists||!source)return true;const same=e=>(e.a===pending.key&&e.b===targetKey)||(e.a===targetKey&&e.b===pending.key);if(pending.action==='attach'){if(state.attachments.some(same)){if(sceneSaveStatus)sceneSaveStatus.textContent='Those objects are already attached.';return true}recordUndo();state.attachments.push({a:pending.key,b:targetKey});if(sceneSaveStatus)sceneSaveStatus.textContent='Attached '+objectLabel(pending.key)+' to '+objectLabel(targetKey)+'.'}else{if(!state.attachments.some(same)){if(sceneSaveStatus)sceneSaveStatus.textContent='Those objects are not directly attached.';return true}recordUndo();state.attachments=state.attachments.filter(e=>!same(e));if(sceneSaveStatus)sceneSaveStatus.textContent='Detached '+objectLabel(pending.key)+' from '+objectLabel(targetKey)+'.'}saveSceneToBrowser();return true}
 function refreshTokenClassResourceControls(token,menu){
@@ -105,7 +117,7 @@ function setupObjectContextMenu(){
   recordUndo();t.borderColor=color;saveSceneToBrowser();render();
  });
  menu.querySelector('[data-token-name]')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();menu.querySelector('[data-token-name-apply]')?.click()}});
- menu.addEventListener('pointerover',e=>{const row=e.target.closest('.context-submenu');if(!row||e.pointerType==='touch')return;menu.querySelectorAll('.context-submenu.is-open').forEach(el=>{if(el!==row&&!el.contains(row)&&!row.contains(el))el.classList.remove('is-open')});row.classList.add('is-open')});
+ menu.addEventListener('pointerover',e=>{const row=e.target.closest('.context-submenu');if(!row||e.pointerType==='touch')return;menu.querySelectorAll('.context-submenu.is-open').forEach(el=>{if(el!==row&&!el.contains(row)&&!row.contains(el))el.classList.remove('is-open')});row.classList.add('is-open');positionContextSubmenu(row)});
  menu.addEventListener('pointerleave',()=>menu.querySelectorAll('.context-submenu.is-open').forEach(el=>el.classList.remove('is-open')));
  menu.addEventListener('change',e=>{
   const input=e.target.closest('[data-token-resource-input]');if(!input)return;
@@ -129,7 +141,7 @@ function setupObjectContextMenu(){
  });
  menu.addEventListener('click',e=>{
   const trigger=e.target.closest('[data-submenu-trigger]');
-  if(trigger){const row=trigger.closest('.context-submenu');if(row){const open=row.classList.contains('is-open');Array.from(row.parentElement?.children||[]).filter(el=>el.classList?.contains('context-submenu')).forEach(el=>el.classList.remove('is-open'));if(!open)row.classList.add('is-open')}return}
+  if(trigger){const row=trigger.closest('.context-submenu');if(row){const open=row.classList.contains('is-open');Array.from(row.parentElement?.children||[]).filter(el=>el.classList?.contains('context-submenu')).forEach(el=>el.classList.remove('is-open'));if(!open){row.classList.add('is-open');positionContextSubmenu(row)}}return}
 
   const conditionApply=e.target.closest('[data-token-condition-apply]'),conditionRemove=e.target.closest('[data-token-condition-remove]');
   if(conditionApply||conditionRemove){
@@ -219,7 +231,7 @@ function setupObjectContextMenu(){
   if(t){select(t.id);refreshTokenMenu(t)}else if(tokenTools)tokenTools.hidden=true;
   const attached=state.attachments.filter(edge=>edge.a===key||edge.b===key).length;
   menu.querySelector('[data-object-action="detach"]').disabled=!attached;
-  menu.hidden=false;menu.style.left=Math.max(8,Math.min(window.innerWidth-menu.offsetWidth-8,e.clientX))+'px';
+  menu.hidden=false;menu.style.maxHeight=Math.max(120,window.innerHeight-16)+'px';menu.style.overflowY='auto';menu.style.left=Math.max(8,Math.min(window.innerWidth-menu.offsetWidth-8,e.clientX))+'px';
   menu.style.top=Math.max(8,Math.min(window.innerHeight-menu.offsetHeight-8,e.clientY))+'px';
  });
 }
