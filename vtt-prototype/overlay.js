@@ -6,6 +6,7 @@
   if (!window.localStorage) return;
   const KEY = "woa-vtt-tactical-overlays-v1";
   const SYNC_CHANNEL = "woa-vtt-tactical-overlay-sync";
+  const MEASUREMENT_CHANNEL = "woa-vtt-shared-measurement";
   const tools = [
     ["select","Select Overlay: Off"],["measure","Measure Distance"],["aura","Token Aura"],["line","Line"],["cone","Cone"],
     ["circle","Circle / Radius"],["cube","Cube"],["arrow","Direction Arrow"]
@@ -58,8 +59,9 @@
   const selectedVisibility = $("overlay-visibility");
   const shapes = [];
   const syncChannel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel(SYNC_CHANNEL) : null;
+  const measurementChannel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel(MEASUREMENT_CHANNEL) : null;
   try { const saved = JSON.parse(localStorage.getItem(KEY)||"[]"); if (Array.isArray(saved)) shapes.push(...saved.filter(s=>s&&typeof s==="object")); } catch {}
-  let tool = "select", overlaySelectEnabled = false, overlayPointerSelecting = false, selected = null, drawing = null, dragging = null, measurement = null, currentOpacity = opacityFallback();
+  let tool = "select", overlaySelectEnabled = false, overlayPointerSelecting = false, selected = null, drawing = null, dragging = null, measurement = null, sharedMeasurement = null, currentOpacity = opacityFallback();
   function opacityFallback(){return 0.28;}
   const active = () => (typeof state !== "undefined" && state);
   const gm = () => !active() || !sessionRoleEl || sessionRoleEl.value === "gm";
@@ -213,22 +215,23 @@
     if(d<5)return 0;
     return Math.ceil((d-1e-8)/5)*5;
   }
-  function distanceValues(start,end){
+  function distanceValues(start,end,modeOverride){
     const dx=Math.abs(end.x-start.x),dy=Math.abs(end.y-start.y);
     const horizontal=Math.round(Math.max(dx,dy))*FEET_PER_GRID;
     const rawVertical=end.z-start.z,vertical=increment5(rawVertical)*(rawVertical<0?-1:rawVertical>0?1:0);
-    const total=$("overlay-measure-mode").value==="3d"
+    const mode=modeOverride||$("overlay-measure-mode").value;
+    const total=mode==="3d"
       ?increment5(Math.sqrt(Math.pow(horizontal,2)+Math.pow(vertical,2)))
       :horizontal;
-    return {horizontal,vertical,total,mode:$("overlay-measure-mode").value};
+    return {horizontal,vertical,total,mode};
   }
-  function drawMeasurement(){
-    if(!measurement?.end)return;
-    const ap=measurementPoint(measurement.start),bp=measurementPoint(measurement.end);
+  function drawMeasurement(target=measurement,modeOverride){
+    if(!target?.end)return;
+    const ap=measurementPoint(target.start),bp=measurementPoint(target.end);
     if(!ap||!bp)return;
     const a=project(ap.x,ap.y,ap.z),b=project(bp.x,bp.y,bp.z);
     if(!Number.isFinite(a.x)||!Number.isFinite(b.x))return;
-    const values=distanceValues(ap,bp);
+    const values=distanceValues(ap,bp,modeOverride||target.mode);
     const label=values.mode==="3d"
       ?values.total+" ft  |  H "+values.horizontal+" ft  |  V "+(values.vertical>0?"+":"")+values.vertical+" ft"
       :values.horizontal+" ft  |  2D Horizontal";
@@ -237,7 +240,7 @@
     for(const p of [a,b]){ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();}
     ctx.font="700 13px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";const tw=ctx.measureText(label).width+16;ctx.fillStyle="rgba(5,8,15,.92)";ctx.beginPath();ctx.roundRect(midX-tw/2,midY-12,tw,24,7);ctx.fill();ctx.fillStyle="#fff";ctx.fillText(label,midX,midY);ctx.restore();
   }
-  function render(){if(!ctx||!active())return;ctx.save();for(const s of shapes){if(!gm()&&s.visibility!=="players")continue;try{currentOpacity=Number.isFinite(Number(s.opacity))?Number(s.opacity):opacity();drawShape(s)}catch{}}if(drawing&&gm()){try{currentOpacity=Number.isFinite(Number(drawing.opacity))?Number(drawing.opacity):opacity();drawShape(drawing)}catch{}}try{drawMeasurement()}catch{}ctx.restore();}
+  function render(){if(!ctx||!active())return;ctx.save();for(const s of shapes){if(!gm()&&s.visibility!=="players")continue;try{currentOpacity=Number.isFinite(Number(s.opacity))?Number(s.opacity):opacity();drawShape(s)}catch{}}if(drawing&&gm()){try{currentOpacity=Number.isFinite(Number(drawing.opacity))?Number(drawing.opacity):opacity();drawShape(drawing)}catch{}}try{if(gm()&&tool!=="measure"&&sharedMeasurement)drawMeasurement(sharedMeasurement,sharedMeasurement.mode);else drawMeasurement()}catch{}ctx.restore();}
   // Called by the main scene renderer after terrain but before props/assets and tokens.
   window.drawTacticalOverlays=render;
   function refreshToolButtons(){
@@ -259,10 +262,20 @@
   function choose(t){
     if(t==="select"){setOverlaySelection(!overlaySelectEnabled);return;}
     tool=t;overlaySelectEnabled=false;refreshToolButtons();
-    if(t==="measure"){measurement=null;status.textContent=$("overlay-measure-mode").value==="3d"?"3D Measure: click any token, prop, or asset for point A, then another object for point B. Horizontal and vertical components use 5-ft increments.":"2D Measure: click any token, prop, or asset for point A, then another object for point B. Measures horizontal grid distance only.";return;}
+    if(t==="measure"){measurement=null;if(gm())sharedMeasurement=null;refreshPlayerMeasureButton();status.textContent=$("overlay-measure-mode").value==="3d"?"3D Measure: click any token, prop, or asset for point A, then another object for point B. Horizontal and vertical components use 5-ft increments.":"2D Measure: click any token, prop, or asset for point A, then another object for point B. Measures horizontal grid distance only.";return;}
     status.textContent=t==="aura"?"Choose or select a token, then left-click the map once to place its aura.":"Drag on the map to set the shape's direction and size.";
   }
   ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.overlayTool)));
+  let playerMeasureButton=null;
+  if(document.body.classList.contains("player-screen-mode")){
+    playerMeasureButton=document.createElement("button");
+    playerMeasureButton.type="button";playerMeasureButton.className="player-measure-button";playerMeasureButton.textContent="Measure Distance";
+    playerMeasureButton.style.cssText="position:absolute;top:14px;left:14px;z-index:30;padding:10px 14px;border:1px solid #8fd3ff;border-radius:9px;background:rgba(17,24,39,.96);color:#eef3ff;font:700 13px system-ui;box-shadow:0 3px 14px rgba(0,0,0,.35);";
+    document.querySelector(".stage-card")?.appendChild(playerMeasureButton);
+    playerMeasureButton.addEventListener("click",()=>{if(tool==="measure"){measurement=null;tool="select";refreshToolButtons();publishMeasurement(null);status.textContent="Measurement cancelled.";}else choose("measure");refreshPlayerMeasureButton();});
+  }
+  function refreshPlayerMeasureButton(){if(!playerMeasureButton)return;const activeMeasure=tool==="measure";playerMeasureButton.textContent=activeMeasure?"Cancel Measure":"Measure Distance";playerMeasureButton.setAttribute("aria-pressed",String(activeMeasure));}
+  function publishMeasurement(value){if(!measurementChannel||gm())return;measurementChannel.postMessage({type:"player-measurement",measurement:value?{start:value.start,end:value.end,complete:!!value.complete,mode:value.mode||$("overlay-measure-mode").value}:null});}
   selectedVisibility.addEventListener("change",()=>{
     if(!gm())return;
     const shape=shapes.find(item=>item.id===selected);
@@ -278,6 +291,13 @@
       catch{}
     }
   });
+  if(measurementChannel){
+    measurementChannel.onmessage=e=>{
+      const message=e.data;
+      if(!gm()||message?.type!=="player-measurement")return;
+      sharedMeasurement=message.measurement&&message.measurement.start&&message.measurement.end?message.measurement:null;
+    };
+  }
   if(syncChannel){
     syncChannel.onmessage=e=>{
       const message=e.data;
@@ -308,11 +328,11 @@
       const object=measuredObjectAt(e.clientX,e.clientY);
       if(!object){status.textContent="Click directly on a token, prop, or asset to choose a measurement endpoint.";return;}
       const endpoint=object;
-      if(!measurement||measurement.complete){measurement={start:endpoint,end:endpoint,complete:false};status.textContent="Point A: "+(object.name||"object")+". Click a token, prop, or asset for point B.";}
+      if(!measurement||measurement.complete){measurement={start:endpoint,end:endpoint,complete:false,mode:$("overlay-measure-mode").value};publishMeasurement(measurement);status.textContent="Point A: "+(object.name||"object")+". Click a token, prop, or asset for point B.";}
       else{
-        measurement.end=endpoint;measurement.complete=true;
-        const ap=measurementPoint(measurement.start),bp=measurementPoint(measurement.end),v=distanceValues(ap,bp);
-        tool="select";overlaySelectEnabled=false;refreshToolButtons();
+        measurement.end=endpoint;measurement.complete=true;publishMeasurement(measurement);
+        const ap=measurementPoint(measurement.start),bp=measurementPoint(measurement.end),v=distanceValues(ap,bp,measurement.mode);
+        tool="select";overlaySelectEnabled=false;refreshToolButtons();refreshPlayerMeasureButton();
         status.textContent=v.mode==="3d"
           ?"3D distance: "+v.total+" ft (horizontal "+v.horizontal+" ft; vertical "+(v.vertical>0?"+":"")+v.vertical+" ft). Choose Measure Distance to measure again."
           :"2D horizontal distance: "+v.horizontal+" ft. Choose Measure Distance to measure again.";
