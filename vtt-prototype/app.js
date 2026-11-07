@@ -230,19 +230,17 @@ function terrainHeightAt(x,y){const gx=snapCell(x),gy=snapCell(y),tile=state.ter
 function footprintTerrainBase(x,y,width,depth,rotation=0){
  const w=Math.max(1,Number(width)||1),d=Math.max(1,Number(depth)||1),cx=x+(w-1)/2,cy=y+(d-1)/2,angle=Number(rotation)||0,cos=Math.cos(angle),sin=Math.sin(angle);
  const centerHeight=terrainHeightAt(cx,cy);
- // Preserve center-cell behavior for objects smaller than a 2x2 footprint.
- if(w<2||d<2)return centerHeight;
  const samplesPerCell=8,totalX=Math.ceil(w*samplesPerCell),totalY=Math.ceil(d*samplesPerCell),total=totalX*totalY;
- let supported=0,maxHeight=centerHeight;
+ let overlapsRaisedTerrain=false,maxHeight=centerHeight;
  for(let j=0;j<totalY;j++)for(let i=0;i<totalX;i++){
   const lx=((i+.5)/totalX-.5)*w,ly=(.5-(j+.5)/totalY)*d;
   const wx=cx+lx*cos-ly*sin,wy=cy+lx*sin+ly*cos,gx=snapCell(wx),gy=snapCell(wy),tile=state.terrain[gx+','+gy];
-  if(tile)supported++;
+  if(tile)overlapsRaisedTerrain=true;
   const height=terrainHeightAt(wx,wy);if(height>maxHeight)maxHeight=height;
  }
- // If terrain supports less than half the footprint, lift the entire object
- // to the highest terrain point beneath it so it cannot be swallowed.
- return supported/total<.5?maxHeight:centerHeight;
+ // Any overlap with raised terrain lifts the whole footprint to its highest
+ // sampled terrain elevation. This applies to every footprint size.
+ return overlapsRaisedTerrain?maxHeight:centerHeight;
 }
 function tokenTerrainBase(t){const f=Math.max(1,Number(t.footprint)||1);return footprintTerrainBase(Number(t._dragX??t.x)||0,Number(t._dragY??t.y)||0,f,f)}
 function assetTerrainBase(a){return footprintTerrainBase(Number(a.x)||0,Number(a.y)||0,Math.max(1,Number(a.width)||1),Math.max(1,Number(a.depth)||1),(Number(a.rotation)||0)*Math.PI/180)}
