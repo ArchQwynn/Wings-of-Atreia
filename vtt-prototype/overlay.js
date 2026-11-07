@@ -5,6 +5,7 @@
 (() => {
   if (!window.localStorage) return;
   const KEY = "woa-vtt-tactical-overlays-v1";
+  const VISIBILITY_KEY = "woa-vtt-tactical-overlay-visibility-v1";
   const tools = [
     ["select","Select Overlay: Off"],["measure","Measure Distance"],["aura","Token Aura"],["line","Line"],["cone","Cone"],
     ["circle","Circle / Radius"],["cube","Cube"],["arrow","Direction Arrow"]
@@ -15,6 +16,7 @@
     <summary>Tactical Overlays</summary>
     <div class="overlay-content">
     <div class="overlay-tool-grid">${tools.map(([v,l])=>`<button type="button" data-overlay-tool="${v}" aria-pressed="false">${l}</button>`).join("")}</div>
+    <div class="overlay-visibility-row"><span>Overlay Visibility</span><button type="button" id="overlay-visibility-toggle" aria-pressed="false">Players + GM</button></div>
     <div class="overlay-form-grid">
       <label>Distance Mode<select id="overlay-measure-mode"><option value="2d" selected>2D · Horizontal</option><option value="3d">3D · Horizontal + Vertical</option></select></label>
       <label>Range (ft)<input id="overlay-range" type="number" min="5" max="300" step="5" value="30"></label>
@@ -36,6 +38,9 @@
     .overlay-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
     .overlay-tool-grid button{font-size:.72rem;padding:8px 6px}
     .overlay-tool-grid button[aria-pressed="true"]{border-color:#8fd3ff;background:#21415a;box-shadow:inset 0 0 0 1px #8fd3ff}
+    .overlay-visibility-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.72rem;color:#9aa8bd}
+    .overlay-visibility-row button{font-size:.72rem;padding:7px 10px;white-space:nowrap}
+    .overlay-visibility-row button[aria-pressed="true"]{border-color:#f0c36a;background:#49391c;color:#ffe4a3}
     .overlay-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .overlay-form-grid label{display:grid;gap:4px;font-size:.7rem;color:#9aa8bd}
     .overlay-form-grid input:not([type=checkbox]):not([type=range]),.overlay-form-grid select{width:100%;min-width:0;padding:7px;border:1px solid #263247;border-radius:7px;background:#0d1626;color:#eef3ff}
@@ -53,12 +58,26 @@
   else panel?.appendChild(ui);
   const $ = id => ui.querySelector("#"+id);
   const status = $("overlay-status");
+  const visibilityButton = $("overlay-visibility-toggle");
   const shapes = [];
   try { const saved = JSON.parse(localStorage.getItem(KEY)||"[]"); if (Array.isArray(saved)) shapes.push(...saved.filter(s=>s&&typeof s==="object")); } catch {}
   let tool = "select", overlaySelectEnabled = false, overlayPointerSelecting = false, selected = null, drawing = null, dragging = null, measurement = null, currentOpacity = opacityFallback();
   function opacityFallback(){return 0.28;}
   const active = () => (typeof state !== "undefined" && state);
   const gm = () => !active() || !sessionRoleEl || sessionRoleEl.value === "gm";
+  const gmOnly = () => { try { return localStorage.getItem(VISIBILITY_KEY) === "gm"; } catch { return false; } };
+  function refreshVisibilityControl(){
+    if(!visibilityButton)return;
+    visibilityButton.textContent=gmOnly()?"GM Only":"Players + GM";
+    visibilityButton.setAttribute("aria-pressed",String(gmOnly()));
+    visibilityButton.hidden=!gm();
+  }
+  function setVisibility(value){
+    if(!gm())return;
+    try{localStorage.setItem(VISIBILITY_KEY,value?"gm":"players");}catch{status.textContent="Could not save tactical overlay visibility."}
+    refreshVisibilityControl();
+    status.textContent=value?"Tactical overlays are now visible to the GM only.":"Tactical overlays are now visible to players and the GM.";
+  }
   const clamp = (v,min,max) => Math.max(min,Math.min(max,Number(v)||min));
   const range = () => clamp($("overlay-range").value,5,300)/FEET_PER_GRID;
   const width = () => clamp($("overlay-width").value,5,100)/FEET_PER_GRID;
@@ -216,7 +235,7 @@
     for(const p of [a,b]){ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();}
     ctx.font="700 13px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";const tw=ctx.measureText(label).width+16;ctx.fillStyle="rgba(5,8,15,.92)";ctx.beginPath();ctx.roundRect(midX-tw/2,midY-12,tw,24,7);ctx.fill();ctx.fillStyle="#fff";ctx.fillText(label,midX,midY);ctx.restore();
   }
-  function render(){if(!ctx||!active())return;ctx.save();for(const s of shapes){try{currentOpacity=Number.isFinite(Number(s.opacity))?Number(s.opacity):opacity();drawShape(s)}catch{}}if(drawing){try{currentOpacity=Number.isFinite(Number(drawing.opacity))?Number(drawing.opacity):opacity();drawShape(drawing)}catch{}}try{drawMeasurement()}catch{}ctx.restore();}
+  function render(){if(!ctx||!active()||(!gm()&&gmOnly()))return;ctx.save();for(const s of shapes){try{currentOpacity=Number.isFinite(Number(s.opacity))?Number(s.opacity):opacity();drawShape(s)}catch{}}if(drawing){try{currentOpacity=Number.isFinite(Number(drawing.opacity))?Number(drawing.opacity):opacity();drawShape(drawing)}catch{}}try{drawMeasurement()}catch{}ctx.restore();}
   // Called by the main scene renderer after terrain but before props/assets and tokens.
   window.drawTacticalOverlays=render;
   function refreshToolButtons(){
@@ -242,6 +261,9 @@
     status.textContent=t==="aura"?"Choose or select a token, then left-click the map once to place its aura.":"Drag on the map to set the shape's direction and size.";
   }
   ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.overlayTool)));
+  visibilityButton?.addEventListener("click",()=>setVisibility(!gmOnly()));
+  window.addEventListener("storage",e=>{if(e.key===VISIBILITY_KEY)refreshVisibilityControl();});
+  refreshVisibilityControl();
   refreshToolButtons();
   status.textContent="Select Overlay is OFF. Tokens and props can be clicked normally.";
   $("overlay-opacity").addEventListener("input",()=>{$("overlay-opacity-value").textContent=$("overlay-opacity").value+"%";const s=shapes.find(s=>s.id===selected);if(s){s.opacity=opacity();save();}});
