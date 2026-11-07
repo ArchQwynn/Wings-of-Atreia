@@ -5,7 +5,6 @@
 (() => {
   if (!window.localStorage) return;
   const KEY = "woa-vtt-tactical-overlays-v1";
-  const VISIBILITY_KEY = "woa-vtt-tactical-overlay-visibility-v1";
   const SYNC_CHANNEL = "woa-vtt-tactical-overlay-sync";
   const tools = [
     ["select","Select Overlay: Off"],["measure","Measure Distance"],["aura","Token Aura"],["line","Line"],["cone","Cone"],
@@ -68,6 +67,7 @@
     const shape=shapes.find(item=>item.id===selected);
     selectedVisibility.value=shape?.visibility==="players"?"players":"gm";
     selectedVisibility.disabled=!gm()||!shape;
+    selectedVisibility.closest("label").hidden=!!document.body.classList.contains("player-screen-mode");
     selectedVisibility.title=shape?"Set visibility for this selected overlay.":"Select an overlay to change its visibility.";
   }
   function publishToPlayerScreen(){
@@ -237,7 +237,7 @@
     for(const p of [a,b]){ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();}
     ctx.font="700 13px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";const tw=ctx.measureText(label).width+16;ctx.fillStyle="rgba(5,8,15,.92)";ctx.beginPath();ctx.roundRect(midX-tw/2,midY-12,tw,24,7);ctx.fill();ctx.fillStyle="#fff";ctx.fillText(label,midX,midY);ctx.restore();
   }
-  function render(){if(!ctx||!active())return;ctx.save();for(const s of shapes){try{currentOpacity=Number.isFinite(Number(s.opacity))?Number(s.opacity):opacity();drawShape(s)}catch{}}if(drawing){try{currentOpacity=Number.isFinite(Number(drawing.opacity))?Number(drawing.opacity):opacity();drawShape(drawing)}catch{}}try{drawMeasurement()}catch{}ctx.restore();}
+  function render(){if(!ctx||!active())return;ctx.save();for(const s of shapes){if(!gm()&&s.visibility!=="players")continue;try{currentOpacity=Number.isFinite(Number(s.opacity))?Number(s.opacity):opacity();drawShape(s)}catch{}}if(drawing&&gm()){try{currentOpacity=Number.isFinite(Number(drawing.opacity))?Number(drawing.opacity):opacity();drawShape(drawing)}catch{}}try{drawMeasurement()}catch{}ctx.restore();}
   // Called by the main scene renderer after terrain but before props/assets and tokens.
   window.drawTacticalOverlays=render;
   function refreshToolButtons(){
@@ -274,7 +274,7 @@
   sessionRoleEl?.addEventListener("change",refreshSelectedVisibility);
   window.addEventListener("storage",e=>{
     if(e.key===KEY&&!gm()){
-      try{const saved=JSON.parse(e.newValue||"[]");if(Array.isArray(saved)){shapes.splice(0,shapes.length,...saved.filter(x=>x&&typeof x==="object"));}}
+      try{const saved=JSON.parse(e.newValue||"[]");if(Array.isArray(saved)){shapes.splice(0,shapes.length,...saved.filter(x=>x&&typeof x==="object"&&x.visibility==="players"));}}
       catch{}
     }
   });
