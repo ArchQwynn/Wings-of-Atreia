@@ -6,6 +6,7 @@
   if (!window.localStorage) return;
   const KEY = "woa-vtt-tactical-overlays-v1";
   const VISIBILITY_KEY = "woa-vtt-tactical-overlay-visibility-v1";
+  const SYNC_CHANNEL = "woa-vtt-tactical-overlay-sync";
   const tools = [
     ["select","Select Overlay: Off"],["measure","Measure Distance"],["aura","Token Aura"],["line","Line"],["cone","Cone"],
     ["circle","Circle / Radius"],["cube","Cube"],["arrow","Direction Arrow"]
@@ -60,30 +61,45 @@
   const status = $("overlay-status");
   const visibilityButton = $("overlay-visibility-toggle");
   const shapes = [];
+  const syncChannel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel(SYNC_CHANNEL) : null;
+  let remoteVisibility = null;
   try { const saved = JSON.parse(localStorage.getItem(KEY)||"[]"); if (Array.isArray(saved)) shapes.push(...saved.filter(s=>s&&typeof s==="object")); } catch {}
   let tool = "select", overlaySelectEnabled = false, overlayPointerSelecting = false, selected = null, drawing = null, dragging = null, measurement = null, currentOpacity = opacityFallback();
   function opacityFallback(){return 0.28;}
   const active = () => (typeof state !== "undefined" && state);
   const gm = () => !active() || !sessionRoleEl || sessionRoleEl.value === "gm";
-  const gmOnly = () => { try { return localStorage.getItem(VISIBILITY_KEY) === "gm"; } catch { return false; } };
+  const gmOnly = () => {
+    if(!gm()&&remoteVisibility!==null)return remoteVisibility==="gm";
+    try { return localStorage.getItem(VISIBILITY_KEY) === "gm"; } catch { return false; }
+  };
   function refreshVisibilityControl(){
     if(!visibilityButton)return;
     visibilityButton.textContent=gmOnly()?"GM Only":"Players + GM";
     visibilityButton.setAttribute("aria-pressed",String(gmOnly()));
-    visibilityButton.hidden=!gm();
+    visibilityButton.hidden=!!document.body.classList.contains("player-screen-mode")||(!!sessionRoleEl&&sessionRoleEl.value!=="gm");
   }
   function setVisibility(value){
     if(!gm())return;
     try{localStorage.setItem(VISIBILITY_KEY,value?"gm":"players");}catch{status.textContent="Could not save tactical overlay visibility."}
     refreshVisibilityControl();
     status.textContent=value?"Tactical overlays are now visible to the GM only.":"Tactical overlays are now visible to players and the GM.";
+    publishToPlayerScreen();
+  }
+  function publishToPlayerScreen(){
+    if(!syncChannel||!gm()||document.body.classList.contains("player-screen-mode"))return;
+    const visibility=gmOnly()?"gm":"players";
+    syncChannel.postMessage({type:"overlay-state",visibility,shapes:visibility==="gm"?[]:shapes});
   }
   const clamp = (v,min,max) => Math.max(min,Math.min(max,Number(v)||min));
   const range = () => clamp($("overlay-range").value,5,300)/FEET_PER_GRID;
   const width = () => clamp($("overlay-width").value,5,100)/FEET_PER_GRID;
   const opacity = () => clamp($("overlay-opacity").value,8,75)/100;
   const snap = p => $("overlay-snap").checked ? {x:Math.round(p.x),y:Math.round(p.y)} : p;
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(shapes));}catch{status.textContent="Overlay storage is full; export your scene and remove unused overlays."}}
+  function save(){
+    try{localStorage.setItem(KEY,JSON.stringify(shapes));}
+    catch{status.textContent="Overlay storage is full; export your scene and remove unused overlays."}
+    publishToPlayerScreen();
+  }
   function worldAt(clientX,clientY){
     const r=canvas.getBoundingClientRect(),sx=clientX-r.left,sy=clientY-r.top,{w,h}=size();
     if(state.view2d)return {x:(sx-w/2-state.camera.panX)/(CELL_PX*state.camera.zoom),y:-(sy-h/2-state.camera.panY)/(CELL_PX*state.camera.zoom)};
@@ -262,8 +278,30 @@
   }
   ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.overlayTool)));
   visibilityButton?.addEventListener("click",()=>setVisibility(!gmOnly()));
-  window.addEventListener("storage",e=>{if(e.key===VISIBILITY_KEY)refreshVisibilityControl();});
+  sessionRoleEl?.addEventListener("change",refreshVisibilityControl);
+  window.addEventListener("storage",e=>{
+    if(e.key===VISIBILITY_KEY)refreshVisibilityControl();
+    if(e.key===KEY&&!gm()){
+      try{const saved=JSON.parse(e.newValue||"[]");if(Array.isArray(saved)){shapes.splice(0,shapes.length,...saved.filter(x=>x&&typeof x==="object"));}}
+      catch{}
+    }
+  });
+  if(syncChannel){
+    syncChannel.onmessage=e=>{
+      const message=e.data;
+      if(!message||message.type!=="overlay-state"||gm())return;
+      remoteVisibility=message.visibility==="gm"?"gm":"players";
+      const incoming=remoteVisibility==="gm"?[]:Array.isArray(message.shapes)?message.shapes:[];
+      shapes.splice(0,shapes.length,...incoming.filter(x=>x&&typeof x==="object"));
+    };
+    if(!gm())syncChannel.postMessage({type:"overlay-request"});
+    else syncChannel.onmessage=e=>{
+      const message=e.data;
+      if(message?.type==="overlay-request")publishToPlayerScreen();
+    };
+  }
   refreshVisibilityControl();
+  if(gm())publishToPlayerScreen();
   refreshToolButtons();
   status.textContent="Select Overlay is OFF. Tokens and props can be clicked normally.";
   $("overlay-opacity").addEventListener("input",()=>{$("overlay-opacity-value").textContent=$("overlay-opacity").value+"%";const s=shapes.find(s=>s.id===selected);if(s){s.opacity=opacity();save();}});
