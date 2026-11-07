@@ -18,7 +18,7 @@
     <div class="overlay-content">
     <div class="overlay-tool-grid">${tools.map(([v,l])=>`<button type="button" data-overlay-tool="${v}" aria-pressed="false">${l}</button>`).join("")}</div>
     <div class="overlay-form-grid">
-      <label>Distance Mode<select id="overlay-measure-mode"><option value="2d" selected>2D · Horizontal</option><option value="3d">3D · Horizontal + Vertical</option></select></label>
+      <label>Distance Mode<select id="overlay-measure-mode"><option value="2d" selected>Components · Horizontal + Vertical</option><option value="3d">3D · Combined + Components</option></select></label>
       <label>Range (ft)<input id="overlay-range" type="number" min="5" max="300" step="5" value="30"></label>
       <label>Width (ft)<input id="overlay-width" type="number" min="5" max="100" step="5" value="10"></label>
       <label>Cone angle<select id="overlay-angle"><option value="30">30°</option><option value="45">45°</option><option value="60" selected>60°</option><option value="90">90°</option><option value="120">120°</option></select></label>
@@ -236,9 +236,7 @@
     const a=project(ap.x,ap.y,ap.z),b=project(bp.x,bp.y,bp.z);
     if(!Number.isFinite(a.x)||!Number.isFinite(b.x))return;
     const values=distanceValues(ap,bp,modeOverride||target.mode);
-    const label=values.mode==="3d"
-      ?values.total+" ft  |  H "+values.horizontal+" ft  |  V "+(values.vertical>0?"+":"")+values.vertical+" ft"
-      :values.horizontal+" ft  |  2D Horizontal";
+    const label="H "+values.horizontal+" ft  |  V "+(values.vertical>0?"+":"")+values.vertical+" ft"+(values.mode==="3d"?"  |  3D "+values.total+" ft":"");
     measurementReadout.textContent=label;
     measurementReadout.style.display="block";
     ctx.save();ctx.strokeStyle="#ffe878";ctx.fillStyle="#ffe878";ctx.lineWidth=3;ctx.setLineDash([8,6]);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.setLineDash([]);
@@ -267,7 +265,7 @@
   function choose(t){
     if(t==="select"){setOverlaySelection(!overlaySelectEnabled);return;}
     tool=t;overlaySelectEnabled=false;refreshToolButtons();
-    if(t==="measure"){measurement=null;if(gm())sharedMeasurement=null;else publishMeasurement(null);refreshPlayerMeasureButton();status.textContent=$("overlay-measure-mode").value==="3d"?"3D Measure: click any token, prop, or asset for point A, then another object for point B. Horizontal and vertical components use 5-ft increments.":"2D Measure: click any token, prop, or asset for point A, then another object for point B. Measures horizontal grid distance only.";return;}
+    if(t==="measure"){measurement=null;if(gm())sharedMeasurement=null;else publishMeasurement(null);refreshPlayerMeasureButton();status.textContent=$("overlay-measure-mode").value==="3d"?"3D Measure: click any token, prop, or asset for point A, then another object for point B. Shows horizontal and vertical components plus combined 3D distance, using 5-ft increments.":"Measure: click any token, prop, or asset for point A, then another object for point B. Shows horizontal and vertical components using 5-ft increments.";return;}
     status.textContent=t==="aura"?"Choose or select a token, then left-click the map once to place its aura.":"Drag on the map to set the shape's direction and size.";
   }
   ui.querySelectorAll("[data-overlay-tool]").forEach(b=>b.addEventListener("click",()=>choose(b.dataset.overlayTool)));
@@ -338,9 +336,7 @@
         measurement.end=endpoint;measurement.complete=true;publishMeasurement(measurement);
         const ap=measurementPoint(measurement.start),bp=measurementPoint(measurement.end),v=distanceValues(ap,bp,measurement.mode);
         tool="select";overlaySelectEnabled=false;refreshToolButtons();refreshPlayerMeasureButton();
-        status.textContent=v.mode==="3d"
-          ?"3D distance: "+v.total+" ft (horizontal "+v.horizontal+" ft; vertical "+(v.vertical>0?"+":"")+v.vertical+" ft). Choose Measure Distance to measure again."
-          :"2D horizontal distance: "+v.horizontal+" ft. Choose Measure Distance to measure again.";
+        status.textContent="Horizontal: "+v.horizontal+" ft; vertical: "+(v.vertical>0?"+":"")+v.vertical+" ft"+(v.mode==="3d"?"; combined 3D distance: "+v.total+" ft":"")+". Choose Measure Distance to measure again.";
       }
       return;
     }
