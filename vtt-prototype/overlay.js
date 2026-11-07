@@ -225,8 +225,12 @@
       :horizontal;
     return {horizontal,vertical,total,mode};
   }
+  const measurementReadout=document.createElement("div");
+  measurementReadout.className="player-measurement-readout";
+  measurementReadout.style.cssText="position:absolute;top:58px;left:14px;z-index:29;display:none;max-width:min(420px,calc(100% - 28px));padding:8px 12px;border:1px solid rgba(255,232,120,.85);border-radius:8px;background:rgba(5,8,15,.94);color:#fff;font:700 13px system-ui;line-height:1.35;box-shadow:0 3px 14px rgba(0,0,0,.35);pointer-events:none;";
+  document.querySelector(".stage-card")?.appendChild(measurementReadout);
   function drawMeasurement(target=measurement,modeOverride){
-    if(!target?.end)return;
+    if(!target?.end){measurementReadout.style.display="none";return;}
     const ap=measurementPoint(target.start),bp=measurementPoint(target.end);
     if(!ap||!bp)return;
     const a=project(ap.x,ap.y,ap.z),b=project(bp.x,bp.y,bp.z);
@@ -235,14 +239,11 @@
     const label=values.mode==="3d"
       ?values.total+" ft  |  H "+values.horizontal+" ft  |  V "+(values.vertical>0?"+":"")+values.vertical+" ft"
       :values.horizontal+" ft  |  2D Horizontal";
-    const {w,h}=size(),hudX=w/2,hudY=h-34;
+    measurementReadout.textContent=label;
+    measurementReadout.style.display="block";
     ctx.save();ctx.strokeStyle="#ffe878";ctx.fillStyle="#ffe878";ctx.lineWidth=3;ctx.setLineDash([8,6]);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.setLineDash([]);
     for(const p of [a,b]){ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();}
-    ctx.font="700 13px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";
-    const tw=ctx.measureText(label).width+24,th=30;
-    ctx.fillStyle="rgba(5,8,15,.94)";ctx.strokeStyle="rgba(255,232,120,.85)";ctx.lineWidth=1;
-    ctx.beginPath();ctx.roundRect(hudX-tw/2,hudY-th/2,tw,th,8);ctx.fill();ctx.stroke();
-    ctx.fillStyle="#fff";ctx.fillText(label,hudX,hudY);ctx.restore();
+    ctx.restore();
   }
   function render(){if(!ctx||!active())return;ctx.save();for(const s of shapes){if(!gm()&&s.visibility!=="players")continue;try{currentOpacity=Number.isFinite(Number(s.opacity))?Number(s.opacity):opacity();drawShape(s)}catch{}}if(drawing&&gm()){try{currentOpacity=Number.isFinite(Number(drawing.opacity))?Number(drawing.opacity):opacity();drawShape(drawing)}catch{}}try{if(gm()&&tool!=="measure"&&sharedMeasurement)drawMeasurement(sharedMeasurement,sharedMeasurement.mode);else drawMeasurement()}catch{}ctx.restore();}
   // Called by the main scene renderer after terrain but before props/assets and tokens.
