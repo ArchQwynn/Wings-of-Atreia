@@ -450,7 +450,7 @@ function updateWallFromEditor(){const w=state.walls.find(v=>v.id===state.selecte
 function drawGroundFootprint(x,y,width,depth,rotation,selected,fillStyle){
  const angle=Number(rotation)||0,cos=Math.cos(angle),sin=Math.sin(angle);
  const local=[[-width/2,-depth/2],[width/2,-depth/2],[width/2,depth/2],[-width/2,depth/2]];
- const baseZ=terrainHeightAt(x,y);const points=local.map(([lx,ly])=>{const wx=x+lx*cos-ly*sin,wy=y+lx*sin+ly*cos;return project(wx,wy,baseZ)});
+ const baseZ=footprintTerrainBase(x-(width-1)/2,y-(depth-1)/2,width,depth,angle);const points=local.map(([lx,ly])=>{const wx=x+lx*cos-ly*sin,wy=y+lx*sin+ly*cos;return project(wx,wy,baseZ)});
  if(points.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR))return;
  ctx.save();ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ctx.lineTo(points[i].x,points[i].y);ctx.closePath();
  ctx.fillStyle=fillStyle||'rgba(3,7,13,.82)';ctx.strokeStyle=selected?'rgba(255,255,255,.95)':'rgba(143,211,255,.78)';ctx.lineWidth=selected?2.5:1.5;ctx.fill();ctx.stroke();ctx.restore();
@@ -642,7 +642,7 @@ document.getElementById('scene-object-filter')?.addEventListener('change',()=>up
 function render(){const{w,h}=size();if(!playerScreenMode&&isGM()&&playerScreenChannel){const now=performance.now();if(now-lastPlayerBroadcast>120){lastPlayerBroadcast=now;broadcastPlayerScene()}}updateSelectionInfo();updateConditionsPanel(state.tokens.find(t=>t.id===state.selected));updateSceneObjectBrowser();ctx.clearRect(0,0,w,h);ctx.fillStyle='#101927';ctx.fillRect(0,0,w,h);drawMapImage();grid();const terrainRender=drawTerrain();if(state.view2d)terrainRender.triangles.forEach(drawTerrainTriangle);terrainRender.labels.forEach(drawTerrainLabel);state.assets.filter(canSeeAsset).filter(a=>a.displayStyle==='flat').forEach(drawAsset);if(typeof window.drawTacticalOverlays==='function')window.drawTacticalOverlays();const depthItems=[
  ...(!state.view2d?terrainRender.triangles.map(tri=>({type:'terrain',item:tri,depth:tri.depth})):[]),
  ...(!state.view2d?state.assets.filter(canSeeAsset).map(a=>{const width=Math.max(1,Number(a.width)||1),depth=Math.max(1,Number(a.depth)||1),x=a.x+(width-1)/2,y=a.y+(depth-1)/2;return{type:'footprint',item:{x,y,width,depth,rotation:(Number(a.rotation)||0)*Math.PI/180,selected:(state.selectedAssetIds||[]).includes(a.id)||a.id===state.selectedAsset},depth:project(x,y,assetTerrainBase(a)).depth}}):[]),
- ...(!state.view2d?visibleTokens().map(t=>{const world=tokenWorld(t),f=Math.max(1,Number(t.footprint)||1);return{type:'footprint',item:{x:world.x,y:world.y,width:f,depth:f,rotation:0,selected:t.id===state.selected||(state.selectedTokenIds||[]).includes(t.id)},depth:project(world.x,world.y,terrainHeightAt(world.x,world.y)).depth}}):[]),
+ ...(!state.view2d?visibleTokens().map(t=>{const world=tokenWorld(t),f=Math.max(1,Number(t.footprint)||1);return{type:'footprint',item:{x:world.x,y:world.y,width:f,depth:f,rotation:0,selected:t.id===state.selected||(state.selectedTokenIds||[]).includes(t.id)},depth:project(world.x,world.y,tokenTerrainBase(t)).depth}}):[]),
  ...(state.walls||[]).flatMap(w=>{
  if(state.view2d)return[{type:'wall',item:w,depth:wallDepth(w)}];
  const length=Math.hypot(w.x2-w.x1,w.y2-w.y1),segmentCount=Math.max(1,Math.ceil(length/Math.max(1,FEET_PER_GRID/4)));
