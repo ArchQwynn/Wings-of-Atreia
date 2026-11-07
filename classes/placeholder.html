@@ -23,6 +23,13 @@ table.rule-table{width:100%;border-collapse:collapse;min-width:640px;background:
 .level-block{padding:1.15rem 0;border-top:1px solid var(--line)}
 .level-block:first-child{border-top:0}
 .level-block h3{margin-bottom:.5rem}
+.level-block summary{cursor:pointer;list-style:none;padding:.7rem .25rem;display:flex;align-items:center;gap:.65rem}
+.level-block summary::-webkit-details-marker{display:none}
+.level-block summary::before{content:"＋";color:var(--accent);font-weight:800;font-size:1rem;width:1.2rem;flex:0 0 1.2rem}
+.level-block[open] summary::before{content:"−"}
+.level-block summary h3{margin:0;font-size:1.05rem}
+.level-block[open] .subfeature,.level-block[open]>p{padding-left:1.95rem}
+.level-block> :not(summary){margin-left:1.95rem}
 .subfeature{margin:.8rem 0}
 .subfeature h4{margin:.1rem 0 .25rem;color:var(--accent-2)}
 .source-note{font-size:.92rem;color:var(--muted);border-left:3px solid var(--accent);padding:.85rem 1rem;background:rgba(127,200,255,.06);margin:1rem 0 2rem}
