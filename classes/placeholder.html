@@ -38,6 +38,12 @@ ul.tight li{margin:.35rem 0}
 .specialization-card{border:1px solid var(--line);border-radius:.9rem;padding:1rem;background:rgba(13,27,42,.78)}
 .specialization-card h3{margin-top:0}
 .placeholder-label{color:var(--muted);font-style:italic}
+.template-entry{border:1px solid var(--line);border-radius:.75rem;margin:.7rem 0;background:rgba(13,27,42,.55);overflow:hidden}
+.template-entry>summary{cursor:pointer;padding:.85rem 1rem;color:var(--accent-2)}
+.template-entry>summary::marker{color:var(--accent)}
+.template-entry>p{padding:0 1rem}
+.html-template-code{overflow-x:auto;padding:1rem;margin:.75rem 0 0;background:#071522;border-top:1px solid var(--line);font-size:.86rem;line-height:1.5;white-space:pre}
+.html-template-code code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
 @media(max-width:850px){.quick-nav{grid-template-columns:repeat(2,minmax(0,1fr))}.specialization-grid{grid-template-columns:1fr}}
 @media(max-width:520px){.quick-nav{grid-template-columns:1fr}}
 </style>
@@ -86,6 +92,7 @@ ul.tight li{margin:.35rem 0}
     <a href="#class-rules">Class-Specific Rules</a>
     <a href="#combat-examples">Combat Examples</a>
     <a href="#specialization-reassignment">Specialization Reassignment</a>
+    <a href="#html-entry-templates">HTML Entry Templates</a>
   </nav>
 
   <section id="overview">
@@ -385,6 +392,223 @@ ul.tight li{margin:.35rem 0}
       <li><strong>Replacement:</strong> [Explain removal and replacement of the complete specialization feature package.]</li>
       <li><strong>Choices and capacities:</strong> [Explain how dependent choices and maximums are recalculated.]</li>
       <li><strong>Restrictions:</strong> [Explain what reassignment does not restore or permit.]</li>
+    </ul>
+  </section>
+
+  <section id="html-entry-templates">
+    <h2>HTML Entry Templates</h2>
+    <p>Use these copy-ready snippets when adding or updating class-page content. Each template is expandable; open the entry you need and copy the code. Replace bracketed instructions with the actual class rules. Keep mechanics consistent with the authoritative Player Handbook and the rest of the class page.</p>
+    <div class="source-note"><strong>Authoring rule:</strong> Write complete, unambiguous rules. State activation or trigger, action type, cost, target, range, duration, effect, and restrictions whenever they apply. Do not add a field just to fill a template when it does not apply.</div>
+    <details class="template-entry">
+      <summary><strong>Level progression entry</strong></summary>
+      <p>Use one collapsible block for each character level. Keep the level ID so direct links continue to work.</p>
+      <pre class="html-template-code"><code>&lt;details class="level-block" id="level-1"&gt;
+  &lt;summary&gt;&lt;h3&gt;Level 1 — [FEATURE NAME]&lt;/h3&gt;&lt;/summary&gt;
+
+  &lt;div class="subfeature"&gt;
+    &lt;h4&gt;[Feature Name]&lt;/h4&gt;
+    &lt;p&gt;[Complete rules text: trigger, action, target, effect, duration, and limits.]&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/details&gt;</code></pre>
+    </details>
+    <details class="template-entry">
+      <summary><strong>General class feature</strong></summary>
+      <p>Use this for a feature that needs its own highlighted explanation.</p>
+      <pre class="html-template-code"><code>&lt;div class="mechanic-box"&gt;
+  &lt;h3&gt;[FEATURE NAME]&lt;/h3&gt;
+  &lt;p&gt;[Explain what the feature does and when it can be used.]&lt;/p&gt;
+  &lt;ul class="tight"&gt;
+    &lt;li&gt;&lt;strong&gt;Activation:&lt;/strong&gt; [Trigger or activation method]&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;Action:&lt;/strong&gt; [Action type]&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;Cost:&lt;/strong&gt; [Resource cost, or None]&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;Duration:&lt;/strong&gt; [Duration]&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;Restrictions:&lt;/strong&gt; [Limits and exceptions]&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+    </details>
+    <details class="template-entry">
+      <summary><strong>Signature resource</strong></summary>
+      <p>Use for a class resource and its generation, capacity, spending, and recovery rules.</p>
+      <pre class="html-template-code"><code>&lt;div class="mechanic-box"&gt;
+  &lt;h3&gt;[RESOURCE NAME]&lt;/h3&gt;
+  &lt;p&gt;[What the resource represents and what it is used for.]&lt;/p&gt;
+
+  &lt;h4&gt;Generation&lt;/h4&gt;
+  &lt;p&gt;[How and when the character gains this resource.]&lt;/p&gt;
+
+  &lt;h4&gt;Maximum Capacity&lt;/h4&gt;
+  &lt;p&gt;[Maximum amount and level-based increases.]&lt;/p&gt;
+
+  &lt;h4&gt;Expenditure&lt;/h4&gt;
+  &lt;p&gt;[What spends the resource and when it is spent.]&lt;/p&gt;
+
+  &lt;h4&gt;Recovery&lt;/h4&gt;
+  &lt;p&gt;[When and how the resource is restored.]&lt;/p&gt;
+
+  &lt;h4&gt;Restrictions&lt;/h4&gt;
+  &lt;p&gt;[Limits, exclusions, and special cases.]&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+    </details>
+    <details class="template-entry">
+      <summary><strong>Mechanics or progression table</strong></summary>
+      <p>Use for level scaling, resource limits, or comparisons. Add or remove rows as needed.</p>
+      <pre class="html-template-code"><code>&lt;div class="rule-table-wrap"&gt;
+  &lt;table class="rule-table"&gt;
+    &lt;thead&gt;
+      &lt;tr&gt;&lt;th&gt;Level&lt;/th&gt;&lt;th&gt;[VALUE / FEATURE]&lt;/th&gt;&lt;th&gt;Effect&lt;/th&gt;&lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+      &lt;tr&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;[Value]&lt;/td&gt;&lt;td&gt;[Effect]&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;5&lt;/td&gt;&lt;td&gt;[Value]&lt;/td&gt;&lt;td&gt;[Effect]&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td&gt;10&lt;/td&gt;&lt;td&gt;[Value]&lt;/td&gt;&lt;td&gt;[Effect]&lt;/td&gt;&lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+&lt;/div&gt;</code></pre>
+    </details>
+    <details class="template-entry">
+      <summary><strong>Specialization overview card</strong></summary>
+      <p>Use inside the existing specialization-grid container.</p>
+      <pre class="html-template-code"><code>&lt;article class="specialization-card"&gt;
+  &lt;h3&gt;[SPECIALIZATION NAME]&lt;/h3&gt;
+  &lt;p&gt;[Short identity and playstyle description.]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Role:&lt;/strong&gt; [Party role]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Strength:&lt;/strong&gt; [Main strength]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Trade-off:&lt;/strong&gt; [Limitation or tactical trade-off]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Level 3:&lt;/strong&gt; [Feature name]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Level 6:&lt;/strong&gt; [Feature name]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Level 10:&lt;/strong&gt; [Feature name]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Level 14:&lt;/strong&gt; [Feature name]&lt;/p&gt;
+&lt;/article&gt;</code></pre>
+    </details>
+    <details class="template-entry">
+      <summary><strong>Specialization feature detail</strong></summary>
+      <p>Use for the full rules text of a specialization feature.</p>
+      <pre class="html-template-code"><code>&lt;div class="mechanic-box"&gt;
+  &lt;h4&gt;[SPECIALIZATION NAME] — Level [3 / 6 / 10 / 14]&lt;/h4&gt;
+  &lt;h5&gt;[FEATURE NAME]&lt;/h5&gt;
+  &lt;p&gt;[Complete mechanical description.]&lt;/p&gt;
+  &lt;ul class="tight"&gt;
+    &lt;li&gt;&lt;strong&gt;Activation:&lt;/strong&gt; [Activation or trigger]&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;Action:&lt;/strong&gt; [Action type]&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;Cost:&lt;/strong&gt; [Resource cost]&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;Effect:&lt;/strong&gt; [Exact effect]&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;Limit:&lt;/strong&gt; [Restrictions]&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+    </details>
+    <details class="template-entry">
+      <summary><strong>Glossary entry</strong></summary>
+      <p>Add this row inside the glossary table's tbody. Keep entries alphabetized by term.</p>
+      <pre class="html-template-code"><code>&lt;tr&gt;
+  &lt;td&gt;[TERM]&lt;/td&gt;
+  &lt;td&gt;[Short, accurate definition. Do not introduce rules that are not explained elsewhere.]&lt;/td&gt;
+  &lt;td&gt;[Related section, feature, or level]&lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+    </details>
+    <details class="template-entry">
+      <summary><strong>Ultimate ability</strong></summary>
+      <p>Use for the class's Ultimate Ability. Include all activation and recovery details.</p>
+      <pre class="html-template-code"><code>&lt;div class="ultimate-box"&gt;
+  &lt;h3&gt;[ULTIMATE ABILITY NAME]&lt;/h3&gt;
+  &lt;p&gt;[Short thematic summary.]&lt;/p&gt;
+
+  &lt;h4&gt;Activation&lt;/h4&gt;
+  &lt;p&gt;[Action type, trigger, range, and targets.]&lt;/p&gt;
+
+  &lt;h4&gt;Cost&lt;/h4&gt;
+  &lt;p&gt;[DP or other required resource and when it is spent.]&lt;/p&gt;
+
+  &lt;h4&gt;Effect&lt;/h4&gt;
+  &lt;p&gt;[Complete mechanical effect, including saves and damage where relevant.]&lt;/p&gt;
+
+  &lt;h4&gt;Scaling&lt;/h4&gt;
+  &lt;p&gt;[How the ability changes at specified levels.]&lt;/p&gt;
+
+  &lt;h4&gt;Recovery&lt;/h4&gt;
+  &lt;p&gt;[When it becomes available again and any restrictions.]&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+    </details>
+    <details class="template-entry">
+      <summary><strong>Combat example</strong></summary>
+      <p>Use a short, rules-accurate sequence to demonstrate a mechanic in play.</p>
+      <pre class="html-template-code"><code>&lt;div class="mechanic-box"&gt;
+  &lt;h3&gt;Example — [SCENARIO]&lt;/h3&gt;
+  &lt;ol class="tight"&gt;
+    &lt;li&gt;&lt;strong&gt;Starting Situation:&lt;/strong&gt; [Position, resources, and conditions.]&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;Action:&lt;/strong&gt; [What the character does.]&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;Resolution:&lt;/strong&gt; [Rolls, targets, effects, and resource changes.]&lt;/li&gt;
+    &lt;li&gt;&lt;strong&gt;Result:&lt;/strong&gt; [Outcome and rule demonstrated.]&lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</code></pre>
+    </details>
+    <details class="template-entry">
+      <summary><strong>Spell or technique entry</strong></summary>
+      <p>Use when a class feature grants a spell, technique, or selectable ability. Remove fields that do not apply.</p>
+      <pre class="html-template-code"><code>&lt;div class="mechanic-box"&gt;
+  &lt;h4&gt;[SPELL / TECHNIQUE NAME]&lt;/h4&gt;
+  &lt;p&gt;&lt;strong&gt;Level / Rank:&lt;/strong&gt; [Value]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Activation:&lt;/strong&gt; [Action type]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Range:&lt;/strong&gt; [Range]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Target:&lt;/strong&gt; [Target or area]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Cost:&lt;/strong&gt; [Resource cost]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Duration:&lt;/strong&gt; [Duration]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Effect:&lt;/strong&gt; [Complete rules text]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Restrictions:&lt;/strong&gt; [Limits, if any]&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+    </details>
+    <details class="template-entry">
+      <summary><strong>Passive ability</strong></summary>
+      <p>Use for a feature that functions continuously or while its stated condition is met.</p>
+      <pre class="html-template-code"><code>&lt;div class="subfeature"&gt;
+  &lt;h4&gt;[PASSIVE FEATURE NAME]&lt;/h4&gt;
+  &lt;p&gt;[State when the passive applies, its exact benefit, and any conditions that suspend or end it.]&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+    </details>
+    <details class="template-entry">
+      <summary><strong>Reaction</strong></summary>
+      <p>Use for an ability that is triggered by a defined event.</p>
+      <pre class="html-template-code"><code>&lt;div class="mechanic-box"&gt;
+  &lt;h3&gt;[REACTION NAME]&lt;/h3&gt;
+  &lt;p&gt;&lt;strong&gt;Trigger:&lt;/strong&gt; [The precise event that allows this reaction.]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Cost:&lt;/strong&gt; [Resource cost, if any.]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Effect:&lt;/strong&gt; [What happens when the reaction is used.]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Limit:&lt;/strong&gt; [Frequency, timing, and other restrictions.]&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+    </details>
+    <details class="template-entry">
+      <summary><strong>Status effect or condition</strong></summary>
+      <p>Use for a class-specific state applied to a creature or object.</p>
+      <pre class="html-template-code"><code>&lt;div class="mechanic-box"&gt;
+  &lt;h3&gt;[STATUS / CONDITION NAME]&lt;/h3&gt;
+  &lt;p&gt;&lt;strong&gt;Applied When:&lt;/strong&gt; [How a target gains this status.]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Effect:&lt;/strong&gt; [Exact mechanical consequences.]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Duration:&lt;/strong&gt; [How long it lasts.]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Ending the Status:&lt;/strong&gt; [How it is removed or what ends it.]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Restrictions:&lt;/strong&gt; [Stacking rules, immunity, or other limits.]&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+    </details>
+    <details class="template-entry">
+      <summary><strong>Resource-consuming action</strong></summary>
+      <p>Use for a specific action or ability that spends the class resource.</p>
+      <pre class="html-template-code"><code>&lt;div class="mechanic-box"&gt;
+  &lt;h3&gt;[ACTION / ABILITY NAME]&lt;/h3&gt;
+  &lt;p&gt;&lt;strong&gt;Action Type:&lt;/strong&gt; [Action / Bonus Action / Reaction / Other]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Cost:&lt;/strong&gt; [Exact resource cost and when it is paid]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Requirement:&lt;/strong&gt; [Prerequisites and target requirements]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Effect:&lt;/strong&gt; [Complete mechanical result]&lt;/p&gt;
+  &lt;p&gt;&lt;strong&gt;Limit:&lt;/strong&gt; [Usage limits and restrictions]&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+    </details>
+
+    <h3>HTML Entry Checklist</h3>
+    <ul class="tight">
+      <li>Keep level IDs in the format <code>level-1</code> through <code>level-20</code>.</li>
+      <li>Use the existing class-page CSS classes: <code>mechanic-box</code>, <code>ultimate-box</code>, <code>subfeature</code>, <code>specialization-card</code>, <code>rule-table-wrap</code>, and <code>rule-table</code>.</li>
+      <li>For tables, include a <code>thead</code> with column headings and place data rows inside <code>tbody</code>.</li>
+      <li>For glossary entries, keep terms alphabetical and definitions concise; the glossary must not create new rules.</li>
+      <li>For collapsible level entries, use <code>details</code> with a <code>summary</code> heading. Do not remove the level's ID.</li>
+      <li>Escape literal angle brackets in displayed HTML snippets as <code>&amp;lt;</code> and <code>&amp;gt;</code> if you write code examples directly into the page source.</li>
+      <li>After editing, check the page on desktop and mobile and verify that every quick-navigation link still works.</li>
     </ul>
   </section>
 </main>
