@@ -104,7 +104,7 @@
 .token-image-status{font-size:.68rem;color:var(--muted);overflow-wrap:anywhere}
 
 
-.token-image-adjust{display:block;font-size:.7rem;color:var(--muted);margin-top:6px}.token-image-adjust input[type=range]{display:block;width:100%;margin:5px 0;accent-color:#9de5a9}.token-image-actions{grid-template-columns:1fr 1fr}.token-image-status{display:block;font-size:.68rem;color:var(--muted);overflow-wrap:anywhere;margin:4px 0}.token-image-actions button:disabled,.token-image-adjust input:disabled{opacity:.4}
+ .image-framing-controls{display:grid;gap:7px;margin:9px 0;padding:9px;border:1px solid var(--line);border-radius:8px;background:rgba(8,15,27,.48)}.image-framing-row{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--muted);font-size:.72rem}.image-framing-row strong{display:inline-block;min-width:48px;margin-left:4px;color:var(--text);font-variant-numeric:tabular-nums}.image-arrow-pair{display:flex;gap:5px}.image-arrow-pair button{width:34px;min-width:34px;height:30px;padding:0;border:1px solid var(--line);border-radius:6px;background:#172438;color:var(--text);font-size:1rem;font-weight:800;line-height:1;cursor:pointer}.image-arrow-pair button:hover:not(:disabled){border-color:var(--accent);background:#22364f}.image-arrow-pair button:disabled{opacity:.35;cursor:not-allowed}.token-image-actions{grid-template-columns:1fr 1fr}.token-image-status{display:block;font-size:.68rem;color:var(--muted);overflow-wrap:anywhere;margin:4px 0}.token-image-actions button:disabled{opacity:.4}
 
 
 /* Props and non-token battlefield assets */
