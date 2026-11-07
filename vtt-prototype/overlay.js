@@ -16,8 +16,8 @@
   ui.innerHTML = `
     <summary>Tactical Overlays</summary>
     <div class="overlay-content">
-    <div class="overlay-tool-grid">${tools.map(([v,l])=>`<button type="button" data-overlay-tool="${v}" aria-pressed="false">${l}</button>`).join("")}</div>
     <div class="overlay-visibility-row"><span>Overlay Visibility</span><button type="button" id="overlay-visibility-toggle" aria-pressed="false">Players + GM</button></div>
+    <div class="overlay-tool-grid">${tools.map(([v,l])=>`<button type="button" data-overlay-tool="${v}" aria-pressed="false">${l}</button>`).join("")}</div>
     <div class="overlay-form-grid">
       <label>Distance Mode<select id="overlay-measure-mode"><option value="2d" selected>2D · Horizontal</option><option value="3d">3D · Horizontal + Vertical</option></select></label>
       <label>Range (ft)<input id="overlay-range" type="number" min="5" max="300" step="5" value="30"></label>
@@ -76,7 +76,10 @@
     if(!visibilityButton)return;
     visibilityButton.textContent=gmOnly()?"GM Only":"Players + GM";
     visibilityButton.setAttribute("aria-pressed",String(gmOnly()));
-    visibilityButton.hidden=!!document.body.classList.contains("player-screen-mode")||(!!sessionRoleEl&&sessionRoleEl.value!=="gm");
+    const playerScreen=!!document.body.classList.contains("player-screen-mode");
+    visibilityButton.hidden=playerScreen;
+    visibilityButton.disabled=!playerScreen&&!gm();
+    visibilityButton.title=playerScreen?"Visibility is controlled by the GM.":gm()?"Change who can see tactical overlays.":"Switch View as to Game Master to change overlay visibility.";
   }
   function setVisibility(value){
     if(!gm())return;
