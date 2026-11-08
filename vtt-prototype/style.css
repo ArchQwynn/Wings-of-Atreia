@@ -548,3 +548,33 @@ aside.panel :where(label,p,small,strong,span) {
   aside.panel > .panel-subgroup,
   aside.panel > section { width:100% !important; flex:0 0 auto; }
 }
+
+/* Wrap controls at their preferred width; do not compress buttons to fit a row. */
+aside.panel .editor-row,
+aside.panel .control-grid,
+aside.panel .token-image-actions,
+aside.panel .context-menu-actions {
+  display:flex !important;
+  flex-wrap:wrap !important;
+  align-items:stretch;
+  gap:8px;
+}
+aside.panel .editor-row > *,
+aside.panel .control-grid > *,
+aside.panel .token-image-actions > *,
+aside.panel .context-menu-actions > * {
+  flex:1 1 148px !important;
+  min-width:148px !important;
+  max-width:100%;
+}
+aside.panel .editor-row button,
+aside.panel .control-grid button,
+aside.panel .token-image-actions button,
+aside.panel .context-menu-actions button {
+  width:auto !important;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
+aside.panel .image-zoom-row { display:grid; grid-template-columns:minmax(0,1fr); gap:5px; }
+aside.panel .image-zoom-row label { display:flex; justify-content:space-between; gap:8px; }
+aside.panel .image-zoom-row input[type="range"] { display:block; width:100%; min-width:0; max-width:100%; padding:0; }
