@@ -692,3 +692,53 @@ aside.panel .image-zoom-row input[type="range"] { display:block; width:100%; min
   .player-screen-open { min-height:28px !important; padding:4px 7px !important; font-size:10px !important; }
   .camera-pad button.wide { width:112px !important; }
 }
+
+
+/* Correct the desktop vertical layout: header + tabletop + footer must fit
+   inside the viewport as three flex rows. Earlier fixed viewport heights on
+   .layout and .stage-card left no room for the footer. */
+@media (min-width:701px) and (orientation:landscape) {
+  html, body {
+    height:100dvh !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+  body {
+    display:flex !important;
+    flex-direction:column !important;
+  }
+  body > header.topbar {
+    flex:0 0 auto !important;
+  }
+  body > main.layout {
+    display:grid !important;
+    flex:1 1 0 !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    overflow:hidden !important;
+  }
+  body > main.layout > .stage-card {
+    height:100% !important;
+    min-height:0 !important;
+    max-height:100% !important;
+  }
+  body > footer {
+    position:relative !important;
+    display:flex !important;
+    flex:0 0 28px !important;
+    width:100% !important;
+    height:28px !important;
+    min-height:28px !important;
+    max-height:28px !important;
+    box-sizing:border-box !important;
+    align-items:center !important;
+    justify-content:center !important;
+    overflow:hidden !important;
+    margin:0 !important;
+    padding:0 8px !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+    z-index:20 !important;
+  }
+}
