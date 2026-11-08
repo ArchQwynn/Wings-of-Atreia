@@ -211,6 +211,14 @@
         </div>
       </section>
       <section>
+        <div class="eyebrow">GRID DISPLAY · GM</div>
+        <div class="token-editor">
+          <label>Gridline color<input id="grid-color" type="color" value="#8fd3ff"></label>
+          <label>Gridline opacity <span id="grid-opacity-value">30%</span><input id="grid-opacity" type="range" min="0" max="100" step="1" value="30"></label>
+          <p class="note">Controls the color and opacity of the gridlines and outer grid boundary. Changes are saved with the scene and shared with the Player Screen.</p>
+        </div>
+      </section>
+      <section>
         <div class="eyebrow">TERRAIN EDITOR · GM</div>
         <div class="token-editor terrain-editor">
           <label>Terrain type
@@ -511,7 +519,7 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept<br><strong>Clark Michael Zafra</strong></footer>
-  <script src="app.js?v=20261108-expanded-grid-clipping-1"></script>
+  <script src="app.js?v=20261108-grid-display-controls-1"></script>
   <script src="multi-scenes.js?v=20261103-multi-scenes-1"></script>
   <script src="asset-library.js?v=20261106-cloud-r2-1"></script>
   <script src="overlay.js?v=20261107-horizontal-vertical-readout-1"></script>
@@ -556,7 +564,7 @@
         { title: 'Tokens & Standees', headings: ['STANDEES', 'TOKEN MANAGEMENT', 'PROPS & ASSETS · GM'], tokenManagement: true },
         { title: 'Conditions', headings: ['CONDITIONS'] },
         { title: 'Class Resource', headings: ['CLASS RESOURCE'] },
-        { title: 'Battlefield Editor', headings: ['TERRAIN EDITOR · GM', 'BATTLEFIELD MAP · GM', 'WALL EDITOR · GM'] },
+        { title: 'Battlefield Editor', headings: ['GRID DISPLAY · GM', 'TERRAIN EDITOR · GM', 'BATTLEFIELD MAP · GM', 'WALL EDITOR · GM'] },
         { title: 'GM Notes & Pins', headings: ['GM NOTES & PINS · GM'] },
         { title: 'Scene Management', headings: ['SCENE MANAGER', 'TEST STATUS'] }
       ];
