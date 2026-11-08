@@ -47,9 +47,17 @@
     data.tokens=(data.tokens||[]).map(token=>({...token,...clone(collection.characters[token.id]||{})}));
     return data;
   }
+  window.woaGetSceneUsage=()=>({
+    sceneCount:collection?.scenes?.length||0,
+    activeSceneName:activeScene()?.name||'No scene',
+    collectionBytes:collection?new Blob([JSON.stringify(collection)]).size:0,
+    ready
+  });
   function persist(){
     if(!ready||!collection)return Promise.resolve();
-    saveQueue=saveQueue.then(()=>writeStored(collection)).catch(error=>{
+    saveQueue=saveQueue.then(()=>writeStored(collection)).then(()=>{
+      window.dispatchEvent(new CustomEvent('woa-scene-collection-updated'));
+    }).catch(error=>{
       if(status)status.textContent='Could not save scene collection: '+(error.message||'storage error');
     });
     return saveQueue;
@@ -180,7 +188,7 @@
       ready=true;
       const current=activeScene();applyScene(current.data);
       refreshSceneUI();
-      if(status)status.textContent='Scene collection ready · '+collection.scenes.length+' scene(s) stored on this device.';
+      if(status)status.textContent='Scene collection ready · '+collection.scenes.length+' scene(s) stored on this device.';\n      window.dispatchEvent(new CustomEvent('woa-scene-collection-updated'));
     }).catch(error=>{
       if(status)status.textContent='Multi-scene storage could not start: '+(error.message||'IndexedDB unavailable')+'. Existing single-scene controls remain available.';
     });
