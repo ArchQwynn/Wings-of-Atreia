@@ -623,3 +623,28 @@ aside.panel .image-zoom-row input[type="range"] { display:block; width:100%; min
   footer br { display:none; }
   footer strong { font-weight:600; }
 }
+
+
+/* Final compact footer sizing: no reserved blank area beneath the credit. */
+@media (min-width:851px) {
+  .layout {
+    min-height:calc(100dvh - 28px) !important;
+  }
+  .stage-card {
+    height:calc(100dvh - 28px) !important;
+    min-height:0 !important;
+  }
+  footer {
+    display:flex !important;
+    height:28px !important;
+    min-height:28px !important;
+    max-height:28px !important;
+    padding:0 8px !important;
+    margin:0 !important;
+    line-height:1 !important;
+    font-size:10px !important;
+    white-space:nowrap;
+    overflow:hidden;
+  }
+  footer br { display:none !important; }
+}
