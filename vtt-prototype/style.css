@@ -648,3 +648,47 @@ aside.panel .image-zoom-row input[type="range"] { display:block; width:100%; min
   }
   footer br { display:none !important; }
 }
+
+
+/* Keep the complete floating camera/combat control stack visible on short
+   landscape displays without taking height away from the battlefield. */
+@media (orientation:landscape) and (max-height:600px) {
+  .camera-pad {
+    right:8px !important;
+    bottom:8px !important;
+    gap:3px !important;
+    max-height:calc(100% - 16px);
+  }
+  .camera-label {
+    padding:2px 6px !important;
+    font-size:9px !important;
+  }
+  .camera-pad > div:not(.camera-label) { gap:3px !important; }
+  .camera-pad button {
+    width:38px !important;
+    height:32px !important;
+    min-height:32px !important;
+    border-radius:8px !important;
+    font-size:15px !important;
+  }
+  .camera-pad .turn-control {
+    width:66px !important;
+    height:34px !important;
+    min-height:34px !important;
+    font-size:10px !important;
+  }
+  .camera-pad .turn-reset {
+    width:auto !important;
+    height:24px !important;
+    min-height:24px !important;
+    padding:2px 6px !important;
+    font-size:9px !important;
+  }
+  .turn-counter {
+    padding:3px 5px !important;
+    font-size:9px !important;
+  }
+  .player-camera-sync-control { font-size:9px !important; }
+  .player-screen-open { min-height:28px !important; padding:4px 7px !important; font-size:10px !important; }
+  .camera-pad button.wide { width:112px !important; }
+}
