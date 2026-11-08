@@ -395,3 +395,94 @@ body.player-screen-mode{overflow:hidden;background:#080d16}body.player-screen-mo
 .storage-usage-meter[data-warning="true"]>span{background:linear-gradient(90deg,#e3b65b,#e06b6b)}
 .storage-usage-note{margin:0}
 @media(max-width:520px){.storage-usage-stats{grid-template-columns:1fr 1fr}.storage-usage-meter-label{align-items:flex-start;flex-direction:column}}
+
+
+/* Keep every GM/player sidebar section and its contents inside the panel. */
+.panel,
+.panel section,
+.panel section > *,
+.panel-group,
+.panel-subgroup,
+.panel-subgroup > *,
+.token-editor,
+.token-list,
+.condition-panel,
+.class-resource-panel,
+.terrain-editor,
+.asset-library-tools,
+.storage-usage-panel {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+.panel { width: 100%; overflow-x: hidden; }
+.panel section { width: 100%; }
+.panel :where(input,select,textarea,button) {
+  box-sizing: border-box;
+  max-width: 100%;
+  min-width: 0;
+}
+.panel :where(input:not([type="checkbox"]):not([type="radio"]),select,textarea) { width: 100%; }
+.panel .editor-row,
+.panel .control-grid,
+.panel .camera-grid,
+.panel .token-image-actions {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+.panel .editor-row > *,
+.panel .control-grid > *,
+.panel .camera-grid > *,
+.panel .token-image-actions > * { min-width: 0; max-width: 100%; }
+.panel .editor-row label { min-width: 0; overflow-wrap: anywhere; }
+.panel .editor-row button,
+.panel .control-grid button,
+.panel .token-image-actions button { width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.panel .token-list { grid-template-columns: minmax(0,1fr); width:100%; }
+.panel .token {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+.panel .token > span,
+.panel .token > small {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.panel .token > span small { display:block; white-space:normal; overflow-wrap:anywhere; }
+.panel .token-image-label,
+.panel .token-image-label input[type="file"] { display:block; width:100%; min-width:0; max-width:100%; }
+.panel .image-framing-controls,
+.panel .image-framing-row,
+.panel .image-arrow-pair { min-width:0; max-width:100%; }
+.panel .image-framing-row { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.panel .image-framing-row > span { min-width:0; overflow-wrap:anywhere; }
+.panel .image-arrow-pair { display:flex; flex:0 0 auto; gap:5px; }
+.panel .image-arrow-pair button { width:34px; min-width:0; padding:6px; }
+.panel .class-resource-values { grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); }
+.panel .asset-library-toolbar { grid-template-columns:minmax(0,1fr); }
+.panel .storage-usage-breakdown > div { min-width:0; }
+.panel .storage-usage-breakdown strong { min-width:0; overflow-wrap:anywhere; }
+.panel .asset-library-entry { grid-template-columns:48px minmax(0,1fr); min-width:0; }
+.panel .asset-library-details,
+.panel .asset-library-actions { min-width:0; max-width:100%; }
+.panel .asset-library-actions button { flex:1 1 90px; min-width:0; max-width:100%; }
+.panel .note,
+.panel p,
+.panel small { overflow-wrap:anywhere; }
+
+@media (max-width: 850px) {
+  .panel { display:flex; flex-direction:column; width:100%; }
+  .panel > section { width:100%; min-width:0; }
+}
