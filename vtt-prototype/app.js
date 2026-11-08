@@ -270,6 +270,7 @@ function gridPointValid(p){return Number.isFinite(p.x)&&Number.isFinite(p.y)&&Nu
 function drawGridLine(points){let drawing=false,last=null;for(const p of points){const ok=gridPointValid(p);if(ok&&!drawing){ctx.beginPath();ctx.moveTo(p.x,p.y);drawing=true;last=p}else if(ok&&drawing){if(last&&Math.abs(p.x-last.x)<Math.max(250,window.innerWidth*2)&&Math.abs(p.y-last.y)<Math.max(250,window.innerHeight*2)){ctx.lineTo(p.x,p.y);last=p}else{ctx.stroke();ctx.beginPath();ctx.moveTo(p.x,p.y);last=p}}else if(drawing){ctx.stroke();drawing=false;last=null}}if(drawing)ctx.stroke()}
 function gridBoundary(min,max){const world=[[min,min],[max,min],[max,max],[min,max]];if(state.view2d)return world.map(([x,y])=>project(x,y,0));const{w,h}=size(),b=basis(),focal=Math.min(w,h)*.86*state.camera.zoom;const camera=world.map(([x,y])=>{const q={x:x-b.pos.x,y:y-b.pos.y,z:-b.pos.z};return{cx:q.x*b.r.x+q.y*b.r.y+q.z*b.r.z,cy:q.x*b.u.x+q.y*b.u.y+q.z*b.u.z,depth:q.x*b.f.x+q.y*b.f.y+q.z*b.f.z}});const clipped=[];for(let i=0;i<camera.length;i++){const a=camera[i],b2=camera[(i+1)%camera.length],ain=a.depth>NEAR,bin=b2.depth>NEAR;if(ain)clipped.push(a);if(ain!==bin){const t=(NEAR+.001-a.depth)/(b2.depth-a.depth);clipped.push({cx:a.cx+(b2.cx-a.cx)*t,cy:a.cy+(b2.cy-a.cy)*t,depth:NEAR+.001})}}return clipped.map(p=>({x:w/2+p.cx*focal/p.depth,y:h*.56-p.cy*focal/p.depth,depth:p.depth,scale:focal/(p.depth*CELL_PX)}))}
 const mapImageCache=new Map();
+let mapRenderLayer=null,mapRenderCtx=null;
 function getMapImage(src){if(!src)return null;let img=mapImageCache.get(src);if(!img){img=new Image();img.src=src;mapImageCache.set(src,img)}return img}
 function drawMapImage(){
  if(!state.mapImage)return;
@@ -279,17 +280,19 @@ function drawMapImage(){
  // Subdivide the map into small projected quads. This approximates perspective
  // projection much more closely than stretching the whole image across two
  // large affine triangles, which can look like it wobbles while orbiting.
- // Use at least two mesh subdivisions per map square in 3D. The grid is
- // projected directly from world coordinates, so a coarse 16x16 image mesh
- // can visibly drift away from it as the camera orbits. A denser mesh keeps
- // the image projection close to the same ground-plane projection.
- const divisionsX=state.view2d?1:Math.min(256,Math.max(16,Math.ceil(mw*2)));
- const divisionsY=state.view2d?1:Math.min(256,Math.max(16,Math.ceil(mh*2)));
+ // A moderate mesh keeps the image aligned to the ground-plane grid
+ // without creating tens of thousands of triangles for large maps.
+ // Reuse the offscreen canvas rather than allocating one on every animation frame.
+ const divisionsX=state.view2d?1:Math.min(64,Math.max(32,Math.ceil(mw/8)));
+ const divisionsY=state.view2d?1:Math.min(64,Math.max(32,Math.ceil(mh/8)));
  const projected=[],{w,h}=size(),pixelRatio=canvas.width/w;
- // Render the mesh opaquely first, then apply map opacity once. Slightly
- // overlap neighboring triangle clips to eliminate antialiasing hairlines.
- const layer=document.createElement('canvas');layer.width=canvas.width;layer.height=canvas.height;
- const mapCtx=layer.getContext('2d');mapCtx.setTransform(pixelRatio,0,0,pixelRatio,0,0);
+ if(!mapRenderLayer||mapRenderLayer.width!==canvas.width||mapRenderLayer.height!==canvas.height){
+  mapRenderLayer=document.createElement('canvas');mapRenderLayer.width=canvas.width;mapRenderLayer.height=canvas.height;
+  mapRenderCtx=mapRenderLayer.getContext('2d');
+ }
+ const layer=mapRenderLayer,mapCtx=mapRenderCtx;
+ mapCtx.setTransform(1,0,0,1,0,0);mapCtx.clearRect(0,0,layer.width,layer.height);
+ mapCtx.setTransform(pixelRatio,0,0,pixelRatio,0,0);
  for(let j=0;j<=divisionsY;j++){
   projected[j]=[];
   for(let i=0;i<=divisionsX;i++){
