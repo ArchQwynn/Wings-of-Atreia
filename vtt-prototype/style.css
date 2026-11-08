@@ -549,30 +549,56 @@ aside.panel :where(label,p,small,strong,span) {
   aside.panel > section { width:100% !important; flex:0 0 auto; }
 }
 
-/* Wrap controls at their preferred width; do not compress buttons to fit a row. */
+
+/* Restore the original panel control arrangement. Only standee cards need a
+   fixed minimum width so they wrap to another row instead of being squeezed. */
 aside.panel .editor-row,
 aside.panel .control-grid,
 aside.panel .token-image-actions,
 aside.panel .context-menu-actions {
-  display:flex !important;
-  flex-wrap:wrap !important;
-  align-items:stretch;
-  gap:8px;
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px;
 }
 aside.panel .editor-row > *,
 aside.panel .control-grid > *,
 aside.panel .token-image-actions > *,
 aside.panel .context-menu-actions > * {
-  flex:1 1 148px !important;
-  min-width:148px !important;
+  min-width:0 !important;
   max-width:100%;
+  flex:initial !important;
 }
 aside.panel .editor-row button,
 aside.panel .control-grid button,
 aside.panel .token-image-actions button,
 aside.panel .context-menu-actions button {
-  width:auto !important;
-  white-space:normal;
+  width:100% !important;
+}
+aside.panel #tokens.token-list {
+  display:grid !important;
+  grid-template-columns:repeat(auto-fill,minmax(92px,1fr)) !important;
+  align-items:stretch;
+  gap:7px;
+  width:100%;
+}
+aside.panel #tokens.token-list > .token {
+  display:flex !important;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:space-between;
+  width:100%;
+  min-width:0 !important;
+  max-width:100%;
+  min-height:110px;
+  padding:8px;
+  overflow-wrap:anywhere;
+}
+aside.panel #tokens.token-list > .token > span,
+aside.panel #tokens.token-list > .token > small {
+  display:block;
+  width:100%;
+  min-width:0;
+  max-width:100%;
   overflow-wrap:anywhere;
 }
 aside.panel .image-zoom-row { display:grid; grid-template-columns:minmax(0,1fr); gap:5px; }
