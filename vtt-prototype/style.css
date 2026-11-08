@@ -369,3 +369,29 @@ body.player-screen-mode{overflow:hidden;background:#080d16}body.player-screen-mo
 /* Keep the three tabletop controls inside narrow sidebar panels. */
 .panel .control-grid{grid-template-columns:repeat(2,minmax(0,1fr));width:100%;min-width:0;box-sizing:border-box}
 .panel .control-grid button{min-width:0;width:100%;white-space:normal}
+
+
+/* GM Scene and browser storage diagnostics */
+.storage-usage-panel{display:grid;gap:10px;margin-top:12px;padding:11px;border:1px solid var(--line);border-radius:9px;background:rgba(8,15,27,.55);min-width:0}
+.storage-usage-heading,.storage-usage-meter-label{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.storage-usage-heading>div{display:grid;gap:2px;min-width:0}
+.storage-usage-heading strong{font-size:.82rem;color:var(--text)}
+.storage-usage-heading small,.storage-usage-stats small,.storage-usage-stats span,.storage-usage-meter-wrap small,.storage-usage-note{font-size:.66rem;line-height:1.4;color:var(--muted)}
+.storage-usage-heading button{flex:0 0 auto;padding:6px 8px;font-size:.68rem}
+.storage-usage-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.storage-usage-stats>div{display:grid;gap:3px;min-width:0;padding:8px;border:1px solid var(--line);border-radius:7px;background:rgba(255,255,255,.025)}
+.storage-usage-stats strong{font-size:1.1rem;overflow-wrap:anywhere;color:var(--text)}
+.storage-usage-stats span{overflow-wrap:anywhere}
+.storage-usage-breakdown{display:grid;gap:5px}
+.storage-usage-breakdown>div{display:flex;justify-content:space-between;gap:8px;font-size:.7rem;line-height:1.35}
+.storage-usage-breakdown span{color:var(--muted)}
+.storage-usage-breakdown strong{color:var(--text);text-align:right}
+.storage-usage-meter-wrap{display:grid;gap:5px;padding-top:8px;border-top:1px solid var(--line)}
+.storage-usage-meter-label{font-size:.69rem}
+.storage-usage-meter-label span{color:var(--muted)}
+.storage-usage-meter-label strong{text-align:right}
+.storage-usage-meter{height:9px;overflow:hidden;border:1px solid rgba(143,211,255,.2);border-radius:999px;background:#080f1b}
+.storage-usage-meter>span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#6bbf91,#8fd3ff);transition:width .2s ease}
+.storage-usage-meter[data-warning="true"]>span{background:linear-gradient(90deg,#e3b65b,#e06b6b)}
+.storage-usage-note{margin:0}
+@media(max-width:520px){.storage-usage-stats{grid-template-columns:1fr 1fr}.storage-usage-meter-label{align-items:flex-start;flex-direction:column}}
