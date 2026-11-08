@@ -275,6 +275,7 @@
           <div class="editor-row"><label>Horizontal offset (squares)<input id="map-x" type="number" min="-200" max="200" step="0.1" value="0"></label><label>Vertical offset (squares)<input id="map-y" type="number" min="-200" max="200" step="0.1" value="0"></label></div>
           <p class="note">Offsets reposition the map image relative to the grid. Positive horizontal moves it right; positive vertical moves it toward the top of the map.</p>
           <label>Map opacity <input id="map-opacity" type="range" min="5" max="100" value="78"></label>
+          <div class="editor-row"><button type="button" data-action="map-lock-toggle" aria-pressed="true">Unlock Map</button></div>
           <div class="editor-row"><button data-action="map-apply">Apply Map Settings</button><button data-action="map-clear">Remove Map Image</button></div>
           <p id="map-status" class="note">Upload a top-down battlefield map. It will sit beneath the grid, terrain, props, and tokens. Set its width and height in 5-foot grid squares.</p>
         </div>
@@ -519,7 +520,7 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept<br><strong>Clark Michael Zafra</strong></footer>
-  <script src="app.js?v=20261108-grid-display-controls-2"></script>
+  <script src="app.js?v=20261108-map-lock-drag-1"></script>
   <script src="multi-scenes.js?v=20261103-multi-scenes-1"></script>
   <script src="asset-library.js?v=20261106-cloud-r2-1"></script>
   <script src="overlay.js?v=20261107-horizontal-vertical-readout-1"></script>
