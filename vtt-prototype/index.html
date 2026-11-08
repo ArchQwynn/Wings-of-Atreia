@@ -488,6 +488,28 @@
         </div>
         <input id="scene-import-file" type="file" accept="application/json,.json" hidden>
         <p class="note" id="scene-save-status" aria-live="polite">Initializing scene storage…</p>
+        <div class="storage-usage-panel" id="storage-usage-panel">
+          <div class="storage-usage-heading">
+            <div><strong>Storage &amp; Scene Usage</strong><small>Local data on this device</small></div>
+            <button type="button" id="storage-usage-refresh" aria-label="Refresh storage usage" title="Refresh">↻ Refresh</button>
+          </div>
+          <div class="storage-usage-stats">
+            <div><small>Saved scenes</small><strong id="storage-scene-count">—</strong><span id="storage-active-scene">Loading scene collection…</span></div>
+            <div><small>VTT data estimate</small><strong id="storage-vtt-total">—</strong><span>Saved scene and local library data</span></div>
+          </div>
+          <div class="storage-usage-breakdown">
+            <div><span>Scene collection</span><strong id="storage-scenes-bytes">—</strong></div>
+            <div><span>Battlefield map media</span><strong id="storage-maps-bytes">—</strong></div>
+            <div><span>Local Asset Library</span><strong id="storage-library-bytes">—</strong></div>
+            <div><span>Local browser settings</span><strong id="storage-local-bytes">—</strong></div>
+          </div>
+          <div class="storage-usage-meter-wrap">
+            <div class="storage-usage-meter-label"><span>Browser origin storage</span><strong id="storage-origin-summary">Checking browser estimate…</strong></div>
+            <div class="storage-usage-meter" id="storage-origin-meter" role="progressbar" aria-label="Browser origin storage usage" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="storage-origin-fill"></span></div>
+            <small id="storage-origin-detail">The browser reports an approximate usage and quota for this website.</small>
+          </div>
+          <p class="storage-usage-note" id="storage-usage-status" aria-live="polite">Calculating local storage usage…</p>
+        </div>
       </section>
 
       <section>
@@ -521,7 +543,7 @@
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept<br><strong>Clark Michael Zafra</strong></footer>
   <script src="app.js?v=20261108-map-seam-fix-1"></script>
-  <script src="multi-scenes.js?v=20261103-multi-scenes-1"></script>
+  <script src="multi-scenes.js?v=20261108-storage-usage-1"></script>\n  <script src="storage-usage.js?v=20261108-storage-usage-1"></script>
   <script src="asset-library.js?v=20261106-cloud-r2-1"></script>
   <script src="overlay.js?v=20261107-horizontal-vertical-readout-1"></script>
 
