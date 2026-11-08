@@ -279,15 +279,21 @@ function drawMapImage(){
  // Subdivide the map into small projected quads. This approximates perspective
  // projection much more closely than stretching the whole image across two
  // large affine triangles, which can look like it wobbles while orbiting.
- const divisions=16,projected=[],{w,h}=size(),pixelRatio=canvas.width/w;
+ // Use at least two mesh subdivisions per map square in 3D. The grid is
+ // projected directly from world coordinates, so a coarse 16x16 image mesh
+ // can visibly drift away from it as the camera orbits. A denser mesh keeps
+ // the image projection close to the same ground-plane projection.
+ const divisionsX=state.view2d?1:Math.min(256,Math.max(16,Math.ceil(mw*2)));
+ const divisionsY=state.view2d?1:Math.min(256,Math.max(16,Math.ceil(mh*2)));
+ const projected=[],{w,h}=size(),pixelRatio=canvas.width/w;
  // Render the mesh opaquely first, then apply map opacity once. Slightly
  // overlap neighboring triangle clips to eliminate antialiasing hairlines.
  const layer=document.createElement('canvas');layer.width=canvas.width;layer.height=canvas.height;
  const mapCtx=layer.getContext('2d');mapCtx.setTransform(pixelRatio,0,0,pixelRatio,0,0);
- for(let j=0;j<=divisions;j++){
+ for(let j=0;j<=divisionsY;j++){
   projected[j]=[];
-  for(let i=0;i<=divisions;i++){
-   const wx=cx-mw/2+mw*i/divisions,wy=cy+mh/2-mh*j/divisions;
+  for(let i=0;i<=divisionsX;i++){
+   const wx=cx-mw/2+mw*i/divisionsX,wy=cy+mh/2-mh*j/divisionsY;
    projected[j][i]=project(wx,wy,0);
   }
  }
@@ -304,8 +310,8 @@ function drawMapImage(){
   const expanded=[d0,d1,d2].map(p=>{const dx=p.x-center.x,dy=p.y-center.y,len=Math.max(.001,Math.hypot(dx,dy));return{x:p.x+dx/len*.8,y:p.y+dy/len*.8}});
   mapCtx.save();mapCtx.beginPath();mapCtx.moveTo(expanded[0].x,expanded[0].y);mapCtx.lineTo(expanded[1].x,expanded[1].y);mapCtx.lineTo(expanded[2].x,expanded[2].y);mapCtx.closePath();mapCtx.clip();mapCtx.transform(a,b,c,d,e,f);mapCtx.drawImage(img,0,0,sw,sh);mapCtx.restore();
  };
- for(let j=0;j<divisions;j++)for(let i=0;i<divisions;i++){
-  const x0=cropX+cropW*i/divisions,x1=cropX+cropW*(i+1)/divisions,y0=cropY+cropH*j/divisions,y1=cropY+cropH*(j+1)/divisions;
+ for(let j=0;j<divisionsY;j++)for(let i=0;i<divisionsX;i++){
+  const x0=cropX+cropW*i/divisionsX,x1=cropX+cropW*(i+1)/divisionsX,y0=cropY+cropH*j/divisionsY,y1=cropY+cropH*(j+1)/divisionsY;
   const s00={x:x0,y:y0},s10={x:x1,y:y0},s11={x:x1,y:y1},s01={x:x0,y:y1};
   const p00=projected[j][i],p10=projected[j][i+1],p11=projected[j+1][i+1],p01=projected[j+1][i];
   if([p00,p10,p11,p01].some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR))continue;
