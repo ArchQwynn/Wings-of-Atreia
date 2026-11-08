@@ -604,3 +604,22 @@ aside.panel #tokens.token-list > .token > small {
 aside.panel .image-zoom-row { display:grid; grid-template-columns:minmax(0,1fr); gap:5px; }
 aside.panel .image-zoom-row label { display:flex; justify-content:space-between; gap:8px; }
 aside.panel .image-zoom-row input[type="range"] { display:block; width:100%; min-width:0; max-width:100%; padding:0; }
+
+
+/* Compact desktop footer to reclaim tabletop height. */
+@media (min-width:851px) {
+  .layout { min-height:calc(100dvh - 75px); }
+  .stage-card { height:calc(100dvh - 75px); min-height:0; }
+  footer {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    min-height:26px;
+    padding:3px 10px;
+    font-size:.62rem;
+    line-height:1.2;
+  }
+  footer br { display:none; }
+  footer strong { font-weight:600; }
+}
