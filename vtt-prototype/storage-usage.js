@@ -16,9 +16,13 @@
   const jsonBytes = value => {
     try { return new Blob([JSON.stringify(value)]).size; } catch { return 0; }
   };
-  function openDatabase(name) {
+  async function openDatabase(name) {
+    if (!('indexedDB' in window)) throw new Error('IndexedDB is unavailable');
+    if (typeof indexedDB.databases === 'function') {
+      const known = await indexedDB.databases();
+      if (Array.isArray(known) && !known.some(item => item.name === name)) return null;
+    }
     return new Promise((resolve, reject) => {
-      if (!('indexedDB' in window)) { reject(new Error('IndexedDB is unavailable')); return; }
       const request = indexedDB.open(name);
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error || new Error('Could not inspect local database'));
@@ -27,6 +31,7 @@
   }
   async function readStore(database, storeName, key) {
     const db = await openDatabase(database);
+    if (!db) return null;
     try {
       return await new Promise((resolve, reject) => {
         if (!db.objectStoreNames.contains(storeName)) { resolve(null); return; }
