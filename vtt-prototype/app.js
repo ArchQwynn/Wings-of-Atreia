@@ -279,7 +279,11 @@ function drawMapImage(){
  // Subdivide the map into small projected quads. This approximates perspective
  // projection much more closely than stretching the whole image across two
  // large affine triangles, which can look like it wobbles while orbiting.
- const divisions=16,projected=[];
+ const divisions=16,projected=[],{w,h}=size(),pixelRatio=canvas.width/w;
+ // Render the mesh opaquely first, then apply map opacity once. Slightly
+ // overlap neighboring triangle clips to eliminate antialiasing hairlines.
+ const layer=document.createElement('canvas');layer.width=canvas.width;layer.height=canvas.height;
+ const mapCtx=layer.getContext('2d');mapCtx.setTransform(pixelRatio,0,0,pixelRatio,0,0);
  for(let j=0;j<=divisions;j++){
   projected[j]=[];
   for(let i=0;i<=divisions;i++){
@@ -296,7 +300,9 @@ function drawMapImage(){
   const b=(d0.y*(s1.y-s2.y)+d1.y*(s2.y-s0.y)+d2.y*(s0.y-s1.y))/den;
   const d=(d0.y*(s2.x-s1.x)+d1.y*(s0.x-s2.x)+d2.y*(s1.x-s0.x))/den;
   const f=(d0.y*(s1.x*s2.y-s2.x*s1.y)+d1.y*(s2.x*s0.y-s0.x*s2.y)+d2.y*(s0.x*s1.y-s1.x*s0.y))/den;
-  ctx.save();ctx.beginPath();ctx.moveTo(d0.x,d0.y);ctx.lineTo(d1.x,d1.y);ctx.lineTo(d2.x,d2.y);ctx.closePath();ctx.clip();ctx.globalAlpha=alpha;ctx.transform(a,b,c,d,e,f);ctx.drawImage(img,0,0,sw,sh);ctx.restore();
+  const center={x:(d0.x+d1.x+d2.x)/3,y:(d0.y+d1.y+d2.y)/3};
+  const expanded=[d0,d1,d2].map(p=>{const dx=p.x-center.x,dy=p.y-center.y,len=Math.max(.001,Math.hypot(dx,dy));return{x:p.x+dx/len*.8,y:p.y+dy/len*.8}});
+  mapCtx.save();mapCtx.beginPath();mapCtx.moveTo(expanded[0].x,expanded[0].y);mapCtx.lineTo(expanded[1].x,expanded[1].y);mapCtx.lineTo(expanded[2].x,expanded[2].y);mapCtx.closePath();mapCtx.clip();mapCtx.transform(a,b,c,d,e,f);mapCtx.drawImage(img,0,0,sw,sh);mapCtx.restore();
  };
  for(let j=0;j<divisions;j++)for(let i=0;i<divisions;i++){
   const x0=cropX+cropW*i/divisions,x1=cropX+cropW*(i+1)/divisions,y0=cropY+cropH*j/divisions,y1=cropY+cropH*(j+1)/divisions;
@@ -305,6 +311,7 @@ function drawMapImage(){
   if([p00,p10,p11,p01].some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)||p.depth<=NEAR))continue;
   triangle([s00,s10,s11],[p00,p10,p11]);triangle([s00,s11,s01],[p00,p11,p01]);
  }
+ ctx.save();ctx.globalAlpha=alpha;ctx.drawImage(layer,0,0,w,h);ctx.restore();
 }
 function grid(){const{w,h}=size(),min=-GRID_RADIUS-.5,max=GRID_RADIUS+.5,boundary=gridBoundary(min,max),gridColor=/^#[0-9a-f]{6}$/i.test(state.gridColor||'')?state.gridColor:'#8fd3ff',gridOpacity=Math.max(0,Math.min(1,Number(state.gridOpacity??.30)));const rgba=(color,alpha)=>{const value=parseInt(color.slice(1),16);return'rgba('+(value>>16)+','+((value>>8)&255)+','+(value&255)+','+alpha+')'};if(boundary.length<3||boundary.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)))return;const pathBoundary=()=>{ctx.beginPath();ctx.moveTo(boundary[0].x,boundary[0].y);for(let i=1;i<boundary.length;i++)ctx.lineTo(boundary[i].x,boundary[i].y);ctx.closePath()};ctx.save();pathBoundary();ctx.fillStyle='#172230';ctx.fill();ctx.clip();drawMapImage();ctx.strokeStyle=rgba(gridColor,gridOpacity);ctx.lineWidth=1;for(let i=-GRID_RADIUS;i<=GRID_RADIUS+1;i++){const a=[],b=[],fixed=i-.5;for(let s=0;s<=82;s++){const q=min+(max-min)*s/82;a.push(project(fixed,q,0));b.push(project(q,fixed,0))}drawGridLine(a);drawGridLine(b)}ctx.restore();ctx.save();pathBoundary();ctx.strokeStyle=rgba(gridColor,Math.min(1,gridOpacity*1.4));ctx.lineWidth=1.5;ctx.stroke();ctx.restore()}
 function drawTerrainTriangle(tri){const pts=tri.points;if(!pts||pts.some(p=>!Number.isFinite(p.x)||!Number.isFinite(p.y)))return;ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);pts.slice(1).forEach(p=>ctx.lineTo(p.x,p.y));ctx.closePath();ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.fillStyle=tri.color;ctx.fill()}
