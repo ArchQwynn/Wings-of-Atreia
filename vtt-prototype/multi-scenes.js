@@ -188,7 +188,8 @@
       ready=true;
       const current=activeScene();applyScene(current.data);
       refreshSceneUI();
-      if(status)status.textContent='Scene collection ready · '+collection.scenes.length+' scene(s) stored on this device.';\n      window.dispatchEvent(new CustomEvent('woa-scene-collection-updated'));
+      if(status)status.textContent='Scene collection ready · '+collection.scenes.length+' scene(s) stored on this device.';
+      window.dispatchEvent(new CustomEvent('woa-scene-collection-updated'));
     }).catch(error=>{
       if(status)status.textContent='Multi-scene storage could not start: '+(error.message||'IndexedDB unavailable')+'. Existing single-scene controls remain available.';
     });
