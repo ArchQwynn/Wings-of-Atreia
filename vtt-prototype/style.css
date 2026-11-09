@@ -365,3 +365,18 @@ body.player-screen-mode .camera-pad button[data-action="2d"] {
   height: 40px;
   font-size: 11px;
 }
+
+
+/* Multiplayer Player Screen: reclaim the former sidebar column for the battlefield. */
+body.player-screen-mode .layout {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  grid-template-rows: minmax(0, 1fr) !important;
+  width: 100% !important;
+}
+body.player-screen-mode .stage-card {
+  grid-column: 1 / -1 !important;
+  grid-row: 1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
