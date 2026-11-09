@@ -416,3 +416,10 @@ body.player-join-gate > footer { display: none !important; }
 .player-join-card button { width: 100%; margin-top: 12px; padding: 12px; border-color: var(--accent); }
 .player-join-status { min-height: 1.4em; margin: 14px 0 0; }
 .player-join-card button:disabled { opacity: .55; cursor: wait; }
+
+
+/* Keep the body visible while its child join-gate overlay is active. */
+html body.player-join-gate {
+  display: block !important;
+  min-height: 100dvh !important;
+}
