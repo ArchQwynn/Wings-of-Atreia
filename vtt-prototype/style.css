@@ -443,3 +443,6 @@ html body.player-join-gate {
 .player-info-settings input[type=checkbox]{width:auto;margin:0;flex:0 0 auto}
 .asset-editor textarea,.token-editor textarea{display:block;width:100%;max-width:100%;box-sizing:border-box;margin-top:4px;border:1px solid var(--line);border-radius:7px;background:#0d1626;color:var(--text);padding:8px;font:inherit;resize:vertical}
 .asset-editor #asset-players{margin-top:6px}
+
+/* Mixed-selection bulk visibility controls */
+.bulk-visibility-panel{display:grid;gap:3px;padding:2px 0 4px}.bulk-visibility-panel .context-menu-heading{padding:5px 9px;color:var(--muted);font-size:.66rem;letter-spacing:.08em}
