@@ -435,3 +435,11 @@ html body.player-join-gate {
 .object-context-menu.player-altitude-only [data-token-tools]>*:not(.context-menu-row):not(.player-altitude-control){display:none!important}
 .object-context-menu.player-altitude-only .context-submenu-trigger{font-size:.75rem}
 @media(max-width:520px){.player-movement-request{left:8px;right:8px;bottom:8px;transform:none;max-width:none;justify-content:space-between;gap:6px}.player-movement-request span{min-width:0}.player-movement-request button{font-size:.7rem;padding:8px}}
+
+
+/* Per-object Player Screen information controls */
+.player-info-settings{display:grid;grid-template-columns:1fr 1fr;gap:7px 12px;margin:8px 0 12px}
+.player-info-settings label{display:flex;align-items:center;gap:7px;min-width:0;font-size:.72rem;color:var(--text)}
+.player-info-settings input[type=checkbox]{width:auto;margin:0;flex:0 0 auto}
+.asset-editor textarea,.token-editor textarea{display:block;width:100%;max-width:100%;box-sizing:border-box;margin-top:4px;border:1px solid var(--line);border-radius:7px;background:#0d1626;color:var(--text);padding:8px;font:inherit;resize:vertical}
+.asset-editor #asset-players{margin-top:6px}
