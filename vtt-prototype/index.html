@@ -75,6 +75,7 @@
       <button type="button" class="context-submenu-trigger" data-submenu-trigger="status">Status <span>›</span></button>
       <div class="context-submenu-panel" data-submenu-panel="status">
         <div class="context-menu-heading">PLAYER SCREEN INFORMATION</div>
+        <small class="context-status-note">These display options apply when the token is Unassigned. All Players and Specific Player tokens show their full information to everyone.</small>
         <label class="context-menu-label"><span><input type="checkbox" data-player-info="name" checked> Show token name</span></label>
         <label class="context-menu-label"><span><input type="checkbox" data-player-info="appearance" checked> Show image / appearance</span></label>
         <label class="context-menu-label"><span><input type="checkbox" data-player-info="description" checked> Show description</span></label>
@@ -336,6 +337,7 @@
           <div class="editor-row"><label>Assignment<select id="asset-visibility"><option value="all">All Players</option><option value="unassigned">Unassigned</option><option value="gm">GM Only</option><option value="specific">Specific Player(s)</option></select></label></div>
           <input id="asset-players" type="text" placeholder="Player name(s), comma separated" hidden>
           <div class="eyebrow">PLAYER SCREEN INFORMATION</div>
+          <p class="note">These individual display options apply when Assignment is Unassigned. All Players and Specific Player objects show their full information to everyone.</p>
           <div class="player-info-settings">
             <label><input type="checkbox" data-asset-player-info="name" checked> Show name</label>
             <label><input type="checkbox" data-asset-player-info="appearance" checked> Show image / appearance</label>
@@ -579,7 +581,7 @@
   <script src="multiplayer/authority.js?v=20261109-live-scene-sync-1"></script>
   <script src="multiplayer/lifecycle.js?v=20261109-live-scene-sync-1"></script>
   <script src="multiplayer/vtt-adapter.js?v=20261109-movement-arrows-1"></script>
-  <script src="app.js?v=20261109-cancel-player-move-1"></script>
+  <script src="app.js?v=20261109-object-assignment-info-1"></script>
   <script src="multi-scenes.js?v=20261108-storage-usage-1"></script>
   <script src="storage-usage.js?v=20261108-storage-usage-1"></script>
   <script src="asset-library.js?v=20261106-cloud-r2-1"></script>
