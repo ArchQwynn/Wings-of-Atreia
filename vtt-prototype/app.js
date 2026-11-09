@@ -196,8 +196,7 @@ function setupObjectContextMenu(){
   const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:')||!canControlToken(t)||t.locked)return;
   const next=Math.max(0,Math.min(MAX_ALTITUDE,Math.round(Number(e.target.value)/ALTITUDE_STEP)*ALTITUDE_STEP));
   if(next===(Number(t.z)||0))return;
-  if(!altitudeSlider.dataset.undoRecorded){recordUndo();altitudeSlider.dataset.undoRecorded='1'}
-  changeGroupAltitude('token',t.id,next);list();select(t.id);saveSceneToBrowser();
+  if(!isGM()&&playerScreenMode){if(!pendingMoveProposal)showMovementProposal({requestId:'move-'+Date.now()+'-'+Math.random().toString(36).slice(2),objectType:'token',objectId:t.id,tokenId:t.id,base:{x:t.x,y:t.y,z:Number(t.z)||0},proposed:{x:t.x,y:t.y,z:next},submitted:false});else if(pendingMoveProposal.tokenId===t.id&&!pendingMoveProposal.submitted)pendingMoveProposal.proposed.z=next;else return;t.z=next;showMovementProposal(pendingMoveProposal);render()}else{if(!altitudeSlider.dataset.undoRecorded){recordUndo();altitudeSlider.dataset.undoRecorded='1'}changeGroupAltitude('token',t.id,next);list();select(t.id);saveSceneToBrowser()}
   const readout=menu.querySelector('[data-token-altitude]');if(readout)readout.textContent=t.z+' ft';
  });
  altitudeSlider?.addEventListener('change',()=>{delete altitudeSlider.dataset.undoRecorded});
@@ -233,13 +232,13 @@ function setupObjectContextMenu(){
  document.addEventListener('pointerdown',e=>{if(!menu.contains(e.target))hideObjectContextMenu()});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(runeMarkModeAssassinId){const source=state.tokens.find(t=>t.id===runeMarkModeAssassinId);runeMarkModeAssassinId=null;if(source)updateClassResourcePanel(source)}pendingAttachmentAction=null;hideObjectContextMenu();if(sceneSaveStatus)sceneSaveStatus.textContent='Object action cancelled.'}});
  canvas.addEventListener('contextmenu',e=>{
-  e.preventDefault();if(!isGM())return;
-  const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,t=hit(x,y),a=t?null:hitAsset(x,y),obj=t||a;if(!obj)return;
+  e.preventDefault();
+  const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,t=hit(x,y),a=t?null:hitAsset(x,y),obj=t||a;if(!obj)return;const playerAltitudeOnly=!isGM()&&playerScreenMode&&!!t&&canControlToken(t);if(!isGM()&&!playerAltitudeOnly)return;
   const key=objectKey(t?'token':'asset',obj.id),selectionBefore=selectedObjectKeys(),preserveSelection=selectionBefore.length>1&&selectionBefore.includes(key);
   if(!preserveSelection){if(t)select(t.id);else{state.selected=null;state.selectedTokenIds=[];state.selectedAsset=obj.id;state.selectedAssetIds=[obj.id];syncAssetEditor(obj)}}
   const bulkKeys=preserveSelection?selectionBefore:[key];menu.dataset.objectKey=key;menu.dataset.bulkObjectKeys=JSON.stringify(bulkKeys);
   const bulkPanel=menu.querySelector('[data-bulk-visibility-panel]');if(bulkPanel)bulkPanel.hidden=!isGM()||bulkKeys.length<1;
-  if(t){refreshTokenMenu(t)}else if(tokenTools)tokenTools.hidden=true;
+  if(t){refreshTokenMenu(t)}else if(tokenTools)tokenTools.hidden=true;menu.classList.toggle('player-altitude-only',playerAltitudeOnly);
   const attached=state.attachments.filter(edge=>edge.a===key||edge.b===key).length;
   menu.querySelector('[data-object-action="detach"]').disabled=!attached;
   menu.hidden=false;menu.style.maxHeight=Math.max(120,window.innerHeight-16)+'px';menu.style.overflowY='auto';menu.style.left=Math.max(8,Math.min(window.innerWidth-menu.offsetWidth-8,e.clientX))+'px';
