@@ -742,3 +742,39 @@ aside.panel .image-zoom-row input[type="range"] { display:block; width:100%; min
     z-index:20 !important;
   }
 }
+
+
+/* PeerJS multiplayer controls and join screen */
+.multiplayer-panel{border:1px solid var(--line);border-radius:10px;padding:12px;margin:12px 0}
+.multiplayer-panel input{width:100%;max-width:100%}
+.multiplayer-join-queue{display:grid;gap:8px;margin:10px 0}
+.multiplayer-request{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px;border:1px solid var(--line);border-radius:8px}
+.multiplayer-request span{flex:1 1 100%}
+.multiplayer-panel [hidden]{display:none!important}
+#multiplayer-status[data-state="good"]{color:#248b54}
+#multiplayer-status[data-state="error"]{color:#b44}
+.player-join-gate{display:none}
+body.player-join-gate{min-height:100dvh}
+body.player-join-gate>.player-join-gate{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at top,#17243a 0%,#080b14 68%)}
+body.player-join-gate>.topbar,body.player-join-gate>.layout,body.player-join-gate>footer{display:none!important}
+.player-join-card{width:min(100%,440px);padding:30px;border:1px solid #35445c;border-radius:16px;background:#111827;box-shadow:0 24px 80px rgba(0,0,0,.42)}
+.player-join-card h1{margin:8px 0 10px;font-size:1.55rem}
+.player-join-card p{color:var(--muted);font-size:.9rem}
+.player-join-card label{display:block;margin:22px 0 6px;font-size:.82rem;color:var(--text)}
+.player-join-card input{display:block;width:100%;min-width:0;padding:12px;border:1px solid var(--line);border-radius:8px;background:#0d1626;color:var(--text);font:inherit}
+.player-join-card button{width:100%;margin-top:12px;padding:12px;border-color:var(--accent)}
+.player-join-status{min-height:1.4em;margin:14px 0 0}
+.player-join-card button:disabled{opacity:.55;cursor:wait}
+html body.player-join-gate{display:block!important;min-height:100dvh!important}
+.player-movement-request{position:absolute;z-index:80;left:50%;bottom:18px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;max-width:calc(100% - 24px);padding:10px 12px;border:1px solid var(--accent);border-radius:10px;background:rgba(12,20,33,.96);box-shadow:0 8px 28px rgba(0,0,0,.45);color:var(--text)}
+.player-movement-request[hidden]{display:none}
+.player-movement-request span{font-size:.78rem;line-height:1.35}
+.player-movement-request button{white-space:nowrap;padding:9px 12px;border:1px solid var(--accent);border-radius:7px;background:#1d3b35;color:#fff;font:inherit;font-size:.78rem;font-weight:700}
+.player-movement-request button:disabled{opacity:.55;cursor:wait}
+.bulk-visibility-panel{display:grid;gap:3px;padding:2px 0 4px}
+.bulk-visibility-panel .context-menu-heading{padding:5px 9px;color:var(--muted);font-size:.66rem;letter-spacing:.08em}
+@media(max-width:520px){.player-movement-request{left:8px;right:8px;bottom:8px;transform:none;max-width:none;justify-content:space-between;gap:6px}.player-movement-request span{min-width:0}.player-movement-request button{font-size:.7rem;padding:8px}}
+
+.object-context-menu.player-altitude-only>.context-submenu:not(:has([data-token-altitude-slider])){display:none!important}
+.object-context-menu.player-altitude-only [data-token-tools]>*:not(.context-menu-row):not(.player-altitude-control){display:none!important}
+.object-context-menu.player-altitude-only .context-submenu-trigger{font-size:.75rem}
