@@ -167,6 +167,8 @@ function setupObjectContextMenu(){
    }
    saveSceneToBrowser();updateConditionsPanel(t);refreshTokenMenu(t);return;
   }
+  const bulkVisibilityButton=e.target.closest('[data-bulk-visibility]');
+  if(bulkVisibilityButton){if(!isGM())return;const mode=bulkVisibilityButton.dataset.bulkVisibility;const keys=JSON.parse(menu.dataset.bulkObjectKeys||'[]');hideObjectContextMenu();state.selectedTokenIds=keys.filter(key=>key.startsWith('token:')).map(key=>key.slice(6));state.selectedAssetIds=keys.filter(key=>key.startsWith('asset:')).map(key=>key.slice(6));setSelectedObjectsVisibility(mode);return}
   const tokenButton=e.target.closest('[data-token-action],[data-token-slot]');
   if(tokenButton){
    const key=menu.dataset.objectKey,t=objectFromKey(key);if(!t||!key.startsWith('token:'))return;
@@ -232,12 +234,15 @@ function setupObjectContextMenu(){
  document.addEventListener('pointerdown',e=>{if(!menu.contains(e.target))hideObjectContextMenu()});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(runeMarkModeAssassinId){const source=state.tokens.find(t=>t.id===runeMarkModeAssassinId);runeMarkModeAssassinId=null;if(source)updateClassResourcePanel(source)}pendingAttachmentAction=null;hideObjectContextMenu();if(sceneSaveStatus)sceneSaveStatus.textContent='Object action cancelled.'}});
  canvas.addEventListener('contextmenu',e=>{
-  e.preventDefault();if(!isGM())return;
-  const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,t=hit(x,y),a=t?null:hitAsset(x,y),obj=t||a;if(!obj)return;
-  const key=objectKey(t?'token':'asset',obj.id);menu.dataset.objectKey=key;
-  if(t){select(t.id);refreshTokenMenu(t)}else if(tokenTools)tokenTools.hidden=true;
+  e.preventDefault();
+  const rect=canvas.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top,t=hit(x,y),a=t?null:hitAsset(x,y),obj=t||a;const playerAltitudeOnly=!isGM()&&playerScreenMode&&!!t&&canControlToken(t);if(!isGM()&&!playerAltitudeOnly)return;if(!obj)return;
+  const key=objectKey(t?'token':'asset',obj.id),selectionBefore=selectedObjectKeys(),preserveSelection=selectionBefore.length>1&&selectionBefore.includes(key);
+  if(!preserveSelection){if(t)select(t.id);else{state.selected=null;state.selectedTokenIds=[];state.selectedAsset=obj.id;state.selectedAssetIds=[obj.id];updateClassResourcePanel(null);syncAssetEditor(obj)}}
+  const bulkKeys=preserveSelection?selectionBefore:[key];menu.dataset.objectKey=key;menu.dataset.bulkObjectKeys=JSON.stringify(bulkKeys);
+  const bulkPanel=menu.querySelector('[data-bulk-visibility-panel]');if(bulkPanel)bulkPanel.hidden=!isGM()||bulkKeys.length<1;
+  if(t){refreshTokenMenu(t)}else{if(tokenTools)tokenTools.hidden=true;refreshTokenMenu(null)}menu.classList.toggle('player-altitude-only',playerAltitudeOnly);
   const attached=state.attachments.filter(edge=>edge.a===key||edge.b===key).length;
-  menu.querySelector('[data-object-action="detach"]').disabled=!attached;
+  menu.querySelector('[data-object-action="detach"]')?.toggleAttribute('disabled',!attached);
   menu.hidden=false;menu.style.maxHeight=Math.max(120,window.innerHeight-16)+'px';menu.style.overflowY='auto';menu.style.left=Math.max(8,Math.min(window.innerWidth-menu.offsetWidth-8,e.clientX))+'px';
   menu.style.top=Math.max(8,Math.min(window.innerHeight-menu.offsetHeight-8,e.clientY))+'px';
  });
@@ -1085,6 +1090,28 @@ function applyScene(data){
 }
 function refreshObjectGroupControls(){const sel=document.getElementById('object-group-select'),summary=document.getElementById('object-group-summary');if(!sel)return;const old=sel.value;sel.replaceChildren();const first=document.createElement('option');first.value='';first.textContent='Choose a group';sel.appendChild(first);(state.objectGroups||[]).forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=g.name+(g.hidden?' · Hidden':'');sel.appendChild(o)});if((state.objectGroups||[]).some(g=>g.id===old))sel.value=old;const g=state.objectGroups.find(x=>x.id===sel.value);if(summary)summary.textContent=g?g.members.map(objectLabel).join(' · ')+' — '+g.members.length+' object(s) · '+(g.hidden?'Hidden':'Visible'):'Create a group from selected tokens and assets.'}
 function selectedObjectKeys(){return [...(state.selectedTokenIds||[]).map(id=>objectKey('token',id)),...(state.selectedAssetIds||[]).map(id=>objectKey('asset',id))].filter(k=>objectFromKey(k))}
+function setSelectedObjectsVisibility(mode){
+ if(!isGM())return;
+ const keys=[...new Set(selectedObjectKeys())].filter(key=>objectFromKey(key));
+ if(keys.length<1){if(sceneSaveStatus)sceneSaveStatus.textContent='Select at least one object to change visibility.';return}
+ const gmOnly=mode==='gm',nextAssignment=gmOnly?'gm':'all',nextVisibility=gmOnly?'gm':'players';
+ const changed=keys.some(key=>{const obj=objectFromKey(key);return obj&&(obj.assignment!==nextAssignment||obj.visibility!==nextVisibility)});
+ if(!changed){if(sceneSaveStatus)sceneSaveStatus.textContent='Selected objects already have that visibility.';return}
+ recordUndo();
+ keys.forEach(key=>{const obj=objectFromKey(key);if(!obj)return;obj.assignment=nextAssignment;obj.visibility=nextVisibility});
+ state.selectedTokenIds=keys.filter(key=>key.startsWith('token:')).map(key=>key.slice(6));
+ state.selectedAssetIds=keys.filter(key=>key.startsWith('asset:')).map(key=>key.slice(6));
+ list();
+ const selectedToken=state.tokens.find(t=>t.id===state.selectedTokenIds[0]);
+ if(selectedToken)select(selectedToken.id);
+ state.selectedTokenIds=keys.filter(key=>key.startsWith('token:')).map(key=>key.slice(6));
+ state.selectedAssetIds=keys.filter(key=>key.startsWith('asset:')).map(key=>key.slice(6));
+ state.selectedAsset=state.selectedAssetIds[0]||null;
+ if(state.selectedAsset){const asset=state.assets.find(a=>a.id===state.selectedAsset);if(asset)syncAssetEditor(asset)}
+ refreshAttachmentControls();updateSceneObjectBrowser(true);render();
+ saveSceneToBrowser();broadcastPlayerScene();
+ if(sceneSaveStatus)sceneSaveStatus.textContent=(gmOnly?'GM Only':'Visible to Players')+' applied to '+keys.length+' selected objects. Their other properties and attachments were preserved.';
+}
 function createObjectGroup(){if(!isGM())return;const input=document.getElementById('object-group-name'),name=input?.value.trim().slice(0,80),members=selectedObjectKeys();if(!name){sceneSaveStatus.textContent='Enter a group name.';return}if(!members.length){sceneSaveStatus.textContent='Select objects first. Ctrl+drag selects tokens, Shift+drag assets, Ctrl+Shift+drag both.';return}if(state.objectGroups.some(g=>g.name.toLowerCase()===name.toLowerCase())){sceneSaveStatus.textContent='A group with that name already exists.';return}recordUndo();const g={id:'group-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7),name,members,hidden:false};state.objectGroups.push(g);input.value='';refreshObjectGroupControls();document.getElementById('object-group-select').value=g.id;refreshObjectGroupControls();saveSceneToBrowser();sceneSaveStatus.textContent='Created group "'+name+'" with '+members.length+' object(s).'}
 function setObjectGroupVisibility(hidden){if(!isGM())return;const id=document.getElementById('object-group-select')?.value,g=state.objectGroups.find(x=>x.id===id);if(!g){sceneSaveStatus.textContent='Choose a group first.';return}recordUndo();g.hidden=hidden;g.members.forEach(k=>{const o=objectFromKey(k);if(o)o.hidden=hidden});state.selectedTokenIds=[];state.selectedAssetIds=[];state.selected=null;state.selectedAsset=null;selectionEl.hidden=true;selectionEl.textContent='';refreshObjectGroupControls();list();render();saveSceneToBrowser();sceneSaveStatus.textContent=(hidden?'Hid ':'Displayed ')+g.name+' ('+g.members.length+' objects).'}
 function deleteObjectGroup(){if(!isGM())return;const sel=document.getElementById('object-group-select'),g=state.objectGroups.find(x=>x.id===sel?.value);if(!g)return;recordUndo();state.objectGroups=state.objectGroups.filter(x=>x.id!==g.id);refreshObjectGroupControls();saveSceneToBrowser();sceneSaveStatus.textContent='Deleted group "'+g.name+'". Its objects were not deleted.'}
