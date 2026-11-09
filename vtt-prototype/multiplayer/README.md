@@ -1,39 +1,53 @@
-# Wings of Atreia VTT — PeerJS Integration Foundation
+# Wings of Atreia VTT — PeerJS Integration
 
-This directory is an isolated integration workspace on `feature/vtt-peerjs-integration`.
+This directory is an isolated integration workspace on `feature/vtt-peerjs-integration`. The branch now carries the current VTT entry files from `main`, plus an opt-in remote multiplayer layer. Nothing has been merged into or deployed from `main`.
 
-## Scope and safeguards
+## Current integration milestone
 
-- Built from the current `main` branch, not from the prototype branch.
-- No changes to the live VTT entry point, deployment, or `main`.
-- GM is the only authoritative host. The VTT has GM and Player roles only; there is no Assistant GM role.
-- Player actions are requests. The GM revalidates target existence, permissions, host generation, and scene revision before applying an approved action.
-- Player snapshots must be filtered before transmission. GM notes/pins and hidden objects must never be sent to players.
-- Camera state and measurements are participant-local. Tactical shapes are shared state.
-- Multiplayer remains opt-in and must not affect normal local/offline VTT operation when inactive.
+- The existing VTT remains the application and renderer; the remote player opens the same VTT in Player Screen mode.
+- PeerJS 1.5.5 provides signaling and WebRTC data connections.
+- GM can start a session, copy a reusable invitation URL, and approve or reject each incoming join request.
+- The initial scene snapshot is built using the VTT's existing player-visibility filter. GM notes/pins and GM-only or unassigned tokens are excluded from that snapshot.
+- Snapshot JSON is transferred in ordered chunks, keeping each protocol message below the 64 KiB envelope limit. A 2.6 MB serialized snapshot cap is currently enforced.
+- Player camera state remains local when the initial scene is applied.
+- The adapter is opt-in. Normal VTT use does not create a PeerJS connection.
+- The existing same-device BroadcastChannel Player Screen remains available.
+
+## Current limitations
+
+- This is an initial scene-delivery milestone, not the completed multiplayer VTT.
+- Live scene updates after the initial snapshot are not yet synchronized.
+- Player movement requests and GM approval of game actions are not yet connected to the live VTT.
+- Per-player visibility for tokens assigned to specific players is not yet individualized; the current initial snapshot uses the existing general Player Screen visibility filter.
+- Props/assets, tactical overlays, conditions, status, media-specific limits, and GM-authoritative Undo/Redo still need dedicated multiplayer integration.
+- The adapter currently uses PeerJS's default public signaling configuration. Production TURN relay configuration and real-world network reliability still need to be finalized.
+- Display names are labels, not authentication. GM approval is required, but the current adapter is a development integration and must not be treated as a security boundary.
+- Host signaling loss ends the session. No host recovery or session restoration is implemented.
+- The 25-player target is not validated by this milestone.
 
 ## Foundation modules
 
 - `protocol.js`: versioned message envelopes and the 64 KiB message ceiling.
 - `authority.js`: host-generation/revision fencing, action authorization helpers, join approval queue, and visibility filtering.
 - `lifecycle.js`: explicit connection lifecycle transitions.
-- `connection-harness.html`: standalone PeerJS diagnostic harness. It does not load or modify the VTT.
+- `vtt-adapter.js`: opt-in PeerJS host/join UI, approval queue, and initial snapshot transfer.
+- `connection-harness.html`: standalone PeerJS diagnostic harness; it does not load or modify the VTT.
 
-These are pure foundation helpers and a test harness. They are not yet connected to the VTT, do not authenticate a display name, do not provide a trusted host-election service, and do not implement automatic recovery.
+## Next implementation steps
 
-## Next integration work
+1. Add incremental authoritative scene updates without resetting each player's local camera.
+2. Add per-player actor identity and filtered snapshots for All Players, Specific Players, GM Only, and Unassigned objects.
+3. Add the authoritative movement request/approval gateway with stale-scene validation and one shared revision sequence.
+4. Add bounded media transfer rules for map, token, and asset images, with explicit size validation.
+5. Integrate props/assets, tactical shapes, status/conditions, and GM-authoritative Undo/Redo.
+6. Validate the integration with targeted new-behavior checks, then run broader regression and multi-participant testing before any merge or deployment.
 
-1. Add bounded chunked media transfer for map, token, and asset images (maximum supported media size 1.8 MiB; each transport message remains below 64 KiB).
-2. Establish a shared-state serializer that includes validated token status, filters GM-private data, and excludes local presentation state.
-3. Add a single authoritative mutation gateway and integrate GM-approved player movement requests.
-4. Integrate assets with the approved visibility categories: GM Only, All Players, Specific Players, and Unassigned. Visibility and edit permission remain separate.
-5. Add shared tactical shapes and GM-authoritative Undo/Redo; keep measurements local.
-6. Wire the modules into the VTT only after isolated tests pass, then run regression and multi-participant tests.
+## Existing foundation tests
 
-## Local tests
+The original isolated foundation tests are retained:
 
 ```sh
 node --test vtt-prototype/multiplayer/tests/*.test.js
 ```
 
-Passing foundation tests do not establish that the VTT integration, real-world PeerJS networking, media transfer, or production security is complete.
+Passing those tests does not establish that the live VTT integration, production security, TURN relay, or capacity target is complete.
