@@ -9,6 +9,12 @@
 </head>
 <body>
   <div id="object-context-menu" class="object-context-menu" role="menu" hidden>
+    <div class="bulk-visibility-panel" data-bulk-visibility-panel hidden>
+      <div class="context-menu-heading">OBJECT VISIBILITY · SELECTED OBJECTS</div>
+      <button type="button" data-bulk-visibility="players" role="menuitem">Visible to Players</button>
+      <button type="button" data-bulk-visibility="gm" role="menuitem">GM Only</button>
+      <div class="context-menu-divider"></div>
+    </div>
     <div class="context-submenu">
       <button type="button" class="context-submenu-trigger" data-submenu-trigger="identity">Token Name &amp; Border Color <span>›</span></button>
       <div class="context-submenu-panel" data-submenu-panel="identity">
@@ -94,6 +100,17 @@
     <button type="button" data-object-action="attach" role="menuitem">Attach to…</button>
     <button type="button" data-object-action="detach" role="menuitem">Detach from…</button>
   </div>
+  <section id="player-join-gate" class="player-join-gate" aria-labelledby="player-join-title">
+    <div class="player-join-card">
+      <div class="eyebrow">WINGS OF ATREIA · MULTIPLAYER</div>
+      <h1 id="player-join-title">Join Game Session</h1>
+      <p>Enter the Character Name you will use in this session, then send a request to the Game Master.</p>
+      <label for="multiplayer-display-name">Character Name</label>
+      <input id="multiplayer-display-name" type="text" maxlength="40" autocomplete="name" placeholder="Enter your Character Name">
+      <button type="button" id="multiplayer-request-join">Submit Join Request</button>
+      <p id="multiplayer-player-state" class="player-join-status" role="status" aria-live="polite">Waiting to submit your request.</p>
+    </div>
+  </section>
   <header class="topbar">
     <div>
       <div class="eyebrow">TECHNICAL PROTOTYPE</div>
@@ -152,6 +169,22 @@
           <input id="session-player-name" type="text" value="Clark" placeholder="Enter player name">
         </label>
         <p class="note" id="permission-status">GM view: all tokens and controls available.</p>
+      </section>
+
+      <section class="multiplayer-panel" id="multiplayer-panel">
+        <div class="eyebrow">REMOTE MULTIPLAYER</div>
+        <p class="note" id="multiplayer-status" role="status">Multiplayer is inactive. The local VTT works normally.</p>
+        <div id="multiplayer-host">
+          <button type="button" id="multiplayer-start-host">Start Multiplayer Session</button>
+          <label for="multiplayer-invite">Player invitation link</label>
+          <input id="multiplayer-invite" type="text" readonly placeholder="Start a session to generate an invitation">
+          <button type="button" id="multiplayer-copy-invite">Copy Invitation Link</button>
+          <div id="multiplayer-join-queue" class="multiplayer-join-queue">No pending join requests.</div>
+          <div class="eyebrow" style="margin-top:12px">MOVEMENT REQUESTS</div>
+          <div id="multiplayer-movement-queue" class="multiplayer-join-queue">No pending movement requests.</div>
+          <button type="button" id="multiplayer-end-session" hidden>End Multiplayer Session</button>
+        </div>
+        <div id="multiplayer-join" hidden></div>
       </section>
 
       <section>
@@ -542,7 +575,12 @@
   </main>
 
   <footer>Wings of Atreia · VTT Prototype · No dedicated server required for this local proof-of-concept<br><strong>Clark Michael Zafra</strong></footer>
-  <script src="app.js?v=20261108-mixed-group-movement-1"></script>
+  <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+  <script src="multiplayer/protocol.js?v=20261109-live-scene-sync-1"></script>
+  <script src="multiplayer/authority.js?v=20261109-live-scene-sync-1"></script>
+  <script src="multiplayer/lifecycle.js?v=20261109-live-scene-sync-1"></script>
+  <script src="multiplayer/vtt-adapter.js?v=20261109-movement-arrows-1"></script>
+  <script src="app.js?v=20261109-peerjs-mainline-1"></script>
   <script src="multi-scenes.js?v=20261108-storage-usage-1"></script>
   <script src="storage-usage.js?v=20261108-storage-usage-1"></script>
   <script src="asset-library.js?v=20261106-cloud-r2-1"></script>
