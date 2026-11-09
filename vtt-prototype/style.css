@@ -343,17 +343,25 @@
 
 
 /* Remote multiplayer players receive a tabletop-focused interface, not GM tools. */
-body.player-screen-mode .panel > section:not(#multiplayer-panel) {
+body.player-screen-mode .panel {
   display: none !important;
 }
-body.player-screen-mode .panel {
-  padding: 10px;
-  gap: 0;
-}
+body.player-screen-mode .camera-pad .camera-label,
 body.player-screen-mode .camera-pad .player-camera-sync-control,
 body.player-screen-mode .camera-pad .player-screen-open,
-body.player-screen-mode .camera-pad [data-action="gm-ping-toggle"],
-body.player-screen-mode .camera-pad .turn-control-row,
-body.player-screen-mode .camera-pad .turn-counter-row {
+body.player-screen-mode .camera-pad button:not([data-action="2d"]) {
   display: none !important;
+}
+body.player-screen-mode .camera-pad {
+  right: 12px;
+  bottom: 12px;
+}
+body.player-screen-mode .camera-pad > div {
+  display: flex;
+}
+body.player-screen-mode .camera-pad button[data-action="2d"] {
+  display: block !important;
+  width: 58px;
+  height: 40px;
+  font-size: 11px;
 }
