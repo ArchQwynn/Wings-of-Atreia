@@ -16,7 +16,7 @@ This directory is an isolated integration workspace on `feature/vtt-peerjs-integ
 ## Current limitations
 
 - This is an initial scene-delivery milestone, not the completed multiplayer VTT.
-- Live scene updates after the initial snapshot are not yet synchronized.
+- GM scene changes are now sent to approved players as debounced, complete scene snapshots. Updates are revision-numbered and preserve each player's local camera. This is an initial live-sync layer, not yet an action-request/authorization gateway.
 - Player movement requests and GM approval of game actions are not yet connected to the live VTT.
 - Per-player visibility for tokens assigned to specific players is not yet individualized; the current initial snapshot uses the existing general Player Screen visibility filter.
 - Props/assets, tactical overlays, conditions, status, media-specific limits, and GM-authoritative Undo/Redo still need dedicated multiplayer integration.
@@ -35,8 +35,7 @@ This directory is an isolated integration workspace on `feature/vtt-peerjs-integ
 
 ## Next implementation steps
 
-1. Add incremental authoritative scene updates without resetting each player's local camera.
-2. Add per-player actor identity and filtered snapshots for All Players, Specific Players, GM Only, and Unassigned objects.
+1. Add per-player actor identity and filtered snapshots for All Players, Specific Players, GM Only, and Unassigned objects.
 3. Add the authoritative movement request/approval gateway with stale-scene validation and one shared revision sequence.
 4. Add bounded media transfer rules for map, token, and asset images, with explicit size validation.
 5. Integrate props/assets, tactical shapes, status/conditions, and GM-authoritative Undo/Redo.
