@@ -17,9 +17,9 @@ This directory is an isolated integration workspace on `feature/vtt-peerjs-integ
 
 - This is an initial scene-delivery milestone, not the completed multiplayer VTT.
 - GM scene changes are now sent to approved players as debounced, complete scene snapshots. Updates are revision-numbered and preserve each player's local camera. This is an initial live-sync layer, not yet an action-request/authorization gateway.
-- Player movement requests and GM approval of game actions are not yet connected to the live VTT.
+- Token altitude changes from an authorized Player Screen context menu can be submitted as movement requests for GM approval. Horizontal drag movement and broader game-action authorization are not yet integrated.
 - Per-player visibility for tokens assigned to specific players is not yet individualized; the current initial snapshot uses the existing general Player Screen visibility filter.
-- Props/assets, tactical overlays, conditions, status, media-specific limits, and GM-authoritative Undo/Redo still need dedicated multiplayer integration.
+- Props/assets, tactical overlays, conditions, status, media-specific limits, and fully GM-authoritative Undo/Redo still need dedicated multiplayer integration. The current approved-movement path is limited to token movement requests.
 - The adapter currently uses PeerJS's default public signaling configuration. Production TURN relay configuration and real-world network reliability still need to be finalized.
 - Display names are labels, not authentication. GM approval is required, but the current adapter is a development integration and must not be treated as a security boundary.
 - Host signaling loss ends the session. No host recovery or session restoration is implemented.
