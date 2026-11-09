@@ -76,18 +76,21 @@
       <div class="context-submenu-panel" data-submenu-panel="status">
         <div class="context-menu-heading">PLAYER SCREEN INFORMATION</div>
         <label class="context-menu-label"><span><input type="checkbox" data-player-info="name" checked> Show token name</span></label>
+        <label class="context-menu-label"><span><input type="checkbox" data-player-info="appearance" checked> Show image / appearance</span></label>
+        <label class="context-menu-label"><span><input type="checkbox" data-player-info="description" checked> Show description</span></label>
         <label class="context-menu-label"><span><input type="checkbox" data-player-info="hp"> Show HP / Temp HP</span></label>
         <label class="context-menu-label"><span><input type="checkbox" data-player-info="ac"> Show Armor Class</span></label>
         <label class="context-menu-label"><span><input type="checkbox" data-player-info="conditions"> Show Conditions</span></label>
         <label class="context-menu-label"><span><input type="checkbox" data-player-info="classResource"> Show Class Resources</span></label>
         <label class="context-menu-label"><span><input type="checkbox" data-player-info="altitude"> Show Altitude</span></label>
+        <label class="context-menu-label"><span><input type="checkbox" data-player-info="size"> Show Size</span></label>
         <div class="context-menu-heading">TOKEN STATUS · GM EDITING</div>
         <label class="context-menu-label">HP (current)<input type="number" min="0" max="9999" step="1" data-token-hp-current></label>
         <label class="context-menu-label">HP (maximum)<input type="number" min="0" max="9999" step="1" data-token-hp-maximum></label>
         <label class="context-menu-label">Temporary HP<input type="number" min="0" max="9999" step="1" data-token-temp-hp></label>
         <label class="context-menu-label">Armor Class (AC)<input type="number" min="0" max="999" step="1" data-token-ac></label>
         <label class="context-menu-label">Life Status<select data-token-life-status><option>Alive</option><option>Unconscious</option><option>Dead</option></select></label>
-        <small class="context-status-note">The GM edits these values. Players can view them only on tokens assigned to them; unassigned-token values remain GM-only.</small>
+        <small class="context-status-note">The GM edits these values. Each field is sent to the Player Screen only when its matching information option is enabled.</small>
       </div>
     </div>
     <div class="context-menu-divider"></div>
@@ -303,6 +306,7 @@
         <div class="eyebrow">PROPS & ASSETS · GM</div>
         <div class="token-editor asset-editor">
           <label>Asset name<input id="asset-name" type="text" value="Prop" maxlength="120" placeholder="Crate, tree, statue..."></label>
+          <label>Description<textarea id="asset-description" rows="2" maxlength="1000" placeholder="Optional description for players..."></textarea></label>
           <label class="token-image-label">Asset image (PNG, WebP, or JPG)
             <input id="asset-image-file" type="file" accept="image/png,image/webp,image/jpeg,.png,.webp,.jpg,.jpeg" aria-label="Upload prop or asset image">
           </label>
@@ -329,7 +333,16 @@
             <div class="image-framing-row"><span>Vertical <strong data-image-value="y">0.00</strong></span><div class="image-arrow-pair"><button type="button" data-image-adjust-object="asset" data-image-adjust-axis="y" data-image-adjust-delta="-0.02" aria-label="Move image up" title="Move up" disabled>↑</button><button type="button" data-image-adjust-object="asset" data-image-adjust-axis="y" data-image-adjust-delta="0.02" aria-label="Move image down" title="Move down" disabled>↓</button></div></div>
           </div>
           <div class="editor-row"><label>Display style<select id="asset-display-style"><option value="standee" selected>Standee · upright</option><option value="flat">Flat 2D · ground overlay</option></select></label><label>Image sizing<select id="asset-size-mode"><option value="grid" selected>Follow grid footprint</option><option value="pixel">Fixed pixel size</option></select></label><label>Image width (px)<input id="asset-image-width-px" type="number" min="16" max="1200" step="8" value="180"></label><label>Image height (px)<input id="asset-image-height-px" type="number" min="16" max="1200" step="8" value="180"></label><label>Height (px)<input id="asset-height-px" type="number" min="16" max="2000" step="8" value="240"></label></div>
-          <div class="editor-row"><label>Visibility<select id="asset-visibility"><option value="players" selected>Visible to Players</option><option value="gm">GM Only</option></select></label></div>
+          <div class="editor-row"><label>Assignment<select id="asset-visibility"><option value="all">All Players</option><option value="unassigned">Unassigned</option><option value="gm">GM Only</option><option value="specific">Specific Player(s)</option></select></label></div>
+          <input id="asset-players" type="text" placeholder="Player name(s), comma separated" hidden>
+          <div class="eyebrow">PLAYER SCREEN INFORMATION</div>
+          <div class="player-info-settings">
+            <label><input type="checkbox" data-asset-player-info="name" checked> Show name</label>
+            <label><input type="checkbox" data-asset-player-info="appearance" checked> Show image / appearance</label>
+            <label><input type="checkbox" data-asset-player-info="description" checked> Show description</label>
+            <label><input type="checkbox" data-asset-player-info="size"> Show footprint size</label>
+            <label><input type="checkbox" data-asset-player-info="altitude"> Show altitude</label>
+          </div>
           <p class="note">Width and Depth set the ground footprint. Height (px) sets the artwork height independently and scales with map zoom. Existing assets retain their previous height until you change this value.</p>
           <div class="editor-row"><label>Width (squares)<select id="asset-width"><option value="1">1 square</option><option value="2" selected>2 squares</option><option value="3">3 squares</option><option value="4">4 squares</option><option value="6">6 squares</option><option value="8">8 squares</option><option value="12">12 squares</option></select></label><label>Depth (squares)<select id="asset-depth"><option value="1">1 square</option><option value="2" selected>2 squares</option><option value="3">3 squares</option><option value="4">4 squares</option><option value="6">6 squares</option><option value="8">8 squares</option><option value="12">12 squares</option></select></label></div>
           <div class="editor-row"><label>Rotation<select id="asset-rotation"><option value="0">0°</option><option value="45">45°</option><option value="90">90°</option><option value="135">135°</option><option value="180">180°</option><option value="225">225°</option><option value="270">270°</option><option value="315">315°</option></select></label><label>Height above terrain<select id="asset-altitude"><option value="0">0 ft</option><option value="5">5 ft</option><option value="10">10 ft</option><option value="15">15 ft</option><option value="20">20 ft</option><option value="30">30 ft</option><option value="40">40 ft</option><option value="60">60 ft</option><option value="90">90 ft</option><option value="120">120 ft</option></select></label></div>
@@ -347,6 +360,7 @@
         <div class="eyebrow">TOKEN MANAGEMENT</div>
         <div class="token-editor">
           <input id="token-name" type="text" placeholder="Token name">
+          <label>Description<textarea id="token-description" rows="2" maxlength="1000" placeholder="Optional description for players..."></textarea></label>
           <div class="editor-row">
             <input id="token-glyph" type="text" maxlength="2" placeholder="Glyph fallback">
             <input id="token-color" type="color" value="#65d6a1" aria-label="Token color">
