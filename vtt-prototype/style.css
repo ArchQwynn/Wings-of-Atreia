@@ -311,3 +311,32 @@
 
 /* GM-only token Status submenu */
 .context-status-note{display:block;padding:3px 6px 6px;color:var(--muted);font-size:.66rem;line-height:1.4}.context-menu-label input[type="number"]{width:100%;padding:7px;border:1px solid var(--line);border-radius:6px;background:#0d1626;color:var(--text);font:inherit;font-size:.75rem}
+
+
+/* Multiplayer preview: keep camera control labels legible inside their buttons. */
+.camera-pad .player-screen-open,
+.camera-pad button.wide {
+  width: 92px;
+  min-height: 34px;
+  height: auto;
+  padding: 5px 6px;
+  font-size: 10px;
+  line-height: 1.15;
+  white-space: normal;
+  text-align: center;
+}
+.camera-pad button[data-action="2d"] {
+  width: 54px;
+  height: 38px;
+  font-size: 10px;
+  line-height: 1.1;
+  white-space: normal;
+}
+.camera-pad .turn-control {
+  width: 76px;
+  height: 36px;
+  padding: 3px 4px;
+  font-size: 10px;
+  line-height: 1.1;
+  white-space: normal;
+}
