@@ -340,3 +340,20 @@
   line-height: 1.1;
   white-space: normal;
 }
+
+
+/* Remote multiplayer players receive a tabletop-focused interface, not GM tools. */
+body.player-screen-mode .panel > section:not(#multiplayer-panel) {
+  display: none !important;
+}
+body.player-screen-mode .panel {
+  padding: 10px;
+  gap: 0;
+}
+body.player-screen-mode .camera-pad .player-camera-sync-control,
+body.player-screen-mode .camera-pad .player-screen-open,
+body.player-screen-mode .camera-pad [data-action="gm-ping-toggle"],
+body.player-screen-mode .camera-pad .turn-control-row,
+body.player-screen-mode .camera-pad .turn-counter-row {
+  display: none !important;
+}
