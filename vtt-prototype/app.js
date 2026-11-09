@@ -239,7 +239,7 @@ function setupObjectContextMenu(){
   const key=objectKey(t?'token':'asset',obj.id),selectionBefore=selectedObjectKeys(),preserveSelection=selectionBefore.length>1&&selectionBefore.includes(key);
   if(!preserveSelection){if(t)select(t.id);else{state.selected=null;state.selectedTokenIds=[];state.selectedAsset=obj.id;state.selectedAssetIds=[obj.id];updateClassResourcePanel(null);syncAssetEditor(obj)}}
   const bulkKeys=preserveSelection?selectionBefore:[key];menu.dataset.objectKey=key;menu.dataset.bulkObjectKeys=JSON.stringify(bulkKeys);
-  const bulkPanel=menu.querySelector('[data-bulk-visibility-panel]');if(bulkPanel)bulkPanel.hidden=!isGM()||bulkKeys.length<2;
+  const bulkPanel=menu.querySelector('[data-bulk-visibility-panel]');if(bulkPanel)bulkPanel.hidden=!isGM()||bulkKeys.length<1;
   if(t){refreshTokenMenu(t)}else{if(tokenTools)tokenTools.hidden=true;refreshTokenMenu(null)}menu.classList.toggle('player-altitude-only',playerAltitudeOnly);
   const attached=state.attachments.filter(edge=>edge.a===key||edge.b===key).length;
   menu.querySelector('[data-object-action="detach"]')?.toggleAttribute('disabled',!attached);
@@ -1097,7 +1097,7 @@ function selectedObjectKeys(){return [...(state.selectedTokenIds||[]).map(id=>ob
 function setSelectedObjectsVisibility(mode){
  if(!isGM())return;
  const keys=[...new Set(selectedObjectKeys())].filter(key=>objectFromKey(key));
- if(keys.length<2){if(sceneSaveStatus)sceneSaveStatus.textContent='Select at least two objects for bulk visibility.';return}
+ if(keys.length<1){if(sceneSaveStatus)sceneSaveStatus.textContent='Select at least one object to change visibility.';return}
  const gmOnly=mode==='gm',nextAssignment=gmOnly?'gm':'all',nextVisibility=gmOnly?'gm':'players';
  const changed=keys.some(key=>{const obj=objectFromKey(key);return obj&&(obj.assignment!==nextAssignment||obj.visibility!==nextVisibility)});
  if(!changed){if(sceneSaveStatus)sceneSaveStatus.textContent='Selected objects already have that visibility.';return}
