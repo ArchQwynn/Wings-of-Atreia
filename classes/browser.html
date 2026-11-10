@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Class Browser | Wings of Atreia</title>
+<title>Wings of Atreia — Class Browser Prototype</title>
 <style>
 :root{
   --bg:#081522;--panel:#102338;--panel2:#142d45;--panel3:#1a3854;
@@ -22,11 +22,6 @@ a:hover{text-decoration:underline}
   border-bottom:1px solid var(--line);background:rgba(7,18,29,.94);position:sticky;top:0;z-index:20;backdrop-filter:blur(12px)}
 .brand{font-weight:850;letter-spacing:.13em;color:var(--accent2);font-size:1rem}
 .header-note{font-size:.78rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
-.site-nav{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:.82rem}
-.site-nav a{color:var(--muted)}
-.site-nav a:hover{color:var(--accent2)}
-@media(max-width:900px){.site-nav{gap:8px;font-size:.75rem}}
-@media(max-width:680px){.site-nav{display:none}}
 .layout{max-width:1600px;margin:auto;display:grid;grid-template-columns:190px minmax(0,1fr);gap:16px;padding:20px}
 .sidebar{position:sticky;top:90px;align-self:start;height:calc(100vh - 112px);min-height:450px;
   background:rgba(16,35,56,.92);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;box-shadow:var(--shadow)}
@@ -491,11 +486,8 @@ body { font-size: 14px; }
 </head>
 <body>
 <header class="site-header">
-  <a class="brand" href="../index.html">WINGS OF ATREIA</a>
-  <nav class="site-nav" aria-label="Main navigation">
-    <a href="../index.html">Home</a><a href="../rules/">Rules</a><a href="./">Classes</a><a href="../spells/">Spells</a><a href="../world/">World</a><a href="../companion/">Character Companion</a><a href="../about.html">About</a>
-  </nav>
-  <div class="header-note">Class Compendium</div>
+  <div class="brand">WINGS OF ATREIA</div>
+  <div class="header-note">Class Compendium · Experimental Prototype</div>
 </header>
 <div class="backdrop" id="backdrop" aria-hidden="true"></div>
 <div class="layout">
@@ -503,7 +495,7 @@ body { font-size: 14px; }
     <div class="sidebar-heading">CLASS DIRECTORY</div>
     <div class="search-wrap"><input id="classSearch" type="search" placeholder="Search classes…" aria-label="Search classes"></div>
     <nav class="class-list" id="classList"></nav>
-    <div class="sidebar-footer">11 playable classes</div>
+    <div class="sidebar-footer">11 playable classes · Prototype data only</div>
   </aside>
 
   <main class="main">
@@ -646,7 +638,7 @@ body { font-size: 14px; }
       </div>
     </section>
 
-    <footer class="footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”)</footer>
+    <footer class="footer">Wings of Atreia · Experimental class browser · Not published</footer>
   </main>
 </div>
 <script>
