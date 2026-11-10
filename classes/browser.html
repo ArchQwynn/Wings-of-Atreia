@@ -760,6 +760,48 @@ body { font-size: 14px; }
   #classContentHost .progression-table{min-width:650px!important}
   #classContentHost .progression-table:has(th.col-spell-level){min-width:850px!important}
 }
+
+/* Progression tables: content-sized leading columns; final column takes remaining width. */
+#classContentHost .table-wrap{
+  width:100%;
+  max-width:100%;
+  overflow-x:auto;
+}
+#classContentHost .progression-table{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  table-layout:auto!important;
+}
+#classContentHost .progression-table th,
+#classContentHost .progression-table td{
+  min-width:0!important;
+  max-width:none!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+  vertical-align:top;
+}
+/* Give the first columns only the space their contents require. */
+#classContentHost .progression-table th:not(:last-child),
+#classContentHost .progression-table td:not(:last-child){
+  width:1%!important;
+}
+/* The final column expands into all remaining table width and wraps long entries. */
+#classContentHost .progression-table th:last-child,
+#classContentHost .progression-table td:last-child{
+  width:99%!important;
+  min-width:0!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+}
+@media(max-width:680px){
+  #classContentHost .progression-table,
+  #classContentHost .progression-table:has(th.col-spell-level){
+    min-width:0!important;
+  }
+}
+
 </style>
 </head>
 <body>
