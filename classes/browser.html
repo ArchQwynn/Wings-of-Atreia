@@ -708,7 +708,7 @@ const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,"-");
 function classBrowserUrl(name){
   const url=new URL(window.location.href);
   url.searchParams.set("class",slug(name));
-  return url.pathname.replace(/^.*?(?=\/classes\/)/,"") + url.search + url.hash;
+  return url.pathname + url.search + url.hash;
 }
 function readClassFavorites(){
   try{return JSON.parse(localStorage.getItem(favoriteKey)||"[]");}catch(_){return [];}
