@@ -38,7 +38,7 @@
 .specialization-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.8rem}
 .specialization-card{border:1px solid var(--line);border-radius:.75rem;padding:1rem;background:rgba(7,17,31,.35)}
 .specialization-card h4{margin:.1rem 0 .6rem;color:var(--accent-2)}
-.browser-note{font-size:.9rem;color:var(--muted);margin-top:1rem}
+.browser-note{font-size:.9rem;color:var(--muted);margin-top:1rem}.authoring-placeholder{color:#a9c0d5;font-style:italic}.class-placeholder{min-height:2.5rem}.authoring-placeholder::selection{background:#28577b;color:#fff}
 @media(max-width:760px){.class-browser{grid-template-columns:1fr}.class-directory{position:static}.class-directory-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.25rem}}
 @media(max-width:420px){.class-directory-list{grid-template-columns:1fr}.class-tabs{gap:.3rem}.class-tab{font-size:.9rem;padding:.48rem .7rem}}
 </style>
@@ -81,14 +81,14 @@
     <div class="class-eyebrow">Class Overview</div>
     <h2 id="className">Gladiator</h2>
     <!-- Add the approved class description here. -->
-    <p class="class-description" id="classDescription"><!-- CLASS DESCRIPTION --></p>
+    <p class="class-description authoring-placeholder" id="classDescription">[Enter the approved class description here.]</p>
     <div class="class-facts">
-     <div class="class-fact"><strong>Hit Die</strong><span id="factHitDie"><!-- HIT DIE --></span></div>
-     <div class="class-fact"><strong>Primary Ability</strong><span id="factPrimary"><!-- PRIMARY ABILITY --></span></div>
-     <div class="class-fact"><strong>Saving Throws</strong><span id="factSaves"><!-- SAVING THROWS --></span></div>
-     <div class="class-fact"><strong>Armor</strong><span id="factArmor"><!-- ARMOR --></span></div>
-     <div class="class-fact"><strong>Weapons</strong><span id="factWeapons"><!-- WEAPONS --></span></div>
-     <div class="class-fact"><strong>Implements</strong><span id="factImplements"><!-- IMPLEMENTS --></span></div>
+     <div class="class-fact"><strong>Hit Die</strong><span id="factHitDie" class="authoring-placeholder">[Enter hit die]</span></div>
+     <div class="class-fact"><strong>Primary Ability</strong><span id="factPrimary" class="authoring-placeholder">[Enter primary ability]</span></div>
+     <div class="class-fact"><strong>Saving Throws</strong><span id="factSaves" class="authoring-placeholder">[Enter saving throws]</span></div>
+     <div class="class-fact"><strong>Armor</strong><span id="factArmor" class="authoring-placeholder">[Enter armor proficiencies]</span></div>
+     <div class="class-fact"><strong>Weapons</strong><span id="factWeapons" class="authoring-placeholder">[Enter weapon proficiencies]</span></div>
+     <div class="class-fact"><strong>Implements</strong><span id="factImplements" class="authoring-placeholder">[Enter implement proficiencies or “None”]</span></div>
     </div>
    </header>
    <nav class="class-tabs" aria-label="Class reference sections" id="classTabs">
@@ -103,30 +103,30 @@
    <div id="classContent">
     <section class="class-section" data-section="progression">
      <h3>Class Progression</h3>
-     <p class="class-placeholder"><!-- Add the class progression table here. --></p>
+     <p class="class-placeholder authoring-placeholder">AUTHORING PLACEHOLDER — Add any progression notes or rules that should appear above the table.</p>
      <div class="progression-table-wrap">
       <table class="progression-table">
        <thead><tr><th>Level</th><th>Proficiency Bonus</th><th>Flight Slots</th><th>Class Features</th></tr></thead>
-       <tbody><!-- Add one <tr>...</tr> for each level. --></tbody>
+       <tbody><tr><td colspan="4" class="authoring-placeholder">AUTHORING PLACEHOLDER — Replace this row with one table row for each class level.</td></tr></tbody>
       </table>
      </div>
      <h3>Level Details</h3>
-     <div><!-- Add <details class="level-entry"> blocks here. --></div>
+     <div class="authoring-placeholder">AUTHORING PLACEHOLDER — Add one expandable Level Details entry for each level that grants a feature. See the HTML example below.</div>
     </section>
-    <section class="class-section" data-section="mechanics" hidden><h3>Class Mechanics</h3><!-- Add mechanics sections here. Use <h4> for subheadings. --></section>
-    <section class="class-section" data-section="ultimate" hidden><h3>Ultimate Ability</h3><!-- Add the approved Ultimate ability entry here. --></section>
+    <section class="class-section" data-section="mechanics" hidden><h3>Class Mechanics</h3><p class="class-placeholder authoring-placeholder">AUTHORING PLACEHOLDER — Add the class resource, core mechanics, and their rules here. Use &lt;h4&gt; for each subsection and &lt;p&gt; or lists for the wording.</p></section>
+    <section class="class-section" data-section="ultimate" hidden><h3>Ultimate Ability</h3><p class="class-placeholder authoring-placeholder">AUTHORING PLACEHOLDER — Add the approved Ultimate ability name, usage, and complete rules text here.</p></section>
     <section class="class-section" data-section="specializations" hidden>
      <h3>Specializations</h3>
-     <p><!-- Add the specialization selection explanation here. --></p>
+     <p class="class-placeholder authoring-placeholder">AUTHORING PLACEHOLDER — Explain specialization selection and the approved level checkpoints here.</p>
      <div class="specialization-grid">
-      <section class="specialization-card"><h4><!-- SPECIALIZATION 1 --></h4><!-- Add its description and features. --></section>
-      <section class="specialization-card"><h4><!-- SPECIALIZATION 2 --></h4><!-- Add its description and features. --></section>
-      <section class="specialization-card"><h4><!-- SPECIALIZATION 3 --></h4><!-- Add its description and features. --></section>
+      <section class="specialization-card"><h4>[Specialization 1]</h4><p class="authoring-placeholder">AUTHORING PLACEHOLDER — Add its description and features.</p></section>
+      <section class="specialization-card"><h4>[Specialization 2]</h4><p class="authoring-placeholder">AUTHORING PLACEHOLDER — Add its description and features.</p></section>
+      <section class="specialization-card"><h4>[Specialization 3]</h4><p class="authoring-placeholder">AUTHORING PLACEHOLDER — Add its description and features.</p></section>
      </div>
     </section>
-    <section class="class-section" data-section="glossary" hidden><h3>Glossary</h3><!-- Add terms and definitions here. --></section>
-    <section class="class-section" data-section="clarifications" hidden><h3>Rules Clarifications</h3><!-- Add approved clarifications here. --></section>
-    <section class="class-section" data-section="spell-list" hidden><h3>Spell List</h3><p><a id="existingSpellListLink" href="../spells/">Open the existing WoA spell reference</a></p><!-- Keep the existing spell list source and behavior; do not duplicate spell records here. --></section>
+    <section class="class-section" data-section="glossary" hidden><h3>Glossary</h3><p class="class-placeholder authoring-placeholder">AUTHORING PLACEHOLDER — Add class-specific terms and their definitions here.</p></section>
+    <section class="class-section" data-section="clarifications" hidden><h3>Rules Clarifications</h3><p class="class-placeholder authoring-placeholder">AUTHORING PLACEHOLDER — Add approved rules clarifications and examples here.</p></section>
+    <section class="class-section" data-section="spell-list" hidden><h3>Spell List</h3><p class="class-placeholder authoring-placeholder">AUTHORING PLACEHOLDER — Link this class to its existing spell list page. Do not copy spell records into the Class Browser.</p><p><a id="existingSpellListLink" href="../spells/">Open the existing WoA spell reference</a></p></section>
    </div>
    <p class="browser-note">How to Play guides remain separate from this class rules reference.</p>
   </article>
@@ -158,8 +158,9 @@
   if(!spellcasters.has(key) && spellTab.getAttribute("aria-selected")==="true") selectTab("progression");
   else selectTab("progression");
   // Class-specific wording and values are intentionally left for the author to enter.
-  document.getElementById("classDescription").textContent="";
-  ["factHitDie","factPrimary","factSaves","factArmor","factWeapons","factImplements"].forEach(id=>document.getElementById(id).textContent="");
+  document.getElementById("classDescription").innerHTML="[Enter the approved class description here.]";
+  const factPrompts = {factHitDie:"[Enter hit die]",factPrimary:"[Enter primary ability]",factSaves:"[Enter saving throws]",factArmor:"[Enter armor proficiencies]",factWeapons:"[Enter weapon proficiencies]",factImplements:"[Enter implement proficiencies or “None”]"};
+  Object.entries(factPrompts).forEach(([id,value])=>document.getElementById(id).textContent=value);
  }
  directory.addEventListener("click",event=>{
   const button=event.target.closest("[data-class]");
