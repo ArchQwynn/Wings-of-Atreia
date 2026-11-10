@@ -625,6 +625,17 @@ body { font-size: 14px; }
 .level-list{margin-top:8px}
 .level-entry{border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent}
 
+
+/* Specializations: match approved three-column, open-card layout */
+#specializations .spec-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:24px!important;margin:22px 0 16px!important}
+#specializations .spec-card{display:block!important;min-width:0!important;padding:8px 0 14px!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+#specializations .spec-card h3{margin:0 0 16px!important;font-size:1rem!important;color:var(--text)!important}
+#specializations .spec-card p{margin:0 0 12px!important;font-size:.9rem!important;color:var(--text)!important}
+#specializations .spec-card p:last-child{margin-bottom:0!important}
+#specializations #specializationSelector{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:7px!important;margin:10px 0!important}
+#specializations #selectedSpecSummary{margin:10px 0 16px!important;padding:8px 12px!important;border-left:1px solid var(--line)!important;border-radius:0!important;background:transparent!important;color:var(--text)!important;font-size:.9rem!important}
+@media(max-width:700px){#specializations .spec-grid{grid-template-columns:1fr!important;gap:10px!important}}
+
 </style>
 </head>
 <body>
