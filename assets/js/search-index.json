@@ -2222,7 +2222,7 @@
     "title": "Gladiator",
     "url": "classes/browser.html#classTitle",
     "desc": "Gladiator — Wings of Atreia reference section.",
-    "text": "Gladiator. WINGS OF ATREIA Home Rules Classes Spells World Character Companion About CLASS DIRECTORY 11 playable classes ☰ Browse Classes Class Reference · Levels 1–20 Gladiator A structured reference page for the selected Wings of Atreia class. This prototype demonstrates the layout only; class mechanics and feature text are intentionally left as placeholders. No multiclassing Three specializations 20-level progression Loading class entries… Wings of Atreia · Created & Designed by Clark Michael Zafra (“ArchQwynn”) /* Class progression tables: wrap every column except the final column. */ #classContentHost .progression-table th:not(:last-child), #classContentHost .progression-table td:not(:last-child){ white-space:normal!important; overflow-wrap:anywhere!important; word-break:normal!important; } #classContentHost .progression-table th:last-child, #classContentHost .progression-table td:last-child{ white-space:nowrap!important; overflow-wrap:normal!important; word-break:normal!important; }",
+    "text": "Gladiator. WINGS OF ATREIA Home Rules Classes Spells World Character Companion About CLASS DIRECTORY 11 playable classes ☰ Browse Classes Class Reference · Levels 1–20 Gladiator A structured reference page for the selected Wings of Atreia class. This prototype demonstrates the layout only; class mechanics and feature text are intentionally left as placeholders. No multiclassing Three specializations 20-level progression Loading class entries… Wings of Atreia · Created & Designed by Clark Michael Zafra (“ArchQwynn”)",
     "kind": "section"
   },
   {
@@ -6226,7 +6226,7 @@
     "title": "Wings of Atreia — Class Browser Prototype",
     "url": "classes/browser.html",
     "desc": "Wings of Atreia reference: Wings of Atreia — Class Browser Prototype.",
-    "text": "WINGS OF ATREIA Home Rules Classes Spells World Character Companion About CLASS DIRECTORY 11 playable classes ☰ Browse Classes Class Reference · Levels 1–20 Gladiator A structured reference page for the selected Wings of Atreia class. This prototype demonstrates the layout only; class mechanics and feature text are intentionally left as placeholders. No multiclassing Three specializations 20-level progression Loading class entries… Wings of Atreia · Created & Designed by Clark Michael Zafra (“ArchQwynn”) /* Class progression tables: wrap every column except the final column. */ #classContentHost .progression-table th:not(:last-child), #classContentHost .progression-table td:not(:last-child){ white-space:normal!important; overflow-wrap:anywhere!important; word-break:normal!important; } #classContentHost .progression-table th:last-child, #classContentHost .progression-table td:last-child{ white-space:nowrap!important; overflow-wrap:normal!important; word-break:normal!important; }",
+    "text": "WINGS OF ATREIA Home Rules Classes Spells World Character Companion About CLASS DIRECTORY 11 playable classes ☰ Browse Classes Class Reference · Levels 1–20 Gladiator A structured reference page for the selected Wings of Atreia class. This prototype demonstrates the layout only; class mechanics and feature text are intentionally left as placeholders. No multiclassing Three specializations 20-level progression Loading class entries… Wings of Atreia · Created & Designed by Clark Michael Zafra (“ArchQwynn”)",
     "kind": "page"
   },
   {
