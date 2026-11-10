@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Class Browser | Wings of Atreia</title>
+<meta name="description" content="Browse the playable classes of Wings of Atreia.">
+<link href="../assets/css/style-v20260914-6.css" rel="stylesheet">
+<style>
+.class-browser{display:grid;grid-template-columns:230px minmax(0,1fr);gap:1.25rem;align-items:start;margin:1.5rem 0 3rem}
+.class-directory,.class-panel{border:1px solid var(--line);border-radius:1rem;background:rgba(13,27,42,.82)}
+.class-directory{padding:.85rem;position:sticky;top:6rem}
+.class-directory h2{font-size:1rem;margin:.25rem .5rem .75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.class-choice{display:block;width:100%;text-align:left;border:1px solid transparent;border-radius:.55rem;background:transparent;color:var(--text);padding:.65rem .75rem;font:inherit;cursor:pointer}
+.class-choice:hover,.class-choice[aria-current="page"]{background:#15314a;border-color:var(--line);color:#fff}
+.class-panel{padding:clamp(1rem,3vw,2rem);min-width:0}
+.class-overview{padding-bottom:1.25rem;border-bottom:1px solid var(--line)}
+.class-eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:800}
+.class-overview h2{font-size:clamp(2rem,4vw,3rem);margin:.2rem 0}
+.class-description{color:var(--muted);max-width:850px}
+.class-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.65rem;margin-top:1rem}
+.class-fact{padding:.7rem .8rem;border:1px solid var(--line);border-radius:.65rem;background:rgba(7,17,31,.5)}
+.class-fact strong{display:block;color:var(--accent-2);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+.class-tabs{display:flex;gap:.4rem;flex-wrap:wrap;padding:1rem 0;border-bottom:1px solid var(--line)}
+.class-tab{border:1px solid var(--line);border-radius:999px;padding:.55rem .9rem;background:transparent;color:var(--muted);font:inherit;font-weight:750;cursor:pointer}
+.class-tab[aria-selected="true"],.class-tab:hover{background:#15314a;color:#fff;border-color:var(--accent)}
+.class-section{padding:1.25rem 0;border-bottom:1px solid var(--line)}
+.class-section:last-child{border-bottom:0}
+.class-section h3{margin-top:0}
+.class-placeholder{border:1px dashed var(--line);border-radius:.65rem;padding:1rem;color:var(--muted);background:rgba(7,17,31,.35)}
+.progression-table-wrap{overflow-x:auto}
+.progression-table{width:100%;border-collapse:collapse;min-width:620px}
+.progression-table th,.progression-table td{border:1px solid var(--line);padding:.65rem;text-align:left;vertical-align:top}
+.progression-table th{background:#173957;color:#fff}
+.level-entry{border:1px solid var(--line);border-radius:.65rem;margin:.65rem 0;background:rgba(7,17,31,.35)}
+.level-entry summary{padding:.75rem 1rem;cursor:pointer;font-weight:750;color:var(--accent-2)}
+.level-entry-content{padding:0 1rem 1rem}
+.specialization-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.8rem}
+.specialization-card{border:1px solid var(--line);border-radius:.75rem;padding:1rem;background:rgba(7,17,31,.35)}
+.specialization-card h4{margin:.1rem 0 .6rem;color:var(--accent-2)}
+.browser-note{font-size:.9rem;color:var(--muted);margin-top:1rem}
+@media(max-width:760px){.class-browser{grid-template-columns:1fr}.class-directory{position:static}.class-directory-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.25rem}}
+@media(max-width:420px){.class-directory-list{grid-template-columns:1fr}.class-tabs{gap:.3rem}.class-tab{font-size:.9rem;padding:.48rem .7rem}}
+</style>
+</head>
+<body data-base="../">
+<header class="site-header">
+ <div class="nav-wrap">
+  <a class="brand" href="../index.html">WINGS OF ATREIA</a>
+  <nav class="nav-links">
+   <a href="../index.html">Home</a><a href="../rules/">Rules</a><a href="./">Classes</a><a href="../spells/">Spells</a><a href="../world/">World</a><a href="../companion/">Character Companion</a><a href="../about.html">About</a>
+  </nav>
+  <div class="search-box"><input aria-label="Search Wings of Atreia" data-site-search placeholder="Search WoA…" type="search"></div>
+ </div>
+</header>
+<main>
+ <header class="page-header">
+  <div class="eyebrow">Player Options</div>
+  <h1>Class Browser</h1>
+  <p>Browse the playable classes and their class rules, progression, features, and specializations.</p>
+ </header>
+ <div class="class-browser">
+  <aside class="class-directory" aria-label="Class directory">
+   <h2>Classes</h2>
+   <div class="class-directory-list" id="classDirectory">
+    <button class="class-choice" data-class="gladiator" aria-current="page">Gladiator</button>
+    <button class="class-choice" data-class="templar">Templar</button>
+    <button class="class-choice" data-class="assassin">Assassin</button>
+    <button class="class-choice" data-class="ranger">Ranger</button>
+    <button class="class-choice" data-class="sorcerer">Sorcerer</button>
+    <button class="class-choice" data-class="spiritmaster">Spiritmaster</button>
+    <button class="class-choice" data-class="cleric">Cleric</button>
+    <button class="class-choice" data-class="chanter">Chanter</button>
+    <button class="class-choice" data-class="aethertech">Aethertech</button>
+    <button class="class-choice" data-class="gunslinger">Gunslinger</button>
+    <button class="class-choice" data-class="songweaver">Songweaver</button>
+   </div>
+  </aside>
+  <article class="class-panel" id="classPanel">
+   <header class="class-overview">
+    <div class="class-eyebrow">Class Overview</div>
+    <h2 id="className">Gladiator</h2>
+    <!-- Add the approved class description here. -->
+    <p class="class-description" id="classDescription"><!-- CLASS DESCRIPTION --></p>
+    <div class="class-facts">
+     <div class="class-fact"><strong>Hit Die</strong><span id="factHitDie"><!-- HIT DIE --></span></div>
+     <div class="class-fact"><strong>Primary Ability</strong><span id="factPrimary"><!-- PRIMARY ABILITY --></span></div>
+     <div class="class-fact"><strong>Saving Throws</strong><span id="factSaves"><!-- SAVING THROWS --></span></div>
+     <div class="class-fact"><strong>Armor</strong><span id="factArmor"><!-- ARMOR --></span></div>
+     <div class="class-fact"><strong>Weapons</strong><span id="factWeapons"><!-- WEAPONS --></span></div>
+     <div class="class-fact"><strong>Implements</strong><span id="factImplements"><!-- IMPLEMENTS --></span></div>
+    </div>
+   </header>
+   <nav class="class-tabs" aria-label="Class reference sections" id="classTabs">
+    <button class="class-tab" data-tab="progression" aria-selected="true">Progression</button>
+    <button class="class-tab" data-tab="mechanics" aria-selected="false">Mechanics</button>
+    <button class="class-tab" data-tab="ultimate" aria-selected="false">Ultimate</button>
+    <button class="class-tab" data-tab="specializations" aria-selected="false">Specializations</button>
+    <button class="class-tab" data-tab="glossary" aria-selected="false">Glossary</button>
+    <button class="class-tab" data-tab="clarifications" aria-selected="false">Clarifications</button>
+    <button class="class-tab" data-tab="spell-list" id="spellListTab" aria-selected="false" hidden>Spell List</button>
+   </nav>
+   <div id="classContent">
+    <section class="class-section" data-section="progression">
+     <h3>Class Progression</h3>
+     <p class="class-placeholder"><!-- Add the class progression table here. --></p>
+     <div class="progression-table-wrap">
+      <table class="progression-table">
+       <thead><tr><th>Level</th><th>Proficiency Bonus</th><th>Flight Slots</th><th>Class Features</th></tr></thead>
+       <tbody><!-- Add one <tr>...</tr> for each level. --></tbody>
+      </table>
+     </div>
+     <h3>Level Details</h3>
+     <div><!-- Add <details class="level-entry"> blocks here. --></div>
+    </section>
+    <section class="class-section" data-section="mechanics" hidden><h3>Class Mechanics</h3><!-- Add mechanics sections here. Use <h4> for subheadings. --></section>
+    <section class="class-section" data-section="ultimate" hidden><h3>Ultimate Ability</h3><!-- Add the approved Ultimate ability entry here. --></section>
+    <section class="class-section" data-section="specializations" hidden>
+     <h3>Specializations</h3>
+     <p><!-- Add the specialization selection explanation here. --></p>
+     <div class="specialization-grid">
+      <section class="specialization-card"><h4><!-- SPECIALIZATION 1 --></h4><!-- Add its description and features. --></section>
+      <section class="specialization-card"><h4><!-- SPECIALIZATION 2 --></h4><!-- Add its description and features. --></section>
+      <section class="specialization-card"><h4><!-- SPECIALIZATION 3 --></h4><!-- Add its description and features. --></section>
+     </div>
+    </section>
+    <section class="class-section" data-section="glossary" hidden><h3>Glossary</h3><!-- Add terms and definitions here. --></section>
+    <section class="class-section" data-section="clarifications" hidden><h3>Rules Clarifications</h3><!-- Add approved clarifications here. --></section>
+    <section class="class-section" data-section="spell-list" hidden><h3>Spell List</h3><p><a id="existingSpellListLink" href="../spells/">Open the existing WoA spell reference</a></p><!-- Keep the existing spell list source and behavior; do not duplicate spell records here. --></section>
+   </div>
+   <p class="browser-note">How to Play guides remain separate from this class rules reference.</p>
+  </article>
+ </div>
+</main>
+<footer class="site-footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”) · Non-commercial fan project.</footer>
+<div class="search-results" data-search-results></div>
+<script src="../assets/js/search-v20260914-6.js"></script>
+<script>
+(function(){
+ const spellcasters = new Set(["sorcerer","spiritmaster","cleric","chanter","songweaver"]);
+ const names = {gladiator:"Gladiator",templar:"Templar",assassin:"Assassin",ranger:"Ranger",sorcerer:"Sorcerer",spiritmaster:"Spiritmaster",cleric:"Cleric",chanter:"Chanter",aethertech:"Aethertech",gunslinger:"Gunslinger",songweaver:"Songweaver"};
+ const directory = document.getElementById("classDirectory");
+ const className = document.getElementById("className");
+ const spellTab = document.getElementById("spellListTab");
+ const tabs = document.getElementById("classTabs");
+ const sections = [...document.querySelectorAll("[data-section]")];
+ function selectTab(tabName){
+  tabs.querySelectorAll("[data-tab]").forEach(btn=>btn.setAttribute("aria-selected",String(btn.dataset.tab===tabName)));
+  sections.forEach(section=>section.hidden=section.dataset.section!==tabName);
+ }
+ function selectClass(key){
+  className.textContent=names[key]||"Class";
+  directory.querySelectorAll("[data-class]").forEach(btn=>{
+   if(btn.dataset.class===key) btn.setAttribute("aria-current","page");
+   else btn.removeAttribute("aria-current");
+  });
+  spellTab.hidden=!spellcasters.has(key);
+  if(!spellcasters.has(key) && spellTab.getAttribute("aria-selected")==="true") selectTab("progression");
+  else selectTab("progression");
+  // Class-specific wording and values are intentionally left for the author to enter.
+  document.getElementById("classDescription").textContent="";
+  ["factHitDie","factPrimary","factSaves","factArmor","factWeapons","factImplements"].forEach(id=>document.getElementById(id).textContent="");
+ }
+ directory.addEventListener("click",event=>{
+  const button=event.target.closest("[data-class]");
+  if(button) selectClass(button.dataset.class);
+ });
+ tabs.addEventListener("click",event=>{
+  const button=event.target.closest("[data-tab]");
+  if(button && !button.hidden) selectTab(button.dataset.tab);
+ });
+ selectClass("gladiator");
+})();
+</script>
+</body>
+</html>
