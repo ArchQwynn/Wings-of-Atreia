@@ -636,6 +636,18 @@ body { font-size: 14px; }
 #specializations #selectedSpecSummary{margin:10px 0 16px!important;padding:8px 12px!important;border-left:1px solid var(--line)!important;border-radius:0!important;background:transparent!important;color:var(--text)!important;font-size:.9rem!important}
 @media(max-width:700px){#specializations .spec-grid{grid-template-columns:1fr!important;gap:10px!important}}
 
+
+/* Keep every progression heading in its own distinct cell */
+#classContentHost .progression-table{width:100%;min-width:900px;table-layout:fixed;border-collapse:collapse}
+#classContentHost .progression-table th,#classContentHost .progression-table td{border:1px solid var(--line);vertical-align:top;white-space:normal;overflow-wrap:anywhere}
+#classContentHost .progression-table th{display:table-cell}
+#classContentHost .progression-table th.col-abilities{min-width:230px}
+#classContentHost .progression-table th.col-spell-advancements{min-width:190px}
+#classContentHost .progression-table th.col-spell-level{min-width:145px}
+#classContentHost .progression-table td:first-child,#classContentHost .progression-table th:first-child{width:58px;min-width:58px;max-width:58px;text-align:center}
+#classContentHost .content-nav{display:flex;flex-wrap:wrap}
+#classContentHost .content-section{scroll-margin-top:125px}
+
 </style>
 </head>
 <body>
@@ -672,132 +684,8 @@ body { font-size: 14px; }
       <div class="hero-meta"><span class="pill">No multiclassing</span><span class="pill">Three specializations</span><span class="pill">20-level progression</span></div>
     </header>
 
-    <section class="class-overview-panel" id="overview" aria-label="Selected class overview">
-      <h2>CLASS OVERVIEW</h2>
-      <table class="class-overview-table">
-        <tbody id="classOverviewPanel">
-          <tr><th scope="row">Armor</th><td>[Armor]</td></tr>
-          <tr><th scope="row">Weapons</th><td>[Weapons]</td></tr>
-          <tr><th scope="row">Implements</th><td>[Implements]</td></tr>
-          <tr><th scope="row">Hit Die</th><td>[Hit Die]</td></tr>
-          <tr><th scope="row">Class Save DC</th><td>[Class Save DC]</td></tr>
-          <tr><th scope="row">Primary Ability</th><td>[Primary Ability]</td></tr>
-          <tr><th scope="row">Saving Throws</th><td>[Saving Throws]</td></tr>
-          <tr><th scope="row">Skills</th><td>[Skills]</td></tr>
-          <tr><th scope="row">Class Resource</th><td>[Class Resource]</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <nav class="content-nav" id="contentNav" aria-label="Class sections">
-  <a href="#progression">Progression</a>
-  <a href="#mechanics">Mechanics</a>
-  <a href="#ultimate">Ultimate</a>
-  <a href="#specializations">Specializations</a>
-  <a href="#glossary">Glossary</a>
-  <a href="#clarifications">Clarifications</a>
-  <a href="#howToPlay">How to Play</a>
-</nav>
-<section class="content-section" id="progression">
-      <h2>Class Progression</h2>
-      <p class="muted">A compact overview of all 20 levels. Selecting a level below expands its feature summary.</p>
-      <div class="table-wrap"><table class="progression-table"><thead><tr id="progressionHeader"><th>Level</th><th>Proficiency</th><th>Features</th><th>Class Resource</th></tr></thead>
-      <tbody id="progressionRows"></tbody></table></div>
-
-</section>
-
-<section class="content-section" id="spellList" hidden>
-      <h2 id="spellListTitle">Spell List</h2>
-      <p class="muted">[The spell list for the selected spellcasting class will be added here.]</p>
-    </section>
-<section class="content-section" id="mechanics">
-      <h2>Core Mechanics &amp; Resources</h2>
-      <details class="feature" open><summary>[Signature resource]</summary><div class="feature-body"><p><strong>Generation:</strong> [How the resource is gained.]</p><p><strong>Capacity:</strong> [Maximum and scaling.]</p><p><strong>Expenditure:</strong> [What spends it.]</p><p><strong>Recovery:</strong> [When it recovers.]</p></div></details>
-      <details class="feature" open><summary>[Signature mechanic]</summary><div class="feature-body"><p>[Full explanation of the class's unique mechanic.]</p></div></details>
-    </section>
-<section class="content-section" id="ultimate">
-      <h2>Ultimate Ability</h2>
-      <details class="feature" open><summary><span class="feature-heading">[Ultimate ability name] <span class="type-tag ultimate">Ultimate</span></span></summary><div class="feature-body"><div class="feature-meta"><span><b>Activation:</b> [Action type]</span><span><b>Cost:</b> [DP / resource]</span><span><b>Recovery:</b> [Recovery timing]</span></div><p><strong>Trigger / Requirements:</strong> [Requirements to activate.]</p><p><strong>Effect:</strong> [Complete effect.]</p><p><strong>Scaling:</strong> [Level scaling.]</p><p><strong>Recovery:</strong> [Full recovery rules and restrictions.]</p></div></details>
-    </section>
-<section class="content-section" id="specializations">
-      <h2>Specializations</h2>
-      <p class="muted">Three distinct paths, with advancement features at the established specialization levels.</p>
-      <div class="spec-grid">
-        <article class="spec-card"><h3>[Specialization One]</h3><p>[Identity and playstyle summary.]</p><p><strong>Advancement:</strong> Levels 3, 6, 10, 14.</p></article>
-        <article class="spec-card"><h3>[Specialization Two]</h3><p>[Identity and playstyle summary.]</p><p><strong>Advancement:</strong> Levels 3, 6, 10, 14.</p></article>
-        <article class="spec-card"><h3>[Specialization Three]</h3><p>[Identity and playstyle summary.]</p><p><strong>Advancement:</strong> Levels 3, 6, 10, 14.</p></article>
-      </div>
-      <h3>Choose a Specialization</h3>
-      <p class="muted">Select a path to preview how its abilities are integrated into the level progression. The sample names and descriptions below are placeholders, not official class rules.</p>
-      <div class="feature-meta" id="specializationSelector" role="group" aria-label="Choose specialization">
-        <button type="button" class="spec-select active" data-spec="0">[Specialization One]</button>
-        <button type="button" class="spec-select" data-spec="1">[Specialization Two]</button>
-        <button type="button" class="spec-select" data-spec="2">[Specialization Three]</button>
-      </div>
-      <div class="callout" id="selectedSpecSummary" aria-live="polite">Selected path: [Specialization One]. Its advancement abilities are highlighted in the level progression below.</div>
-    </section>
-<section class="content-section" id="levelDetails">
-<h2>Level Details</h2>
-<h3>Level Details</h3>
-      <ol class="level-list" id="levelList"></ol>
-</section>
-<section class="content-section" id="glossary">
-      <h2>Class Glossary</h2>
-      <div class="table-wrap"><table><thead><tr><th>Term</th><th>Definition</th><th>Related Feature</th></tr></thead>
-      <tbody><tr><td>[Term]</td><td>[Concise definition.]</td><td>[Section or feature]</td></tr><tr><td>[Term]</td><td>[Concise definition.]</td><td>[Section or feature]</td></tr></tbody></table></div>
-    </section>
-<section class="content-section" id="clarifications">
-      <h2>Rules &amp; Clarifications</h2>
-      <details class="feature" open><summary>[Topic or interaction]</summary><div class="feature-body"><p>[Precise clarification and any relevant examples.]</p></div></details>
-    </section>
-<section class="content-section" id="howToPlay">
-      <h2 id="howToPlayTitle">How to Play Gladiator</h2>
-      <p class="how-to-play-intro" id="howToPlayIntro">[Brief introduction explaining this class's playstyle, combat identity, and overall objective.]</p>
-
-      <div class="how-core-loop">
-        <span class="how-kicker">Core Gameplay Loop</span>
-        <p id="howToPlayLoop">[Step 1] → [Step 2] → [Step 3] → [Step 4] → [Continue or adapt]</p>
-      </div>
-
-      <table class="class-overview-table how-overview-table">
-        <tbody>
-          <tr>
-            <th scope="row">Your Job</th>
-            <td>[Explain the class's role in the party and what it should prioritize during encounters.]</td>
-          </tr>
-          <tr>
-            <th scope="row">Your Resource</th>
-            <td>[Explain how the class resource works in practice and what players should consider when spending or preserving it.]</td>
-          </tr>
-          <tr>
-            <th scope="row">Your Position</th>
-            <td>[Explain where the class should position itself and what positioning considerations matter.]</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="how-strategy">
-        <h3>1. [First Strategy Topic]</h3>
-        <p>[Explain the first important principle of playing this class.]</p>
-        <p>[Add a practical tip, decision-making guideline, or example.]</p>
-      </div>
-
-      <div class="how-strategy">
-        <h3>2. [Second Strategy Topic]</h3>
-        <p>[Explain the second important principle of playing this class.]</p>
-        <ul>
-          <li>[Practical guideline or action]</li>
-          <li>[Practical guideline or action]</li>
-          <li>[Practical guideline or action]</li>
-        </ul>
-      </div>
-
-      <div class="how-strategy">
-        <h3>3. [Additional Strategy Topic]</h3>
-        <p>[Add further class-specific guidance, tactical considerations, or common mistakes to avoid.]</p>
-      </div>
-    </section>
-    <footer class="footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”)</footer>
+    <div id="classContentHost"><p class="muted">Loading class entries…</p></div>
+<footer class="footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”)</footer>
   <div class="search-results" data-search-results=""></div>
   </main>
 </div>
@@ -809,139 +697,71 @@ const list=document.getElementById("classList");
 const search=document.getElementById("classSearch");
 const title=document.getElementById("classTitle");
 const desc=document.getElementById("classDescription");
+const host=document.getElementById("classContentHost");
+const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,"-");
 function renderList(){
   const q=search.value.trim().toLowerCase();
   list.innerHTML="";
   const matches=classes.filter(c=>c.toLowerCase().includes(q));
   if(!matches.length){list.innerHTML='<div class="empty">No matching classes.</div>';return;}
   matches.forEach(c=>{
-    const b=document.createElement("button");b.className="class-button"+(c===selected?" active":"");
+    const b=document.createElement("button");
+    b.className="class-button"+(c===selected?" active":"");
     b.textContent=c;
     b.setAttribute("aria-current",c===selected?"page":"false");
-    b.addEventListener("click",()=>selectClass(c));list.appendChild(b);
+    b.addEventListener("click",()=>selectClass(c));
+    list.appendChild(b);
   });
 }
-const classOverview={
-  "Gladiator":{armor:"[Armor]",weapons:"[Weapons]",implements:"[Implements]",hitDie:"[Hit Die]",saveDC:"[Class Save DC]",primary:"[Primary Ability]",saves:"[Saving Throws]",skills:"[Skills]",resource:"[Class Resource]"}
-};
-function renderSidebarOverview(c){
-  const data=classOverview[c]||classOverview["Gladiator"];
-  const fields=[["Armor","armor"],["Weapons","weapons"],["Implements","implements"],["Hit Die","hitDie"],["Class Save DC","saveDC"],["Primary Ability","primary"],["Saving Throws","saves"],["Skills","skills"],["Class Resource","resource"]];
-  document.getElementById("classOverviewPanel").innerHTML=fields.map(([label,key])=>'<tr><th scope="row">'+label+'</th><td>'+data[key]+'</td></tr>').join("");
+function wireClassContent(){
+  document.querySelectorAll("#classContentHost .spec-select").forEach(button=>{
+    button.addEventListener("click",()=>{
+      document.querySelectorAll("#classContentHost .spec-select").forEach(b=>{
+        const active=b===button;
+        b.classList.toggle("active",active);
+        b.setAttribute("aria-pressed",String(active));
+      });
+      const summary=document.querySelector("#classContentHost #selectedSpecSummary");
+      if(summary) summary.textContent="Selected path: "+button.textContent.trim()+".";
+    });
+  });
+  const navLinks=[...document.querySelectorAll("#classContentHost .content-nav a")];
+  if("IntersectionObserver" in window){
+    const observer=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting) navLinks.forEach(a=>a.classList.toggle("current",a.getAttribute("href")==="#"+entry.target.id));
+      });
+    },{rootMargin:"-22% 0px -68% 0px"});
+    document.querySelectorAll("#classContentHost .content-section").forEach(s=>observer.observe(s));
+  }
 }
-const spellcastingClasses=["Chanter","Cleric","Sorcerer","Spiritmaster","Songweaver"];
-function updateSpellListLink(c){
-  const hasSpellList=spellcastingClasses.includes(c);
-  const link=document.getElementById("spellListNav");
-  const section=document.getElementById("spellList");
-  link.hidden=!hasSpellList;
-  section.hidden=!hasSpellList;
-  document.getElementById("spellListTitle").textContent=c+" Spell List";
-}
-function selectClass(c){
-  selected=c;title.textContent=c;
-  updateSpellListLink(c);
-  renderSidebarOverview(c);
-  renderProgression();
-  desc.textContent="A structured reference page for "+c+". This prototype demonstrates the layout only; class mechanics and feature text are intentionally left as placeholders.";
+async function selectClass(c,scroll=true){
+  selected=c;
+  title.textContent=c;
   renderList();
-  document.body.classList.remove("drawer-open");
-  document.getElementById("menuButton").setAttribute("aria-expanded","false");
-  window.scrollTo({top:0,behavior:"smooth"});
+  host.innerHTML='<p class="muted">Loading '+c+' entries…</p>';
+  try{
+    const response=await fetch("./class-data/"+slug(c)+".html",{cache:"no-store"});
+    if(!response.ok) throw new Error("HTTP "+response.status);
+    const markup=await response.text();
+    const parsed=new DOMParser().parseFromString(markup,"text/html");
+    const root=parsed.getElementById("classData");
+    if(!root) throw new Error("The class data file is missing its classData wrapper.");
+    const description=root.querySelector("#classDescription");
+    desc.textContent=description?description.textContent.trim():"";
+    if(description) description.remove();
+    host.innerHTML=root.innerHTML;
+    const spellNav=host.querySelector("#spellListNav");
+    const spellSection=host.querySelector("#spellList");
+    if(spellNav && !spellSection) spellNav.remove();
+    wireClassContent();
+    if(scroll) window.scrollTo({top:0,behavior:"smooth"});
+  }catch(error){
+    host.innerHTML='<div class="callout"><strong>Unable to load '+c+' entries.</strong><p>Check that classes/class-data/'+slug(c)+'.html exists and is committed.</p></div>';
+    console.error(error);
+  }
 }
 search.addEventListener("input",renderList);
-const rows=document.getElementById("progressionRows"),levels=document.getElementById("levelList");
-const specializationNames=["[Specialization One]","[Specialization Two]","[Specialization Three]"];
-const specializationAbilities=[
-  {3:"[Specialization One — Level 3 ability]",6:"[Specialization One — Level 6 ability]",10:"[Specialization One — Level 10 ability]",14:"[Specialization One — Level 14 ability]"},
-  {3:"[Specialization Two — Level 3 ability]",6:"[Specialization Two — Level 6 ability]",10:"[Specialization Two — Level 10 ability]",14:"[Specialization Two — Level 14 ability]"},
-  {3:"[Specialization Three — Level 3 ability]",6:"[Specialization Three — Level 6 ability]",10:"[Specialization Three — Level 10 ability]",14:"[Specialization Three — Level 14 ability]"}
-];
-let selectedSpecialization=0;
-function renderSpecialization(){
-  document.querySelectorAll(".spec-select").forEach((button)=>{
-    const active=Number(button.dataset.spec)===selectedSpecialization;
-    button.classList.toggle("active",active);
-    button.setAttribute("aria-pressed",String(active));
-  });
-  const name=specializationNames[selectedSpecialization];
-  document.getElementById("selectedSpecSummary").textContent=
-    "Selected path: "+name+". Its advancement abilities are highlighted at the appropriate levels below. Select another path to replace these entries.";
-  renderProgression();
-}
-
-function renderProgressionHeader(){
-  const header=document.getElementById("progressionHeader");
-  const columns=[
-    "<th>Level</th>",
-    "<th>Proficiency</th>",
-    "<th>Flight Slots</th>"
-  ];
-  if(spellcastingClasses.includes(selected)){
-    columns.push("<th class=\"col-spell-level\">Maximum Spell Level</th>");
-    columns.push("<th class=\"col-spell-advancements\">Spell Advancements</th>");
-  }
-  columns.push("<th class=\"col-abilities\">Class Abilities</th>");
-  if(selected==="Aethertech"){
-    columns.push("<th class=\"col-resource\">[Resource 1]</th>","<th class=\"col-resource\">[Resource 2]</th>");
-  }else{
-    columns.push("<th class=\"col-resource\">Class Resources</th>");
-  }
-  header.innerHTML=columns.join("");
-}
-function renderProgression(){
-  rows.innerHTML="";levels.innerHTML="";
-  renderProgressionHeader();
-  const abilities=specializationAbilities[selectedSpecialization];
-  for(let n=1;n<=20;n++){
-    const hasSpec=Boolean(abilities[n]);
-    const featureLabel=hasSpec?abilities[n]:"[General class feature(s), if any]";
-    const tr=document.createElement("tr");
-    const cells=[
-      "<td>"+n+"</td>",
-      "<td>[PB]</td>",
-      "<td>[Flight Slots]</td>"
-    ];
-    if(spellcastingClasses.includes(selected)){
-      cells.push("<td class=\"col-spell-level\">[Maximum Spell Level]</td>");
-      cells.push("<td class=\"col-spell-advancements\">[Spell Advancements]</td>");
-    }
-    cells.push("<td class=\"col-abilities\">"+featureLabel+(hasSpec?" · Specialization":"")+"</td>");
-    if(selected==="Aethertech"){
-      cells.push("<td class=\"col-resource\">[Resource 1 value]</td>","<td class=\"col-resource\">[Resource 2 value]</td>");
-    }else{
-      cells.push("<td class=\"col-resource\">[Resource value]</td>");
-    }
-    tr.innerHTML=cells.join("");
-    rows.appendChild(tr);
-    const item=document.createElement("li");item.className="level-item";
-    const d=document.createElement("details");d.className="level level-entry";d.open=true;
-    const summary=document.createElement("summary");summary.className="level-entry-heading";
-    const title=document.createElement("span");title.className="level-entry-title";
-    title.textContent="Level "+n+": "+featureLabel;
-    summary.append(title);
-    const content=document.createElement("div");content.className="level-content";
-    const description=document.createElement("p");
-    description.textContent="[Your level "+n+" class feature description appears here.]";
-    content.appendChild(description);
-    if(hasSpec){
-      const spec=document.createElement("details");spec.className="level-specialization-entry";spec.open=true;
-      const specSummary=document.createElement("summary");specSummary.className="specialization-entry-heading";
-      const specTitle=document.createElement("span");specTitle.className="specialization-entry-title";
-      specTitle.textContent="Level "+n+": "+abilities[n];
-      specSummary.append(specTitle);
-      const specDescription=document.createElement("p");
-      specDescription.textContent="[The specialization ability description appears here.]";
-      spec.append(specSummary,specDescription);content.appendChild(spec);
-    }
-    d.append(summary,content);item.appendChild(d);levels.appendChild(item);
-  }
-}
-function nameForSelected(){return specializationNames[selectedSpecialization];}
-document.querySelectorAll(".spec-select").forEach(button=>{
-  button.addEventListener("click",()=>{selectedSpecialization=Number(button.dataset.spec);renderSpecialization();});
-});
-renderSpecialization();
 document.getElementById("menuButton").addEventListener("click",()=>{
   const open=!document.body.classList.contains("drawer-open");
   document.body.classList.toggle("drawer-open",open);
@@ -951,20 +771,10 @@ document.getElementById("backdrop").addEventListener("click",()=>{
   document.body.classList.remove("drawer-open");
   document.getElementById("menuButton").setAttribute("aria-expanded","false");
 });
-const navLinks=[...document.querySelectorAll(".content-nav a")];
-if ("IntersectionObserver" in window) {
-  const observer=new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){
-        navLinks.forEach(a=>a.classList.toggle("current",a.getAttribute("href")==="#"+entry.target.id));
-      }
-    });
-  },{rootMargin:"-22% 0px -68% 0px"});
-  document.querySelectorAll(".content-section").forEach(s=>observer.observe(s));
-}
 renderList();
-renderSidebarOverview(selected);
-updateSpellListLink(selected);
+const requested=new URLSearchParams(window.location.search).get("class");
+const initial=classes.find(c=>c.toLowerCase()===String(requested||"").toLowerCase())||"Gladiator";
+selectClass(initial,false);
 </script>
 </body>
 </html>
