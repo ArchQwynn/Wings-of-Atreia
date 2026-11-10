@@ -735,13 +735,6 @@ body { font-size: 14px; }
         <button type="button" class="spec-select" data-spec="2">[Specialization Three]</button>
       </div>
       <div class="callout" id="selectedSpecSummary" aria-live="polite">Selected path: [Specialization One]. Its advancement abilities are highlighted in the level progression below.</div>
-      <h3>Selected Specialization — Feature Details</h3>
-      <div id="selectedSpecFeatures" aria-live="polite"></div>
-
-      <h3>Specialization Features</h3>
-      <details class="feature" open><summary><span class="feature-heading">[Specialization One — Level 3 feature] <span class="type-tag specialization">Specialization</span></span></summary><div class="feature-body"><div class="feature-meta"><span><b>Path:</b> [Specialization One]</span><span><b>Level:</b> 3</span></div><p>[Full rules text, including action type, cost, effect, and restrictions where applicable.]</p></div></details>
-      <details class="feature" open><summary><span class="feature-heading">[Specialization Two — Level 3 feature] <span class="type-tag specialization">Specialization</span></span></summary><div class="feature-body"><div class="feature-meta"><span><b>Path:</b> [Specialization Two]</span><span><b>Level:</b> 3</span></div><p>[Full rules text, including action type, cost, effect, and restrictions where applicable.]</p></div></details>
-      <details class="feature" open><summary><span class="feature-heading">[Specialization Three — Level 3 feature] <span class="type-tag specialization">Specialization</span></span></summary><div class="feature-body"><div class="feature-meta"><span><b>Path:</b> [Specialization Three]</span><span><b>Level:</b> 3</span></div><p>[Full rules text, including action type, cost, effect, and restrictions where applicable.]</p></div></details>
     </section>
 <section class="content-section" id="levelDetails">
 <h2>Level Details</h2>
@@ -874,16 +867,6 @@ function renderSpecialization(){
   const name=specializationNames[selectedSpecialization];
   document.getElementById("selectedSpecSummary").textContent=
     "Selected path: "+name+". Its advancement abilities are highlighted at the appropriate levels below. Select another path to replace these entries.";
-  const featureHost=document.getElementById("selectedSpecFeatures");
-  featureHost.innerHTML="";
-  [3,6,10,14].forEach(level=>{
-    const details=document.createElement("details");details.className="feature";
-    const summary=document.createElement("summary");
-    summary.innerHTML='<span class="feature-heading">Level '+level+' — '+specializationAbilities[selectedSpecialization][level]+' <span class="type-tag specialization">Specialization</span></span>';
-    const body=document.createElement("div");body.className="feature-body";
-    body.innerHTML='<div class="feature-meta"><span><b>Path:</b> '+name+'</span><span><b>Level:</b> '+level+'</span></div><p>[Your full ability definition and description will be entered once and displayed here and in the level progression.]</p>';
-    details.append(summary,body);featureHost.appendChild(details);
-  });
   renderProgression();
 }
 
