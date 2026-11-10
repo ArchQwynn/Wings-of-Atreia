@@ -709,20 +709,57 @@ body { font-size: 14px; }
 }
 
 
-/* Class progression tables: wrap every column except the final column. */
-#classContentHost .progression-table th:not(:last-child),
-#classContentHost .progression-table td:not(:last-child){
+/* Class progression tables: fixed page width; wrap text in every column. */
+#classContentHost .table-wrap{
+  width:100%;
+  max-width:100%;
+  overflow-x:auto;
+}
+#classContentHost .progression-table{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  table-layout:fixed!important;
+}
+#classContentHost .progression-table th,
+#classContentHost .progression-table td{
+  min-width:0!important;
+  max-width:none!important;
   white-space:normal!important;
   overflow-wrap:anywhere!important;
   word-break:normal!important;
+  vertical-align:top;
 }
-#classContentHost .progression-table th:last-child,
-#classContentHost .progression-table td:last-child{
-  white-space:nowrap!important;
-  overflow-wrap:normal!important;
-  word-break:normal!important;
+/* Five-column non-spellcaster tables. */
+#classContentHost .progression-table:not(:has(th.col-spell-level)) th:nth-child(1),
+#classContentHost .progression-table:not(:has(th.col-spell-level)) td:nth-child(1){width:7%!important}
+#classContentHost .progression-table:not(:has(th.col-spell-level)) th:nth-child(2),
+#classContentHost .progression-table:not(:has(th.col-spell-level)) td:nth-child(2){width:15%!important}
+#classContentHost .progression-table:not(:has(th.col-spell-level)) th:nth-child(3),
+#classContentHost .progression-table:not(:has(th.col-spell-level)) td:nth-child(3){width:15%!important}
+#classContentHost .progression-table:not(:has(th.col-spell-level)) th:nth-child(4),
+#classContentHost .progression-table:not(:has(th.col-spell-level)) td:nth-child(4){width:25%!important}
+#classContentHost .progression-table:not(:has(th.col-spell-level)) th:nth-child(5),
+#classContentHost .progression-table:not(:has(th.col-spell-level)) td:nth-child(5){width:38%!important}
+/* Seven-column spellcaster tables retain their established proportions. */
+#classContentHost .progression-table:has(th.col-spell-level) th:nth-child(1),
+#classContentHost .progression-table:has(th.col-spell-level) td:nth-child(1){width:6%!important}
+#classContentHost .progression-table:has(th.col-spell-level) th:nth-child(2),
+#classContentHost .progression-table:has(th.col-spell-level) td:nth-child(2){width:9%!important}
+#classContentHost .progression-table:has(th.col-spell-level) th:nth-child(3),
+#classContentHost .progression-table:has(th.col-spell-level) td:nth-child(3){width:10%!important}
+#classContentHost .progression-table:has(th.col-spell-level) th:nth-child(4),
+#classContentHost .progression-table:has(th.col-spell-level) td:nth-child(4){width:14%!important}
+#classContentHost .progression-table:has(th.col-spell-level) th:nth-child(5),
+#classContentHost .progression-table:has(th.col-spell-level) td:nth-child(5){width:18%!important}
+#classContentHost .progression-table:has(th.col-spell-level) th:nth-child(6),
+#classContentHost .progression-table:has(th.col-spell-level) td:nth-child(6){width:26%!important}
+#classContentHost .progression-table:has(th.col-spell-level) th:nth-child(7),
+#classContentHost .progression-table:has(th.col-spell-level) td:nth-child(7){width:17%!important}
+@media(max-width:680px){
+  #classContentHost .progression-table{min-width:650px!important}
+  #classContentHost .progression-table:has(th.col-spell-level){min-width:850px!important}
 }
-
 </style>
 </head>
 <body>
