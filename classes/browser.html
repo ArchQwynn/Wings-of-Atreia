@@ -673,9 +673,17 @@ body { font-size: 14px; }
 #classContentHost .progression-table th:nth-child(1),
 #classContentHost .progression-table td:nth-child(1){width:7%!important}
 #classContentHost .progression-table th:nth-child(2),
-#classContentHost .progression-table td:nth-child(2){width:12%!important}
+#classContentHost .progression-table td:nth-child(2){width:8%!important}
 #classContentHost .progression-table th:nth-child(3),
-#classContentHost .progression-table td:nth-child(3){width:13%!important}
+#classContentHost .progression-table td:nth-child(3){width:9%!important}
+/* Allow the first three narrow columns, including their headers, to wrap. */
+#classContentHost .progression-table th:nth-child(-n+3),
+#classContentHost .progression-table td:nth-child(-n+3){
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+  hyphens:auto;
+}
 #classContentHost .progression-table th:nth-child(4),
 #classContentHost .progression-table td:nth-child(4){width:43%!important}
 #classContentHost .progression-table th:nth-child(5),
