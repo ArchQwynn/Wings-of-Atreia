@@ -1,177 +1,815 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Class Browser | Wings of Atreia</title>
-<meta name="description" content="Browse the playable classes of Wings of Atreia.">
-<link href="../assets/css/style-v20260914-6.css" rel="stylesheet">
 <style>
-.class-browser{display:grid;grid-template-columns:230px minmax(0,1fr);gap:1.25rem;align-items:start;margin:1.5rem 0 3rem}
-.class-directory,.class-panel{border:1px solid var(--line);border-radius:1rem;background:rgba(13,27,42,.82)}
-.class-directory{padding:.85rem;position:sticky;top:6rem}
-.class-directory h2{font-size:1rem;margin:.25rem .5rem .75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
-.class-choice{display:block;width:100%;text-align:left;border:1px solid transparent;border-radius:.55rem;background:transparent;color:var(--text);padding:.65rem .75rem;font:inherit;cursor:pointer}
-.class-choice:hover,.class-choice[aria-current="page"]{background:#15314a;border-color:var(--line);color:#fff}
-.class-panel{padding:clamp(1rem,3vw,2rem);min-width:0}
-.class-overview{padding-bottom:1.25rem;border-bottom:1px solid var(--line)}
-.class-eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.14em;color:var(--accent);font-weight:800}
-.class-overview h2{font-size:clamp(2rem,4vw,3rem);margin:.2rem 0}
-.class-description{color:var(--muted);max-width:850px}
-.class-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.65rem;margin-top:1rem}
-.class-fact{padding:.7rem .8rem;border:1px solid var(--line);border-radius:.65rem;background:rgba(7,17,31,.5)}
-.class-fact strong{display:block;color:var(--accent-2);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
-.class-tabs{display:flex;gap:.4rem;flex-wrap:wrap;padding:1rem 0;border-bottom:1px solid var(--line)}
-.class-tab{border:1px solid var(--line);border-radius:999px;padding:.55rem .9rem;background:transparent;color:var(--muted);font:inherit;font-weight:750;cursor:pointer}
-.class-tab[aria-selected="true"],.class-tab:hover{background:#15314a;color:#fff;border-color:var(--accent)}
-.class-section{padding:1.25rem 0;border-bottom:1px solid var(--line)}
-.class-section:last-child{border-bottom:0}
-.class-section h3{margin-top:0}
-.class-placeholder{border:1px dashed var(--line);border-radius:.65rem;padding:1rem;color:var(--muted);background:rgba(7,17,31,.35)}
-.progression-table-wrap{overflow-x:auto}
-.progression-table{width:100%;border-collapse:collapse;min-width:620px}
-.progression-table th,.progression-table td{border:1px solid var(--line);padding:.65rem;text-align:left;vertical-align:top}
-.progression-table th{background:#173957;color:#fff}
-.level-entry{border:1px solid var(--line);border-radius:.65rem;margin:.65rem 0;background:rgba(7,17,31,.35)}
-.level-entry summary{padding:.75rem 1rem;cursor:pointer;font-weight:750;color:var(--accent-2)}
-.level-entry-content{padding:0 1rem 1rem}
-.specialization-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.8rem}
-.specialization-card{border:1px solid var(--line);border-radius:.75rem;padding:1rem;background:rgba(7,17,31,.35)}
-.specialization-card h4{margin:.1rem 0 .6rem;color:var(--accent-2)}
-.browser-note{font-size:.9rem;color:var(--muted);margin-top:1rem}.authoring-placeholder{color:#a9c0d5;font-style:italic}.class-placeholder{min-height:2.5rem}.authoring-placeholder::selection{background:#28577b;color:#fff}
-@media(max-width:760px){.class-browser{grid-template-columns:1fr}.class-directory{position:static}.class-directory-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.25rem}}
-@media(max-width:420px){.class-directory-list{grid-template-columns:1fr}.class-tabs{gap:.3rem}.class-tab{font-size:.9rem;padding:.48rem .7rem}}
+:root{
+  --bg:#081522;--panel:#102338;--panel2:#142d45;--panel3:#1a3854;
+  --line:#29445d;--text:#e8f0f7;--muted:#a8bacb;--accent:#83c8f4;
+  --accent2:#c5e8ff;--gold:#d7b875;--shadow:0 14px 38px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:110px}
+body{margin:0;background:linear-gradient(180deg,#091827,#07121d 70%);color:var(--text);
+  font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.site-header{height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;
+  border-bottom:1px solid var(--line);background:rgba(7,18,29,.94);position:sticky;top:0;z-index:20;backdrop-filter:blur(12px)}
+.brand{font-weight:850;letter-spacing:.13em;color:var(--accent2);font-size:1rem}
+.header-note{font-size:.78rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.site-nav{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:.82rem}
+.site-nav a{color:var(--muted)}
+.site-nav a:hover{color:var(--accent2)}
+@media(max-width:900px){.site-nav{gap:8px;font-size:.75rem}}
+@media(max-width:680px){.site-nav{display:none}}
+.layout{max-width:1600px;margin:auto;display:grid;grid-template-columns:190px minmax(0,1fr);gap:16px;padding:20px}
+.sidebar{position:sticky;top:90px;align-self:start;height:calc(100vh - 112px);min-height:450px;
+  background:rgba(16,35,56,.92);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.sidebar-heading{font-size:.78rem;letter-spacing:.14em;color:var(--muted);font-weight:800;margin:2px 0 12px}
+.search-wrap{position:relative;margin-bottom:14px}
+.search-wrap input{width:100%;background:#091a2a;border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--text);outline:none}
+.search-wrap input:focus{border-color:var(--accent)}
+.class-list{overflow:visible;display:flex;flex-direction:column;gap:2px;padding-right:0}
+.class-button{display:block;text-align:left;width:100%;padding:5px 9px;border:1px solid transparent;
+  border-radius:6px;background:transparent;color:var(--text);font-size:.84rem;line-height:1.25}
+.class-button:hover{background:var(--panel2);border-color:var(--line)}
+.class-button.active{background:linear-gradient(90deg,#1b4565,#15334e);border-color:#47799d;color:#fff}
+.sidebar-footer{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);font-size:.75rem;color:var(--muted)}
+
+.class-overview-panel{margin-top:16px;padding:17px 20px;background:rgba(16,35,56,.88);
+  border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.class-overview-panel h2{font-size:.78rem;letter-spacing:.14em;color:var(--muted);font-weight:800;margin:0 0 12px}
+.class-overview-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.class-overview-table th,.class-overview-table td{padding:8px 10px;border-bottom:1px solid rgba(41,68,93,.7);
+  font-size:.82rem;line-height:1.35;vertical-align:top;overflow-wrap:anywhere}
+.class-overview-table tr:last-child th,.class-overview-table tr:last-child td{border-bottom:0}
+.class-overview-table th{width:30%;color:var(--muted);font-weight:600;text-align:left}
+.class-overview-table td{color:var(--text);font-weight:650;text-align:left}
+
+.main{min-width:0}
+.mobile-toolbar{display:none;margin-bottom:12px}
+.menu-button{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:9px 13px}
+.class-hero{padding:26px 30px;border:1px solid var(--line);border-radius:14px;
+  background:radial-gradient(ellipse at top right,rgba(71,137,180,.2),transparent 55%),linear-gradient(130deg,#132d45,#0c1e30);box-shadow:var(--shadow)}
+.eyebrow{font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:800}
+h1{font-size:clamp(1.5rem,2.8vw,2.2rem);line-height:1.1;margin:.35rem 0 .6rem;letter-spacing:.015em}
+.hero-description{color:var(--muted);max-width:850px;margin:0}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.pill{border:1px solid #345873;border-radius:999px;padding:4px 10px;color:var(--accent2);font-size:.78rem;background:rgba(9,26,42,.55)}
+.content-nav{position:sticky;top:78px;z-index:10;display:flex;gap:7px;overflow-x:auto;padding:12px 0;margin:0 0 8px;
+  background:linear-gradient(180deg,rgba(8,21,34,.98),rgba(8,21,34,.9));scrollbar-width:thin}
+.content-nav a{white-space:nowrap;padding:7px 11px;border:1px solid var(--line);border-radius:7px;background:var(--panel);font-size:.82rem;color:var(--muted)}
+.content-nav a:hover,.content-nav a.current{color:var(--accent2);border-color:#5484a5;background:var(--panel2);text-decoration:none}
+.content-section{margin:18px 0;background:rgba(16,35,56,.72);border:1px solid var(--line);border-radius:12px;padding:22px 24px}
+.content-section h2{font-size:1.35rem;margin:0 0 14px;color:var(--accent2)}
+.content-section h3{font-size:1.05rem;margin:20px 0 8px}
+.content-section p{color:#d4e0eb}
+.muted{color:var(--muted)!important}
+.info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.info-tile{padding:12px;background:#0b1d2e;border:1px solid var(--line);border-radius:8px}
+.info-tile small{display:block;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em}
+.info-tile strong{display:block;margin-top:3px;font-weight:650}
+/* Content-sized progression table with a frozen Level column */
+.table-wrap{overflow-x:auto;max-width:100%;position:relative;overscroll-behavior-x:contain}
+.progression-table{width:max-content;min-width:100%;table-layout:auto;border-collapse:separate;border-spacing:0}
+.progression-table th,.progression-table td{white-space:normal;overflow-wrap:anywhere}
+.progression-table th:nth-child(1),.progression-table td:nth-child(1){
+  position:sticky;left:0;width:70px;min-width:70px;max-width:70px;text-align:center;
+  white-space:nowrap;z-index:2;background:#142f49
+}
+.progression-table thead th:nth-child(1){z-index:4;background:#1a3b59}
+.progression-table th:nth-child(2),.progression-table td:nth-child(2),
+.progression-table th:nth-child(3),.progression-table td:nth-child(3){
+  min-width:105px;text-align:center;white-space:nowrap
+}
+.progression-table .col-spell-level{min-width:155px}
+.progression-table .col-spell-advancements{min-width:220px}
+.progression-table .col-abilities{min-width:320px;width:420px}
+.progression-table .col-resource{min-width:155px;width:180px}
+.progression-table tbody tr:nth-child(odd) td:first-child{background:#10283e}
+.progression-table tbody tr:nth-child(even) td:first-child{background:#0d2032}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:540px}
+th,td{padding:10px 12px;text-align:left;border:1px solid var(--line);vertical-align:top}
+th{background:#1a3b59;color:#f0f7fc;font-size:.83rem}
+td{color:#d7e3ed}
+tbody tr:nth-child(even){background:rgba(9,26,42,.45)}
+.feature{border:1px solid var(--line);border-radius:9px;margin:10px 0;background:#0d2032;overflow:hidden}
+.feature summary,.level summary{cursor:pointer;list-style:none;padding:13px 15px;color:var(--accent2);font-weight:700;display:flex;align-items:center;gap:10px}
+.feature summary::-webkit-details-marker,.level summary::-webkit-details-marker{display:none}
+.feature summary:before,.level summary:before{content:"＋";color:var(--accent);font-weight:900;width:16px}
+.feature[open] summary:before,.level[open] summary:before{content:"−"}
+.feature-body{padding:0 16px 15px;color:#d5e1eb}
+
+.feature-heading{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.type-tag{display:inline-flex;align-items:center;border:1px solid #42627d;border-radius:999px;padding:2px 8px;
+  font-size:.68rem;line-height:1.5;letter-spacing:.07em;text-transform:uppercase;color:var(--accent2);background:#142f47}
+.type-tag.passive{border-color:#547b68;color:#bce4c9;background:#142e27}
+.type-tag.active{border-color:#477da2;color:#bce5ff;background:#132e43}
+.type-tag.reaction{border-color:#8b7448;color:#f0d9a7;background:#342b1a}
+.type-tag.resource{border-color:#7962a0;color:#ddccff;background:#29213b}
+.type-tag.specialization{border-color:#8d6480;color:#f1cce3;background:#352333}
+.type-tag.ultimate{border-color:#a58a4c;color:#f4dfaa;background:#3a301b}
+.feature-meta{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 12px}
+.feature-meta span{font-size:.77rem;color:var(--muted);padding:3px 8px;border-radius:5px;background:#142b40;border:1px solid #29445d}
+.feature-meta b{color:#dbeaf6;font-weight:650}
+.feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.feature-grid .feature{margin:0}
+.feature-type-intro{font-size:.88rem;color:var(--muted);margin:-5px 0 12px}
+
+.feature-body p{margin:6px 0}
+.level-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.level{border:1px solid var(--line);border-radius:9px;background:#0d2032;overflow:hidden}
+.level summary{padding:11px 13px;font-size:.9rem}
+.level-content{padding:0 14px 13px;color:#d3dfeb;font-size:.9rem}
+.level-content p{margin:5px 0}
+.spec-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.spec-card{border:1px solid var(--line);background:#0d2032;border-radius:10px;padding:15px}
+.spec-card h3{margin:0 0 7px;color:var(--accent2)}
+.spec-card p{font-size:.9rem;color:var(--muted)}
+
+.spec-select{border:1px solid var(--line);border-radius:7px;background:#10283e;color:var(--muted);padding:7px 11px;font-size:.82rem}
+.spec-select:hover{border-color:#5484a5;color:var(--accent2)}
+.spec-select.active{background:#1b4565;border-color:#6ca4ca;color:#fff}
+.level-specialization{margin-top:8px;padding:7px 9px;border-left:3px solid var(--gold);background:rgba(215,184,117,.09);border-radius:0 6px 6px 0}
+.level-specialization strong{display:block;color:#f0d9a7;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em}
+.level-specialization span{font-size:.87rem;color:#e9e0ce}
+
+.callout{border-left:3px solid var(--gold);padding:12px 15px;background:rgba(215,184,117,.08);color:#e8ddc5;border-radius:0 8px 8px 0}
+.empty{padding:18px;color:var(--muted);text-align:center}
+.footer{text-align:center;color:var(--muted);font-size:.78rem;padding:24px}
+.backdrop{display:none}
+@media(max-width:900px){
+  .layout{grid-template-columns:180px minmax(0,1fr);gap:12px;padding:14px}
+  .info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .spec-grid{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  .site-header{height:58px;padding:0 15px}.header-note{display:none}
+  .layout{display:block;width:100%;padding:12px}
+  /* On narrow screens, place the directory above the class details.
+     This avoids a clipped two-column layout and lets the overview grow naturally. */
+  .sidebar{position:relative;top:auto;left:auto;bottom:auto;width:100%;height:auto;min-height:0;
+    margin:0 0 14px;transform:none;transition:none}
+  .mobile-toolbar{display:none}
+  .backdrop{display:none}
+  .class-hero{padding:21px 19px}
+  .content-section{padding:17px 16px}
+  .content-nav{top:58px}
+  .level-list{grid-template-columns:1fr}
+  .info-grid{grid-template-columns:1fr 1fr}
+  .class-overview-table th,.class-overview-table td{padding:7px 8px;font-size:.76rem}
+  .class-overview-table th{width:36%}
+  .class-button{font-size:.82rem}
+}
+@media(max-width:390px){.info-grid{grid-template-columns:1fr}}
+
+
+/* Core Mechanics & Resources: content-driven height, wrapping, minimal chrome */
+#mechanics {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  margin: 14px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+#mechanics h2 {
+  margin: 0 0 10px;
+}
+#mechanics .feature {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  margin: 8px 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  border-bottom: 1px solid rgba(130, 160, 185, .22);
+  background: transparent;
+  overflow: visible;
+}
+#mechanics .feature summary {
+  box-sizing: border-box;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.45;
+  padding: 10px 2px;
+}
+#mechanics .feature-body {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  padding: 2px 2px 12px;
+}
+#mechanics .feature-body p {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  margin: 7px 0;
+}
+
+/* Simplified 5etools-inspired presentation: remove decorative panels and frames */
+.content-section {
+  margin: 22px 0;
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.content-section h2 {
+  padding: 0 0 7px;
+  margin: 0 0 12px;
+  border: 0;
+  border-bottom: 1px solid rgba(160, 180, 200, .28);
+}
+.content-section h3 {
+  margin: 18px 0 7px;
+}
+.content-section .feature,
+.feature {
+  margin: 8px 0;
+  padding: 0;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(160, 180, 200, .18) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible;
+}
+.feature summary {
+  padding: 9px 2px !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+.feature-body {
+  padding: 2px 2px 12px !important;
+  background: transparent !important;
+}
+.spec-card,
+.info-tile {
+  padding: 10px 0;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(160, 180, 200, .18) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.callout {
+  padding: 8px 0 8px 12px;
+  border: 0;
+  border-left: 2px solid rgba(160, 180, 200, .35);
+  border-radius: 0;
+  background: transparent;
+}
+.level {
+  border: 0 !important;
+  border-bottom: 1px solid rgba(160, 180, 200, .2) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.level summary {
+  padding: 9px 2px !important;
+  background: transparent !important;
+}
+
+/* Slightly more compact typography: reduce text sizing by about 1–2 points */
+body { font-size: 14px; }
+.site-header { font-size: 13px; }
+.sidebar, .class-list, .class-list button { font-size: 13px; }
+.content-section { font-size: 13px; }
+.content-section p,
+.content-section li,
+.feature-body,
+.level-body,
+.muted { font-size: 13px; }
+.content-section h2 { font-size: 17px; }
+.content-section h3 { font-size: 14px; }
+.feature summary,
+.level summary { font-size: 13px; }
+.progression-table { font-size: 12px; }
+.progression-table th,
+.progression-table td { font-size: 12px; }
+
+/* Level Details: clean numbered list from Level 1 through Level 20 */
+.level-list {
+  display: block;
+  list-style: decimal;
+  margin: 8px 0 0;
+  padding-left: 30px;
+}
+.level-item {
+  display: list-item;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+.level-item::marker {
+  color: var(--muted);
+  font-size: 12px;
+}
+.level-item .level {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(160, 180, 200, .16) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.level-item .level summary {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 2px !important;
+  font-size: 13px;
+  background: transparent !important;
+}
+.level-item .level summary::before {
+  content: none;
+}
+.level-number {
+  flex: 0 0 62px;
+  color: var(--accent2);
+  font-weight: 700;
+}
+.level-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 500;
+}
+.level-content {
+  padding: 2px 2px 12px 72px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 680px) {
+  .level-content { padding-left: 8px; }
+}
+
+/* Level Details formatted like compact 5etools feature entries */
+.level-list {
+  display: block;
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.level-item { display: block; margin: 0; padding: 0; }
+.level-entry,
+.level-specialization-entry {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible;
+}
+.level-entry > summary,
+.level-specialization-entry > summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 6px 2px 3px !important;
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(210, 160, 65, .65);
+  border-radius: 0;
+  background: transparent !important;
+  cursor: pointer;
+  list-style: none;
+}
+.level-entry > summary::-webkit-details-marker,
+.level-specialization-entry > summary::-webkit-details-marker { display: none; }
+.level-entry > summary::before,
+.level-specialization-entry > summary::before { content: none !important; }
+.level-entry-title {
+  color: #d99a28;
+  font-family: Georgia, "Times New Roman", serif;
+  font-variant: small-caps;
+  font-size: 16px;
+  line-height: 1.2;
+}
+.level-source {
+  margin-left: auto;
+  color: #8d7448;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.level-content {
+  padding: 3px 2px 8px !important;
+  color: #d0d0d0;
+  font-size: 13px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.level-content > p { margin: 3px 0 6px; }
+.level-specialization-entry { margin: 4px 0 8px 0; }
+.level-specialization-entry > summary {
+  border-bottom: 0;
+  padding: 3px 2px !important;
+}
+.specialization-entry-title {
+  color: #4c9acb;
+  font-family: Georgia, "Times New Roman", serif;
+  font-variant: small-caps;
+  font-size: 15px;
+  line-height: 1.2;
+}
+.level-specialization-entry > p {
+  margin: 2px 2px 7px;
+  color: #d0d0d0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+
+#specializations { margin: 18px 0 16px; padding: 0; }
+#specializations > h2 { margin-bottom: 7px; }
+#specializations .spec-grid { margin: 10px 0; }
+#specializations .spec-select { cursor: pointer; }
+.level-specialization-entry { margin: 5px 0 8px; }
+.specialization-entry-title {
+  color: #559ac7;
+  font-family: Georgia, "Times New Roman", serif;
+  font-variant: small-caps;
+  font-size: 15px;
+  line-height: 1.25;
+}
+.level-specialization-entry p {
+  margin: 3px 0 7px;
+  color: #d0d0d0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+
+/* How to Play */
+.how-to-play-intro{margin:0 0 14px;max-width:900px;color:var(--text)}
+.how-core-loop{padding:12px 0;margin:0 0 14px;background:transparent;border:0;border-radius:0}
+.how-kicker{display:block;margin:0 0 12px;color:var(--accent2);font-size:.68rem;
+  letter-spacing:.1em;text-transform:uppercase}
+.how-core-loop p{margin:0;font-weight:750;font-size:.95rem}
+.how-overview-table{margin:0 0 14px}
+.how-overview-table tr:last-child th,.how-overview-table tr:last-child td{
+  border-bottom:1px solid rgba(41,68,93,.7)
+}
+.how-strategy{padding:14px 0;margin:0 0 12px;background:transparent;border:0;border-radius:0}
+.how-strategy h3{margin:0 0 12px;color:var(--text);font-size:1rem}
+.how-strategy p{margin:0 0 10px;font-size:.85rem}
+.how-strategy p:last-child{margin-bottom:0}
+.how-strategy ul{margin:8px 0 0;padding-left:22px;font-size:.85rem}
+.how-strategy li{padding:2px 0}
+
+
 </style>
 </head>
-<body data-base="../">
+<body>
 <header class="site-header">
- <div class="nav-wrap">
   <a class="brand" href="../index.html">WINGS OF ATREIA</a>
-  <nav class="nav-links">
-   <a href="../index.html">Home</a><a href="../rules/">Rules</a><a href="./">Classes</a><a href="../spells/">Spells</a><a href="../world/">World</a><a href="../companion/">Character Companion</a><a href="../about.html">About</a>
+  <nav class="site-nav" aria-label="Main navigation">
+    <a href="../index.html">Home</a><a href="../rules/">Rules</a><a href="./">Classes</a><a href="../spells/">Spells</a><a href="../world/">World</a><a href="../companion/">Character Companion</a><a href="../about.html">About</a>
   </nav>
-  <div class="search-box"><input aria-label="Search Wings of Atreia" data-site-search placeholder="Search WoA…" type="search"></div>
- </div>
+  <div class="header-note">Class Compendium</div>
 </header>
-<main>
- <header class="page-header">
-  <div class="eyebrow">Player Options</div>
-  <h1>Class Browser</h1>
-  <p>Browse the playable classes and their class rules, progression, features, and specializations.</p>
- </header>
- <div class="class-browser">
-  <aside class="class-directory" aria-label="Class directory">
-   <h2>Classes</h2>
-   <div class="class-directory-list" id="classDirectory">
-    <button class="class-choice" data-class="gladiator" aria-current="page">Gladiator</button>
-    <button class="class-choice" data-class="templar">Templar</button>
-    <button class="class-choice" data-class="assassin">Assassin</button>
-    <button class="class-choice" data-class="ranger">Ranger</button>
-    <button class="class-choice" data-class="sorcerer">Sorcerer</button>
-    <button class="class-choice" data-class="spiritmaster">Spiritmaster</button>
-    <button class="class-choice" data-class="cleric">Cleric</button>
-    <button class="class-choice" data-class="chanter">Chanter</button>
-    <button class="class-choice" data-class="aethertech">Aethertech</button>
-    <button class="class-choice" data-class="gunslinger">Gunslinger</button>
-    <button class="class-choice" data-class="songweaver">Songweaver</button>
-   </div>
+<div class="backdrop" id="backdrop" aria-hidden="true"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar" aria-label="Class selector">
+    <div class="sidebar-heading">CLASS DIRECTORY</div>
+    <div class="search-wrap"><input id="classSearch" type="search" placeholder="Search classes…" aria-label="Search classes"></div>
+    <nav class="class-list" id="classList"></nav>
+    <div class="sidebar-footer">11 playable classes</div>
   </aside>
-  <article class="class-panel" id="classPanel">
-   <header class="class-overview">
-    <div class="class-eyebrow">Class Overview</div>
-    <h2 id="className">Gladiator</h2>
-    <!-- Add the approved class description here. -->
-    <p class="class-description authoring-placeholder" id="classDescription">[Enter the approved class description here.]</p>
-    <div class="class-facts">
-     <div class="class-fact"><strong>Hit Die</strong><span id="factHitDie" class="authoring-placeholder">[Enter hit die]</span></div>
-     <div class="class-fact"><strong>Primary Ability</strong><span id="factPrimary" class="authoring-placeholder">[Enter primary ability]</span></div>
-     <div class="class-fact"><strong>Saving Throws</strong><span id="factSaves" class="authoring-placeholder">[Enter saving throws]</span></div>
-     <div class="class-fact"><strong>Armor</strong><span id="factArmor" class="authoring-placeholder">[Enter armor proficiencies]</span></div>
-     <div class="class-fact"><strong>Weapons</strong><span id="factWeapons" class="authoring-placeholder">[Enter weapon proficiencies]</span></div>
-     <div class="class-fact"><strong>Implements</strong><span id="factImplements" class="authoring-placeholder">[Enter implement proficiencies or “None”]</span></div>
-    </div>
-   </header>
-   <nav class="class-tabs" aria-label="Class reference sections" id="classTabs">
-    <button class="class-tab" data-tab="progression" aria-selected="true">Progression</button>
-    <button class="class-tab" data-tab="mechanics" aria-selected="false">Mechanics</button>
-    <button class="class-tab" data-tab="ultimate" aria-selected="false">Ultimate</button>
-    <button class="class-tab" data-tab="specializations" aria-selected="false">Specializations</button>
-    <button class="class-tab" data-tab="glossary" aria-selected="false">Glossary</button>
-    <button class="class-tab" data-tab="clarifications" aria-selected="false">Clarifications</button>
-    <button class="class-tab" data-tab="spell-list" id="spellListTab" aria-selected="false" hidden>Spell List</button>
-   </nav>
-   <div id="classContent">
-    <section class="class-section" data-section="progression">
-     <h3>Class Progression</h3>
-     <p class="class-placeholder authoring-placeholder">AUTHORING PLACEHOLDER — Add any progression notes or rules that should appear above the table.</p>
-     <div class="progression-table-wrap">
-      <table class="progression-table">
-       <thead><tr><th>Level</th><th>Proficiency Bonus</th><th>Flight Slots</th><th>Class Features</th></tr></thead>
-       <tbody><tr><td colspan="4" class="authoring-placeholder">AUTHORING PLACEHOLDER — Replace this row with one table row for each class level.</td></tr></tbody>
+
+  <main class="main">
+    <div class="mobile-toolbar"><button class="menu-button" id="menuButton" aria-expanded="false">☰ &nbsp; Browse Classes</button></div>
+    <header class="class-hero">
+      <div class="eyebrow">Class Reference · Levels 1–20</div>
+      <h1 id="classTitle">Gladiator</h1>
+      <p class="hero-description" id="classDescription">A structured reference page for the selected Wings of Atreia class. This prototype demonstrates the layout only; class mechanics and feature text are intentionally left as placeholders.</p>
+      <div class="hero-meta"><span class="pill">No multiclassing</span><span class="pill">Three specializations</span><span class="pill">20-level progression</span></div>
+    </header>
+
+    <section class="class-overview-panel" id="overview" aria-label="Selected class overview">
+      <h2>CLASS OVERVIEW</h2>
+      <table class="class-overview-table">
+        <tbody id="classOverviewPanel">
+          <tr><th scope="row">Armor</th><td>[Armor]</td></tr>
+          <tr><th scope="row">Weapons</th><td>[Weapons]</td></tr>
+          <tr><th scope="row">Implements</th><td>[Implements]</td></tr>
+          <tr><th scope="row">Hit Die</th><td>[Hit Die]</td></tr>
+          <tr><th scope="row">Class Save DC</th><td>[Class Save DC]</td></tr>
+          <tr><th scope="row">Primary Ability</th><td>[Primary Ability]</td></tr>
+          <tr><th scope="row">Saving Throws</th><td>[Saving Throws]</td></tr>
+          <tr><th scope="row">Skills</th><td>[Skills]</td></tr>
+          <tr><th scope="row">Class Resource</th><td>[Class Resource]</td></tr>
+        </tbody>
       </table>
-     </div>
-     <h3>Level Details</h3>
-     <div class="authoring-placeholder">AUTHORING PLACEHOLDER — Add one expandable Level Details entry for each level that grants a feature. See the HTML example below.</div>
     </section>
-    <section class="class-section" data-section="mechanics" hidden><h3>Class Mechanics</h3><p class="class-placeholder authoring-placeholder">AUTHORING PLACEHOLDER — Add the class resource, core mechanics, and their rules here. Use &lt;h4&gt; for each subsection and &lt;p&gt; or lists for the wording.</p></section>
-    <section class="class-section" data-section="ultimate" hidden><h3>Ultimate Ability</h3><p class="class-placeholder authoring-placeholder">AUTHORING PLACEHOLDER — Add the approved Ultimate ability name, usage, and complete rules text here.</p></section>
-    <section class="class-section" data-section="specializations" hidden>
-     <h3>Specializations</h3>
-     <p class="class-placeholder authoring-placeholder">AUTHORING PLACEHOLDER — Explain specialization selection and the approved level checkpoints here.</p>
-     <div class="specialization-grid">
-      <section class="specialization-card"><h4>[Specialization 1]</h4><p class="authoring-placeholder">AUTHORING PLACEHOLDER — Add its description and features.</p></section>
-      <section class="specialization-card"><h4>[Specialization 2]</h4><p class="authoring-placeholder">AUTHORING PLACEHOLDER — Add its description and features.</p></section>
-      <section class="specialization-card"><h4>[Specialization 3]</h4><p class="authoring-placeholder">AUTHORING PLACEHOLDER — Add its description and features.</p></section>
-     </div>
+
+    <nav class="content-nav" id="contentNav" aria-label="Class sections">
+      <a href="#spellList" id="spellListNav" hidden>Spell List</a><a href="#progression">Progression</a>
+      <a href="#mechanics">Mechanics</a><a href="#ultimate">Ultimate</a><a href="#specializations">Specializations</a><a href="#glossary">Glossary</a><a href="#clarifications">Clarifications</a><a href="#howToPlay">How to Play</a>
+    </nav>
+
+<section class="content-section" id="spellList" hidden>
+      <h2 id="spellListTitle">Spell List</h2>
+      <p class="muted">[The spell list for the selected spellcasting class will be added here.]</p>
     </section>
-    <section class="class-section" data-section="glossary" hidden><h3>Glossary</h3><p class="class-placeholder authoring-placeholder">AUTHORING PLACEHOLDER — Add class-specific terms and their definitions here.</p></section>
-    <section class="class-section" data-section="clarifications" hidden><h3>Rules Clarifications</h3><p class="class-placeholder authoring-placeholder">AUTHORING PLACEHOLDER — Add approved rules clarifications and examples here.</p></section>
-    <section class="class-section" data-section="spell-list" hidden><h3>Spell List</h3><p class="class-placeholder authoring-placeholder">AUTHORING PLACEHOLDER — Link this class to its existing spell list page. Do not copy spell records into the Class Browser.</p><p><a id="existingSpellListLink" href="../spells/">Open the existing WoA spell reference</a></p></section>
-   </div>
-   <p class="browser-note">How to Play guides remain separate from this class rules reference.</p>
-  </article>
- </div>
-</main>
-<footer class="site-footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”) · Non-commercial fan project.</footer>
-<div class="search-results" data-search-results></div>
-<script src="../assets/js/search-v20260914-6.js"></script>
+
+    <section class="content-section" id="progression">
+      <h2>Class Progression</h2>
+      <p class="muted">A compact overview of all 20 levels. Selecting a level below expands its feature summary.</p>
+      <div class="table-wrap"><table class="progression-table"><thead><tr id="progressionHeader"><th>Level</th><th>Proficiency</th><th>Features</th><th>Class Resource</th></tr></thead>
+      <tbody id="progressionRows"></tbody></table></div>
+
+<section class="content-section" id="mechanics">
+      <h2>Core Mechanics &amp; Resources</h2>
+      <details class="feature" open><summary>[Signature resource]</summary><div class="feature-body"><p><strong>Generation:</strong> [How the resource is gained.]</p><p><strong>Capacity:</strong> [Maximum and scaling.]</p><p><strong>Expenditure:</strong> [What spends it.]</p><p><strong>Recovery:</strong> [When it recovers.]</p></div></details>
+      <details class="feature" open><summary>[Signature mechanic]</summary><div class="feature-body"><p>[Full explanation of the class's unique mechanic.]</p></div></details>
+    </section>
+<div class="content-section ultimate-block" id="ultimate">
+      <h2>Ultimate Ability</h2>
+      <details class="feature" open><summary><span class="feature-heading">[Ultimate ability name] <span class="type-tag ultimate">Ultimate</span></span></summary><div class="feature-body"><div class="feature-meta"><span><b>Activation:</b> [Action type]</span><span><b>Cost:</b> [DP / resource]</span><span><b>Recovery:</b> [Recovery timing]</span></div><p><strong>Trigger / Requirements:</strong> [Requirements to activate.]</p><p><strong>Effect:</strong> [Complete effect.]</p><p><strong>Scaling:</strong> [Level scaling.]</p><p><strong>Recovery:</strong> [Full recovery rules and restrictions.]</p></div></details>
+    </div>
+
+<div class="content-section specialization-block" id="specializations">
+      <h2>Specializations</h2>
+      <p class="muted">Three distinct paths, with advancement features at the established specialization levels.</p>
+      <div class="spec-grid">
+        <article class="spec-card"><h3>[Specialization One]</h3><p>[Identity and playstyle summary.]</p><p><strong>Advancement:</strong> Levels 3, 6, 10, 14.</p></article>
+        <article class="spec-card"><h3>[Specialization Two]</h3><p>[Identity and playstyle summary.]</p><p><strong>Advancement:</strong> Levels 3, 6, 10, 14.</p></article>
+        <article class="spec-card"><h3>[Specialization Three]</h3><p>[Identity and playstyle summary.]</p><p><strong>Advancement:</strong> Levels 3, 6, 10, 14.</p></article>
+      </div>
+      <h3>Choose a Specialization</h3>
+      <p class="muted">Select a path to preview how its abilities are integrated into the level progression. The sample names and descriptions below are placeholders, not official class rules.</p>
+      <div class="feature-meta" id="specializationSelector" role="group" aria-label="Choose specialization">
+        <button type="button" class="spec-select active" data-spec="0">[Specialization One]</button>
+        <button type="button" class="spec-select" data-spec="1">[Specialization Two]</button>
+        <button type="button" class="spec-select" data-spec="2">[Specialization Three]</button>
+      </div>
+      <div class="callout" id="selectedSpecSummary" aria-live="polite">Selected path: [Specialization One]. Its abilities appear in the corresponding Level Details entries at Levels 3, 6, 10, and 14.</div>
+    </div>
+
+      <h3>Level Details</h3>
+      <ol class="level-list" id="levelList"></ol>
+    </section>
+
+    
+
+    
+
+    
+
+    
+
+    <section class="content-section" id="glossary">
+      <h2>Class Glossary</h2>
+      <div class="table-wrap"><table><thead><tr><th>Term</th><th>Definition</th><th>Related Feature</th></tr></thead>
+      <tbody><tr><td>[Term]</td><td>[Concise definition.]</td><td>[Section or feature]</td></tr><tr><td>[Term]</td><td>[Concise definition.]</td><td>[Section or feature]</td></tr></tbody></table></div>
+    </section>
+
+    <section class="content-section" id="clarifications">
+      <h2>Rules &amp; Clarifications</h2>
+      <details class="feature" open><summary>[Topic or interaction]</summary><div class="feature-body"><p>[Precise clarification and any relevant examples.]</p></div></details>
+    </section>
+    <section class="content-section" id="howToPlay">
+      <h2 id="howToPlayTitle">How to Play Gladiator</h2>
+      <p class="how-to-play-intro" id="howToPlayIntro">[Brief introduction explaining this class's playstyle, combat identity, and overall objective.]</p>
+
+      <div class="how-core-loop">
+        <span class="how-kicker">Core Gameplay Loop</span>
+        <p id="howToPlayLoop">[Step 1] → [Step 2] → [Step 3] → [Step 4] → [Continue or adapt]</p>
+      </div>
+
+      <table class="class-overview-table how-overview-table">
+        <tbody>
+          <tr>
+            <th scope="row">Your Job</th>
+            <td>[Explain the class's role in the party and what it should prioritize during encounters.]</td>
+          </tr>
+          <tr>
+            <th scope="row">Your Resource</th>
+            <td>[Explain how the class resource works in practice and what players should consider when spending or preserving it.]</td>
+          </tr>
+          <tr>
+            <th scope="row">Your Position</th>
+            <td>[Explain where the class should position itself and what positioning considerations matter.]</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="how-strategy">
+        <h3>1. [First Strategy Topic]</h3>
+        <p>[Explain the first important principle of playing this class.]</p>
+        <p>[Add a practical tip, decision-making guideline, or example.]</p>
+      </div>
+
+      <div class="how-strategy">
+        <h3>2. [Second Strategy Topic]</h3>
+        <p>[Explain the second important principle of playing this class.]</p>
+        <ul>
+          <li>[Practical guideline or action]</li>
+          <li>[Practical guideline or action]</li>
+          <li>[Practical guideline or action]</li>
+        </ul>
+      </div>
+
+      <div class="how-strategy">
+        <h3>3. [Additional Strategy Topic]</h3>
+        <p>[Add further class-specific guidance, tactical considerations, or common mistakes to avoid.]</p>
+      </div>
+    </section>
+
+    <footer class="footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”)</footer>
+  </main>
+</div>
 <script>
-(function(){
- const spellcasters = new Set(["sorcerer","spiritmaster","cleric","chanter","songweaver"]);
- const names = {gladiator:"Gladiator",templar:"Templar",assassin:"Assassin",ranger:"Ranger",sorcerer:"Sorcerer",spiritmaster:"Spiritmaster",cleric:"Cleric",chanter:"Chanter",aethertech:"Aethertech",gunslinger:"Gunslinger",songweaver:"Songweaver"};
- const directory = document.getElementById("classDirectory");
- const className = document.getElementById("className");
- const spellTab = document.getElementById("spellListTab");
- const tabs = document.getElementById("classTabs");
- const sections = [...document.querySelectorAll("[data-section]")];
- function selectTab(tabName){
-  tabs.querySelectorAll("[data-tab]").forEach(btn=>btn.setAttribute("aria-selected",String(btn.dataset.tab===tabName)));
-  sections.forEach(section=>section.hidden=section.dataset.section!==tabName);
- }
- function selectClass(key){
-  className.textContent=names[key]||"Class";
-  directory.querySelectorAll("[data-class]").forEach(btn=>{
-   if(btn.dataset.class===key) btn.setAttribute("aria-current","page");
-   else btn.removeAttribute("aria-current");
+const classes=["Gladiator","Templar","Assassin","Ranger","Sorcerer","Spiritmaster","Cleric","Chanter","Aethertech","Gunslinger","Songweaver"];
+let selected="Gladiator";
+const list=document.getElementById("classList");
+const search=document.getElementById("classSearch");
+const title=document.getElementById("classTitle");
+const desc=document.getElementById("classDescription");
+function renderList(){
+  const q=search.value.trim().toLowerCase();
+  list.innerHTML="";
+  const matches=classes.filter(c=>c.toLowerCase().includes(q));
+  if(!matches.length){list.innerHTML='<div class="empty">No matching classes.</div>';return;}
+  matches.forEach(c=>{
+    const b=document.createElement("button");b.className="class-button"+(c===selected?" active":"");
+    b.textContent=c;
+    b.setAttribute("aria-current",c===selected?"page":"false");
+    b.addEventListener("click",()=>selectClass(c));list.appendChild(b);
   });
-  spellTab.hidden=!spellcasters.has(key);
-  if(!spellcasters.has(key) && spellTab.getAttribute("aria-selected")==="true") selectTab("progression");
-  else selectTab("progression");
-  // Class-specific wording and values are intentionally left for the author to enter.
-  document.getElementById("classDescription").innerHTML="[Enter the approved class description here.]";
-  const factPrompts = {factHitDie:"[Enter hit die]",factPrimary:"[Enter primary ability]",factSaves:"[Enter saving throws]",factArmor:"[Enter armor proficiencies]",factWeapons:"[Enter weapon proficiencies]",factImplements:"[Enter implement proficiencies or “None”]"};
-  Object.entries(factPrompts).forEach(([id,value])=>document.getElementById(id).textContent=value);
- }
- directory.addEventListener("click",event=>{
-  const button=event.target.closest("[data-class]");
-  if(button) selectClass(button.dataset.class);
- });
- tabs.addEventListener("click",event=>{
-  const button=event.target.closest("[data-tab]");
-  if(button && !button.hidden) selectTab(button.dataset.tab);
- });
- selectClass("gladiator");
-})();
+}
+const classOverview={
+  "Gladiator":{armor:"[Armor]",weapons:"[Weapons]",implements:"[Implements]",hitDie:"[Hit Die]",saveDC:"[Class Save DC]",primary:"[Primary Ability]",saves:"[Saving Throws]",skills:"[Skills]",resource:"[Class Resource]"}
+};
+function renderSidebarOverview(c){
+  const data=classOverview[c]||classOverview["Gladiator"];
+  const fields=[["Armor","armor"],["Weapons","weapons"],["Implements","implements"],["Hit Die","hitDie"],["Class Save DC","saveDC"],["Primary Ability","primary"],["Saving Throws","saves"],["Skills","skills"],["Class Resource","resource"]];
+  document.getElementById("classOverviewPanel").innerHTML=fields.map(([label,key])=>'<tr><th scope="row">'+label+'</th><td>'+data[key]+'</td></tr>').join("");
+}
+const spellcastingClasses=["Chanter","Cleric","Sorcerer","Spiritmaster","Songweaver"];
+function updateSpellListLink(c){
+  const hasSpellList=spellcastingClasses.includes(c);
+  const link=document.getElementById("spellListNav");
+  const section=document.getElementById("spellList");
+  link.hidden=!hasSpellList;
+  section.hidden=!hasSpellList;
+  document.getElementById("spellListTitle").textContent=c+" Spell List";
+}
+function selectClass(c){
+  selected=c;title.textContent=c;
+  updateSpellListLink(c);
+  renderSidebarOverview(c);
+  renderProgression();
+  desc.textContent="A structured reference page for "+c+". This prototype demonstrates the layout only; class mechanics and feature text are intentionally left as placeholders.";
+  renderList();
+  document.body.classList.remove("drawer-open");
+  document.getElementById("menuButton").setAttribute("aria-expanded","false");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+search.addEventListener("input",renderList);
+const rows=document.getElementById("progressionRows"),levels=document.getElementById("levelList");
+const specializationNames=["[Specialization One]","[Specialization Two]","[Specialization Three]"];
+const specializationAbilities=[
+  {3:"[Specialization One — Level 3 ability]",6:"[Specialization One — Level 6 ability]",10:"[Specialization One — Level 10 ability]",14:"[Specialization One — Level 14 ability]"},
+  {3:"[Specialization Two — Level 3 ability]",6:"[Specialization Two — Level 6 ability]",10:"[Specialization Two — Level 10 ability]",14:"[Specialization Two — Level 14 ability]"},
+  {3:"[Specialization Three — Level 3 ability]",6:"[Specialization Three — Level 6 ability]",10:"[Specialization Three — Level 10 ability]",14:"[Specialization Three — Level 14 ability]"}
+];
+let selectedSpecialization=0;
+function renderSpecialization(){
+  document.querySelectorAll(".spec-select").forEach((button)=>{
+    const active=Number(button.dataset.spec)===selectedSpecialization;
+    button.classList.toggle("active",active);
+    button.setAttribute("aria-pressed",String(active));
+  });
+  const name=specializationNames[selectedSpecialization];
+  document.getElementById("selectedSpecSummary").textContent=
+    "Selected path: "+name+". Its advancement abilities are highlighted at the appropriate levels below. Select another path to replace these entries.";
+  renderProgression();
+}
+
+function renderProgressionHeader(){
+  const header=document.getElementById("progressionHeader");
+  const columns=[
+    "<th>Level</th>",
+    "<th>Proficiency</th>",
+    "<th>Flight Slots</th>"
+  ];
+  if(spellcastingClasses.includes(selected)){
+    columns.push("<th class=\"col-spell-level\">Maximum Spell Level</th>");
+    columns.push("<th class=\"col-spell-advancements\">Spell Advancements</th>");
+  }
+  columns.push("<th class=\"col-abilities\">Class Abilities</th>");
+  if(selected==="Aethertech"){
+    columns.push("<th class=\"col-resource\">[Resource 1]</th>","<th class=\"col-resource\">[Resource 2]</th>");
+  }else{
+    columns.push("<th class=\"col-resource\">Class Resources</th>");
+  }
+  header.innerHTML=columns.join("");
+}
+function renderProgression(){
+  rows.innerHTML="";levels.innerHTML="";
+  renderProgressionHeader();
+  const abilities=specializationAbilities[selectedSpecialization];
+  for(let n=1;n<=20;n++){
+    const hasSpec=Boolean(abilities[n]);
+    const featureLabel=hasSpec?abilities[n]:"[General class feature(s), if any]";
+    const tr=document.createElement("tr");
+    const cells=[
+      "<td>"+n+"</td>",
+      "<td>[PB]</td>",
+      "<td>[Flight Slots]</td>"
+    ];
+    if(spellcastingClasses.includes(selected)){
+      cells.push("<td class=\"col-spell-level\">[Maximum Spell Level]</td>");
+      cells.push("<td class=\"col-spell-advancements\">[Spell Advancements]</td>");
+    }
+    cells.push("<td class=\"col-abilities\">"+featureLabel+(hasSpec?" · Specialization":"")+"</td>");
+    if(selected==="Aethertech"){
+      cells.push("<td class=\"col-resource\">[Resource 1 value]</td>","<td class=\"col-resource\">[Resource 2 value]</td>");
+    }else{
+      cells.push("<td class=\"col-resource\">[Resource value]</td>");
+    }
+    tr.innerHTML=cells.join("");
+    rows.appendChild(tr);
+    const item=document.createElement("li");item.className="level-item";
+    const d=document.createElement("details");d.className="level level-entry";d.open=true;
+    const summary=document.createElement("summary");summary.className="level-entry-heading";
+    const title=document.createElement("span");title.className="level-entry-title";
+    title.textContent="Level "+n+": "+featureLabel;
+    summary.append(title);
+    const content=document.createElement("div");content.className="level-content";
+    const description=document.createElement("p");
+    description.textContent="[Your level "+n+" class feature description appears here.]";
+    content.appendChild(description);
+    if(hasSpec){
+      const spec=document.createElement("div");spec.className="level-specialization-entry";
+      const specTitle=document.createElement("div");specTitle.className="specialization-entry-title";
+      specTitle.textContent=nameForSelected()+" — "+abilities[n];
+      const specDescription=document.createElement("p");
+      specDescription.textContent="[The selected specialization's full ability description, mechanics, costs, effects, and restrictions appear here.]";
+      spec.append(specTitle,specDescription);content.appendChild(spec);
+    }
+    d.append(summary,content);item.appendChild(d);levels.appendChild(item);
+  }
+}
+function nameForSelected(){return specializationNames[selectedSpecialization];}
+document.querySelectorAll(".spec-select").forEach(button=>{
+  button.addEventListener("click",()=>{selectedSpecialization=Number(button.dataset.spec);renderSpecialization();});
+});
+renderSpecialization();
+document.getElementById("menuButton").addEventListener("click",()=>{
+  const open=!document.body.classList.contains("drawer-open");
+  document.body.classList.toggle("drawer-open",open);
+  document.getElementById("menuButton").setAttribute("aria-expanded",String(open));
+});
+document.getElementById("backdrop").addEventListener("click",()=>{
+  document.body.classList.remove("drawer-open");
+  document.getElementById("menuButton").setAttribute("aria-expanded","false");
+});
+const navLinks=[...document.querySelectorAll(".content-nav a")];
+if ("IntersectionObserver" in window) {
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        navLinks.forEach(a=>a.classList.toggle("current",a.getAttribute("href")==="#"+entry.target.id));
+      }
+    });
+  },{rootMargin:"-22% 0px -68% 0px"});
+  document.querySelectorAll(".content-section").forEach(s=>observer.observe(s));
+}
+renderList();
+renderSidebarOverview(selected);
+updateSpellListLink(selected);
 </script>
 </body>
 </html>
