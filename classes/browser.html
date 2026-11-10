@@ -590,10 +590,30 @@ body { font-size: 14px; }
 
 
 
+/* Class Browser header: match the shared WoA navigation without inheriting compact prototype layout */
+#browserSiteHeader{display:block!important;width:100%!important;height:auto!important;min-height:68px!important;padding:0!important;margin:0!important;border-bottom:1px solid #29445d!important;background:rgba(6,16,28,.96)!important;position:sticky!important;top:0!important;z-index:100!important}
+#browserSiteHeader .nav-wrap{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:24px!important;width:100%!important;max-width:1180px!important;min-height:68px!important;margin:0 auto!important;padding:12px 16px!important;box-sizing:border-box!important}
+#browserSiteHeader .brand{display:block!important;flex:0 0 auto!important;margin:0 auto 0 0!important;padding:0!important;color:#fff!important;font-size:16px!important;font-weight:800!important;letter-spacing:.12em!important;line-height:1.4!important;white-space:nowrap!important;text-decoration:none!important}
+#browserSiteHeader .nav-links{display:flex!important;flex:0 1 auto!important;flex-direction:row!important;align-items:center!important;justify-content:flex-end!important;gap:16px!important;width:auto!important;margin:0!important;padding:0!important;white-space:normal!important}
+#browserSiteHeader .nav-links a{display:inline-flex!important;align-items:center!important;min-height:0!important;width:auto!important;margin:0!important;padding:4px 0!important;color:#a8bacb!important;font-size:13px!important;line-height:1.4!important;white-space:nowrap!important;text-decoration:none!important}
+#browserSiteHeader .nav-links a:hover{color:#fff!important}
+#browserSiteHeader .search-box{display:flex!important;flex:0 0 180px!important;width:180px!important;max-width:180px!important;margin:0!important;padding:0!important}
+#browserSiteHeader .search-box input{display:block!important;width:100%!important;max-width:none!important;min-height:36px!important;padding:7px 12px!important;border:1px solid #29445d!important;border-radius:999px!important;background:#071524!important;color:#fff!important;font-size:13px!important;line-height:1.4!important}
+@media(max-width:900px){
+#browserSiteHeader .nav-wrap{flex-wrap:wrap!important;gap:10px 16px!important}
+#browserSiteHeader .nav-links{order:3!important;flex:1 0 100%!important;justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px 14px!important}
+#browserSiteHeader .search-box{margin-left:auto!important}
+}
+@media(max-width:600px){
+#browserSiteHeader .nav-wrap{align-items:center!important;padding:10px 14px!important}
+#browserSiteHeader .nav-links{gap:6px 12px!important}
+#browserSiteHeader .nav-links a{font-size:12px!important}
+#browserSiteHeader .search-box{flex:1 1 100%!important;width:100%!important;max-width:none!important}
+}
 </style>
 </head>
 <body>
-<header class="site-header">
+<header class="site-header" id="browserSiteHeader">
   <div class="nav-wrap">
     <a class="brand" href="../index.html">WINGS OF ATREIA</a>
     <nav class="nav-links" aria-label="Main navigation">
