@@ -610,6 +610,21 @@ body { font-size: 14px; }
 #browserSiteHeader .nav-links a{font-size:12px!important}
 #browserSiteHeader .search-box{flex:1 1 100%!important;width:100%!important;max-width:none!important}
 }
+
+/* Approved Class Browser main-panel arrangement */
+.content-section{margin:18px 0;padding:0 0 18px;background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none}
+.content-section h2{font-size:1.15rem;margin:0 0 12px;padding:0 0 8px;border-bottom:1px solid var(--line);color:var(--accent2)}
+.content-section h3{font-size:1rem;margin:16px 0 8px}
+.content-nav{position:sticky;top:68px;margin:0 0 12px;padding:10px 0;background:rgba(8,21,34,.98)}
+.progression-table{width:100%;min-width:900px;table-layout:fixed;border-collapse:collapse}
+.progression-table th:nth-child(1),.progression-table td:nth-child(1){width:5%;min-width:46px;max-width:56px}
+.progression-table th:nth-child(2),.progression-table td:nth-child(2){width:12%;min-width:90px}
+.progression-table th:nth-child(3),.progression-table td:nth-child(3){width:15%;min-width:100px}
+.progression-table th:nth-child(4),.progression-table td:nth-child(4){width:31%;min-width:180px}
+.progression-table th:last-child,.progression-table td:last-child{width:20%;min-width:130px}
+.level-list{margin-top:8px}
+.level-entry{border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent}
+
 </style>
 </head>
 <body>
@@ -664,91 +679,36 @@ body { font-size: 14px; }
     </section>
 
     <nav class="content-nav" id="contentNav" aria-label="Class sections">
-      <a href="#spellList" id="spellListNav" hidden>Spell List</a><a href="#progression">Progression</a>
-      <a href="#features">Features</a><a href="#mechanics">Mechanics</a><a href="#specializations">Specializations</a>
-      <a href="#ultimate">Ultimate</a><a href="#glossary">Glossary</a><a href="#clarifications">Clarifications</a><a href="#howToPlay">How to Play</a>
-    </nav>
-
-<section class="content-section" id="spellList" hidden>
-      <h2 id="spellListTitle">Spell List</h2>
-      <p class="muted">[The spell list for the selected spellcasting class will be added here.]</p>
-    </section>
-
-    <section class="content-section" id="progression">
+  <a href="#progression">Progression</a>
+  <a href="#mechanics">Mechanics</a>
+  <a href="#ultimate">Ultimate</a>
+  <a href="#specializations">Specializations</a>
+  <a href="#glossary">Glossary</a>
+  <a href="#clarifications">Clarifications</a>
+  <a href="#howToPlay">How to Play</a>
+</nav>
+<section class="content-section" id="progression">
       <h2>Class Progression</h2>
       <p class="muted">A compact overview of all 20 levels. Selecting a level below expands its feature summary.</p>
       <div class="table-wrap"><table class="progression-table"><thead><tr id="progressionHeader"><th>Level</th><th>Proficiency</th><th>Features</th><th>Class Resource</th></tr></thead>
       <tbody id="progressionRows"></tbody></table></div>
 
+</section>
+
+<section class="content-section" id="spellList" hidden>
+      <h2 id="spellListTitle">Spell List</h2>
+      <p class="muted">[The spell list for the selected spellcasting class will be added here.]</p>
+    </section>
 <section class="content-section" id="mechanics">
       <h2>Core Mechanics &amp; Resources</h2>
       <details class="feature" open><summary>[Signature resource]</summary><div class="feature-body"><p><strong>Generation:</strong> [How the resource is gained.]</p><p><strong>Capacity:</strong> [Maximum and scaling.]</p><p><strong>Expenditure:</strong> [What spends it.]</p><p><strong>Recovery:</strong> [When it recovers.]</p></div></details>
       <details class="feature" open><summary>[Signature mechanic]</summary><div class="feature-body"><p>[Full explanation of the class's unique mechanic.]</p></div></details>
     </section>
-      <h3>Level Details</h3>
-      <ol class="level-list" id="levelList"></ol>
+<section class="content-section" id="ultimate">
+      <h2>Ultimate Ability</h2>
+      <details class="feature" open><summary><span class="feature-heading">[Ultimate ability name] <span class="type-tag ultimate">Ultimate</span></span></summary><div class="feature-body"><div class="feature-meta"><span><b>Activation:</b> [Action type]</span><span><b>Cost:</b> [DP / resource]</span><span><b>Recovery:</b> [Recovery timing]</span></div><p><strong>Trigger / Requirements:</strong> [Requirements to activate.]</p><p><strong>Effect:</strong> [Complete effect.]</p><p><strong>Scaling:</strong> [Level scaling.]</p><p><strong>Recovery:</strong> [Full recovery rules and restrictions.]</p></div></details>
     </section>
-
-    <section class="content-section" id="features">
-      <h2>Class Features</h2>
-      <p class="muted">Features are grouped by how they function in play. Each entry uses a consistent layout, while showing the rules details most relevant to that feature type.</p>
-
-      <h3>Passive Abilities</h3>
-      <p class="feature-type-intro">Always available, or active while their stated conditions are met.</p>
-      <details class="feature" open>
-        <summary><span class="feature-heading">[Passive feature name] <span class="type-tag passive">Passive</span></span></summary>
-        <div class="feature-body">
-          <div class="feature-meta"><span><b>Availability:</b> [Always / condition]</span><span><b>Cost:</b> None</span></div>
-          <p><strong>Effect:</strong> [State the continuous benefit and exactly when it applies.]</p>
-          <p><strong>Limitations:</strong> [State conditions that suspend, restrict, or end the benefit.]</p>
-        </div>
-      </details>
-
-      <h3>Active Abilities</h3>
-      <p class="feature-type-intro">Abilities the character deliberately activates on their turn or at another permitted time.</p>
-      <details class="feature" open>
-        <summary><span class="feature-heading">[Active ability name] <span class="type-tag active">Active</span></span></summary>
-        <div class="feature-body">
-          <div class="feature-meta"><span><b>Action:</b> [Action type]</span><span><b>Range:</b> [Range]</span><span><b>Duration:</b> [Duration]</span></div>
-          <p><strong>Activation:</strong> [When and how the ability is activated.]</p>
-          <p><strong>Target:</strong> [Eligible target or area.]</p>
-          <p><strong>Effect:</strong> [Complete mechanical effect.]</p>
-          <p><strong>Restrictions:</strong> [Usage limits and special conditions.]</p>
-        </div>
-      </details>
-
-      <h3>Reactions</h3>
-      <p class="feature-type-intro">Abilities used in response to a clearly defined event.</p>
-      <details class="feature" open>
-        <summary><span class="feature-heading">[Reaction name] <span class="type-tag reaction">Reaction</span></span></summary>
-        <div class="feature-body">
-          <div class="feature-meta"><span><b>Action:</b> Reaction</span><span><b>Cost:</b> [Cost / None]</span></div>
-          <p><strong>Trigger:</strong> [The precise event that permits this reaction.]</p>
-          <p><strong>Effect:</strong> [What happens when the reaction is used.]</p>
-          <p><strong>Limit:</strong> [Frequency, timing, and restrictions.]</p>
-        </div>
-      </details>
-
-      <h3>Resource-Consuming Abilities</h3>
-      <p class="feature-type-intro">Abilities with an explicit class-resource expenditure. The cost and payment timing are prominent.</p>
-      <details class="feature" open>
-        <summary><span class="feature-heading">[Resource ability name] <span class="type-tag resource">Resource Cost</span></span></summary>
-        <div class="feature-body">
-          <div class="feature-meta"><span><b>Action:</b> [Action type]</span><span><b>Cost:</b> [Exact resource amount]</span><span><b>Payment:</b> [When paid]</span></div>
-          <p><strong>Requirement:</strong> [Prerequisites and target requirements.]</p>
-          <p><strong>Effect:</strong> [Complete mechanical effect.]</p>
-          <p><strong>Failure / Refund:</strong> [What happens if the effect cannot resolve, if the rules specify.]</p>
-          <p><strong>Restrictions:</strong> [Usage limits and interactions.]</p>
-        </div>
-      </details>
-
-      <h3>Feature Notes</h3>
-      <div class="callout">Not every class needs every feature category. Use only the categories that apply, and preserve the exact mechanics and terminology established in the class rules.</div>
-    </section>
-
-    
-
-    <section class="content-section" id="specializations">
+<section class="content-section" id="specializations">
       <h2>Specializations</h2>
       <p class="muted">Three distinct paths, with advancement features at the established specialization levels.</p>
       <div class="spec-grid">
@@ -772,23 +732,21 @@ body { font-size: 14px; }
       <details class="feature" open><summary><span class="feature-heading">[Specialization Two — Level 3 feature] <span class="type-tag specialization">Specialization</span></span></summary><div class="feature-body"><div class="feature-meta"><span><b>Path:</b> [Specialization Two]</span><span><b>Level:</b> 3</span></div><p>[Full rules text, including action type, cost, effect, and restrictions where applicable.]</p></div></details>
       <details class="feature" open><summary><span class="feature-heading">[Specialization Three — Level 3 feature] <span class="type-tag specialization">Specialization</span></span></summary><div class="feature-body"><div class="feature-meta"><span><b>Path:</b> [Specialization Three]</span><span><b>Level:</b> 3</span></div><p>[Full rules text, including action type, cost, effect, and restrictions where applicable.]</p></div></details>
     </section>
-
-    <section class="content-section" id="ultimate">
-      <h2>Ultimate Ability</h2>
-      <details class="feature" open><summary><span class="feature-heading">[Ultimate ability name] <span class="type-tag ultimate">Ultimate</span></span></summary><div class="feature-body"><div class="feature-meta"><span><b>Activation:</b> [Action type]</span><span><b>Cost:</b> [DP / resource]</span><span><b>Recovery:</b> [Recovery timing]</span></div><p><strong>Trigger / Requirements:</strong> [Requirements to activate.]</p><p><strong>Effect:</strong> [Complete effect.]</p><p><strong>Scaling:</strong> [Level scaling.]</p><p><strong>Recovery:</strong> [Full recovery rules and restrictions.]</p></div></details>
-    </section>
-
-    <section class="content-section" id="glossary">
+<section class="content-section" id="levelDetails">
+<h2>Level Details</h2>
+<h3>Level Details</h3>
+      <ol class="level-list" id="levelList"></ol>
+</section>
+<section class="content-section" id="glossary">
       <h2>Class Glossary</h2>
       <div class="table-wrap"><table><thead><tr><th>Term</th><th>Definition</th><th>Related Feature</th></tr></thead>
       <tbody><tr><td>[Term]</td><td>[Concise definition.]</td><td>[Section or feature]</td></tr><tr><td>[Term]</td><td>[Concise definition.]</td><td>[Section or feature]</td></tr></tbody></table></div>
     </section>
-
-    <section class="content-section" id="clarifications">
+<section class="content-section" id="clarifications">
       <h2>Rules &amp; Clarifications</h2>
       <details class="feature" open><summary>[Topic or interaction]</summary><div class="feature-body"><p>[Precise clarification and any relevant examples.]</p></div></details>
     </section>
-    <section class="content-section" id="howToPlay">
+<section class="content-section" id="howToPlay">
       <h2 id="howToPlayTitle">How to Play Gladiator</h2>
       <p class="how-to-play-intro" id="howToPlayIntro">[Brief introduction explaining this class's playstyle, combat identity, and overall objective.]</p>
 
