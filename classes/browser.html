@@ -699,6 +699,7 @@ const search=document.getElementById("classSearch");
 const title=document.getElementById("classTitle");
 const desc=document.getElementById("classDescription");
 const host=document.getElementById("classContentHost");
+const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,"-");
 
 function renderList(){
   const q=search.value.trim().toLowerCase();
