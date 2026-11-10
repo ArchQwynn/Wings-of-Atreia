@@ -16,7 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "assets" / "js" / "search-index.json"
 
-EXCLUDED_DIRS = {".git", ".github", "node_modules", "scripts"}
+EXCLUDED_DIRS = {".git", ".github", "node_modules", "scripts", "class-data"}
 EXCLUDED_FILES = {"offline.html"}
 MAX_PAGE_TEXT = 12000
 MAX_SECTION_TEXT = 5000
@@ -182,6 +182,23 @@ def build() -> list[dict]:
             "kind": kind,
         })
         index.extend(section_entries(path, parser, url))
+
+    # Class Browser content is stored as editable HTML fragments. Index each
+    # fragment as a Class Browser result, not as a standalone fragment page.
+    class_data_dir = ROOT / "classes" / "class-data"
+    if class_data_dir.exists():
+        for path in sorted(class_data_dir.glob("*.html")):
+            parser, body_text = parse_page(path)
+            class_name = path.stem.replace("-", " ").title()
+            page_url = f"classes/browser.html?class={path.stem}"
+            index.append({
+                "title": f"{class_name} Class Browser",
+                "url": page_url,
+                "desc": f"{class_name} class rules, progression, features, and specializations.",
+                "text": body_text[:MAX_PAGE_TEXT],
+                "kind": "page",
+            })
+            index.extend(section_entries(path, parser, page_url))
 
     index.sort(key=lambda item: (item["title"].lower(), item["url"].lower(), item["kind"]))
     return index
