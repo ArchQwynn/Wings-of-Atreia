@@ -443,27 +443,126 @@ body { font-size: 14px; }
   line-height: 1.45;
 }
 
-
-#specializations { margin: 18px 0 16px; padding: 0; }
-#specializations > h2 { margin-bottom: 7px; }
-#specializations .spec-grid { margin: 10px 0; }
-#specializations .spec-select { cursor: pointer; }
-.level-specialization-entry { margin: 5px 0 8px; }
-.specialization-entry-title {
-  color: #559ac7;
+/* Class Features: compact 5etools-style entries */
+#features {
+  margin-top: 24px;
+}
+#features > h2 {
+  margin-bottom: 8px;
+}
+#features > .muted {
+  margin: 0 0 16px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+#features > h3 {
+  margin: 18px 0 2px;
+  padding: 0 0 3px;
+  color: #d99a28;
+  font-family: Georgia, "Times New Roman", serif;
+  font-variant: small-caps;
+  font-size: 16px;
+  font-weight: 600;
+  border: 0;
+}
+#features .feature-type-intro {
+  margin: 2px 0 7px;
+  color: #aaa;
+  font-size: 12px;
+  font-style: italic;
+  line-height: 1.4;
+}
+#features details.feature {
+  display: block;
+  margin: 4px 0 12px;
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid rgba(210, 160, 65, .5) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible;
+}
+#features details.feature > summary {
+  display: block;
+  margin: 0;
+  padding: 4px 2px 5px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #d99a28;
   font-family: Georgia, "Times New Roman", serif;
   font-variant: small-caps;
   font-size: 15px;
-  line-height: 1.25;
+  font-weight: 600;
+  line-height: 1.3;
+  cursor: pointer;
+  list-style: none;
 }
-.level-specialization-entry p {
-  margin: 3px 0 7px;
+#features details.feature > summary::-webkit-details-marker {
+  display: none;
+}
+#features details.feature > summary::before {
+  content: none !important;
+}
+#features .feature-heading {
+  display: inline;
+  color: inherit;
+  font: inherit;
+}
+#features .type-tag {
+  display: inline;
+  margin-left: 7px;
+  padding: 0;
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  color: #559ac7;
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  font-variant: normal;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+#features .feature-body {
+  margin: 0;
+  padding: 2px 2px 10px !important;
   color: #d0d0d0;
   font-size: 13px;
   line-height: 1.45;
 }
-
-
+#features .feature-body p {
+  margin: 3px 0 6px;
+  color: inherit;
+  font-size: inherit;
+  overflow-wrap: anywhere;
+}
+#features .feature-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 2px 0 7px;
+  color: #aaa;
+  font-size: 11px;
+}
+#features .feature-meta span {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+#features .feature-meta b {
+  color: #d5b16a;
+}
+#features .callout {
+  margin: 5px 0 12px;
+  padding: 5px 0;
+  border: 0;
+  background: transparent;
+  color: #aaa;
+  font-size: 12px;
+}
 /* How to Play */
 .how-to-play-intro{margin:0 0 14px;max-width:900px;color:var(--text)}
 .how-core-loop{padding:12px 0;margin:0 0 14px;background:transparent;border:0;border-radius:0}
@@ -482,12 +581,14 @@ body { font-size: 14px; }
 .how-strategy li{padding:2px 0}
 
 
+
 </style>
 </head>
 <body>
 <header class="site-header">
-  <div class="brand">WINGS OF ATREIA</div>
-  <div class="header-note">Class Compendium · Experimental Prototype</div>
+  <a class="brand" href="../index.html">WINGS OF ATREIA</a>
+  <nav class="site-nav" aria-label="Main navigation"><a href="../index.html">Home</a><a href="../rules/">Rules</a><a href="./">Classes</a><a href="../spells/">Spells</a><a href="../world/">World</a><a href="../companion/">Character Companion</a><a href="../about.html">About</a></nav>
+  <div class="header-note">Class Compendium</div>
 </header>
 <div class="backdrop" id="backdrop" aria-hidden="true"></div>
 <div class="layout">
@@ -495,7 +596,7 @@ body { font-size: 14px; }
     <div class="sidebar-heading">CLASS DIRECTORY</div>
     <div class="search-wrap"><input id="classSearch" type="search" placeholder="Search classes…" aria-label="Search classes"></div>
     <nav class="class-list" id="classList"></nav>
-    <div class="sidebar-footer">11 playable classes · Prototype data only</div>
+    <div class="sidebar-footer">11 playable classes</div>
   </aside>
 
   <main class="main">
@@ -526,7 +627,8 @@ body { font-size: 14px; }
 
     <nav class="content-nav" id="contentNav" aria-label="Class sections">
       <a href="#spellList" id="spellListNav" hidden>Spell List</a><a href="#progression">Progression</a>
-      <a href="#mechanics">Mechanics</a><a href="#ultimate">Ultimate</a><a href="#specializations">Specializations</a><a href="#glossary">Glossary</a><a href="#clarifications">Clarifications</a><a href="#howToPlay">How to Play</a>
+      <a href="#features">Features</a><a href="#mechanics">Mechanics</a><a href="#specializations">Specializations</a>
+      <a href="#ultimate">Ultimate</a><a href="#glossary">Glossary</a><a href="#clarifications">Clarifications</a><a href="#howToPlay">How to Play</a>
     </nav>
 
 <section class="content-section" id="spellList" hidden>
@@ -545,12 +647,70 @@ body { font-size: 14px; }
       <details class="feature" open><summary>[Signature resource]</summary><div class="feature-body"><p><strong>Generation:</strong> [How the resource is gained.]</p><p><strong>Capacity:</strong> [Maximum and scaling.]</p><p><strong>Expenditure:</strong> [What spends it.]</p><p><strong>Recovery:</strong> [When it recovers.]</p></div></details>
       <details class="feature" open><summary>[Signature mechanic]</summary><div class="feature-body"><p>[Full explanation of the class's unique mechanic.]</p></div></details>
     </section>
-<div class="content-section ultimate-block" id="ultimate">
-      <h2>Ultimate Ability</h2>
-      <details class="feature" open><summary><span class="feature-heading">[Ultimate ability name] <span class="type-tag ultimate">Ultimate</span></span></summary><div class="feature-body"><div class="feature-meta"><span><b>Activation:</b> [Action type]</span><span><b>Cost:</b> [DP / resource]</span><span><b>Recovery:</b> [Recovery timing]</span></div><p><strong>Trigger / Requirements:</strong> [Requirements to activate.]</p><p><strong>Effect:</strong> [Complete effect.]</p><p><strong>Scaling:</strong> [Level scaling.]</p><p><strong>Recovery:</strong> [Full recovery rules and restrictions.]</p></div></details>
-    </div>
+      <h3>Level Details</h3>
+      <ol class="level-list" id="levelList"></ol>
+    </section>
 
-<div class="content-section specialization-block" id="specializations">
+    <section class="content-section" id="features">
+      <h2>Class Features</h2>
+      <p class="muted">Features are grouped by how they function in play. Each entry uses a consistent layout, while showing the rules details most relevant to that feature type.</p>
+
+      <h3>Passive Abilities</h3>
+      <p class="feature-type-intro">Always available, or active while their stated conditions are met.</p>
+      <details class="feature" open>
+        <summary><span class="feature-heading">[Passive feature name] <span class="type-tag passive">Passive</span></span></summary>
+        <div class="feature-body">
+          <div class="feature-meta"><span><b>Availability:</b> [Always / condition]</span><span><b>Cost:</b> None</span></div>
+          <p><strong>Effect:</strong> [State the continuous benefit and exactly when it applies.]</p>
+          <p><strong>Limitations:</strong> [State conditions that suspend, restrict, or end the benefit.]</p>
+        </div>
+      </details>
+
+      <h3>Active Abilities</h3>
+      <p class="feature-type-intro">Abilities the character deliberately activates on their turn or at another permitted time.</p>
+      <details class="feature" open>
+        <summary><span class="feature-heading">[Active ability name] <span class="type-tag active">Active</span></span></summary>
+        <div class="feature-body">
+          <div class="feature-meta"><span><b>Action:</b> [Action type]</span><span><b>Range:</b> [Range]</span><span><b>Duration:</b> [Duration]</span></div>
+          <p><strong>Activation:</strong> [When and how the ability is activated.]</p>
+          <p><strong>Target:</strong> [Eligible target or area.]</p>
+          <p><strong>Effect:</strong> [Complete mechanical effect.]</p>
+          <p><strong>Restrictions:</strong> [Usage limits and special conditions.]</p>
+        </div>
+      </details>
+
+      <h3>Reactions</h3>
+      <p class="feature-type-intro">Abilities used in response to a clearly defined event.</p>
+      <details class="feature" open>
+        <summary><span class="feature-heading">[Reaction name] <span class="type-tag reaction">Reaction</span></span></summary>
+        <div class="feature-body">
+          <div class="feature-meta"><span><b>Action:</b> Reaction</span><span><b>Cost:</b> [Cost / None]</span></div>
+          <p><strong>Trigger:</strong> [The precise event that permits this reaction.]</p>
+          <p><strong>Effect:</strong> [What happens when the reaction is used.]</p>
+          <p><strong>Limit:</strong> [Frequency, timing, and restrictions.]</p>
+        </div>
+      </details>
+
+      <h3>Resource-Consuming Abilities</h3>
+      <p class="feature-type-intro">Abilities with an explicit class-resource expenditure. The cost and payment timing are prominent.</p>
+      <details class="feature" open>
+        <summary><span class="feature-heading">[Resource ability name] <span class="type-tag resource">Resource Cost</span></span></summary>
+        <div class="feature-body">
+          <div class="feature-meta"><span><b>Action:</b> [Action type]</span><span><b>Cost:</b> [Exact resource amount]</span><span><b>Payment:</b> [When paid]</span></div>
+          <p><strong>Requirement:</strong> [Prerequisites and target requirements.]</p>
+          <p><strong>Effect:</strong> [Complete mechanical effect.]</p>
+          <p><strong>Failure / Refund:</strong> [What happens if the effect cannot resolve, if the rules specify.]</p>
+          <p><strong>Restrictions:</strong> [Usage limits and interactions.]</p>
+        </div>
+      </details>
+
+      <h3>Feature Notes</h3>
+      <div class="callout">Not every class needs every feature category. Use only the categories that apply, and preserve the exact mechanics and terminology established in the class rules.</div>
+    </section>
+
+    
+
+    <section class="content-section" id="specializations">
       <h2>Specializations</h2>
       <p class="muted">Three distinct paths, with advancement features at the established specialization levels.</p>
       <div class="spec-grid">
@@ -565,20 +725,20 @@ body { font-size: 14px; }
         <button type="button" class="spec-select" data-spec="1">[Specialization Two]</button>
         <button type="button" class="spec-select" data-spec="2">[Specialization Three]</button>
       </div>
-      <div class="callout" id="selectedSpecSummary" aria-live="polite">Selected path: [Specialization One]. Its abilities appear in the corresponding Level Details entries at Levels 3, 6, 10, and 14.</div>
-    </div>
+      <div class="callout" id="selectedSpecSummary" aria-live="polite">Selected path: [Specialization One]. Its advancement abilities are highlighted in the level progression below.</div>
+      <h3>Selected Specialization — Feature Details</h3>
+      <div id="selectedSpecFeatures" aria-live="polite"></div>
 
-      <h3>Level Details</h3>
-      <ol class="level-list" id="levelList"></ol>
+      <h3>Specialization Features</h3>
+      <details class="feature" open><summary><span class="feature-heading">[Specialization One — Level 3 feature] <span class="type-tag specialization">Specialization</span></span></summary><div class="feature-body"><div class="feature-meta"><span><b>Path:</b> [Specialization One]</span><span><b>Level:</b> 3</span></div><p>[Full rules text, including action type, cost, effect, and restrictions where applicable.]</p></div></details>
+      <details class="feature" open><summary><span class="feature-heading">[Specialization Two — Level 3 feature] <span class="type-tag specialization">Specialization</span></span></summary><div class="feature-body"><div class="feature-meta"><span><b>Path:</b> [Specialization Two]</span><span><b>Level:</b> 3</span></div><p>[Full rules text, including action type, cost, effect, and restrictions where applicable.]</p></div></details>
+      <details class="feature" open><summary><span class="feature-heading">[Specialization Three — Level 3 feature] <span class="type-tag specialization">Specialization</span></span></summary><div class="feature-body"><div class="feature-meta"><span><b>Path:</b> [Specialization Three]</span><span><b>Level:</b> 3</span></div><p>[Full rules text, including action type, cost, effect, and restrictions where applicable.]</p></div></details>
     </section>
 
-    
-
-    
-
-    
-
-    
+    <section class="content-section" id="ultimate">
+      <h2>Ultimate Ability</h2>
+      <details class="feature" open><summary><span class="feature-heading">[Ultimate ability name] <span class="type-tag ultimate">Ultimate</span></span></summary><div class="feature-body"><div class="feature-meta"><span><b>Activation:</b> [Action type]</span><span><b>Cost:</b> [DP / resource]</span><span><b>Recovery:</b> [Recovery timing]</span></div><p><strong>Trigger / Requirements:</strong> [Requirements to activate.]</p><p><strong>Effect:</strong> [Complete effect.]</p><p><strong>Scaling:</strong> [Level scaling.]</p><p><strong>Recovery:</strong> [Full recovery rules and restrictions.]</p></div></details>
+    </section>
 
     <section class="content-section" id="glossary">
       <h2>Class Glossary</h2>
@@ -637,8 +797,7 @@ body { font-size: 14px; }
         <p>[Add further class-specific guidance, tactical considerations, or common mistakes to avoid.]</p>
       </div>
     </section>
-
-    <footer class="footer">Wings of Atreia · Experimental class browser · Not published</footer>
+    <footer class="footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”)</footer>
   </main>
 </div>
 <script>
@@ -706,6 +865,16 @@ function renderSpecialization(){
   const name=specializationNames[selectedSpecialization];
   document.getElementById("selectedSpecSummary").textContent=
     "Selected path: "+name+". Its advancement abilities are highlighted at the appropriate levels below. Select another path to replace these entries.";
+  const featureHost=document.getElementById("selectedSpecFeatures");
+  featureHost.innerHTML="";
+  [3,6,10,14].forEach(level=>{
+    const details=document.createElement("details");details.className="feature";
+    const summary=document.createElement("summary");
+    summary.innerHTML='<span class="feature-heading">Level '+level+' — '+specializationAbilities[selectedSpecialization][level]+' <span class="type-tag specialization">Specialization</span></span>';
+    const body=document.createElement("div");body.className="feature-body";
+    body.innerHTML='<div class="feature-meta"><span><b>Path:</b> '+name+'</span><span><b>Level:</b> '+level+'</span></div><p>[Your full ability definition and description will be entered once and displayed here and in the level progression.]</p>';
+    details.append(summary,body);featureHost.appendChild(details);
+  });
   renderProgression();
 }
 
@@ -764,12 +933,14 @@ function renderProgression(){
     description.textContent="[Your level "+n+" class feature description appears here.]";
     content.appendChild(description);
     if(hasSpec){
-      const spec=document.createElement("div");spec.className="level-specialization-entry";
-      const specTitle=document.createElement("div");specTitle.className="specialization-entry-title";
-      specTitle.textContent=nameForSelected()+" — "+abilities[n];
+      const spec=document.createElement("details");spec.className="level-specialization-entry";spec.open=true;
+      const specSummary=document.createElement("summary");specSummary.className="specialization-entry-heading";
+      const specTitle=document.createElement("span");specTitle.className="specialization-entry-title";
+      specTitle.textContent="Level "+n+": "+abilities[n];
+      specSummary.append(specTitle);
       const specDescription=document.createElement("p");
-      specDescription.textContent="[The selected specialization's full ability description, mechanics, costs, effects, and restrictions appear here.]";
-      spec.append(specTitle,specDescription);content.appendChild(spec);
+      specDescription.textContent="[The specialization ability description appears here.]";
+      spec.append(specSummary,specDescription);content.appendChild(spec);
     }
     d.append(summary,content);item.appendChild(d);levels.appendChild(item);
   }
