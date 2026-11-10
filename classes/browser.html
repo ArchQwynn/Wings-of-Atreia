@@ -637,13 +637,27 @@ body { font-size: 14px; }
 @media(max-width:700px){#specializations .spec-grid{grid-template-columns:1fr!important;gap:10px!important}}
 
 
-/* Progression tables: flexible for standard classes, structured for seven-column spellcasters. */
+/* Keep every progression heading in its own distinct cell */
+#classContentHost .progression-table{width:max-content;min-width:1100px;table-layout:auto;border-collapse:collapse}
+#classContentHost .progression-table th,#classContentHost .progression-table td{border:1px solid var(--line);vertical-align:top;white-space:normal;overflow-wrap:break-word;word-break:normal}
+#classContentHost .progression-table th{display:table-cell}
+#classContentHost .progression-table th.col-spell-level,#classContentHost .progression-table td:nth-child(4){min-width:155px}
+#classContentHost .progression-table th.col-spell-advancements,#classContentHost .progression-table td:nth-child(5){min-width:220px}
+#classContentHost .progression-table th.col-abilities,#classContentHost .progression-table td:nth-child(6){min-width:320px;width:420px}
+#classContentHost .progression-table th.col-resource,#classContentHost .progression-table td:nth-child(7){min-width:155px}
+#classContentHost .progression-table td:first-child,#classContentHost .progression-table th:first-child{width:58px;min-width:58px;max-width:58px;text-align:center}
+#classContentHost .content-nav{display:flex;flex-wrap:wrap}
+#classContentHost .content-section{scroll-margin-top:125px}
+
+
+/* Progression tables: fit the content panel and wrap cell text.
+   Spellcasting classes have seven columns; other classes have five. */
 #classContentHost .table-wrap{width:100%;max-width:100%;overflow-x:auto}
 #classContentHost .progression-table{
   width:100%!important;
-  min-width:100%!important;
+  min-width:0!important;
   max-width:100%;
-  table-layout:auto!important;
+  table-layout:fixed!important;
   border-collapse:collapse;
 }
 #classContentHost .progression-table th,
@@ -656,17 +670,25 @@ body { font-size: 14px; }
   word-break:normal;
   vertical-align:top;
 }
-#classContentHost .progression-table th:first-child,
-#classContentHost .progression-table td:first-child{min-width:48px;text-align:center}
-
-/* Spellcasting classes use seven columns. Give the table enough width and
-   explicitly size each column so long headings never collapse to one letter. */
-#classContentHost .progression-table:has(th.col-spell-level){
-  width:1100px!important;
-  min-width:1100px!important;
-  max-width:none!important;
-  table-layout:fixed!important;
+#classContentHost .progression-table th:nth-child(1),
+#classContentHost .progression-table td:nth-child(1){width:7%!important}
+#classContentHost .progression-table th:nth-child(2),
+#classContentHost .progression-table td:nth-child(2){width:8%!important}
+#classContentHost .progression-table th:nth-child(3),
+#classContentHost .progression-table td:nth-child(3){width:9%!important}
+/* Allow the first three narrow columns, including their headers, to wrap. */
+#classContentHost .progression-table th:nth-child(-n+3),
+#classContentHost .progression-table td:nth-child(-n+3){
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+  hyphens:auto;
 }
+#classContentHost .progression-table th:nth-child(4),
+#classContentHost .progression-table td:nth-child(4){width:43%!important}
+#classContentHost .progression-table th:nth-child(5),
+#classContentHost .progression-table td:nth-child(5){width:25%!important}
+/* Seven-column spellcaster progression layout */
 #classContentHost .progression-table:has(th.col-spell-level) th:nth-child(1),
 #classContentHost .progression-table:has(th.col-spell-level) td:nth-child(1){width:6%!important}
 #classContentHost .progression-table:has(th.col-spell-level) th:nth-child(2),
@@ -681,16 +703,77 @@ body { font-size: 14px; }
 #classContentHost .progression-table:has(th.col-spell-level) td:nth-child(6){width:26%!important}
 #classContentHost .progression-table:has(th.col-spell-level) th:nth-child(7),
 #classContentHost .progression-table:has(th.col-spell-level) td:nth-child(7){width:17%!important}
-#classContentHost .progression-table:has(th.col-spell-level) th,
-#classContentHost .progression-table:has(th.col-spell-level) td{
-  white-space:normal!important;
-  overflow-wrap:anywhere;
-}
 @media(max-width:680px){
-  #classContentHost .progression-table:not(:has(th.col-spell-level)){min-width:100%!important}
+  #classContentHost .progression-table{min-width:650px!important}
+  #classContentHost .progression-table:has(th.col-spell-level){min-width:850px!important}
 }
+
 </style>
+</head>
+<body>
+<header class="site-header" id="browserSiteHeader">
+  <div class="nav-wrap">
+    <a class="brand" href="../index.html">WINGS OF ATREIA</a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="../index.html">Home</a>
+      <a href="../rules/">Rules</a>
+      <a href="./">Classes</a>
+      <a href="../spells/">Spells</a>
+      <a href="../world/">World</a>
+      <a href="../companion/">Character Companion</a>
+      <a href="../about.html">About</a>
+    </nav>
+    <div class="search-box"><input aria-label="Search Wings of Atreia" data-site-search="" placeholder="Search WoA…" type="search"/></div>
+  </div>
+</header>
+<div class="backdrop" id="backdrop" aria-hidden="true"></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar" aria-label="Class selector">
+    <div class="sidebar-heading">CLASS DIRECTORY</div>
+    <div class="search-wrap"><input id="classSearch" type="search" placeholder="Search classes…" aria-label="Search classes"></div>
+    <nav class="class-list" id="classList"></nav>
+    <div class="sidebar-footer">11 playable classes</div>
+  </aside>
+
+  <main class="main">
+    <div class="mobile-toolbar"><button class="menu-button" id="menuButton" aria-expanded="false">☰ &nbsp; Browse Classes</button></div>
+    <header class="class-hero">
+      <div class="eyebrow">Class Reference · Levels 1–20</div>
+      <h1 id="classTitle">Gladiator</h1>
+      <p class="hero-description" id="classDescription">A structured reference page for the selected Wings of Atreia class. This prototype demonstrates the layout only; class mechanics and feature text are intentionally left as placeholders.</p>
+      <div class="hero-meta"><span class="pill">No multiclassing</span><span class="pill">Three specializations</span><span class="pill">20-level progression</span></div>
+    </header>
+
+    <div id="classContentHost"><p class="muted">Loading class entries…</p></div>
+<footer class="footer">Wings of Atreia · Created &amp; Designed by Clark Michael Zafra (“ArchQwynn”)</footer>
+  <div class="search-results" data-search-results=""></div>
+  </main>
+</div>
+<script src="../assets/js/search-v20260914-6.js"></script>
 <script>
+const classes=["Gladiator","Templar","Assassin","Ranger","Sorcerer","Spiritmaster","Cleric","Chanter","Aethertech","Gunslinger","Songweaver"];
+let selected="Gladiator";
+const list=document.getElementById("classList");
+const search=document.getElementById("classSearch");
+const title=document.getElementById("classTitle");
+const desc=document.getElementById("classDescription");
+const host=document.getElementById("classContentHost");
+const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,"-");
+
+function renderList(){
+  const q=search.value.trim().toLowerCase();
+  list.innerHTML="";
+  const matches=classes.filter(c=>c.toLowerCase().includes(q));
+  if(!matches.length){list.innerHTML='<div class="empty">No matching classes.</div>';return;}
+  matches.forEach(c=>{
+    const b=document.createElement("button");
+    b.className="class-button"+(c===selected?" active":"");
+    b.textContent=c;
+    b.setAttribute("aria-current",c===selected?"page":"false");
+    b.addEventListener("click",()=>selectClass(c));
+    list.appendChild(b);
+  });
+}
 function wireClassContent(){
   document.querySelectorAll("#classContentHost .spec-select").forEach(button=>{
     button.addEventListener("click",()=>{
