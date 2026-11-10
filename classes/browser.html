@@ -683,6 +683,10 @@ body { font-size: 14px; }
       <h1 id="classTitle">Gladiator</h1>
       <p class="hero-description" id="classDescription">A structured reference page for the selected Wings of Atreia class. This prototype demonstrates the layout only; class mechanics and feature text are intentionally left as placeholders.</p>
       <div class="hero-meta"><span class="pill">No multiclassing</span><span class="pill">Three specializations</span><span class="pill">20-level progression</span></div>
+      <div class="page-action-bar" id="classPageActions">
+        <button class="page-action-button" id="classFavoriteButton" type="button" aria-pressed="false">☆ <span>Favorite</span></button>
+        <button class="page-action-button" id="classShareButton" type="button">↗ <span>Share</span></button>
+      </div>
     </header>
 
     <div id="classContentHost"><p class="muted">Loading class entries…</p></div>
@@ -699,7 +703,51 @@ const search=document.getElementById("classSearch");
 const title=document.getElementById("classTitle");
 const desc=document.getElementById("classDescription");
 const host=document.getElementById("classContentHost");
+const favoriteKey="woa:favorites:v1";
 const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,"-");
+function classBrowserUrl(name){
+  const url=new URL(window.location.href);
+  url.searchParams.set("class",slug(name));
+  return url.pathname.replace(/^.*?(?=\/classes\/)/,"") + url.search + url.hash;
+}
+function readClassFavorites(){
+  try{return JSON.parse(localStorage.getItem(favoriteKey)||"[]");}catch(_){return [];}
+}
+function updateClassFavoriteButton(){
+  const button=document.getElementById("classFavoriteButton");
+  if(!button)return;
+  const target=classBrowserUrl(selected);
+  const saved=readClassFavorites().some(item=>item.url===target);
+  button.innerHTML=saved?'★ <span>Favorited</span>':'☆ <span>Favorite</span>';
+  button.setAttribute("aria-pressed",String(saved));
+}
+document.getElementById("classFavoriteButton").addEventListener("click",()=>{
+  const target=classBrowserUrl(selected);
+  const title=selected;
+  let favorites=readClassFavorites();
+  const exists=favorites.some(item=>item.url===target);
+  favorites=exists?favorites.filter(item=>item.url!==target):[{title,url:target},...favorites].slice(0,50);
+  try{localStorage.setItem(favoriteKey,JSON.stringify(favorites));}catch(_){}
+  document.dispatchEvent(new CustomEvent("woa:favorites-changed"));
+  updateClassFavoriteButton();
+});
+document.getElementById("classShareButton").addEventListener("click",async()=>{
+  const url=new URL(classBrowserUrl(selected),window.location.origin).href;
+  const data={title:selected+" | Wings of Atreia",text:selected+" class reference — Wings of Atreia",url};
+  if(navigator.share){
+    try{await navigator.share(data);return;}catch(error){if(error&&error.name==="AbortError")return;}
+  }
+  try{
+    await navigator.clipboard.writeText(url);
+    const button=document.getElementById("classShareButton");
+    const original=button.innerHTML;
+    button.innerHTML='✓ <span>Link Copied</span>';
+    setTimeout(()=>{button.innerHTML=original;},1800);
+  }catch(_){
+    window.prompt("Copy this class link:",url);
+  }
+}
+
 function renderList(){
   const q=search.value.trim().toLowerCase();
   list.innerHTML="";
@@ -739,6 +787,7 @@ function wireClassContent(){
 async function selectClass(c,scroll=true){
   selected=c;
   title.textContent=c;
+  updateClassFavoriteButton();
   renderList();
   host.innerHTML='<p class="muted">Loading '+c+' entries…</p>';
   try{
