@@ -829,6 +829,74 @@ body { font-size: 14px; }
   #classContentHost .progression-table:has(th.col-spell-level){min-width:850px!important}
 }
 
+
+/* Mobile progression tables: turn each level into a readable full-width card. */
+@media(max-width:680px){
+  #classContentHost .table-wrap{
+    width:100%!important;
+    max-width:100%!important;
+    overflow:visible!important;
+  }
+  #classContentHost .progression-table,
+  #classContentHost .progression-table:has(th.col-spell-level){
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    table-layout:auto!important;
+    border:0!important;
+  }
+  #classContentHost .progression-table thead{
+    position:absolute!important;
+    width:1px!important;
+    height:1px!important;
+    padding:0!important;
+    margin:-1px!important;
+    overflow:hidden!important;
+    clip:rect(0,0,0,0)!important;
+    white-space:nowrap!important;
+    border:0!important;
+  }
+  #classContentHost .progression-table tbody{
+    display:block!important;
+    width:100%!important;
+  }
+  #classContentHost .progression-table tbody tr{
+    display:block!important;
+    width:100%!important;
+    margin:0 0 12px!important;
+    padding:8px 12px!important;
+    border:1px solid var(--line)!important;
+    border-radius:8px!important;
+    background:rgba(16,35,56,.72)!important;
+  }
+  #classContentHost .progression-table tbody td{
+    display:grid!important;
+    grid-template-columns:minmax(105px,34%) minmax(0,1fr)!important;
+    align-items:start!important;
+    gap:10px!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    padding:7px 0!important;
+    border:0!important;
+    border-bottom:1px solid rgba(41,68,93,.55)!important;
+    text-align:left!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    word-break:normal!important;
+  }
+  #classContentHost .progression-table tbody td:last-child{
+    border-bottom:0!important;
+  }
+  #classContentHost .progression-table tbody td::before{
+    content:attr(data-label);
+    color:var(--muted);
+    font-weight:700;
+    overflow-wrap:anywhere;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -917,6 +985,18 @@ function wireClassContent(){
     document.querySelectorAll("#classContentHost .content-section").forEach(s=>observer.observe(s));
   }
 }
+
+function labelProgressionTableCells(){
+  host.querySelectorAll(".progression-table").forEach(table=>{
+    const headings=[...table.querySelectorAll("thead th")].map(th=>th.textContent.trim());
+    table.querySelectorAll("tbody tr").forEach(row=>{
+      [...row.children].forEach((cell,index)=>{
+        if(cell.tagName==="TD") cell.setAttribute("data-label",headings[index]||"");
+      });
+    });
+  });
+}
+
 async function selectClass(c,scroll=true){
   selected=c;
   title.textContent=c;
@@ -933,6 +1013,7 @@ async function selectClass(c,scroll=true){
     desc.textContent=description?description.textContent.trim():"";
     if(description) description.remove();
     host.innerHTML=root.innerHTML;
+    labelProgressionTableCells();
     const spellNav=host.querySelector("#spellListNav");
     const spellSection=host.querySelector("#spellList");
     if(spellNav && !spellSection) spellNav.remove();
