@@ -964,17 +964,22 @@ function renderList(){
   });
 }
 function wireClassContent(){
-  document.querySelectorAll("#classContentHost .spec-select").forEach(button=>{
-    button.addEventListener("click",()=>{
-      document.querySelectorAll("#classContentHost .spec-select").forEach(b=>{
-        const active=b===button;
-        b.classList.toggle("active",active);
-        b.setAttribute("aria-pressed",String(active));
-      });
-      const summary=document.querySelector("#classContentHost #selectedSpecSummary");
-      if(summary) summary.textContent="Selected path: "+button.textContent.trim()+".";
+  const specButtons=[...document.querySelectorAll("#classContentHost .spec-select")];
+  const specializationNames=specButtons.map(button=>button.textContent.trim());
+  function selectSpecialization(index){
+    specButtons.forEach((button,i)=>{
+      const active=i===index;
+      button.classList.toggle("active",active);
+      button.setAttribute("aria-pressed",String(active));
     });
-  });
+    document.querySelectorAll("#classContentHost .level-specialization-entry[data-spec]").forEach(entry=>{
+      entry.hidden=Number(entry.dataset.spec)!==index;
+    });
+    const summary=document.querySelector("#classContentHost #selectedSpecSummary");
+    if(summary) summary.textContent="Selected path: "+(specializationNames[index]||"")+".";
+  }
+  specButtons.forEach((button,index)=>button.addEventListener("click",()=>selectSpecialization(index)));
+  if(specButtons.length) selectSpecialization(0);
   const navLinks=[...document.querySelectorAll("#classContentHost .content-nav a")];
   if("IntersectionObserver" in window){
     const observer=new IntersectionObserver(entries=>{
@@ -985,7 +990,6 @@ function wireClassContent(){
     document.querySelectorAll("#classContentHost .content-section").forEach(s=>observer.observe(s));
   }
 }
-
 function labelProgressionTableCells(){
   host.querySelectorAll(".progression-table").forEach(table=>{
     const headings=[...table.querySelectorAll("thead th")].map(th=>th.textContent.trim());
