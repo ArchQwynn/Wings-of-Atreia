@@ -1033,6 +1033,58 @@ body { font-size: 14px; }
   }
 }
 
+
+
+/* Reliable mobile progression cards: avoid narrow table-cell/grid sizing. */
+.progression-mobile-cards{display:none}
+@media(max-width:680px){
+  #classContentHost .table-wrap{overflow:visible!important}
+  #classContentHost .progression-table{display:none!important}
+  #classContentHost .progression-mobile-cards{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:12px!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  #classContentHost .progression-mobile-card{
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+    padding:10px 14px!important;
+    border:1px solid var(--line)!important;
+    border-radius:10px!important;
+    background:rgba(16,35,56,.82)!important;
+    overflow:hidden!important;
+  }
+  #classContentHost .progression-mobile-field{
+    display:grid!important;
+    grid-template-columns:minmax(0,40%) minmax(0,60%)!important;
+    align-items:start!important;
+    column-gap:10px!important;
+    width:100%!important;
+    min-width:0!important;
+    padding:7px 0!important;
+    border-bottom:1px solid rgba(41,68,93,.55)!important;
+  }
+  #classContentHost .progression-mobile-field:last-child{border-bottom:0!important}
+  #classContentHost .progression-mobile-label,
+  #classContentHost .progression-mobile-value{
+    display:block!important;
+    min-width:0!important;
+    max-width:100%!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    word-break:normal!important;
+    line-height:1.45!important;
+  }
+  #classContentHost .progression-mobile-label{color:var(--muted)!important;font-weight:700!important}
+  #classContentHost .progression-mobile-value{color:var(--text)!important;font-weight:500!important}
+  #classContentHost .progression-mobile-level .progression-mobile-label{color:var(--accent2)!important}
+}
 </style>
 </head>
 <body>
@@ -1134,6 +1186,34 @@ function labelProgressionTableCells(){
         if(cell.tagName==="TD") cell.setAttribute("data-label",headings[index]||"");
       });
     });
+
+    /* Build a real card layout for phones instead of squeezing table cells
+       into CSS grid tracks. The original table remains for desktop. */
+    const oldCards=table.parentElement.querySelector(":scope > .progression-mobile-cards");
+    if(oldCards) oldCards.remove();
+    const cards=document.createElement("div");
+    cards.className="progression-mobile-cards";
+    const rows=[...table.querySelectorAll("tbody tr")];
+    rows.forEach(row=>{
+      const cells=[...row.querySelectorAll("td")];
+      if(!cells.length) return;
+      const card=document.createElement("article");
+      card.className="progression-mobile-card";
+      cells.forEach((cell,index)=>{
+        const field=document.createElement("div");
+        field.className="progression-mobile-field"+(index===0?" progression-mobile-level":"");
+        const label=document.createElement("span");
+        label.className="progression-mobile-label";
+        label.textContent=headings[index]||("Entry "+(index+1));
+        const value=document.createElement("span");
+        value.className="progression-mobile-value";
+        value.innerHTML=cell.innerHTML;
+        field.append(label,value);
+        card.appendChild(field);
+      });
+      cards.appendChild(card);
+    });
+    table.insertAdjacentElement("afterend",cards);
   });
 }
 
