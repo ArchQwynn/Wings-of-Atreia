@@ -1313,6 +1313,17 @@ function labelProgressionTableCells(){
       cards.appendChild(card);
     });
     table.insertAdjacentElement("afterend",cards);
+    /* Hide the source table directly on phones; keep it for desktop. */
+    const mobileView=window.matchMedia("(max-width: 680px)");
+    const syncSourceTable=()=>{
+      if(mobileView.matches) table.style.setProperty("display","none","important");
+      else table.style.removeProperty("display");
+    };
+    syncSourceTable();
+    if(!table.dataset.mobileVisibilityBound){
+      mobileView.addEventListener("change",syncSourceTable);
+      table.dataset.mobileVisibilityBound="true";
+    }
   });
 }
 
