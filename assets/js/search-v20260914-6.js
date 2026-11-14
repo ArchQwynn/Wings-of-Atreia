@@ -306,195 +306,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 })();
 
-/* Wings of Atreia Offline Reference Manager */
-(function initWoAOfflineManager() {
-  if (!("serviceWorker" in navigator)) return;
-
-  const style = document.createElement("style");
-  style.textContent = `
-    .woa-offline-status{position:fixed;right:16px;bottom:16px;z-index:9998;width:min(360px,calc(100vw - 32px));font:600 13px/1.4 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-    .woa-offline-status .toggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;border:1px solid rgba(214,176,83,.5);background:rgba(8,19,31,.97);color:#f4ead2;border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.3);cursor:pointer}
-    .woa-offline-status .toggle:hover,.woa-offline-status .toggle:focus,.woa-offline-status button:focus{border-color:#d6b053;outline:2px solid rgba(214,176,83,.25);outline-offset:2px}
-    .woa-offline-status .status-row{display:flex;align-items:center;gap:9px;min-width:0}
-    .woa-offline-status .dot{width:9px;height:9px;border-radius:50%;background:#9aa6b2;flex:0 0 auto}
-    .woa-offline-status.ready .dot{background:#65c98b}
-    .woa-offline-status.preparing .dot{background:#d6b053}
-    .woa-offline-status.error .dot{background:#d06a6a}
-    .woa-offline-status .chevron{transition:transform .18s ease}
-    .woa-offline-status.open .chevron{transform:rotate(180deg)}
-    .woa-offline-status .panel{display:none;margin-top:8px;padding:14px;border:1px solid rgba(214,176,83,.35);border-radius:12px;background:rgba(8,19,31,.98);color:#c9d3dc;box-shadow:0 8px 24px rgba(0,0,0,.28);font-weight:400}
-    .woa-offline-status.open .panel{display:block}
-    .woa-offline-status .panel p{margin:0 0 10px}
-    .woa-offline-status .actions{display:grid;gap:8px;margin-top:12px}
-    .woa-offline-status .action{width:100%;border:1px solid rgba(214,176,83,.55);border-radius:8px;padding:10px 12px;background:#182b3c;color:#f4ead2;font:600 13px system-ui;cursor:pointer}
-    .woa-offline-status .action.primary{background:#d6b053;color:#101923;border-color:#d6b053}
-    .woa-offline-status .action:disabled{opacity:.55;cursor:wait}
-    .woa-offline-status .progress-track{height:8px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden;margin:8px 0}
-    .woa-offline-status .progress-fill{height:100%;width:0;background:#d6b053;transition:width .15s ease}
-    .woa-offline-status.ready .progress-fill{background:#65c98b}
-    .woa-offline-status .small{font-size:12px;color:#aebbc7}
-    @media (max-width:640px){.woa-offline-status{right:10px;bottom:10px;width:calc(100vw - 20px)}}
-  `;
-  document.head.appendChild(style);
-
-  const wrap = document.createElement("section");
-  wrap.className = "woa-offline-status preparing";
-  wrap.innerHTML = `
-    <button class="toggle" type="button" aria-expanded="false" aria-label="Open offline reference manager">
-      <span class="status-row"><span class="dot" aria-hidden="true"></span><span class="label">Offline Reference: Checking…</span></span>
-      <span class="chevron" aria-hidden="true">⌃</span>
-    </button>
-    <div class="panel" hidden>
-      <p class="description">Check for changes and download the complete offline reference bundle, including the Class Browser and its class data.</p>
-      <div class="count">Checking cached files…</div>
-      <div class="progress-track" role="progressbar" aria-label="Offline download progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-fill"></div></div>
-      <div class="small progress-text">Connect to the internet before downloading.</div>
-      <div class="actions">
-        <button class="action primary check-download" type="button">Check &amp; Download Offline Files</button>
-        <button class="action force-download" type="button">Force Full Download</button>
-      </div>
-    </div>`;
-  document.body.appendChild(wrap);
-
-  const toggle = wrap.querySelector(".toggle");
-  const panel = wrap.querySelector(".panel");
-  const label = wrap.querySelector(".label");
-  const count = wrap.querySelector(".count");
-  const progress = wrap.querySelector(".progress-track");
-  const fill = wrap.querySelector(".progress-fill");
-  const progressText = wrap.querySelector(".progress-text");
-  const checkButton = wrap.querySelector(".check-download");
-  const forceButton = wrap.querySelector(".force-download");
-  let busy = false;
-
-  toggle.addEventListener("click", () => {
-    const open = wrap.classList.toggle("open");
-    panel.hidden = !open;
-    toggle.setAttribute("aria-expanded", String(open));
-  });
-
-  function setProgress(done, total, message) {
-    const percent = total ? Math.round(done / total * 100) : 0;
-    count.textContent = `Cached files: ${done} / ${total}`;
-    fill.style.width = `${percent}%`;
-    progress.setAttribute("aria-valuenow", String(percent));
-    progressText.textContent = message || `${percent}% complete`;
-  }
-
-  function setBusy(value) {
-    busy = value;
-    checkButton.disabled = value;
-    forceButton.disabled = value;
-    checkButton.textContent = value ? "Downloading…" : "Check & Download Offline Files";
-  }
-
-  function renderStatus(status) {
-    if (!status) {
-      wrap.classList.remove("ready");
-      wrap.classList.add("error");
-      label.textContent = navigator.onLine ? "Offline Reference: Not ready" : "Offline Reference: Status unavailable";
-      count.textContent = "Offline status could not be verified.";
-      progressText.textContent = navigator.onLine ? "Use Check & Download to prepare the offline files." : "Reconnect to the internet to download the offline bundle.";
-      return;
-    }
-    wrap.classList.remove("ready", "preparing", "error");
-    if (status.ready) {
-      wrap.classList.add("ready");
-      label.textContent = navigator.onLine ? "Offline Reference: Ready" : "Offline Reference: Ready · Offline";
-      setProgress(status.cached, status.total, "All required offline files are available on this device.");
-    } else {
-      wrap.classList.add("preparing");
-      label.textContent = "Offline Reference: Not ready";
-      setProgress(status.cached || 0, status.total || 0, "Some files are missing. Run Check & Download to prepare them.");
-    }
-  }
-
-  async function getWorker() {
-    const registration = await navigator.serviceWorker.getRegistration();
-    return navigator.serviceWorker.controller || registration?.active || registration?.waiting || registration?.installing;
-  }
-
-  async function requestStatus() {
-    try {
-      const worker = await getWorker();
-      if (!worker) return renderStatus(null);
-      const channel = new MessageChannel();
-      const timeout = setTimeout(() => renderStatus(null), 4000);
-      channel.port1.onmessage = event => {
-        clearTimeout(timeout);
-        renderStatus(event.data || null);
-      };
-      worker.postMessage({ type: "WOA_CACHE_STATUS" }, [channel.port2]);
-    } catch (_) { renderStatus(null); }
-  }
-
-  async function downloadBundle(force) {
-    if (busy) return;
-    if (!navigator.onLine) {
-      wrap.classList.remove("ready");
-      wrap.classList.add("error");
-      label.textContent = "Offline Reference: No connection";
-      progressText.textContent = "Connect to the internet, then try again.";
-      return;
-    }
-    setBusy(true);
-    wrap.classList.remove("ready", "error");
-    wrap.classList.add("preparing", "open");
-    panel.hidden = false;
-    toggle.setAttribute("aria-expanded", "true");
-    label.textContent = force ? "Offline Reference: Full download…" : "Offline Reference: Checking & downloading…";
-    count.textContent = "Preparing offline file list…";
-    fill.style.width = "0%";
-    progress.setAttribute("aria-valuenow", "0");
-    progressText.textContent = "Please keep this page open while files are downloaded.";
-    try {
-      const worker = await getWorker();
-      if (!worker) throw new Error("The offline service worker is not active yet. Reload the site while online and try again.");
-      const channel = new MessageChannel();
-      const timeout = setTimeout(() => {
-        setBusy(false);
-        wrap.classList.remove("preparing");
-        wrap.classList.add("error");
-        label.textContent = "Offline Reference: Download timed out";
-        progressText.textContent = "The download did not report completion. Check your connection and retry.";
-      }, 120000);
-      channel.port1.onmessage = event => {
-        const data = event.data || {};
-        if (data.type === "WOA_DOWNLOAD_PROGRESS") {
-          setProgress(data.cached || 0, data.total || 0, data.message || "Downloading files…");
-        } else if (data.type === "WOA_DOWNLOAD_COMPLETE") {
-          clearTimeout(timeout);
-          setBusy(false);
-          renderStatus(data.status || data);
-          progressText.textContent = "Offline Ready — all required files have been verified and cached.";
-        } else if (data.type === "WOA_DOWNLOAD_ERROR") {
-          clearTimeout(timeout);
-          setBusy(false);
-          wrap.classList.remove("preparing", "ready");
-          wrap.classList.add("error");
-          label.textContent = "Offline Reference: Download incomplete";
-          progressText.textContent = data.message || "A file could not be downloaded. Check your connection and retry.";
-        }
-      };
-      worker.postMessage({ type: "WOA_DOWNLOAD_OFFLINE", force: Boolean(force) }, [channel.port2]);
-    } catch (error) {
-      setBusy(false);
-      wrap.classList.remove("preparing", "ready");
-      wrap.classList.add("error");
-      label.textContent = "Offline Reference: Download failed";
-      progressText.textContent = error.message || "Could not start the offline download.";
-    }
-  }
-
-  checkButton.addEventListener("click", () => downloadBundle(false));
-  forceButton.addEventListener("click", () => downloadBundle(true));
-  window.addEventListener("online", requestStatus);
-  window.addEventListener("offline", requestStatus);
-  navigator.serviceWorker.addEventListener("controllerchange", () => setTimeout(requestStatus, 300));
-  window.addEventListener("load", () => setTimeout(requestStatus, 900));
-  setTimeout(requestStatus, 1400);
-})(); 
-
 /* Wings of Atreia session usability suite: favorites, recent pages, quick reference, sharing, mobile navigation, and accessibility */
 (function initWoAUsabilitySuite() {
   const STORAGE_FAVORITES = "woa:favorites:v1";
@@ -700,14 +511,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         <button type="button" role="tab" data-tab="quick" aria-selected="true">Quick</button>
         <button type="button" role="tab" data-tab="favorites" aria-selected="false">Favorites</button>
         <button type="button" role="tab" data-tab="recent" aria-selected="false">Recent</button>
+        <button type="button" role="tab" data-tab="offline" aria-selected="false">Offline</button>
       </div>
       <div class="tools-panel" data-panel="quick"></div>
       <div class="tools-panel" data-panel="favorites" hidden></div>
-      <div class="tools-panel" data-panel="recent" hidden></div>`;
+      <div class="tools-panel" data-panel="recent" hidden></div>
+      <div class="tools-panel offline-tools-panel" data-panel="offline" hidden>
+        <p class="offline-intro">Check for changes and download the complete offline reference bundle, including the Class Browser and all 11 class data files.</p>
+        <div class="offline-status-line"><span class="offline-status-dot"></span><strong class="offline-label">Checking offline files…</strong></div>
+        <div class="offline-count">Checking cached files…</div>
+        <div class="offline-progress-track" role="progressbar" aria-label="Offline download progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="offline-progress-fill"></div></div>
+        <p class="offline-progress-text" aria-live="polite">Connect to the internet to download the offline bundle.</p>
+        <div class="offline-actions">
+          <button class="offline-action primary check-download" type="button">Check &amp; Download Offline Files</button>
+          <button class="offline-action force-download" type="button">Force Full Download</button>
+        </div>
+      </div>`;
     document.body.append(backdrop, drawer);
 
     const quick = drawer.querySelector('[data-panel="quick"]');
-    quick.innerHTML = `<div class="tool-link-list">${quickLinks.map(([label,url]) => `<a href="${escapeAttr(absoluteFromRelative(url))}"><strong>${escapeAttr(label)}</strong><small>Open reference →</small></a>`).join("")}</div>`;
+    quick.innerHTML = `<div class="tool-link-list">${quickLinks.map(([label,url]) => `<a href="${escapeAttr(absoluteFromRelative(url))}"><strong>${label}</strong><small>Open reference →</small></a>`).join("")}</div>`;
 
     const refreshLists = () => {
       drawer.querySelector('[data-panel="favorites"]').innerHTML = renderSavedList(readJson(STORAGE_FAVORITES), "No favorites yet. Use ☆ Favorite on any reference page.");
@@ -722,55 +545,121 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (remove) {
         const url = remove.dataset.removeRecent;
         writeJson(STORAGE_RECENT, readJson(STORAGE_RECENT).filter(entry => entry.url !== url));
-        refreshLists();
-        toast("Removed from Recent.");
-        return;
+        refreshLists(); toast("Removed from Recent."); return;
       }
       if (event.target.closest(".clear-recents")) {
-        writeJson(STORAGE_RECENT, []);
-        refreshLists();
-        toast("Recent pages cleared.");
+        writeJson(STORAGE_RECENT, []); refreshLists(); toast("Recent pages cleared.");
       }
     });
 
-    let previousFocus = null;
-    const open = () => { previousFocus = document.activeElement; backdrop.hidden = false; requestAnimationFrame(() => { drawer.classList.add("open"); backdrop.classList.add("open"); }); drawer.setAttribute("aria-hidden", "false"); document.body.classList.add("drawer-open"); drawer.querySelector(".tools-close").focus(); refreshLists(); };
-    const close = () => { drawer.classList.remove("open"); backdrop.classList.remove("open"); drawer.setAttribute("aria-hidden", "true"); document.body.classList.remove("drawer-open"); setTimeout(() => { backdrop.hidden = true; }, 220); previousFocus?.focus?.(); };
-    launcher.addEventListener("click", open); drawer.querySelector(".tools-close").addEventListener("click", close); backdrop.addEventListener("click", close);
-    document.addEventListener("keydown", event => { if (event.key === "Escape" && drawer.classList.contains("open")) close(); });
+    const offlinePanel = drawer.querySelector('[data-panel="offline"]');
+    const offlineLabel = offlinePanel.querySelector(".offline-label");
+    const offlineCount = offlinePanel.querySelector(".offline-count");
+    const offlineProgress = offlinePanel.querySelector(".offline-progress-track");
+    const offlineFill = offlinePanel.querySelector(".offline-progress-fill");
+    const offlineText = offlinePanel.querySelector(".offline-progress-text");
+    const checkButton = offlinePanel.querySelector(".check-download");
+    const forceButton = offlinePanel.querySelector(".force-download");
+    let offlineBusy = false;
 
-    drawer.querySelectorAll('[role="tab"]').forEach(tab => tab.addEventListener("click", () => {
-      drawer.querySelectorAll('[role="tab"]').forEach(t => t.setAttribute("aria-selected", String(t === tab)));
-      drawer.querySelectorAll(".tools-panel").forEach(panel => panel.hidden = panel.dataset.panel !== tab.dataset.tab);
-      if (tab.dataset.tab !== "quick") refreshLists();
-    }));
-  }
-
-  function addOfflineHeaderBadge() {
-    const navWrap = document.querySelector(".nav-wrap");
-    if (!navWrap || document.querySelector(".woa-header-status")) return;
-    const badge = document.createElement("a");
-    badge.className = "woa-header-status checking";
-    badge.href = base() + "rules/status.html";
-    badge.title = "Rules and offline reference status";
-    badge.innerHTML = `<span class="status-dot"></span><span class="status-copy"><strong>Rules Current</strong><small>Offline checking…</small></span>`;
-    navWrap.appendChild(badge);
-
-    async function updateBadge() {
-      const registration = await navigator.serviceWorker?.getRegistration?.();
-      const worker = navigator.serviceWorker?.controller || registration?.active || registration?.waiting || registration?.installing;
-      if (!worker) { badge.className = "woa-header-status not-ready"; badge.querySelector("small").textContent = "Offline not ready"; return; }
-      const channel = new MessageChannel();
-      const timer = setTimeout(() => { badge.className = "woa-header-status checking"; badge.querySelector("small").textContent = navigator.onLine ? "Offline checking…" : "Offline status unknown"; }, 1800);
-      channel.port1.onmessage = event => {
-        clearTimeout(timer); const status = event.data || {};
-        badge.className = `woa-header-status ${status.ready ? "ready" : "not-ready"}`;
-        badge.querySelector("small").textContent = status.ready ? (navigator.onLine ? "Offline Ready" : "Offline Ready · No network") : "Offline preparing…";
-        badge.title = status.ready ? `Offline bundle ${status.cached}/${status.total} ready · ${status.updated}` : `Offline bundle ${status.cached || 0}/${status.total || "?"}`;
-      };
-      worker.postMessage({ type: "WOA_CACHE_STATUS" }, [channel.port2]);
+    function setOfflineProgress(done,total,message) {
+      const percent = total ? Math.round(done/total*100) : 0;
+      offlineCount.textContent = `Cached files: ${done} / ${total}`;
+      offlineFill.style.width = percent + "%";
+      offlineProgress.setAttribute("aria-valuenow",String(percent));
+      offlineText.textContent = message || percent + "% complete";
     }
-    addEventListener("online", updateBadge); addEventListener("offline", updateBadge); navigator.serviceWorker?.addEventListener?.("controllerchange", () => setTimeout(updateBadge, 300)); setTimeout(updateBadge, 700);
+    function renderOfflineStatus(status) {
+      offlinePanel.classList.remove("ready","preparing","error");
+      if(!status) {
+        offlinePanel.classList.add("error");
+        offlineLabel.textContent = navigator.onLine ? "Offline files not ready" : "Offline status unavailable";
+        offlineText.textContent = navigator.onLine ? "Use Check & Download to prepare the offline files." : "Reconnect to download the offline bundle.";
+        return;
+      }
+      if(status.ready) {
+        offlinePanel.classList.add("ready");
+        offlineLabel.textContent = navigator.onLine ? "Offline Ready" : "Offline Ready · No connection";
+        setOfflineProgress(status.cached,status.total,"All required offline files are available on this device.");
+      } else {
+        offlinePanel.classList.add("preparing");
+        offlineLabel.textContent = "Offline files not ready";
+        setOfflineProgress(status.cached||0,status.total||0,"Some files are missing. Run Check & Download to prepare them.");
+      }
+    }
+    async function getOfflineWorker() {
+      const registration=await navigator.serviceWorker.getRegistration();
+      return navigator.serviceWorker.controller||registration?.active||registration?.waiting||registration?.installing;
+    }
+    async function requestOfflineStatus() {
+      try {
+        const worker=await getOfflineWorker();
+        if(!worker) return renderOfflineStatus(null);
+        const channel=new MessageChannel();
+        const timeout=setTimeout(()=>renderOfflineStatus(null),4000);
+        channel.port1.onmessage=event=>{clearTimeout(timeout);renderOfflineStatus(event.data||null);};
+        worker.postMessage({type:"WOA_CACHE_STATUS"},[channel.port2]);
+      } catch(_) { renderOfflineStatus(null); }
+    }
+    async function downloadOfflineBundle(force) {
+      if(offlineBusy)return;
+      if(!navigator.onLine) {
+        offlinePanel.classList.remove("ready");offlinePanel.classList.add("error");
+        offlineLabel.textContent="Internet connection required";
+        offlineText.textContent="Reconnect to the internet, then try again.";return;
+      }
+      offlineBusy=true;checkButton.disabled=true;forceButton.disabled=true;
+      checkButton.textContent="Downloading…";
+      offlinePanel.classList.remove("ready","error");offlinePanel.classList.add("preparing");
+      offlineLabel.textContent=force?"Force full download in progress…":"Checking & downloading…";
+      setOfflineProgress(0,0,"Please keep this page open while the offline files are prepared.");
+      try {
+        const worker=await getOfflineWorker();
+        if(!worker)throw new Error("The offline service worker is not active. Reload the website while online and try again.");
+        const channel=new MessageChannel();
+        const timeout=setTimeout(()=>{
+          offlineBusy=false;checkButton.disabled=false;forceButton.disabled=false;checkButton.textContent="Check & Download Offline Files";
+          offlinePanel.classList.remove("preparing");offlinePanel.classList.add("error");
+          offlineLabel.textContent="Download timed out";offlineText.textContent="Check your connection and retry.";
+        },180000);
+        channel.port1.onmessage=event=>{
+          const data=event.data||{};
+          if(data.type==="WOA_DOWNLOAD_PROGRESS") setOfflineProgress(data.cached||0,data.total||0,data.message||"Downloading…");
+          if(data.type==="WOA_DOWNLOAD_COMPLETE") {
+            clearTimeout(timeout);offlineBusy=false;checkButton.disabled=false;forceButton.disabled=false;checkButton.textContent="Check & Download Offline Files";
+            renderOfflineStatus(data.status||data);offlineText.textContent="Offline Ready — every required file has been verified.";
+          }
+          if(data.type==="WOA_DOWNLOAD_ERROR") {
+            clearTimeout(timeout);offlineBusy=false;checkButton.disabled=false;forceButton.disabled=false;checkButton.textContent="Check & Download Offline Files";
+            offlinePanel.classList.remove("preparing","ready");offlinePanel.classList.add("error");
+            offlineLabel.textContent="Download incomplete";offlineText.textContent=data.message||"A file could not be downloaded. Check your connection and retry.";
+          }
+        };
+        worker.postMessage({type:"WOA_DOWNLOAD_OFFLINE",force:Boolean(force)},[channel.port2]);
+      } catch(error) {
+        offlineBusy=false;checkButton.disabled=false;forceButton.disabled=false;checkButton.textContent="Check & Download Offline Files";
+        offlinePanel.classList.remove("preparing","ready");offlinePanel.classList.add("error");
+        offlineLabel.textContent="Download failed";offlineText.textContent=error.message||"Could not start the offline download.";
+      }
+    }
+    checkButton.addEventListener("click",()=>downloadOfflineBundle(false));
+    forceButton.addEventListener("click",()=>downloadOfflineBundle(true));
+    window.addEventListener("online",requestOfflineStatus);
+    window.addEventListener("offline",requestOfflineStatus);
+    navigator.serviceWorker?.addEventListener("controllerchange",()=>setTimeout(requestOfflineStatus,300));
+    requestOfflineStatus();
+
+    let previousFocus=null;
+    const open=()=>{previousFocus=document.activeElement;backdrop.hidden=false;requestAnimationFrame(()=>{drawer.classList.add("open");backdrop.classList.add("open");});drawer.setAttribute("aria-hidden","false");document.body.classList.add("drawer-open");drawer.querySelector(".tools-close").focus();refreshLists();requestOfflineStatus();};
+    const close=()=>{drawer.classList.remove("open");backdrop.classList.remove("open");drawer.setAttribute("aria-hidden","true");document.body.classList.remove("drawer-open");setTimeout(()=>{backdrop.hidden=true;},220);previousFocus?.focus?.();};
+    launcher.addEventListener("click",open);drawer.querySelector(".tools-close").addEventListener("click",close);backdrop.addEventListener("click",close);
+    document.addEventListener("keydown",event=>{if(event.key==="Escape"&&drawer.classList.contains("open"))close();});
+    drawer.querySelectorAll('[role="tab"]').forEach(tab=>tab.addEventListener("click",()=>{
+      drawer.querySelectorAll('[role="tab"]').forEach(t=>t.setAttribute("aria-selected",String(t===tab)));
+      drawer.querySelectorAll(".tools-panel").forEach(panel=>panel.hidden=panel.dataset.panel!==tab.dataset.tab);
+      if(tab.dataset.tab==="favorites"||tab.dataset.tab==="recent")refreshLists();
+      if(tab.dataset.tab==="offline")requestOfflineStatus();
+    }));
   }
 
   function addUpdateAwareness() {
@@ -813,7 +702,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     addHeadingLinks();
     addPageActions();
     addReferenceDrawer();
-    addOfflineHeaderBadge();
     addUpdateAwareness();
   });
 })();
