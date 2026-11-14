@@ -319,7 +319,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   const writeJson = (key, value) => {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {}
   };
-  const base = () => document.body?.dataset?.base || "";
+  const base = () => {
+    const body = document.body;
+    if (body && body.hasAttribute("data-base")) return body.dataset.base || "";
+    const path = window.location.pathname;
+    const section = path.match(/\/(?:classes|rules|spells|world|companion|vtt-prototype)\//);
+    return section ? path.slice(0, section.index + 1) : "/";
+  };
   const pageTitle = () => (document.querySelector("main h1, .hero h1")?.textContent || document.title.split("|")[0] || "Wings of Atreia").trim();
   const currentPath = () => {
     const root = new URL(base() || "./", location.href);
