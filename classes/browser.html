@@ -1112,6 +1112,77 @@ body { font-size: 14px; }
   }
   #classContentHost .progression-table tbody td:nth-child(1)::before{color:var(--accent2)!important}
 }
+
+/* Mobile: show the working generated progression cards, not the cramped
+   original seven-column table. Desktop continues to use the original table. */
+.progression-mobile-cards{display:none}
+@media(max-width:680px){
+  #classContentHost .table-wrap{overflow:visible!important}
+  #classContentHost .progression-table{display:none!important}
+  #classContentHost .progression-mobile-cards{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:12px!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  #classContentHost .progression-mobile-card{
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+    padding:10px 14px!important;
+    border:1px solid var(--line)!important;
+    border-radius:10px!important;
+    background:rgba(16,35,56,.82)!important;
+    overflow:hidden!important;
+  }
+  #classContentHost .progression-mobile-field{
+    display:flex!important;
+    flex-flow:row nowrap!important;
+    align-items:flex-start!important;
+    gap:8px!important;
+    width:100%!important;
+    min-width:0!important;
+    padding:7px 0!important;
+    border-bottom:1px solid rgba(41,68,93,.55)!important;
+  }
+  #classContentHost .progression-mobile-field:last-child{border-bottom:0!important}
+  #classContentHost .progression-mobile-label{
+    display:block!important;
+    flex:0 0 36%!important;
+    width:36%!important;
+    min-width:0!important;
+    max-width:36%!important;
+    color:var(--muted)!important;
+    font-weight:700!important;
+    white-space:normal!important;
+    overflow-wrap:normal!important;
+    word-break:normal!important;
+    line-height:1.45!important;
+  }
+  #classContentHost .progression-mobile-value{
+    display:block!important;
+    flex:1 1 0%!important;
+    width:0!important;
+    min-width:0!important;
+    max-width:none!important;
+    color:var(--text)!important;
+    font-weight:500!important;
+    white-space:normal!important;
+    overflow-wrap:break-word!important;
+    word-break:normal!important;
+    line-height:1.45!important;
+  }
+  #classContentHost .progression-mobile-value *{
+    max-width:100%!important;
+    white-space:normal!important;
+    overflow-wrap:break-word!important;
+    word-break:normal!important;
+  }
+}
 </style>
 </head>
 <body>
@@ -1212,16 +1283,36 @@ function labelProgressionTableCells(){
       [...row.children].forEach((cell,index)=>{
         if(cell.tagName!=="TD") return;
         cell.setAttribute("data-label",headings[index]||"");
-        /* Keep the original table cell and wrap only its value so mobile
-           layout can give the label and value independent widths. */
-        if(!cell.querySelector(":scope > .progression-cell-value")){
-          const value=document.createElement("div");
-          value.className="progression-cell-value";
-          while(cell.firstChild) value.appendChild(cell.firstChild);
-          cell.appendChild(value);
-        }
       });
     });
+
+    /* Keep the original table for desktop and generate the approved,
+       readable card version for mobile. */
+    const oldCards=table.parentElement.querySelector(":scope > .progression-mobile-cards");
+    if(oldCards) oldCards.remove();
+    const cards=document.createElement("div");
+    cards.className="progression-mobile-cards";
+    table.querySelectorAll("tbody tr").forEach(row=>{
+      const cells=[...row.querySelectorAll("td")];
+      if(!cells.length) return;
+      const card=document.createElement("article");
+      card.className="progression-mobile-card";
+      cells.forEach((cell,index)=>{
+        const field=document.createElement("div");
+        field.className="progression-mobile-field";
+        const label=document.createElement("div");
+        label.className="progression-mobile-label";
+        label.textContent=headings[index]||("Entry "+(index+1));
+        const value=document.createElement("div");
+        value.className="progression-mobile-value";
+        const content=cell.querySelector(":scope > .progression-cell-value");
+        value.innerHTML=content?content.innerHTML:cell.innerHTML;
+        field.append(label,value);
+        card.appendChild(field);
+      });
+      cards.appendChild(card);
+    });
+    table.insertAdjacentElement("afterend",cards);
   });
 }
 
