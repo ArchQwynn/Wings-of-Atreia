@@ -1,31 +1,17 @@
 <div id="classData" data-class="Templar" data-spellcaster="false">
-<p class="class-quote"><em>“You're only as good as your armor.”</em></p>
-<p class="class-tagline">The premier martial defender, turning incoming pressure into protection, damage reduction, retaliation, and formation control.</p>
-<p id="classDescription" class="hero-description"></p>
-<section id="overview">
-<p>The <strong>Templar</strong> is the system’s premier martial defender. It does not force enemies to attack it through mind control; instead, Challenge makes ignoring the Templar tactically dangerous while Resolve turns incoming pressure into protection, damage reduction, retaliation, and formation control.</p>
-<h3>Class Identity</h3>
-<p>Templars are guardian-warriors whose strength is measured by what they can endure and whom they can keep standing. They occupy the most dangerous space in a battle, challenge enemies that would otherwise overwhelm vulnerable allies, and turn personal resilience into protection for the group. Resolve is the mechanical expression of this identity: a Templar grows most meaningful when danger is real and protection requires commitment.</p>
-<h3>Tradition &amp; Outlook</h3>
-<p>The Templar tradition grows from Atreia’s warrior disciplines but places duty, discipline, guardianship, and control above personal glory. Templars are found among legion defenders, fortress guardians, sworn protectors, escorts, and Daevas who believe power carries an obligation to stand between danger and others. Individual Templars may be stern, compassionate, devout, pragmatic, or fiercely patriotic, but the class ideal is constancy under pressure.</p>
-<h3>Appearance &amp; Adventuring</h3>
-<p>Templars are commonly associated with plate armor, shields, and the unmistakable silhouette of a heavily protected frontline Daeva. Their equipment tends to emphasize readiness and endurance rather than ornament alone. Templars adventure because someone must hold the line: to defend a community, fulfill an oath, guard companions, reclaim threatened territory, or confront enemies that cannot safely be allowed to reach the rest of the party.</p>
-</section>
-<section class="class-overview-panel" id="overview" aria-label="Templar class overview">
+  <p id="classDescription" class="hero-description">[Enter the Templar class description here.]</p>
+  <section class="class-overview-panel" id="overview" aria-label="Templar class overview">
     <h2>CLASS OVERVIEW</h2>
     <table class="class-overview-table"><tbody id="classOverviewPanel">
-      <tr><th>Armor</th><td>Chain Armor, Plate Armor, Round/Medium/Tower Shields</td></tr>
-      <tr><th>Weapons</th><td>Longswords, Polearms, Maces</td></tr>
-      <tr><th>Implements</th><td>None</td></tr>
-      <tr><th>Hit Die</th><td>d12</td></tr>
-      <tr><th>Hit Points at Level 1</th><td>16 + CON modifier</td></tr>
-      <tr><th>Hit Points at Higher Levels</th><td>Roll d12 or use fixed 7, add CON modifier, then add +4 maximum HP for each Templar level after 1.</td></tr>
-      <tr><th>Class Save DC</th><td>8 + PB + CON modifier</td></tr>
-      <tr><th>Primary Ability</th><td>Constitution</td></tr>
-      <tr><th>Weapon Ability</th><td>Strength</td></tr>
-      <tr><th>Saving Throws</th><td>Strength, Constitution</td></tr>
-      <tr><th>Skills</th><td>Choose 2 from 6: Athletics, History, Insight, Intimidation, Medicine, Perception</td></tr>
-      <tr><th>Class Resource</th><td>Resolve</td></tr>
+      <tr><th>Armor</th><td>[Armor]</td></tr>
+      <tr><th>Weapons</th><td>[Weapons]</td></tr>
+      <tr><th>Implements</th><td>[Implements]</td></tr>
+      <tr><th>Hit Die</th><td>[Hit Die]</td></tr>
+      <tr><th>Class Save DC</th><td>[Class Save DC]</td></tr>
+      <tr><th>Primary Ability</th><td>[Primary Ability]</td></tr>
+      <tr><th>Saving Throws</th><td>[Saving Throws]</td></tr>
+      <tr><th>Skills</th><td>[Skills]</td></tr>
+      <tr><th>Class Resource</th><td>[Class Resource]</td></tr>
     </tbody></table>
   </section>
   <nav class="content-nav" aria-label="Class sections">
@@ -57,13 +43,27 @@
 <tr><td>20</td><td>+6</td><td>8</td><td>6</td><td>d12</td><td>3</td><td>Unyielding Guardian</td></tr>
     </tbody></table></div>
   </section>
-  <section class="content-section" id="mechanics">
+   <section class="content-section" id="mechanics">
     <h2>Core Mechanics &amp; Resources</h2>
-    <details class="feature"><summary>[Signature Resource]</summary><div class="feature-body">
-      <p><strong>Generation:</strong> [How the resource is gained.]</p>
-      <p><strong>Capacity:</strong> [Maximum and scaling.]</p>
-      <p><strong>Expenditure:</strong> [What spends it.]</p>
-      <p><strong>Recovery:</strong> [When it recovers.]</p>
+    <details class="feature"><summary>Resolve</summary><div class="feature-body">
+      <p><strong>Generation:</strong> You gain Resolve whenever the following instances occur even outside your own turn as long as within genuine combat:</p>
+      <p><ul>
+  <li><strong>Hold the Line</strong>: gain 1 Resolve when a hostile creature you can see hits you with a weapon or spell attack. AOE weapon or spell attacks are included.</li>
+  <li><strong>Protect the Vulnerable</strong>: gain 1 Resolve when a Templar class feature successfully reduces, prevents, redirects, or intercepts damage that would otherwise be dealt to another creature, or when a feature explicitly says the protection qualifies.</li>
+  <li><strong>Defy the Templar</strong>: gain 1 Resolve when a creature Challenged by you attacks another creature while you were a valid target for that attack. Ranged and spell attacks are included.</li>
+  <li>You can normally gain no more than 1 Resolve during any hostile creature’s turn. One event grants Resolve only once even if it satisfies multiple triggers.</li>
+  <li><strong>Note</strong>: Inflicting self-damage or damage from allies will not generate Resolve for your Templar.</li>
+      </ul></p>
+      <p><strong>Expenditure:</strong> Gained Resolve is used to spend specified Templar abilities that can affect or change the outcome of the hostile creature's attack as listed under Signature Defensive Mechanics.</p>
+    </div></details>
+    <details class="feature"><summary>Resolve Timing and Signature Defensive Mechanics</summary><div class="feature-body">
+    <p>Resolve represents the Templar converting battlefield pressure into defensive certainty. Unless a later feature states otherwise, Resolve becomes 0 when Initiative is rolled, becomes 0 when combat ends, and cannot be gained while you are Incapacitated.</p>
+    <p><ul>
+    <li>Resolve generated by <strong>Hold the Line</strong> can be spent immediately on <strong>Resolute Guard</strong> to mitigate the triggering attack. When used this way, you only reduce the damage by half of your total Guard die rounded up + CON modifier roll.</li>
+    <li>Resolve generated by a successful <strong>Guardian's Intercession</strong> is gained before redirected damage is applied, so it may be used against the redirected attack if otherwise legal.</li>
+    <li>Resolve generated because <strong>Guardian's Shelter</strong> changed a save from failure to success may immediately pay for Resolute Shelter at Level 14.</li>
+    <li>Challenge may remain on a creature while its penalty is temporarily suppressed because yo uare out of range, cannot be perceived, or are not a legal target. Explicit rules apply.</li>
+    </ul></p>
     </div></details>
     <details class="feature"><summary>[Signature Mechanic]</summary><div class="feature-body"><p>[Full explanation of the class's unique mechanic.]</p></div></details>
   </section>
