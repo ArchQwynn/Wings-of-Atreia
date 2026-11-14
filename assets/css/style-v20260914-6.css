@@ -453,3 +453,28 @@ table { max-width: 100%; }
 .tool-link-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:.45rem; align-items:stretch; }
 .tool-link-row > a { min-width:0; }
 .tool-remove-recent { width:2.35rem; min-height:100%; font-size:.9rem; }
+
+/* Integrated offline controls inside the Reference drawer */
+.woa-tools-drawer { display:flex; flex-direction:column; }
+.tools-panel { min-height:0; overflow:auto; }
+.offline-tools-panel { color:var(--muted); }
+.offline-intro { margin:.2rem 0 1rem; line-height:1.55; }
+.offline-status-line { display:flex; align-items:center; gap:.55rem; margin:.7rem 0; color:var(--text); }
+.offline-status-dot { width:.65rem; height:.65rem; border-radius:50%; background:#9aa6b2; flex:0 0 auto; }
+.offline-tools-panel.ready .offline-status-dot { background:#65c98b; }
+.offline-tools-panel.preparing .offline-status-dot { background:#d6b053; }
+.offline-tools-panel.error .offline-status-dot { background:#d06a6a; }
+.offline-count { font-size:.88rem; color:var(--text); margin:.65rem 0 .35rem; }
+.offline-progress-track { height:8px; overflow:hidden; border-radius:99px; background:rgba(255,255,255,.13); }
+.offline-progress-fill { width:0; height:100%; background:#d6b053; transition:width .15s ease; }
+.offline-tools-panel.ready .offline-progress-fill { background:#65c98b; }
+.offline-progress-text { font-size:.82rem; line-height:1.45; min-height:2.5em; }
+.offline-actions { display:grid; gap:.55rem; margin-top:1rem; }
+.offline-action { width:100%; border:1px solid var(--line); border-radius:.65rem; padding:.75rem .85rem; background:#0d2236; color:var(--text); font:inherit; font-weight:800; cursor:pointer; }
+.offline-action.primary { background:var(--gold); color:#101923; border-color:var(--gold); }
+.offline-action:disabled { opacity:.55; cursor:wait; }
+@media(max-width:600px) {
+  .woa-tools-drawer { width:min(420px,94vw); max-width:94vw; }
+  .tools-tabs { grid-template-columns:repeat(4,minmax(0,1fr)); }
+  .tools-tabs button { padding:.58rem .2rem; font-size:.84rem; }
+}
