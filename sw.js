@@ -51,11 +51,29 @@ self.addEventListener("message",event=>{
         send({type:"WOA_DOWNLOAD_PROGRESS",cached:0,total:PRECACHE.length,message:event.data.force?"Starting full offline download…":"Checking and downloading offline files…"});
         for(const path of PRECACHE){
           const request=new Request(scopedUrl(path),{cache:"reload"});
-          const response=await fetch(request);
-          if(!response.ok)throw new Error("Could not download "+path+" (HTTP "+response.status+").");
-          await cache.put(request,response.clone());
+          const cachedResponse=await cache.match(request);
+          let unchanged=false;
+          if(!event.data.force&&cachedResponse){
+            try{
+              const head=await fetch(new Request(scopedUrl(path),{method:"HEAD",cache:"no-store"}));
+              if(head.ok){
+                const oldTag=cachedResponse.headers.get("ETag");
+                const newTag=head.headers.get("ETag");
+                const oldModified=cachedResponse.headers.get("Last-Modified");
+                const newModified=head.headers.get("Last-Modified");
+                const oldLength=cachedResponse.headers.get("Content-Length");
+                const newLength=head.headers.get("Content-Length");
+                unchanged=Boolean((oldTag&&newTag&&oldTag===newTag)||(oldModified&&newModified&&oldModified===newModified&&(!oldLength||!newLength||oldLength===newLength)));
+              }
+            }catch(_){}
+          }
+          if(!unchanged){
+            const response=await fetch(request);
+            if(!response.ok)throw new Error("Could not download "+path+" (HTTP "+response.status+").");
+            await cache.put(request,response.clone());
+          }
           completed++;
-          send({type:"WOA_DOWNLOAD_PROGRESS",cached:completed,total:PRECACHE.length,message:"Downloaded "+path});
+          send({type:"WOA_DOWNLOAD_PROGRESS",cached:completed,total:PRECACHE.length,message:(unchanged?"Verified ":"Downloaded ")+path});
         }
         const keys=await cache.keys();
         const expected=new Set(PRECACHE.map(scopedUrl));
