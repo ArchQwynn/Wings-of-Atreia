@@ -1085,6 +1085,26 @@ body { font-size: 14px; }
   #classContentHost .progression-mobile-value{color:var(--text)!important;font-weight:500!important}
   #classContentHost .progression-mobile-level .progression-mobile-label{color:var(--accent2)!important}
 }
+
+/* Mobile progression card text: preserve natural word wrapping on phones.
+   Keep the approved level-card layout and desktop table unchanged. */
+@media(max-width:680px){
+  #classContentHost .progression-mobile-field{
+    grid-template-columns:minmax(0,36%) minmax(0,1fr)!important;
+    column-gap:8px!important;
+  }
+  #classContentHost .progression-mobile-label,
+  #classContentHost .progression-mobile-value,
+  #classContentHost .progression-mobile-value *{
+    overflow-wrap:break-word!important;
+    word-break:normal!important;
+    hyphens:manual!important;
+  }
+  #classContentHost .progression-mobile-value{
+    min-width:0!important;
+  }
+}
+
 </style>
 </head>
 <body>
