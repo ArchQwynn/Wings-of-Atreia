@@ -1,17 +1,30 @@
 <div id="classData" data-class="Assassin" data-spellcaster="false">
-  <p id="classDescription" class="hero-description">[Enter the Assassin class description here.]</p>
+<p class="class-quote"><em>“You'll know I'm there when you're dead.”</em></p>
+<p class="class-tagline"A precision close-range fighter that stacks target-locked Rune Marks to trigger an Assassination Sequence, dealing the highest burst damage of any class.</p>
+  <p id="classDescription" class="hero-description"></p>
+ <section id="overview">
+<p>The Assassin is a precision melee striker that builds target-bound Rune Marks, converts them into burst damage or execution riders, and uses Shadow Step to remain difficult to pin down. Unlike a conventional Extra Attack martial, its Level 5 Assassination Sequence is a conditional follow-up attack tied to a successful Sneak Attack.</p>
+<h2 id="class-identity">Class Identity</h2>
+p>Assassins are precision predators who win through positioning, timing, concealment, and carefully prepared execution. Their art is not simply “attacking from stealth.” An Assassin studies a target, creates the right opening, carves Rune Marks, and converts preparation into a sudden lethal advantage. Their greatest strength is the ability to decide where and when a close-range confrontation becomes dangerous.</p>
+<h2 id="tradition-outlook">Tradition &amp; Outlook</h2>
+<p>The Assassin tradition descends from Atreia’s scout disciplines and is practiced by infiltrators, covert operatives, hunters of dangerous individuals, intelligence agents, and Daevas who favor certainty over spectacle. Assassins often prize patience, awareness, self-control, and economy of motion. Their motives vary widely: service to a faction, revenge, professional duty, protection through preemptive action, or the pursuit of perfect technique.</p>
+<h2 id="appearance-adventuring">Appearance &amp; Adventuring</h2>
+<p>Assassins favor equipment that permits mobility and unobstructed movement, with Shortswords and Daggers forming the class’s approved weapon identity in Wings of Atreia. Their appearance may be subdued or ceremonial, but practical Assassins avoid anything that compromises movement or control. They adventure when a threat must be found before it strikes, a route must be infiltrated, an enemy leader must be neutralized, or a mystery demands someone comfortable operating unseen.</p>
+</section>
   <section class="class-overview-panel" id="overview" aria-label="Assassin class overview">
     <h2>CLASS OVERVIEW</h2>
     <table class="class-overview-table"><tbody id="classOverviewPanel">
-      <tr><th>Armor</th><td>[Armor]</td></tr>
-      <tr><th>Weapons</th><td>[Weapons]</td></tr>
-      <tr><th>Implements</th><td>[Implements]</td></tr>
-      <tr><th>Hit Die</th><td>[Hit Die]</td></tr>
-      <tr><th>Class Save DC</th><td>[Class Save DC]</td></tr>
-      <tr><th>Primary Ability</th><td>[Primary Ability]</td></tr>
-      <tr><th>Saving Throws</th><td>[Saving Throws]</td></tr>
-      <tr><th>Skills</th><td>[Skills]</td></tr>
-      <tr><th>Class Resource</th><td>[Class Resource]</td></tr>
+      <tr><th>Armor</th><td>Leather Armor</td></tr>
+      <tr><th>Weapons</th><td>Shortswords, Daggers</td></tr>
+      <tr><th>Implements</th><td>None</td></tr>
+      <tr><th>Hit Die</th><td>d8</td></tr>
+	  <tr><th>Hit Points at Level 1</th><td>8 + CON modifier</td></tr>
+	  <tr><th>Hit Points at Higher Levels</th><td>Roll d8 or use fixed 5, add CON modifier for each Assassin level after 1.</td></tr>
+      <tr><th>Class Save DC</th><td>8 + PB + DEX modifier</td></tr>
+      <tr><th>Primary Ability</th><td>Dexterity</td></tr>
+      <tr><th>Saving Throws</th><td>Dexterity, Intelligence</td></tr>
+      <tr><th>Skills</th><td>Choose 2 from 6: Acrobatics, Deception, Investigation, Perception, Sleight of Hand, Stealth</td></tr>
+      <tr><th>Class Resource</th><td>Rune Marks placed on enemy targets</td></tr>
     </tbody></table>
   </section>
   <nav class="content-nav" aria-label="Class sections">
@@ -45,19 +58,35 @@
   </section>
   <section class="content-section" id="mechanics">
     <h2>Core Mechanics &amp; Resources</h2>
-    <details class="feature"><summary>[Signature Resource]</summary><div class="feature-body">
-      <p><strong>Generation:</strong> [How the resource is gained.]</p>
-      <p><strong>Capacity:</strong> [Maximum and scaling.]</p>
-      <p><strong>Expenditure:</strong> [What spends it.]</p>
-      <p><strong>Recovery:</strong> [When it recovers.]</p>
+    <details class="feature"><summary>Rune Marks</summary><div class="feature-body">
+      <p><strong>Rune Mark Mechanics:</strong> While every Assassin tracks their own individual limit, a single creature can never hold more than the specified number of Rune Marks in total, even if multiple Assassins are applying them. Additionally, you can trigger your own specific Rune Burst using the marks left by another Assassin to finish off the target.</p>
+      <p><strong>Rune Mark limit:</strong> A target creature can only carry up to 3 of your Rune Marks.</p>
+      <p>Marks disappear when consumed, when the marked creature is defeated, or when the encounter ends.</p>
     </div></details>
-    <details class="feature"><summary>[Signature Mechanic]</summary><div class="feature-body"><p>[Full explanation of the class's unique mechanic.]</p></div></details>
-  </section>
+    <details class="feature"><summary>Sneak Attack and Rune Mark Carving and Bursting</summary><div class="feature-body">
+      <p><strong>Sneak Attack:</strong> A Sneak Attack applies once on each of your own turns. Sneak Attack damage scales per level. To trigger a Sneak Attack, you must satisfy one of the following two conditions on your attack:</p>
+      <p><ul>
+  <li>You have advantage on the attack roll. Any effect, spell, or abilities that granted you advantage on your attack roll qualifies. Attacking while Invisible counts as granting Advantage to the attack roll.</li>
+  <li>An ally or another enemy of the target is within 5 ft of the target of your attack, and that creature is not incapacitated. The other creature does not need to be within your melee reach.</li>
+      </ul></p>
+      <p><strong>Rune Carving:</strong>  Once on your turn, a qualifying melee hit that actually deals Sneak Attack places 1 Rune Mark after that hit resolves. In the event that you are able to attack and hit twice, only place the Rune Mark after the second hit resolves.</p>
+      <p><strong>Rune Mark Capacity:</strong> Whenever a feature would place Rune Marks on a creature that already has 3 Rune Marks, place only enough Marks to reach 3; any excess Marks are lost. This limit applies regardless of how the Marks are generated, including Rune Carving, Masterful Carving, Perfect Marking, Relentless Execution, Perfect Preparation, Perfect Transition, and any Specialization feature.</p>
+      <p>Newly created Rune Marks cannot be consumed by the same hit that created them. You will have to wait for the next turn to Burst the Rune Mark.</p>
+      <p>If you exceed your current marked-target limit, choose one previously marked creature and remove all of your Marks from it. If you did not hit that creature to remove the Rune Marks, it does not deal any Rune Burst damage.</p>
+      <p>You can also detonate a Rune Mark immediately after landing a hit on a marked target. This does not require a Sneak Attack; instead, you can spend your Bonus Action to expend your chosen Marks and roll the corresponding Rune Dice for extra damage.</p>
+      <p>Missing, merely targeting, off-turn staged attacks, or hitting a creature without satisfying Rune Carving do not place Marks unless an explicit Assassin feature says otherwise.</p>
+      <p><strong>Rune Burst and Critical Hits</strong> When you hit a creature bearing your Rune Marks, you may use your Bonus Action to consume 1, 2, or 3 Marks to add the same number of Rune Dice to that weapon attack. Rune Dice added directly to the attack double on a critical hit. Secondary status riders of an Execution are not doubled. A Rune Burst resolves only the Marks placed on the previous turns, not on the same turn this ability is executed.</p>
+</div></details></section>
   <section class="content-section" id="ultimate">
     <h2>Ultimate Ability</h2>
-    <details class="feature"><summary><span class="feature-heading">[Ultimate Ability Name] <span class="type-tag ultimate">Ultimate</span></span></summary><div class="feature-body">
-      <div class="feature-meta"><span><b>Activation:</b> [Action type]</span><span><b>Cost:</b> [DP / resource]</span><span><b>Recovery:</b> [Recovery timing]</span></div>
-      <p><strong>Trigger / Requirements:</strong> [Requirements to activate.]</p><p><strong>Effect:</strong> [Complete effect.]</p><p><strong>Scaling:</strong> [Level scaling.]</p><p><strong>Recovery:</strong> [Full recovery rules and restrictions.]</p>
+    <details class="feature"><summary><span class="feature-heading">Death's Eclipse <span class="type-tag ultimate">Ultimate</span></span></summary><div class="feature-body">
+<p><strong>Ultimate Activation: Costs 100 Daeva Points (DP).</strong></p>
+      <p>As your Action and Bonus Action, choose one creature you can see within 60 ft and teleport to a legal unoccupied space within 5 ft of it. If no such space exists, you cannot choose that creature. Make one Ultimate attack against it with your melee weapon. After this Ultimate attempt resolves, you enter Ultimate Recovery during your next turn.</p>
+      <p><strong>Execution Damage:</strong> The attack deals its normal weapon damage plus fixed additional damage of the ability.</p>
+      <p><strong>Eclipsed Response.</strong> The target cannot take Reactions until the end of your next turn. Death's Eclipse has no area-damage or allied-support component; its power is concentrated into the primary target.</p>
+      <p><strong>Rules, Recovery and Restrictions:</strong></p>
+      <p><strong>Ultimate Attack Ability.</strong> Activating an Ultimate consumes both the character's Action and Bonus Action. The character cannot activate it unless both are available, but may still move and take Reactions normally. The Ultimate Ability is not an Attack action and cannot be duplicated by Extra Attack, Quick Shot, Akimbo, additional-action effects, reactions, or similar features.</p>
+      <p><strong>Fixed Ultimate Output.</strong> Damage printed on the corresponding level as the Ultimate's own direct numerical output are not rolled; use the maximum value of those die. Normal weapon damage and damage dice from other features remain rolled normally.</p>
     </div></details>
   </section>
   <section class="content-section" id="specializations">
