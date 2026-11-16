@@ -1,17 +1,30 @@
 <div id="classData" data-class="Ranger" data-spellcaster="false">
-  <p id="classDescription" class="hero-description">[Enter the Ranger class description here.]</p>
+<p class="class-quote"><em>“Chase me or run away. Either way, you'll only die tired.”</em></p>
+<p class="class-tagline">A nonmagical ranged hunter who uses battlefield traps to control enemy movement and spends Focus on precise or evasive shots against ensnared targets.</p>
+  <p id="classDescription" class="hero-description">
+   <section id="overview">
+   <p>The Ranger is a nonmagical ranged hunter that controls enemy movement with persistent battlefield traps, spends Focus on precision or evasive shots, and is rewarded for exploiting targets that walk into prepared terrain. Its sustained damage comes from two ranged attacks, not from spellcasting or a third standard attack.</p>
+   <h2 id="class-identity">Class Identity</h2>
+   <p>Rangers are mobile ranged specialists who control distance through marksmanship, movement, traps, and battlefield awareness. They are most effective when they can read terrain before committing, choose favorable lines of attack, and punish enemies that approach carelessly. Focus represents the Ranger’s ability to convert patience and perception into precise action.</p>
+   <h2 id="tradition-outlook">Tradition &amp; Outlook</h2>
+   <p>The Ranger tradition also descends from Atreia’s scout disciplines, but where Assassins close with a chosen target, Rangers cultivate distance, fieldcraft, and control of the approach. Rangers are common among scouts, hunters, pathfinders, border wardens, reconnaissance troops, and independent Daevas accustomed to surviving beyond secure settlements. They tend to value preparedness, observation, mobility, and freedom of movement.</p>
+   <h2 id="appearance-adventuring">Appearance &amp; Adventuring</h2>
+   <p>Rangers usually wear mobile armor and carry bows, ammunition, traps, and field equipment suited to extended movement. Their gear often reflects the terrain in which they learned their craft. Rangers adventure to explore dangerous regions, hunt monsters or enemy operatives, guide expeditions, secure routes, protect remote communities, or prove that no battlefield is truly open ground when preparation and range are on their side.</p>
+   </section>
   <section class="class-overview-panel" id="overview" aria-label="Ranger class overview">
     <h2>CLASS OVERVIEW</h2>
     <table class="class-overview-table"><tbody id="classOverviewPanel">
-      <tr><th>Armor</th><td>[Armor]</td></tr>
-      <tr><th>Weapons</th><td>[Weapons]</td></tr>
-      <tr><th>Implements</th><td>[Implements]</td></tr>
-      <tr><th>Hit Die</th><td>[Hit Die]</td></tr>
-      <tr><th>Class Save DC</th><td>[Class Save DC]</td></tr>
-      <tr><th>Primary Ability</th><td>[Primary Ability]</td></tr>
-      <tr><th>Saving Throws</th><td>[Saving Throws]</td></tr>
-      <tr><th>Skills</th><td>[Skills]</td></tr>
-      <tr><th>Class Resource</th><td>[Class Resource]</td></tr>
+      <tr><th>Armor</th><td>Leather Armor</td></tr>
+      <tr><th>Weapons</th><td>Shortbows, Longbows, Crossbows</td></tr>
+      <tr><th>Implements</th><td>None</td></tr>
+      <tr><th>Hit Die</th><td>d10</td></tr>
+	  <tr><th>Hit Points at Level 1</th><td>10 + CON modifier</td></tr>
+	  <tr><th>Hit Points at Higher Levels</th><td>Roll d10 or use fixed 6, add CON modifier for each Ranger level after 1.</td></tr>
+      <tr><th>Class Save DC</th><td>8 + PB + WIS modifier</td></tr>
+      <tr><th>Primary Ability</th><td>Dexterity</td></tr>
+      <tr><th>Saving Throws</th><td>Dexterity, Strength</td></tr>
+      <tr><th>Skills</th><td>Choose 2 from 6: Animal Handling, Athletics, Investigation, Nature, Perception, Survival</td></tr>
+      <tr><th>Class Resource</th><td>Focus</td></tr>
     </tbody></table>
   </section>
   <nav class="content-nav" aria-label="Class sections">
@@ -20,27 +33,27 @@
   <section class="content-section" id="progression">
     <h2>Class Progression</h2>
     <p class="muted">A compact overview of all 20 levels. Edit the table cells directly; keep the header and body columns in the same order.</p>
-    <div class="table-wrap"><table class="progression-table"><thead><tr><th>Level</th><th>Proficiency</th><th>Flight Slots</th><th class="col-abilities">Class Abilities</th><th class="col-resource">Class Resources</th></tr></thead><tbody id="progressionRows">
-<tr><td>1</td><td>+2</td><td>2</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>2</td><td>+2</td><td>2</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>3</td><td>+2</td><td>3</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>4</td><td>+2</td><td>3</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>5</td><td>+3</td><td>3</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>6</td><td>+3</td><td>4</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>7</td><td>+3</td><td>4</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>8</td><td>+3</td><td>4</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>9</td><td>+4</td><td>5</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>10</td><td>+4</td><td>5</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>11</td><td>+4</td><td>5</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>12</td><td>+4</td><td>5</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>13</td><td>+5</td><td>6</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>14</td><td>+5</td><td>6</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>15</td><td>+5</td><td>6</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>16</td><td>+5</td><td>6</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>17</td><td>+6</td><td>7</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>18</td><td>+6</td><td>7</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>19</td><td>+6</td><td>7</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
-<tr><td>20</td><td>+6</td><td>8</td><td>[Class feature(s), if any]</td><td>[Resource value]</td></tr>
+<div class="table-wrap"><table class="progression-table"><thead><tr><th>Level</th><th>Proficiency</th><th>Flight Slots</th><th class="col-resource">Max Trap Limit / Traps Known</th><th class="col-resource">Unique Abilities</th></tr></thead><tbody id="progressionRows">
+<tr><td>1</td><td>+2</td><td>2</td><td>2 / 3</td><td>Focus, Trapcraft, Exploit Opening</td></tr>
+<tr><td>2</td><td>+2</td><td>2</td><td>2 / 3</td><td>Hunter's Awareness, Quick Reposition</td></tr>
+<tr><td>3</td><td>+2</td><td>3</td><td>2 / 4</td><td>Deadeye, Trapper, Windrunner, Additional Trap</td></tr>
+<tr><td>4</td><td>+2</td><td>3</td><td>2 / 4</td><td>Feat / Ability Score Improvement</td></tr>
+<tr><td>5</td><td>+3</td><td>3</td><td>2 / 4</td><td>Extra Attack, Improved Focus Techniques</td></tr>
+<tr><td>6</td><td>+3</td><td>4</td><td>2 / 4</td><td>Specialization Decision / Advancement</td></tr>
+<tr><td>7</td><td>+3</td><td>4</td><td>2 / 5</td><td>Skirmisher's Escape, Additional Trap</td></tr>
+<tr><td>8</td><td>+3</td><td>4</td><td>3 / 5</td><td>Feat / Ability Score Improvement</td></tr>
+<tr><td>9</td><td>+4</td><td>5</td><td>3 / 6</td><td>Hunter's Rhythm, Advanced Trapcraft</td></tr>
+<tr><td>10</td><td>+4</td><td>5</td><td>3 / 6</td><td>Specialization Decision / Advancement, Starfall Volley</td></tr>
+<tr><td>11</td><td>+4</td><td>5</td><td>3 / 6</td><td>Focus Mastery and Exploit Weakness</td></tr>
+<tr><td>12</td><td>+4</td><td>5</td><td>3 / 6</td><td>Feat / Ability Score Improvement</td></tr>
+<tr><td>13</td><td>+5</td><td>6</td><td>3 / 6</td><td>Master Hunter</td></tr>
+<tr><td>14</td><td>+5</td><td>6</td><td>3 / 6</td><td>Final Specialization Decision / Advancement</td></tr>
+<tr><td>15</td><td>+5</td><td>6</td><td>4 / 6</td><td>Relentless Hunt</td></tr>
+<tr><td>16</td><td>+5</td><td>6</td><td>4 / 6</td><td>Feat / Ability Score Improvement</td></tr>
+<tr><td>17</td><td>+6</td><td>7</td><td>4 / 6</td><td>Apex Focus Techniques, Perfect Exploitation</td></tr>
+<tr><td>18</td><td>+6</td><td>7</td><td>4 / 6</td><td>Apex Hunter</td></tr>
+<tr><td>19</td><td>+6</td><td>7</td><td>4 / 6</td><td>Empyrean Boon</td></tr>
+<tr><td>20</td><td>+6</td><td>8</td><td>4 / 6</td><td>Perfect Ranger</td></tr>
     </tbody></table></div>
   </section>
   <section class="content-section" id="mechanics">
