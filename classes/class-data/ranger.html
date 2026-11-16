@@ -1,122 +1,36 @@
-<div id="classData" data-class="Ranger" data-spellcaster="false">
-<p class="class-quote"><em>“Chase me or run away. Either way, you'll only die tired.”</em></p>
-<p class="class-tagline">A nonmagical ranged hunter who uses battlefield traps to control enemy movement and spends Focus on precise or evasive shots against ensnared targets.</p>
-  <p id="classDescription" class="hero-description">
-   <section id="overview">
-   <p>The Ranger is a nonmagical ranged hunter that controls enemy movement with persistent battlefield traps, spends Focus on precision or evasive shots, and is rewarded for exploiting targets that walk into prepared terrain. Its sustained damage comes from two ranged attacks, not from spellcasting or a third standard attack.</p>
-   <h2 id="class-identity">Class Identity</h2>
-   <p>Rangers are mobile ranged specialists who control distance through marksmanship, movement, traps, and battlefield awareness. They are most effective when they can read terrain before committing, choose favorable lines of attack, and punish enemies that approach carelessly. Focus represents the Ranger’s ability to convert patience and perception into precise action.</p>
-   <h2 id="tradition-outlook">Tradition &amp; Outlook</h2>
-   <p>The Ranger tradition also descends from Atreia’s scout disciplines, but where Assassins close with a chosen target, Rangers cultivate distance, fieldcraft, and control of the approach. Rangers are common among scouts, hunters, pathfinders, border wardens, reconnaissance troops, and independent Daevas accustomed to surviving beyond secure settlements. They tend to value preparedness, observation, mobility, and freedom of movement.</p>
-   <h2 id="appearance-adventuring">Appearance &amp; Adventuring</h2>
-   <p>Rangers usually wear mobile armor and carry bows, ammunition, traps, and field equipment suited to extended movement. Their gear often reflects the terrain in which they learned their craft. Rangers adventure to explore dangerous regions, hunt monsters or enemy operatives, guide expeditions, secure routes, protect remote communities, or prove that no battlefield is truly open ground when preparation and range are on their side.</p>
-   </section>
-  <section class="class-overview-panel" id="overview" aria-label="Ranger class overview">
-    <h2>CLASS OVERVIEW</h2>
-    <table class="class-overview-table"><tbody id="classOverviewPanel">
-      <tr><th>Armor</th><td>Leather Armor</td></tr>
-      <tr><th>Weapons</th><td>Shortbows, Longbows, Crossbows</td></tr>
-      <tr><th>Implements</th><td>None</td></tr>
-      <tr><th>Hit Die</th><td>d10</td></tr>
-	  <tr><th>Hit Points at Level 1</th><td>10 + CON modifier</td></tr>
-	  <tr><th>Hit Points at Higher Levels</th><td>Roll d10 or use fixed 6, add CON modifier for each Ranger level after 1.</td></tr>
-      <tr><th>Class Save DC</th><td>8 + PB + WIS modifier</td></tr>
-      <tr><th>Primary Ability</th><td>Dexterity</td></tr>
-      <tr><th>Saving Throws</th><td>Dexterity, Strength</td></tr>
-      <tr><th>Skills</th><td>Choose 2 from 6: Animal Handling, Athletics, Investigation, Nature, Perception, Survival</td></tr>
-      <tr><th>Class Resource</th><td>Focus</td></tr>
-    </tbody></table>
-  </section>
-  <nav class="content-nav" aria-label="Class sections">
-    <a href="#progression">Progression</a><a href="#mechanics">Mechanics</a><a href="#ultimate">Ultimate</a><a href="#specializations">Specializations</a><a href="#glossary">Glossary</a><a href="#clarifications">Clarifications</a><a href="#howToPlay">How to Play</a>
-  </nav>
-  <section class="content-section" id="progression">
-    <h2>Class Progression</h2>
-    <p class="muted">A compact overview of all 20 levels. Edit the table cells directly; keep the header and body columns in the same order.</p>
-<div class="table-wrap"><table class="progression-table"><thead><tr><th>Level</th><th>Proficiency</th><th>Flight Slots</th><th class="col-resource">Max Trap Limit / Traps Known</th><th class="col-resource">Unique Abilities</th></tr></thead><tbody id="progressionRows">
-<tr><td>1</td><td>+2</td><td>2</td><td>2 / 3</td><td>Focus, Trapcraft, Exploit Opening</td></tr>
-<tr><td>2</td><td>+2</td><td>2</td><td>2 / 3</td><td>Hunter's Awareness, Quick Reposition</td></tr>
-<tr><td>3</td><td>+2</td><td>3</td><td>2 / 4</td><td>Deadeye, Trapper, Windrunner, Additional Trap</td></tr>
-<tr><td>4</td><td>+2</td><td>3</td><td>2 / 4</td><td>Feat / Ability Score Improvement</td></tr>
-<tr><td>5</td><td>+3</td><td>3</td><td>2 / 4</td><td>Extra Attack, Improved Focus Techniques</td></tr>
-<tr><td>6</td><td>+3</td><td>4</td><td>2 / 4</td><td>Specialization Decision / Advancement</td></tr>
-<tr><td>7</td><td>+3</td><td>4</td><td>2 / 5</td><td>Skirmisher's Escape, Additional Trap</td></tr>
-<tr><td>8</td><td>+3</td><td>4</td><td>3 / 5</td><td>Feat / Ability Score Improvement</td></tr>
-<tr><td>9</td><td>+4</td><td>5</td><td>3 / 6</td><td>Hunter's Rhythm, Advanced Trapcraft</td></tr>
-<tr><td>10</td><td>+4</td><td>5</td><td>3 / 6</td><td>Specialization Decision / Advancement, Starfall Volley</td></tr>
-<tr><td>11</td><td>+4</td><td>5</td><td>3 / 6</td><td>Focus Mastery and Exploit Weakness</td></tr>
-<tr><td>12</td><td>+4</td><td>5</td><td>3 / 6</td><td>Feat / Ability Score Improvement</td></tr>
-<tr><td>13</td><td>+5</td><td>6</td><td>3 / 6</td><td>Master Hunter</td></tr>
-<tr><td>14</td><td>+5</td><td>6</td><td>3 / 6</td><td>Final Specialization Decision / Advancement</td></tr>
-<tr><td>15</td><td>+5</td><td>6</td><td>4 / 6</td><td>Relentless Hunt</td></tr>
-<tr><td>16</td><td>+5</td><td>6</td><td>4 / 6</td><td>Feat / Ability Score Improvement</td></tr>
-<tr><td>17</td><td>+6</td><td>7</td><td>4 / 6</td><td>Apex Focus Techniques, Perfect Exploitation</td></tr>
-<tr><td>18</td><td>+6</td><td>7</td><td>4 / 6</td><td>Apex Hunter</td></tr>
-<tr><td>19</td><td>+6</td><td>7</td><td>4 / 6</td><td>Empyrean Boon</td></tr>
-<tr><td>20</td><td>+6</td><td>8</td><td>4 / 6</td><td>Perfect Ranger</td></tr>
-    </tbody></table></div>
-  </section>
   <section class="content-section" id="mechanics">
     <h2>Core Mechanics &amp; Resources</h2>
-    <details class="feature"><summary>[Signature Resource]</summary><div class="feature-body">
-      <p><strong>Generation:</strong> [How the resource is gained.]</p>
-      <p><strong>Capacity:</strong> [Maximum and scaling.]</p>
-      <p><strong>Expenditure:</strong> [What spends it.]</p>
-      <p><strong>Recovery:</strong> [When it recovers.]</p>
-    </div></details>
-    <details class="feature"><summary>[Signature Mechanic]</summary><div class="feature-body"><p>[Full explanation of the class's unique mechanic.]</p></div></details>
-  </section>
-  <section class="content-section" id="ultimate">
-    <h2>Ultimate Ability</h2>
-    <details class="feature"><summary><span class="feature-heading">[Ultimate Ability Name] <span class="type-tag ultimate">Ultimate</span></span></summary><div class="feature-body">
-      <div class="feature-meta"><span><b>Activation:</b> [Action type]</span><span><b>Cost:</b> [DP / resource]</span><span><b>Recovery:</b> [Recovery timing]</span></div>
-      <p><strong>Trigger / Requirements:</strong> [Requirements to activate.]</p><p><strong>Effect:</strong> [Complete effect.]</p><p><strong>Scaling:</strong> [Level scaling.]</p><p><strong>Recovery:</strong> [Full recovery rules and restrictions.]</p>
-    </div></details>
-  </section>
-  <section class="content-section" id="specializations">
-    <h2>Specializations</h2><p class="muted">Three distinct paths, with advancement features at the established specialization levels.</p>
-    <div class="spec-grid">
-      <article class="spec-card"><h3>[Specialization One]</h3><p>[Identity and playstyle summary.]</p><p><strong>Advancement:</strong> Levels 3, 6, 10, 14.</p></article>
-      <article class="spec-card"><h3>[Specialization Two]</h3><p>[Identity and playstyle summary.]</p><p><strong>Advancement:</strong> Levels 3, 6, 10, 14.</p></article>
-      <article class="spec-card"><h3>[Specialization Three]</h3><p>[Identity and playstyle summary.]</p><p><strong>Advancement:</strong> Levels 3, 6, 10, 14.</p></article>
-    </div>
-    <h3>Choose a Specialization</h3><p class="muted">Select a path to preview its entries in the level progression. Replace the sample names with this class's approved specialization names and abilities.</p>
-    <div class="feature-meta" role="group" aria-label="Choose specialization">
-      <button type="button" class="spec-select active" data-spec="0">[Specialization One]</button>
-      <button type="button" class="spec-select" data-spec="1">[Specialization Two]</button>
-      <button type="button" class="spec-select" data-spec="2">[Specialization Three]</button>
-    </div>
-    <div class="callout" id="selectedSpecSummary">Selected path: [Specialization One].</div>
-  </section>
-  
-  <section class="content-section" id="levelDetails"><h2>Level Details</h2><ol class="level-list"><li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 1: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 1 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 2: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 2 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 3: Specialization Advancement</span></summary><div class="level-content"><p>Choose one specialization path to view its Level 3 feature.</p><details class="level-specialization-entry" data-spec="0"><summary><span class="specialization-entry-title">[Specialization One] — [Feature name]</span></summary><p>[Enter the Level 3 [Specialization One] feature description here.]</p></details><details class="level-specialization-entry" data-spec="1" hidden><summary><span class="specialization-entry-title">[Specialization Two] — [Feature name]</span></summary><p>[Enter the Level 3 [Specialization Two] feature description here.]</p></details><details class="level-specialization-entry" data-spec="2" hidden><summary><span class="specialization-entry-title">[Specialization Three] — [Feature name]</span></summary><p>[Enter the Level 3 [Specialization Three] feature description here.]</p></details></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 4: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 4 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 5: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 5 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 6: Specialization Advancement</span></summary><div class="level-content"><p>Choose one specialization path to view its Level 6 feature.</p><details class="level-specialization-entry" data-spec="0"><summary><span class="specialization-entry-title">[Specialization One] — [Feature name]</span></summary><p>[Enter the Level 6 [Specialization One] feature description here.]</p></details><details class="level-specialization-entry" data-spec="1" hidden><summary><span class="specialization-entry-title">[Specialization Two] — [Feature name]</span></summary><p>[Enter the Level 6 [Specialization Two] feature description here.]</p></details><details class="level-specialization-entry" data-spec="2" hidden><summary><span class="specialization-entry-title">[Specialization Three] — [Feature name]</span></summary><p>[Enter the Level 6 [Specialization Three] feature description here.]</p></details></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 7: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 7 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 8: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 8 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 9: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 9 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 10: Specialization Advancement</span></summary><div class="level-content"><p>Choose one specialization path to view its Level 10 feature.</p><details class="level-specialization-entry" data-spec="0"><summary><span class="specialization-entry-title">[Specialization One] — [Feature name]</span></summary><p>[Enter the Level 10 [Specialization One] feature description here.]</p></details><details class="level-specialization-entry" data-spec="1" hidden><summary><span class="specialization-entry-title">[Specialization Two] — [Feature name]</span></summary><p>[Enter the Level 10 [Specialization Two] feature description here.]</p></details><details class="level-specialization-entry" data-spec="2" hidden><summary><span class="specialization-entry-title">[Specialization Three] — [Feature name]</span></summary><p>[Enter the Level 10 [Specialization Three] feature description here.]</p></details></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 11: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 11 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 12: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 12 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 13: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 13 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 14: Specialization Advancement</span></summary><div class="level-content"><p>Choose one specialization path to view its Level 14 feature.</p><details class="level-specialization-entry" data-spec="0"><summary><span class="specialization-entry-title">[Specialization One] — [Feature name]</span></summary><p>[Enter the Level 14 [Specialization One] feature description here.]</p></details><details class="level-specialization-entry" data-spec="1" hidden><summary><span class="specialization-entry-title">[Specialization Two] — [Feature name]</span></summary><p>[Enter the Level 14 [Specialization Two] feature description here.]</p></details><details class="level-specialization-entry" data-spec="2" hidden><summary><span class="specialization-entry-title">[Specialization Three] — [Feature name]</span></summary><p>[Enter the Level 14 [Specialization Three] feature description here.]</p></details></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 15: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 15 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 16: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 16 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 17: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 17 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 18: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 18 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 19: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 19 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 20: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 20 feature description here.]</p></div></details></li></ol></section>
-  <section class="content-section" id="glossary"><h2>Class Glossary</h2><div class="table-wrap"><table><thead><tr><th>Term</th><th>Definition</th><th>Related Feature</th></tr></thead><tbody><tr><td>[Term]</td><td>[Concise definition.]</td><td>[Section or feature]</td></tr><tr><td>[Term]</td><td>[Concise definition.]</td><td>[Section or feature]</td></tr></tbody></table></div></section>
-  <section class="content-section" id="clarifications"><h2>Rules &amp; Clarifications</h2><details class="feature"><summary>[Topic or interaction]</summary><div class="feature-body"><p>[Precise clarification and relevant examples.]</p></div></details></section>
-  <section class="content-section" id="howToPlay"><h2>How to Play Ranger</h2>
-    <p>[Brief introduction explaining this class's playstyle, combat identity, and overall objective.]</p>
-    <h4>Core Gameplay Loop</h4><p>[Step 1] → [Step 2] → [Step 3] → [Step 4] → [Continue or adapt]</p>
-    <table class="class-overview-table"><tbody><tr><th>Your Job</th><td>[Explain the class's role in the party.]</td></tr><tr><th>Your Resource</th><td>[Explain how the class resource works in practice.]</td></tr><tr><th>Your Position</th><td>[Explain positioning considerations.]</td></tr></tbody></table>
-    <h3>1. [First Strategy Topic]</h3><p>[Explain the first important principle of playing this class.]</p><p>[Add a practical tip or example.]</p>
-    <h3>2. [Second Strategy Topic]</h3><p>[Explain the second important principle.]</p><ul><li>[Practical guideline or action]</li><li>[Practical guideline or action]</li><li>[Practical guideline or action]</li></ul>
-    <h3>3. [Additional Strategy Topic]</h3><p>[Add further class-specific guidance, tactical considerations, or common mistakes to avoid.]</p>
-  </section>
-</div>
+    <details class="feature"><summary>Focus</summary><div class="feature-body">
+      <p><strong>Maximum Focus:</strong> Maximum Focus equals your PB + WIS modifier, minimum 2. A Long Rest restores all expended Focus. A Short Rest restores Focus equal to PB, up to your maximum. Focus is a tactical reserve rather than ammunition or a tax on ordinary ranged attacks; Ranger Traps normally cost no Focus.</p>
+      <p><strong>Starting State:</strong> Focus is a rest-based reserve and does not reset merely because combat begins or ends. After a Long Rest it is normally full.</p>
+      <p><strong>Combat Recovery:</strong> Hunter’s Rhythm and certain later Ranger/specialization features can regain Focus during genuine combat when their tactical conditions are actually satisfied.</p>
+      <p><strong>Trapcraft:</strong> Ranger Traps do not cost Focus. They are however subject to the Learned Limits and Maximum per Level requirements.</p>
+<p><ul>
+<li>Deploy one known Ranger Trap as a Bonus Action in an unoccupied space within 5 feet. A trap occupies one 5-foot space.</li>
+<li>You normally deploy no more than one Ranger Trap during a turn unless a feature explicitly says otherwise.</li>
+<li>Only hostile creatures trigger your traps unless you designate otherwise when deploying a trap.</li>
+<li>A trap remains until triggered, dismantled, made inert because you exceed your active-trap limit, or until you finish a Long Rest.</li>
+<li>Base active-trap limits and traps known is designated in the Level Progression Table. The Trapper Specialization increases this number under its explicit mechanics.</li>
+<li>You can change your known traps every time you level up. Subject to Trap learning level requirements, and learn limits.</li>
+<li>Trap damage is independent damage and does not double because one of your weapon attacks was a critical hit.</li>
+<li>Traps spring to life the moment a hostile creature steps onto, passes through, or is shoved into an adjacent space. You must be within 30 ft of the trap for this to take effect.</li>
+<li>Traps only function on the ground. Flying or hovering creatures will not trigger traps unless they land or fall directly onto them or on an adjacent 5 grid space.</li>
+<li>Once on each of your own turns, when you make a ranged weapon attack against a creature that triggered one of your Ranger Traps since the end of your previous turn, you may make that attack with Advantage.</li>
+</ul></p>
+</div></details>
+    <details class="feature"><summary>Focus Techniques and Ranger Trap Reference</summary><div class="feature-body">
+<p><ul>Focus Techniques:</p>
+      <li><strong>Precision Shot:</strong> Costs 1 Focus and can be triggered when one of your ranged weapon attack hits. Adds current Precision Shot damage. Doubles on a critical hit.</li>
+      <li><strong>Pinning Shot:</strong> Costs 1 Focus and can be triggered when one of your ranged weapon attack hits. Applies the current Speed reduction. Reductions do not stack with themselves.</li>
+      <li><strong>Evasive Step:</strong> Costs 1 Focus and can be triggered when one of your ranged weapon attack hits. Make the current safe movement. This is movement, not teleportation, and never allows passage through barriers or unsupported spaces.</li>
+</ul></p>
+<p><ul>Ranger Trap Reference</p>
+<li><strong>Snare Trap− </strong>Level 1. Target rolls DEX save. Failure would make speed become 0 until end of the target's next turn. Success only reduces 10 ft until end of the target's next turn. When you successfully hit the target on your turn that is affected by this trap, add +1 to your damage roll against the target. This applies to only 1 attack while the ffects of the trap is active. Allies do not benefit from this trap.</li>
+<li><strong>Spike Trap− </strong>Level 1. Target rolls DEX save. On a Failure, the target suffers 1d10 Piercing damage and its speed is reduced by 10 ft until start of target's next turn. On a Success, it will only suffer half the damage rounded down. Speed does not get reduced. When you successfully hit the target on your turn that is affected by this trap, add +1 to your damage roll against the target. This applies to only 1 attack while the ffects of the trap is active. Allies do not benefit from this trap.</li>
+<li><strong>Disrupting Trap− </strong>Level 1. Target rolls CON save. On a failure, the target cannot take Reactions until the start of its next turn. Success would let the target still take Reactions. When you successfully hit the target on your turn that is affected by this trap, add +1 to your damage roll against the target. This applies to only 1 attack while the effects of the trap is active. Allies do not benefit from this trap.</li>
+<li><strong>Revealing Trap− </strong>Level 1. Until start of your next turn, the target cannot benefit from Invisible, cannot become Hidden and its location is revealed to you and your allies. No extra effects apply.</li>
+<li><strong>Repulsion Trap− </strong>Level 1. Target rolls STR save. On a Failure, the target suffers 2d6 Bludgeoning damage and is pushed fixed 20 ft away from the trap. You will decide which direction to push the target to. On a Success, it will only suffer 1d6 Bludeoning damage. Forced movement is only 10 ft away from the trap at your preferred location. This may trigger Opportunity Attacks from any enemy of the target. Creatures more than one size larger than you have Advantage on the saving throw.</li>
+<li><strong>Blinding Trap− </strong>Level 9. Target rolls WIS save. On a Failure, the target is Blinded until end of target's next turn. On a Success, it is not Blinded but it has Disadvantage to its attack rolls until the start of its next turn. No extra effects apply.</li>
+<li><strong>Binding Trap− </strong>Level 9. Target rolls STR save. On a Failure, the target becomes Prone and its speed drops to 0 for the rest of the turn, preventing it from standing back up. While your attacks against the target from beyond 5 ft won't suffer disadvantage, this advantage does not extend to your allies. Nothing happens on a Success.</li>
+<li><strong>Aether Disruption Trap− </strong>Level 9. Target rolls DEX save. On a Failure, the target cannot become Invisible, teleport, or use Aetheric displacement movements. Until start of the target's next turn, target cannot do 1 Action. It can only do Bonus Actions and Reactions. Nothing happens on a Success. When you successfully hit the target on your turn that is affected by this trap, add +1 to your damage roll. This lasts until the start of target's next turn. This applies to only 1 attack while the effects of the trap is active. Allies do not benefit from this trap.</li>
+</ul></p></div></details></section>
