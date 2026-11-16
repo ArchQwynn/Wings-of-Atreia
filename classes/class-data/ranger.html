@@ -32,7 +32,7 @@
   </nav>
   <section class="content-section" id="progression">
     <h2>Class Progression</h2>
-    <p class="muted">A compact overview of all 20 levels. Edit the table cells directly; keep the header and body columns in the same order.</p>
+    <p class="muted">A compact overview of all 20 levels.</p>
 <div class="table-wrap"><table class="progression-table"><thead><tr><th>Level</th><th>Proficiency</th><th>Flight Slots</th><th class="col-resource">Max Trap Limit / Traps Known</th><th class="col-resource">Unique Abilities</th></tr></thead><tbody id="progressionRows">
 <tr><td>1</td><td>+2</td><td>2</td><td>2 / 3</td><td>Focus, Trapcraft, Exploit Opening</td></tr>
 <tr><td>2</td><td>+2</td><td>2</td><td>2 / 3</td><td>Hunter's Awareness, Quick Reposition</td></tr>
@@ -96,33 +96,57 @@
 </ul></p></div></details></section>
   <section class="content-section" id="ultimate">
     <h2>Ultimate Ability</h2>
-    <details class="feature"><summary><span class="feature-heading">[Ultimate Ability Name] <span class="type-tag ultimate">Ultimate</span></span></summary><div class="feature-body">
-      <div class="feature-meta"><span><b>Activation:</b> [Action type]</span><span><b>Cost:</b> [DP / resource]</span><span><b>Recovery:</b> [Recovery timing]</span></div>
-      <p><strong>Trigger / Requirements:</strong> [Requirements to activate.]</p><p><strong>Effect:</strong> [Complete effect.]</p><p><strong>Scaling:</strong> [Level scaling.]</p><p><strong>Recovery:</strong> [Full recovery rules and restrictions.]</p>
+      <details class="feature"><summary><span class="feature-heading">Starfall Volley<span class="type-tag ultimate">Ultimate</span></span></summary><div class="feature-body">
+      <p><strong>Ultimate Activation: Costs 100 Daeva Points (DP).</strong></p>
+      <p>As your Action and Bonus Action, make one Ultimate ranged weapon attack against a creature within the weapon's normal range. Starfall Volley ignores Half Cover; Full Cover remains absolute. After this Ultimate resolves, you enter Ultimate Recovery during your next turn.</p>
+      <p><strong>Primary Damage:</strong> The attack deals its normal weapon damage plus fixed additional Piercing damage.</p>
+      <p><strong>Falling Volley.</strong> Every other hostile creature within a certain distance from the primary target makes a DEX save against your Ranger Class Save DC. Every affected creature takes fixed Piercing damage on a failure, or half that amount on a success.</p>
+      <p><strong>Rules, Recovery and Restrictions:</strong></p>
+      <p><strong>Ultimate Attack Ability.</strong> Activating an Ultimate consumes both the character's Action and Bonus Action. The character cannot activate it unless both are available, but may still move and take Reactions normally. The Ultimate Ability is not an Attack action and cannot be duplicated by Extra Attack, Quick Shot, Akimbo, additional-action effects, reactions, or similar features.</p>
+      <p><strong>Fixed Ultimate Output.</strong> Damage printed on the corresponding level as the Ultimate's own direct numerical output are not rolled; use the maximum value of those die. Normal weapon damage and damage dice from other features remain rolled normally.</p>
     </div></details>
   </section>
   <section class="content-section" id="specializations">
     <h2>Specializations</h2><p class="muted">Three distinct paths, with advancement features at the established specialization levels.</p>
     <div class="spec-grid">
-      <article class="spec-card"><h3>[Specialization One]</h3><p>[Identity and playstyle summary.]</p><p><strong>Advancement:</strong> Levels 3, 6, 10, 14.</p></article>
-      <article class="spec-card"><h3>[Specialization Two]</h3><p>[Identity and playstyle summary.]</p><p><strong>Advancement:</strong> Levels 3, 6, 10, 14.</p></article>
-      <article class="spec-card"><h3>[Specialization Three]</h3><p>[Identity and playstyle summary.]</p><p><strong>Advancement:</strong> Levels 3, 6, 10, 14.</p></article>
+      <article class="spec-card"><h3>DEADEYE</h3><p>The Deadeye favors patience, positioning, and carefully aimed attacks over constant movement. It improves ranged accuracy, cover penetration, and finishing shots, rewarding players who prefer deliberate attacks against carefully selected targets.</p></article>
+      <article class="spec-card"><h3>TRAPPER</h3><p>The Trapper controls enemy movement through an expanding network of specialized traps. It improves trap capacity and effectiveness, eventually allowing traps to interact with one another or be activated remotely to create dangerous zones across the battlefield.</p></article>
+      <article class="spec-card"><h3>WINDRUNNER</h3><p>The Windrunner combines ranged attacks with continuous movement, maintaining pressure while avoiding enemy retaliation. Its abilities enhance repositioning, reward movement during combat, and allow it to remain an elusive threat while firing on the move.</p></article>
     </div>
     <h3>Choose a Specialization</h3><p class="muted">Select a path to preview its entries in the level progression. Replace the sample names with this class's approved specialization names and abilities.</p>
     <div class="feature-meta" role="group" aria-label="Choose specialization">
-      <button type="button" class="spec-select active" data-spec="0">[Specialization One]</button>
-      <button type="button" class="spec-select" data-spec="1">[Specialization Two]</button>
-      <button type="button" class="spec-select" data-spec="2">[Specialization Three]</button>
+      <button type="button" class="spec-select active" data-spec="0">DEADEYE</button>
+      <button type="button" class="spec-select" data-spec="1">TRAPPER</button>
+      <button type="button" class="spec-select" data-spec="2">WINDRUNNER</button>
     </div>
     <div class="callout" id="selectedSpecSummary">Selected path: [Specialization One].</div>
   </section>
   
-  <section class="content-section" id="levelDetails"><h2>Level Details</h2><ol class="level-list"><li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 1: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 1 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 2: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 2 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 3: Specialization Advancement</span></summary><div class="level-content"><p>Choose one specialization path to view its Level 3 feature.</p><details class="level-specialization-entry" data-spec="0"><summary><span class="specialization-entry-title">[Specialization One] — [Feature name]</span></summary><p>[Enter the Level 3 [Specialization One] feature description here.]</p></details><details class="level-specialization-entry" data-spec="1" hidden><summary><span class="specialization-entry-title">[Specialization Two] — [Feature name]</span></summary><p>[Enter the Level 3 [Specialization Two] feature description here.]</p></details><details class="level-specialization-entry" data-spec="2" hidden><summary><span class="specialization-entry-title">[Specialization Three] — [Feature name]</span></summary><p>[Enter the Level 3 [Specialization Three] feature description here.]</p></details></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 4: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 4 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 5: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 5 feature description here.]</p></div></details></li>
-<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 6: Specialization Advancement</span></summary><div class="level-content"><p>Choose one specialization path to view its Level 6 feature.</p><details class="level-specialization-entry" data-spec="0"><summary><span class="specialization-entry-title">[Specialization One] — [Feature name]</span></summary><p>[Enter the Level 6 [Specialization One] feature description here.]</p></details><details class="level-specialization-entry" data-spec="1" hidden><summary><span class="specialization-entry-title">[Specialization Two] — [Feature name]</span></summary><p>[Enter the Level 6 [Specialization Two] feature description here.]</p></details><details class="level-specialization-entry" data-spec="2" hidden><summary><span class="specialization-entry-title">[Specialization Three] — [Feature name]</span></summary><p>[Enter the Level 6 [Specialization Three] feature description here.]</p></details></div></details></li>
+  <section class="content-section" id="levelDetails"><h2>Level Details</h2><ol class="level-list">
+  <li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 1: Focus, Trapcraft, Exploit Opening</span></summary><div class="level-content"><p><strong>Focus</strong></p>
+<p>Maximum Focus is equivalent to your Proficiency Bonus + WIS modifier, minimum 2. Long Rest restores all; Short Rest restores only a number equal to your Proficiency Bonus. You gain Precision Shot +1d6 to your damage roll, Pinning Shot -10 Speed, and Evasive Step 10 feet, each for 1 Focus under the timing rules above.</p>
+<p><strong>Trapcraft</strong></p>
+<p>You know 3 Ranger Traps and may maintain 2 active traps. Choose from Snare, Spike, Disrupting, Revealing, and Repulsion when selecting known traps.</p>
+<p><strong>Exploit Opening</strong></p>
+<p>Once on your turn, one ranged attack against a creature that triggered your trap since the end of your previous turn can be made with Advantage.</p>
+</div></details></li>
+<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 2: Hunter’s Awareness and Quick Reposition</span></summary><div class="level-content"><p><strong>Aether Disturbance</strong></p>
+<p>You sense an Invisible creature within 10 feet if it is not behind Full Cover. You know its occupied space, it cannot become Hidden from you solely because it is Invisible, and you do not suffer Disadvantage on ranged attacks against it solely for that invisibility.</p>
+<p><strong>Watchful Hunter</strong></p>
+<p>If you are not already proficient, add your Proficiency Bonus to a WIS (Perception) or WIS (Survival) check used to detect concealed creatures, ambushes, tracks, disturbed terrain, or hidden traps. This does not stack with proficiency.</p>
+<p><strong>Quick Reposition</strong></p>
+<p>Once on each of your turns after making a ranged weapon attack, move 5 feet without provoking an Opportunity Attack from the creature you attacked. This costs no action and no Focus. Quick Reposition and Evasive Step do not stack on the same attack unless a later feature explicitly allows it.</p></div></details></li>
+<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 3: Specialization Advancement</span></summary><div class="level-content"><p>Choose one specialization path to view its Level 3 feature.</p><details class="level-specialization-entry" data-spec="0"><summary><span class="specialization-entry-title">DEADEYE — Patient Aim</span></summary><p>Once on each of your turns, if you moved no more than half your Speed before a ranged weapon attack, empower one hit for +1d6 damage, or +1d8 if the target triggered one of your traps since the end of your previous turn. This costs no Focus.</p></details><details class="level-specialization-entry" data-spec="1" hidden><summary><span class="specialization-entry-title">TRAPPER — Expanded Trapcraft / Potent Traps</span></summary><p>Learn 1 additional Ranger Traps beyond the normal class total and increase your active-trap limit by 2. Once on each of your turns when a creature fails a save against one of your traps, choose one Potent rider: Exposed Footing gives +1 to all attack rolls against it until the end of your next turn (measured by the Trapper’s turns); or Disrupted Recovery prevents the creature from benefiting from Dash before the start of your next turn (measured by the Trapper’s turns).</p></details><details class="level-specialization-entry" data-spec="2" hidden><summary><span class="specialization-entry-title">WINDRUNNER — Mobile Archer / Running Shot</span></summary><p>Quick Reposition increases to 10 feet. Once on each of your turns after moving at least 10 feet from your turn-start position, the next ranged weapon hit that turn deals +1d6 damage. This bonus damage can stack with Slipstream Shot on the same hit.</p>
+<p><strong>Additional Trap</strong></p>
+<p>Learn one additional Ranger Trap, bringing your base total to 4 known.</p>
+</details></div></details></li>
+<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 4: Feat / Ability Score Improvement</span></summary><div class="level-content"><p>Gain the universal Feat / Ability Score Improvement.</p></div></details></li>
+<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 5: Extra Attack and Improved Focus Techniques</span></summary><div class="level-content"><p><strong>Extra Attack</strong></p>
+<p>When you take the Attack action, make two ranged weapon attacks instead of one. Ranger never gains a third standard Attack-action attack.</p>
+<p><strong>Improved Focus Techniques</strong></p>
+<p>Your Precision Shot now becomes +1d8, Pinning Shot becomes Speed reduction of 15 ft, and Evasive Step becomes 15 ft.</p>
+</div></details></li>
+<li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 6: Specialization Decision / Advancement</span></summary><div class="level-content"><p>Choose one specialization path to view its Level 6 feature.</p><details class="level-specialization-entry" data-spec="0"><summary><span class="specialization-entry-title">DEADEYE — Steady Hand</span></summary><p>[Enter the Level 6 [Specialization One] feature description here.]</p></details><details class="level-specialization-entry" data-spec="1" hidden><summary><span class="specialization-entry-title">TRAPPER — Hair-Trigger</span></summary><p>[Enter the Level 6 [Specialization Two] feature description here.]</p></details><details class="level-specialization-entry" data-spec="2" hidden><summary><span class="specialization-entry-title">WINDRUNNER — Slipstream Shot</span></summary><p>[Enter the Level 6 [Specialization Three] feature description here.]</p></details></div></details></li>
 <li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 7: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 7 feature description here.]</p></div></details></li>
 <li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 8: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 8 feature description here.]</p></div></details></li>
 <li class="level-item"><details class="level level-entry"><summary><span class="level-entry-title">Level 9: [Feature name]</span></summary><div class="level-content"><p>[Enter the Level 9 feature description here.]</p></div></details></li>
