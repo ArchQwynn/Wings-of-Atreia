@@ -1,5 +1,5 @@
-const CACHE_VERSION="woa-pwa-20261116-2038";
-const RUNTIME_CACHE="woa-runtime-20261116-2038";
+const CACHE_VERSION="woa-pwa-20261116-2041";
+const RUNTIME_CACHE="woa-runtime-20261116-2041";
 const CORE=["index.html","offline.html","manifest.webmanifest","assets/css/style-v20260914-6.css","assets/js/search-v20260914-6.js","assets/js/search-index.json","assets/icons/icon-192.png","assets/icons/icon-512.png","about.html","companion/index.html","companion/assets/companion-v20260916-1.css","companion/assets/companion-v20260916-1.js","changelog.html","start-here.html","rules/index.html","rules/status.html","world/index.html","vtt-prototype/index.html","vtt-prototype/style.css","vtt-prototype/app.js","classes/browser.html","classes/class-data/aethertech.html","classes/class-data/assassin.html","classes/class-data/chanter.html","classes/class-data/cleric.html","classes/class-data/gladiator.html","classes/class-data/gunslinger.html","classes/class-data/ranger.html","classes/class-data/songweaver.html","classes/class-data/sorcerer.html","classes/class-data/spiritmaster.html","classes/class-data/templar.html"];
 let PRECACHE=[];
 function scopedUrl(path){return new URL(path,self.registration.scope).href;}
