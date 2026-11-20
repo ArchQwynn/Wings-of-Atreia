@@ -35,7 +35,7 @@
   <section class="content-section" id="progression">
     <h2>Class Progression</h2>
     <p class="muted">A compact overview of all 20 levels.</p>
-    <div class="table-wrap"><table class="progression-table"><thead><tr><th>Level</th><th>Proficiency</th><th>Flight Slots</th><th class="col-spell-level">Maximum Spell Level</th><th class="col-spell-advancements">Spell Advancements</th><th class="col-abilities">Class Abilities</th><th class="col-resource">Class Resources</th></tr></thead><tbody id="progressionRows">
+    <div class="table-wrap"><table class="progression-table"><thead><tr><th>Level</th><th>Proficiency</th><th>Flight Slots</th><th class="col-spell-level">Maximum Spell Level</th><th class="col-spell-advancements">Spell Advancements</th><th class="col-abilities">Unique Abilities</th></tr></thead><tbody id="progressionRows">
 <tr><td>1</td><td>+2</td><td>2</td><td>3</td><td>1</td><td>Spellcasting, Summon Spirit, Spirit Bond, Bond Techniques, Shared Aether</td></tr>
 <tr><td>2</td><td>+2</td><td>2</td><td>4</td><td>2</td><td>Spirit Link, Aetheric Command</td></tr>
 <tr><td>3</td><td>+2</td><td>3</td><td>4</td><td>2</td><td>Spirit Caller, Hexbinder, Bondweaver</td></tr>
@@ -60,14 +60,32 @@
   </section>
   <section class="content-section" id="mechanics">
     <h2>Core Mechanics &amp; Resources</h2>
-    <details class="feature"><summary>[Signature Resource]</summary><div class="feature-body">
-      <p><strong>Generation:</strong> [How the resource is gained.]</p>
-      <p><strong>Capacity:</strong> [Maximum and scaling.]</p>
-      <p><strong>Expenditure:</strong> [What spends it.]</p>
-      <p><strong>Recovery:</strong> [When it recovers.]</p>
+    <details class="feature"><summary>Spirit Bond</summary><div class="feature-body">
+      <p><strong>Generation:</strong> Once on each of your turns, gain 1 Spirit Bond if both you and your active spirit successfully affect hostile creatures during your turn. This includes a hit, actual damage, a failed save, meaningful hostil condition/penalty, forced movement, or another real combat effects. Merely targeting a hostile or applying an effect to which it is immune does not. Normal Bond generation is once on each of your turns. The master and spirit do not need to affect the same hostile unless a specific features says so.</p>
+      <p><strong>Starting State and Reset:</strong> Spirit Bond begins at 0 when genuine combat starts and resets to 0 when combat ends. Artifical combat and initiatives cannot preload it.</p>
     </div></details>
-    <details class="feature"><summary>[Signature Mechanic]</summary><div class="feature-body"><p>[Full explanation of the class's unique mechanic.]</p></div></details>
-  </section>
+    <details class="feature"><summary>Summon Spirits and Elemental Spirits</summary><div class="feature-body">
+    <p>A Spiritmaster <strong>spirit</strong> is a Large creature that occupies a 4-grid space. All spirits hover and remain displaced above the ground. They do not need to land. They can move vertically using their available speed. Fire, Water, and Earth spirits have a Speed of 30 ft; Wind has a Speed of 40 ft. Hovering and vertical movement do not by themselves prevent Opportunity Attacks; a spirit can provoke normally when it voluntarily moves out of an enemy's reach. Teleportation and movement that explicitly avoids Opportunity Attacks remain exceptions.</p>
+    <p>The Spiritmaster and spirit share one Reaction. If either uses it, neither can use another Reaction until the start of the Spiritmaster's next turn.</p>
+    <p>You know all four fundamental spirits—Fire, Water, Earth, and Wind—and choose among them tactically. Only one Spiritmaster spirit may be summoned at a time. Summoning another spirit will disperse the other one that is currently active. Summoning uses an Action and places the spirit in a visible unoccupied space within 15 ft.</p>
+    <p>A defeated spirit disperses into Aether and makes no death saves. Recovery depends on your level, and you may resummon it at certain HP levels depending on your Spiritmaster Level. Only a spirit actually reduced to 0 HP qualifies for reconstitution. Voluntary dismissal or replacement never qualifies for defeat recovery. Outside combat a newly summoned spirit appears at full HP; voluntary replacement during combat preserves the dismissed spirit's current HP percentage rather than healing by switching forms.</p>
+    <p>The spirit shares your Initiative and acts during your turn. It moves normally during your turn without consuming your action.</p>
+    <p>You normally spend your Bonus Action to command its basic Spirit Action. If not commanded, it may move normally, Dodge, or remain in place; it may move and Dodge during the same turn. It does not need a Bonus Action to move or Dodge when commanded.</p>
+    <p>A spirit normally makes only one basic Spirit Attack per turn.</p>
+    <p>Spirit attacks are class features, not spells. Spirit AC never inherits your armor or personal AC bonuses.</p>
+    <p>The spirit has its own designated Chassis separate from your own as described below.</p>
+    <table class="spirit-overview-table"><tbody id="spiritOverviewPanel">
+      <tr><th>AC</th><td>12 + Proficiency Bonus; Earth Spirit is 15 + Proficiency Bonus</td></tr>
+      <tr><th>HP Levels 1-10</th><td>8 + (5 × Spiritmaster level) + INT modifier</td></tr>
+      <tr><th>HP Levels 1-10</th><td>12 + (6 × Spiritmaster level) + INT modifier</td></tr>
+      <tr><th>Speed</th><td>30 ft; Wind Spirit is 40 ft</td></tr>
+      <tr><th>Attack Modifier</th><td>Your Spiritmaster Spell Attack Modifier</td></tr>
+      <tr><th>Save DC</th><td>Your Spiritmaster Spell Save DC</td></tr>
+      <tr><th>Saving Throws beginning Level 11</th><td>d6</td></tr>
+      <tr><th>Speed</th><td>Proficient in all saves using PB; Advantage vs Charmed/Frightened</td></tr>
+     </tbody></table>
+    </div></details>
+
   <section class="content-section" id="ultimate">
     <h2>Ultimate Ability</h2>
     <details class="feature"><summary><span class="feature-heading">[Ultimate Ability Name] <span class="type-tag ultimate">Ultimate</span></span></summary><div class="feature-body">
