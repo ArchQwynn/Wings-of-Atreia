@@ -15,6 +15,14 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 @media(max-width:850px){.quick-nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.quick-nav{grid-template-columns:1fr}}
 .abyss-board th{min-width:150px;text-align:center;vertical-align:middle;background:#173957}.abyss-board tr:nth-child(odd) th{background:#102b43}.abyss-board tr:first-child th,.abyss-board tr:nth-child(5) th,.abyss-board tr:last-child th{background:#245174;letter-spacing:.04em}@media(max-width:700px){.abyss-board th{min-width:125px;font-size:.82rem}}
+/* Unit Catalogue: full grid with visible cell borders and readable column alignment. */
+.unit-catalogue-wrap{width:100%;overflow-x:auto}
+.unit-catalogue-table{border:1px solid var(--line);table-layout:auto}
+.unit-catalogue-table th,.unit-catalogue-table td{border:1px solid var(--line);padding:.7rem .75rem;white-space:normal}
+.unit-catalogue-table thead th{text-align:center;vertical-align:middle;white-space:nowrap}
+.unit-catalogue-table tbody th[rowspan]{vertical-align:middle;min-width:125px}
+.unit-catalogue-table tbody td:nth-child(n+3){text-align:center;vertical-align:middle}
+.unit-catalogue-table tbody td:nth-child(2){font-weight:700;min-width:125px}
 /* Tutorial readability: separate Situation captions from their explanatory text. */
 section.card h3{margin:1.25rem 0 .65rem;line-height:1.35}
 section.card p{line-height:1.65;margin:.65rem 0 1rem}
@@ -124,7 +132,7 @@ section.card p{line-height:1.65;margin:.65rem 0 1rem}
 <tr><td>9–10</td><td>Nothing happens.</td></tr>
 </table></div>
 <p>If the roll results in Friendly reinforcements, the Players choose who will roll the first d20 to determine the composition of the reinforcements according to the rollable table that is provided. If the result is for the Opposing reinforcements, it will be the GM that will roll the provided die. A second roll table will determine the Tier of the units. In the event that the Unit composition has a set maximum Tier level that is less than the result of the 2nd roll, it means an automatic maximum Tier available to that unit composition.</p>
-<h2 id="unit-catalogue">Universal Unit Catalogue</h2><p>This is the single consolidated reference for all Unit profiles, combat statistics, Tier ranges, and War Asset costs. The individual Unit sections below explain rules and functions without repeating their stat tables. For tiered Units, END equals the Unit Tier (Tier I = 1 END through Tier V = 5 END). Fixed-END Units use the listed value.</p><table aria-label="Universal Unit Catalogue and War Asset costs" style="min-width:1050px">
+<h2 id="unit-catalogue">Universal Unit Catalogue</h2><p>This is the single consolidated reference for all Unit profiles, combat statistics, Tier ranges, and War Asset costs. The individual Unit sections below explain rules and functions without repeating their stat tables. For tiered Units, END equals the Unit Tier (Tier I = 1 END through Tier V = 5 END). Fixed-END Units use the listed value.</p><div class="rule-table-wrap unit-catalogue-wrap"><table class="rule-table unit-catalogue-table" aria-label="Universal Unit Catalogue and War Asset costs" style="min-width:1050px">
 <thead><tr><th>Category</th><th>Unit Profile</th><th>ATK</th><th>DEF</th><th>SIEGE</th><th>END</th><th>Tier Range</th><th>WA Cost</th></tr></thead>
 <tbody>
 <tr><th rowspan="8">Infantry</th><td>Levy</td><td>1</td><td>1</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 2 · II 3 · III 4 · IV 5 · V 6</td></tr>
@@ -154,7 +162,7 @@ section.card p{line-height:1.65;margin:.65rem 0 1rem}
 <tr><td>Engineer</td><td>—</td><td>—</td><td>—</td><td>1</td><td>I</td><td>3</td></tr>
 <tr><td>Saboteur</td><td>—</td><td>—</td><td>—</td><td>1</td><td>I</td><td>2</td></tr>
 <tr><td>Assassin</td><td>—</td><td>—</td><td>—</td><td>1</td><td>I</td><td>3</td></tr>
-</tbody></table>
+</tbody></table></div>
 <h3>Infantry</h3>
 <p>Only Infantry captures or recaptures Major Ground Objectives and Open Abyss grids.</p>
 
