@@ -248,7 +248,7 @@ section.card p{line-height:1.65;margin:.65rem 0 1rem}
 <li>PCs cannot capture Major Ground Objectives or Open Abyss grids.</li>
 <li>PCs may target Aerial Units directly without Artillery, but do not grant allied Infantry anti-Aerial capability.</li>
 <li>At least one allied Warfront Unit must normally accompany PCs in an active Battlefront/grid.</li>
-<li>At the start of the overall battle, each PC declares Ground or Aerial assignment; this determines that PC's Warfront movement mode for the battle.</li>
+<li>PCs use a unified movement allowance of 1 connected grid per normal Movement Phase throughout a Fortress War. PCs do not declare Ground or Aerial assignment.</li>
 <li><strong>Daeva Point and Ultimate Exclusion:</strong> PCs neither gain nor spend DP and cannot activate Ultimates anywhere within a Warfront operation. Existing DP is retained but inaccessible until the Warfront ends.</li>
 </ul><h3 id="pc-targeting">PC Targeting and Casualty Selection</h3>
 <p>A PC may target only an enemy Unit in the same Battlefront or grid where that PC is actively clashing. Before making an attack roll, the player must declare one target category: <strong>Infantry, Ranged/Caster, Artillery, Support, Specialists, or Aerial</strong>. The declared category must be present in the same active clash.</p>
@@ -263,36 +263,32 @@ section.card p{line-height:1.65;margin:.65rem 0 1rem}
 <li><strong>Inter-Battle Reset:</strong> after a complete separate Warfront battle ends, every surviving Unit returns to maximum END. END loss never carries between separate Fortress Wars or Open Abyss Battles.</li>
 </ul>
 <h2 id="fortress-wars">Fortress Wars</h2>
-<h3>Fortress Classes</h3>
-<div class="rule-table-wrap"><table class="rule-table">
-<tr><th>Fortress</th><th>Main Gates</th><th>Rampart Requirement</th></tr>
-<tr><td>Standard</td><td>2</td><td>Each Gate requires both Ramparts connected to that Gate.</td></tr>
-<tr><td>Major</td><td>1</td><td>All four Ramparts must be captured before the single Main Gate may be contested.</td></tr>
-</table></div>
-<p>Both use the same strategic depth: <strong>Outer Approach → Inner Approach → Rampart → Main Gate → Inner Fortress → Aether Controller → Fortress Core</strong>.</p>
-<h3>Directional Exterior Structure</h3>
-<p>Each Fortress has North, East, South, and West exterior sectors. Each sector contains an Outer Approach, Inner Approach, and Rampart. Units may move only across connections shown by the Fortress board. Captured Battlefronts do not require a standing garrison; control persists until enemy Infantry recaptures them.</p>
 <h3>Standard Fortress Topology</h3>
+<p>Every Fortress follows the same six-section structure: <strong>Staging Area → Three Walls → 3 × 3 Inner Fortress → Junction → Aether Controller → Fortress Core.</strong> The Three Walls and Junction follow the connections shown on the individual Fortress map. The Inner Fortress always uses a 3 × 3 grid.</p>
 <ul class="source-list">
-<li>South + West Ramparts connect to one Main Gate.</li>
-<li>North + East Ramparts connect to the other Main Gate.</li>
-<li>Both Ramparts linked to a specific Gate must be captured before that Gate may be contested.</li>
-<li>The two Gate routes progress independently and converge into the Inner Fortress.</li>
+<li><strong>Staging Area:</strong> The attacking force deploys and organizes here. All Fortress external reinforcements enter at the Staging Area.</li>
+<li><strong>Three Walls:</strong> The Fortress has three Wall routes/sections. Their lengths, defensive arrangements, and grid connections are determined by the Fortress map.</li>
+<li><strong>Inner Fortress:</strong> A standard 3 × 3 grid lies beyond the Three Walls.</li>
+<li><strong>Junction:</strong> The routes converge through a map-defined Junction. The Junction may occupy one or more connected grids as shown on the map.</li>
+<li><strong>Aether Controller:</strong> The next objective. It must be captured by at least one surviving attacking Infantry Unit before the Fortress Core becomes accessible.</li>
+<li><strong>Fortress Core:</strong> The final section containing the Brigadier-General and using the Fortress Core procedures below.</li>
 </ul>
-<h3>Major Fortress Topology</h3>
+<h3>Wall Access and Flanking</h3>
 <ul class="source-list">
-<li>Exactly one Main Gate.</li>
-<li>North, East, South, and West Ramparts all connect to it.</li>
-<li>All four Ramparts must be captured before the Gate may be contested.</li>
+<li>Capturing any one of the Three Walls grants the attacking force access to the 3 × 3 Inner Fortress. The attackers do not need to capture all three Walls before advancing.</li>
+<li>The other two Walls remain active defensive positions while they remain defender-controlled.</li>
+<li>Defenders in the remaining Walls cannot attack the Inner Fortress or attacking Units from a distance. To threaten an exposed flank, they must advance through Battlefronts that are directly connected on the Fortress map.</li>
+<li>Defenders must capture a connecting Battlefront and physically advance through the connected grids before engaging attackers. They cannot bypass intervening grids or attack a disconnected grid.</li>
+<li>The number and arrangement of Battlefronts along each Wall and within the Junction are determined by the individual Fortress map; no fixed number of grids per Wall or Junction is imposed.</li>
 </ul>
-<h3>Main-Gate Unlock Timing</h3>
-<p>When the final required Rampart is captured, its Gate becomes accessible immediately. Until a still-uncaptured Gate is actually captured, defenders can close access again by recapturing a prerequisite Rampart. Once a Main Gate itself has been captured, later loss of an exterior prerequisite Rampart does not relock that captured Gate.</p>
-<h3>Fortress Aerial Movement</h3>
+<h3>Fortress Movement and Operational Limits</h3>
 <ul class="source-list">
-<li>Outside the Main Gate, Aerial Units may move up to 2 connected Battlefront levels per normal Movement Phase.</li>
-<li>Inside the Main Gate, they revert to normal 1-Battlefront movement.</li>
-<li>An Aerial Unit cannot cross an uncontrolled intermediate Battlefront to penetrate deeper.</li>
-<li>A legal two-transition move counts as two changes for the External Reinforcement counter.</li>
+<li><strong>Same-Grid Engagement:</strong> A Unit may engage an enemy Unit only when both occupy the same Battlefront/grid. Units cannot attack, damage, or engage enemies in another grid, including an adjacent or connected grid. Units must enter the enemy-occupied grid before engaging it.</li>
+<li><strong>Ordinary Warfront Units:</strong> Move 1 connected grid per normal Movement Phase unless a specific Unit rule states otherwise.</li>
+<li><strong>Aerial Units:</strong> May move up to 2 connected grids per normal Movement Phase from the Staging Area through the Three Walls and throughout the 3 × 3 Inner Fortress. Once an Aerial Unit enters the Junction, its movement allowance becomes 1 connected grid per normal Movement Phase. This 1-grid allowance continues through the Aether Controller and Fortress Core.</li>
+<li><strong>PCs:</strong> Use a unified movement allowance of 1 connected grid per normal Movement Phase throughout the Fortress. PCs do not declare Ground or Aerial assignment.</li>
+<li>All movement must follow the Fortress map's actual grid connections. Aerial movement does not allow a Unit to bypass an intervening grid or cross a disconnected area.</li>
+<li>Decision-Window reinforcement movement remains limited to 1 connected grid, including for Aerial Units.</li>
 </ul>
 <h3>Fortifications, Siege, Engineers, and Specialists</h3>
 <div class="rule-table-wrap"><table class="rule-table">
@@ -308,7 +304,7 @@ section.card p{line-height:1.65;margin:.65rem 0 1rem}
 <li><strong>Assassin:</strong> Fortress Wars allow at most three Assassin uses per side for the entire Fortress War.</li>
 </ul>
 <h3>Fortress External Reinforcements</h3>
-<p>Fortress external reinforcements enter from outside. Roll 1d4: 1 North, 2 East, 3 South, 4 West. They cannot bypass an enemy-controlled exterior Battlefront to appear deeper in the Fortress. The first three Fortress reinforcement checks use the normal 1d10 table; after the third Fortress reinforcement check, later qualifying checks automatically reinforce the Fortress defender.</p>
+<p>The normal 1d10 External Reinforcement Check determines whether friendly reinforcements arrive, opposing reinforcements arrive, or no reinforcements arrive. No direction roll is made. All Fortress external reinforcements enter at the Staging Area. Reinforcements must advance from the Staging Area through the Fortress map's connected grids; they cannot appear deeper inside the Fortress or bypass an enemy-controlled Battlefront. The first three Fortress reinforcement checks use the normal 1d10 table; after the third Fortress reinforcement check, later qualifying checks automatically reinforce the Fortress defender.</p>
 <h3>Brigadier-General</h3>
 <p>Every active Fortress Core has a Brigadier-General. The Brigadier-General is not purchased with WA and is the mandatory final defender of every active Fortress Core. It remains exclusively inside the Fortress Core and cannot move, redeploy, reinforce another Battlefront, or defend the Aether Controller.</p>
 <h3>Aether Controller and Fortress Core</h3>
