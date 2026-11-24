@@ -26,6 +26,9 @@ ul.source-list,ol.source-list{margin:.6rem 0 1rem 1.3rem}ul.source-list li,ol.so
 /* Tutorial readability: separate Situation captions from their explanatory text. */
 section.card h3{margin:1.25rem 0 .65rem;line-height:1.35}
 section.card p{line-height:1.65;margin:.65rem 0 1rem}
+
+/* Keep the ATK values centered even in rows where the Category cell is rowspan. */
+.unit-catalogue-table td.unit-atk{text-align:center!important;vertical-align:middle}
 </style></head>
 <body data-base="../"><header class="site-header"><div class="nav-wrap">
 <a class="brand" href="../index.html">WINGS OF ATREIA</a>
@@ -132,40 +135,39 @@ section.card p{line-height:1.65;margin:.65rem 0 1rem}
 <tr><td>9–10</td><td>Nothing happens.</td></tr>
 </table></div>
 <p>If the roll results in Friendly reinforcements, the Players choose who will roll the first d20 to determine the composition of the reinforcements according to the rollable table that is provided. If the result is for the Opposing reinforcements, it will be the GM that will roll the provided die. A second roll table will determine the Tier of the units. In the event that the Unit composition has a set maximum Tier level that is less than the result of the 2nd roll, it means an automatic maximum Tier available to that unit composition.</p>
-<h2 id="unit-catalogue">Universal Unit Catalogue</h2><p>This is the single consolidated reference for all Unit profiles, combat statistics, Tier ranges, and War Asset costs. The individual Unit sections below explain rules and functions without repeating their stat tables. For tiered Units, END equals the Unit Tier (Tier I = 1 END through Tier V = 5 END). Fixed-END Units use the listed value.</p><div class="rule-table-wrap unit-catalogue-wrap"><table class="rule-table unit-catalogue-table" aria-label="Universal Unit Catalogue and War Asset costs" style="min-width:1050px">
+<h2 id="unit-catalogue">Universal Unit Catalogue</h2><p>This is the single consolidated reference for all Unit profiles, combat statistics, Tier ranges, and War Asset costs. The individual Unit sections below explain rules and functions without repeating their stat tables. For tiered Units, END equals the Unit Tier (Tier I = 1 END through Tier V = 5 END). Fixed-END Units use the listed value.</p><div class="rule-table-wrap unit-catalogue-wrap"><table aria-label="Universal Unit Catalogue and War Asset costs" class="rule-table unit-catalogue-table" style="min-width:1050px">
 <thead><tr><th>Category</th><th>Unit Profile</th><th>ATK</th><th>DEF</th><th>SIEGE</th><th>END</th><th>Tier Range</th><th>WA Cost</th></tr></thead>
 <tbody>
-<tr><th rowspan="8">Infantry</th><td>Levy</td><td>1</td><td>1</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 2 · II 3 · III 4 · IV 5 · V 6</td></tr>
-<tr><td>Light</td><td>2</td><td>1</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 3 · II 4 · III 5 · IV 6 · V 7</td></tr>
-<tr><td>Line</td><td>2</td><td>2</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 4 · II 5 · III 6 · IV 7 · V 8</td></tr>
-<tr><td>Assault</td><td>3</td><td>1</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 4 · II 5 · III 6 · IV 7 · V 8</td></tr>
-<tr><td>Vanguard</td><td>3</td><td>2</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 5 · II 6 · III 7 · IV 8 · V 9</td></tr>
-<tr><td>Heavy</td><td>1</td><td>3</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 5 · II 6 · III 7 · IV 8 · V 9</td></tr>
-<tr><td>Guard</td><td>2</td><td>3</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 6 · II 7 · III 8 · IV 9 · V 10</td></tr>
-<tr><td>Elite</td><td>3</td><td>3</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 7 · II 8 · III 9 · IV 10 · V 11</td></tr>
-<tr><th rowspan="3">Ranged/Caster</th><td>Light</td><td>2</td><td>1</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 4 · II 5 · III 6</td></tr>
-<tr><td>Battle</td><td>3</td><td>2</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 6 · II 7 · III 8</td></tr>
-<tr><td>War</td><td>4</td><td>2</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 7 · II 8 · III 9</td></tr>
-<tr><th rowspan="7">Aerial</th><td>Light Aerial</td><td>2</td><td>1</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 5 · II 6 · III 7</td></tr>
-<tr><td>Aerial Line</td><td>2</td><td>2</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 6 · II 7 · III 8</td></tr>
-<tr><td>Aerial Assault</td><td>3</td><td>1</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 6 · II 7 · III 8</td></tr>
-<tr><td>Aerial Vanguard</td><td>3</td><td>2</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 7 · II 8 · III 9</td></tr>
-<tr><td>Aerial Guard</td><td>1</td><td>3</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 6 · II 7 · III 8</td></tr>
-<tr><td>Aerial Defender</td><td>2</td><td>3</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 7 · II 8 · III 9</td></tr>
-<tr><td>Elite Aerial</td><td>4</td><td>3</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 8 · II 9 · III 10</td></tr>
-<tr><th rowspan="1">Artillery</th><td>Artillery</td><td>0</td><td>2</td><td>—</td><td>1</td><td>—</td><td>3</td></tr>
-<tr><th rowspan="3">Siege</th><td>Field Siege</td><td>3</td><td>1</td><td>2</td><td>1</td><td>—</td><td>3</td></tr>
-<tr><td>Heavy Siege</td><td>3</td><td>1</td><td>3</td><td>2</td><td>—</td><td>5</td></tr>
-<tr><td>Armored Siege</td><td>3</td><td>1</td><td>2</td><td>3</td><td>—</td><td>5</td></tr>
-<tr><th rowspan="1">Support</th><td>Support</td><td>0</td><td>2</td><td>—</td><td>2</td><td>—</td><td>7</td></tr>
-<tr><th rowspan="4">Specialist</th><td>Scout</td><td>—</td><td>—</td><td>—</td><td>1</td><td>I</td><td>1</td></tr>
-<tr><td>Engineer</td><td>—</td><td>—</td><td>—</td><td>1</td><td>I</td><td>3</td></tr>
-<tr><td>Saboteur</td><td>—</td><td>—</td><td>—</td><td>1</td><td>I</td><td>2</td></tr>
-<tr><td>Assassin</td><td>—</td><td>—</td><td>—</td><td>1</td><td>I</td><td>3</td></tr>
+<tr><th rowspan="8">Infantry</th><td>Levy</td><td class="unit-atk">1</td><td>1</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 2 · II 3 · III 4 · IV 5 · V 6</td></tr>
+<tr><td>Light</td><td class="unit-atk">2</td><td>1</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 3 · II 4 · III 5 · IV 6 · V 7</td></tr>
+<tr><td>Line</td><td class="unit-atk">2</td><td>2</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 4 · II 5 · III 6 · IV 7 · V 8</td></tr>
+<tr><td>Assault</td><td class="unit-atk">3</td><td>1</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 4 · II 5 · III 6 · IV 7 · V 8</td></tr>
+<tr><td>Vanguard</td><td class="unit-atk">3</td><td>2</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 5 · II 6 · III 7 · IV 8 · V 9</td></tr>
+<tr><td>Heavy</td><td class="unit-atk">1</td><td>3</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 5 · II 6 · III 7 · IV 8 · V 9</td></tr>
+<tr><td>Guard</td><td class="unit-atk">2</td><td>3</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 6 · II 7 · III 8 · IV 9 · V 10</td></tr>
+<tr><td>Elite</td><td class="unit-atk">3</td><td>3</td><td>—</td><td>Tier-based</td><td>I–V</td><td>I 7 · II 8 · III 9 · IV 10 · V 11</td></tr>
+<tr><th rowspan="3">Ranged/Caster</th><td>Light</td><td class="unit-atk">2</td><td>1</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 4 · II 5 · III 6</td></tr>
+<tr><td>Battle</td><td class="unit-atk">3</td><td>2</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 6 · II 7 · III 8</td></tr>
+<tr><td>War</td><td class="unit-atk">4</td><td>2</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 7 · II 8 · III 9</td></tr>
+<tr><th rowspan="7">Aerial</th><td>Light Aerial</td><td class="unit-atk">2</td><td>1</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 5 · II 6 · III 7</td></tr>
+<tr><td>Aerial Line</td><td class="unit-atk">2</td><td>2</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 6 · II 7 · III 8</td></tr>
+<tr><td>Aerial Assault</td><td class="unit-atk">3</td><td>1</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 6 · II 7 · III 8</td></tr>
+<tr><td>Aerial Vanguard</td><td class="unit-atk">3</td><td>2</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 7 · II 8 · III 9</td></tr>
+<tr><td>Aerial Guard</td><td class="unit-atk">1</td><td>3</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 6 · II 7 · III 8</td></tr>
+<tr><td>Aerial Defender</td><td class="unit-atk">2</td><td>3</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 7 · II 8 · III 9</td></tr>
+<tr><td>Elite Aerial</td><td class="unit-atk">4</td><td>3</td><td>—</td><td>Tier-based</td><td>I–III</td><td>I 8 · II 9 · III 10</td></tr>
+<tr><th rowspan="1">Artillery</th><td>Artillery</td><td class="unit-atk">0</td><td>2</td><td>—</td><td>1</td><td>—</td><td>3</td></tr>
+<tr><th rowspan="3">Siege</th><td>Field Siege</td><td class="unit-atk">3</td><td>1</td><td>2</td><td>1</td><td>—</td><td>3</td></tr>
+<tr><td>Heavy Siege</td><td class="unit-atk">3</td><td>1</td><td>3</td><td>2</td><td>—</td><td>5</td></tr>
+<tr><td>Armored Siege</td><td class="unit-atk">3</td><td>1</td><td>2</td><td>3</td><td>—</td><td>5</td></tr>
+<tr><th rowspan="1">Support</th><td>Support</td><td class="unit-atk">0</td><td>2</td><td>—</td><td>2</td><td>—</td><td>7</td></tr>
+<tr><th rowspan="4">Specialist</th><td>Scout</td><td class="unit-atk">—</td><td>—</td><td>—</td><td>1</td><td>I</td><td>1</td></tr>
+<tr><td>Engineer</td><td class="unit-atk">—</td><td>—</td><td>—</td><td>1</td><td>I</td><td>3</td></tr>
+<tr><td>Saboteur</td><td class="unit-atk">—</td><td>—</td><td>—</td><td>1</td><td>I</td><td>2</td></tr>
+<tr><td>Assassin</td><td class="unit-atk">—</td><td>—</td><td>—</td><td>1</td><td>I</td><td>3</td></tr>
 </tbody></table></div>
 <h3>Infantry</h3>
 <p>Only Infantry captures or recaptures Major Ground Objectives and Open Abyss grids.</p>
-
 <h3>Levy Infantry</h3>
 <p>Levy represent hastily mobilized reserves, militia, auxiliaries, emergency garrison troops, and other expendable mass manpower. They remain ATK 1 / DEF 1 at every Tier; higher Tier represents formation depth and END rather than better training.</p>
 <ul class="source-list">
@@ -177,13 +179,11 @@ section.card p{line-height:1.65;margin:.65rem 0 1rem}
 <h3>Ranged / Caster Units</h3>
 <p>Ranged/Caster Units must physically occupy the Battlefront/grid where they fight and may target Aerial Units.</p>
 <p>Defending Ranged/Caster Units within the same grid that has at least 1 Fortification point will receive a +1 to their DEF roll. This applies to all Ranged/Caster units.</p>
-
 <h3>Artillery</h3>
 <p><strong>ATK 0 / DEF 2 / END 1.</strong> During the Preliminary Round, each Artillery makes one special Preliminary Attack: roll 1d6, and only a <strong>1</strong> scores 1 Hit. The Preliminary Attack can target only Infantry and Ranged/Caster Units; it cannot target Specialists, Aerial Units, other Artillery, or Support Units. The target's owner chooses which eligible Unit suffers the Hit. The Preliminary Attack does not use ATK 0.</p>
 <p>During Main Combat, Artillery uses its normal ATK 0 / DEF 2 statistics. One Artillery may grant one additional Attack Die to one eligible attacking Infantry Unit: Light, Line, Assault, or Vanguard. Heavy, Guard, Elite, Levy, and non-Infantry Units are ineligible. One Infantry can receive at most one Artillery bonus die in the same Battle Exchange. Artillery also enables all allied Infantry in the same Battlefront/grid, including Levy, to attack Aerial Units.</p>
 <h3>Siege Units</h3>
 <p>Each Siege Unit makes one Preliminary Attack before Main Combat. Roll 1d6; only a <strong>1</strong> is a successful Preliminary SIEGE Hit, removing 1 Fortification Point. During Main Combat, Siege uses its listed SIEGE statistic normally. Saboteur can modify only a Main Combat Siege attack. Siege cannot proceed beyond the Main Gate and is excluded from Open Abyss Battles.</p>
-
 <h3>Support</h3>
 <p><strong>ATK 0 / DEF 2 / END 2.</strong></p><p><strong>Support defense:</strong> A Support Unit does not make an attack roll (ATK 0). However, when the Support Unit itself is the Unit defending in a grid, it may roll its DEF die normally using DEF 2.</p>
 <ul class="source-list">
@@ -197,10 +197,8 @@ section.card p{line-height:1.65;margin:.65rem 0 1rem}
 <h3>Specialists</h3>
 <p>All Specialists are Tier I, END 1, and roll no ATK or DEF die.</p>
 <p>Players can choose them as casualties in exchange of other more important units.</p>
-
 <h3>Aerial Units</h3>
 <p>Warfront Aerial Units do not track character-scale Flight Slots or individual Wind Serum consumption; their WA cost abstracts sustained mass-flight logistics.</p>
-
 <h2 id="unit-encyclopedia">Warfront Unit Encyclopedia</h2>
 <p>This encyclopedia describes the military identity, training, purpose, and typical deployment of the formations in the Universal Unit Catalogue. These entries are descriptive reference material only. They do not add abilities, modify statistics, change War Asset costs, or override any Warfront timing, targeting, movement, or objective-control rule. Where a formation's exact tactical doctrine is not separately defined by the rules, the description below is explanatory rather than a new mechanic.</p>
 <h3 id="encyclopedia-infantry">Infantry Formations</h3>
